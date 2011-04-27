@@ -18,6 +18,7 @@ package org.sprog.cdiunit;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import junit.framework.Assert;
 
@@ -34,7 +35,7 @@ import org.sprog.cdiunit.TestCdiUnitRunner.B;
 public class TestCdiUnitRunner {
 	
 	@Inject
-	private B _b;
+	private Provider<B> _b;
 
 	@TestAlternative
 	@Produces
@@ -44,8 +45,8 @@ public class TestCdiUnitRunner {
 	
 	@Test
 	public void testInjections() {
-		Assert.assertNotNull(_b._a);
-		Assert.assertEquals(_impl, _b._a);
+		Assert.assertNotNull(_b.get()._a);
+		Assert.assertEquals(_impl, _b.get()._a);
 	}
 	
 	public static class B {
