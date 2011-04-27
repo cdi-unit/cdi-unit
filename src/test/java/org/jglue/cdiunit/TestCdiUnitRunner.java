@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sprog.cdiunit;
+package org.jglue.cdiunit;
 
 
 import javax.enterprise.inject.Produces;
@@ -25,10 +25,10 @@ import junit.framework.Assert;
 import org.iglue.cdiunit.CdiRunner;
 import org.iglue.cdiunit.SupportClasses;
 import org.iglue.cdiunit.TestAlternative;
+import org.jglue.cdiunit.TestCdiUnitRunner.B;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.sprog.cdiunit.TestCdiUnitRunner.B;
 
 @RunWith(CdiRunner.class)
 @SupportClasses({A.class, B.class})
