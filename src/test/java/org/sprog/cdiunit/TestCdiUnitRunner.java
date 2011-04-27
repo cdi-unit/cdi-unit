@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import junit.framework.Assert;
 
-import org.iglue.cdiunit.CdiUnit;
+import org.iglue.cdiunit.CdiRunner;
 import org.iglue.cdiunit.SupportClasses;
 import org.iglue.cdiunit.TestAlternative;
 import org.junit.Test;
@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.sprog.cdiunit.TestCdiUnitRunner.B;
 
-@RunWith(CdiUnit.class)
+@RunWith(CdiRunner.class)
 @SupportClasses({A.class, B.class})
 public class TestCdiUnitRunner {
 	

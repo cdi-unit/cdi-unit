@@ -25,7 +25,7 @@ import javax.enterprise.inject.Stereotype;
 
 @Stereotype
 @Alternative
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TestAlternative {
 

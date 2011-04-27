@@ -25,11 +25,11 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
-public class CdiUnit extends BlockJUnit4ClassRunner {
+public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	private Class<?> _clazz;
 
-	public CdiUnit(Class<?> clazz) throws InitializationError {
+	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
 		_clazz = clazz;
 	}
