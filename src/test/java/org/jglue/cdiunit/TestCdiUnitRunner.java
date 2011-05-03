@@ -18,13 +18,9 @@ package org.jglue.cdiunit;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import junit.framework.Assert;
 
-import org.jglue.cdiunit.CdiRunner;
-import org.jglue.cdiunit.SupportClasses;
-import org.jglue.cdiunit.TestAlternative;
 import org.jglue.cdiunit.TestCdiUnitRunner.B;
 import org.junit.Test;
 import org.junit.runner.RunWith;
