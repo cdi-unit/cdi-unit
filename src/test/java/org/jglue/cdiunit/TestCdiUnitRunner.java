@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sprog.cdiunit;
+package org.jglue.cdiunit;
 
 
 import javax.enterprise.inject.Produces;
@@ -22,20 +22,20 @@ import javax.inject.Provider;
 
 import junit.framework.Assert;
 
-import org.iglue.cdiunit.CdiRunner;
-import org.iglue.cdiunit.SupportClasses;
-import org.iglue.cdiunit.TestAlternative;
+import org.jglue.cdiunit.CdiRunner;
+import org.jglue.cdiunit.SupportClasses;
+import org.jglue.cdiunit.TestAlternative;
+import org.jglue.cdiunit.TestCdiUnitRunner.B;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.sprog.cdiunit.TestCdiUnitRunner.B;
 
 @RunWith(CdiRunner.class)
 @SupportClasses({A.class, B.class})
 public class TestCdiUnitRunner {
 	
 	@Inject
-	private Provider<B> _b;
+	private B _b;
 
 	@TestAlternative
 	@Produces
@@ -45,8 +45,8 @@ public class TestCdiUnitRunner {
 	
 	@Test
 	public void testInjections() {
-		Assert.assertNotNull(_b.get()._a);
-		Assert.assertEquals(_impl, _b.get()._a);
+		Assert.assertNotNull(_b._a);
+		Assert.assertEquals(_impl, _b._a);
 	}
 	
 	public static class B {

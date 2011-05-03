@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.iglue.cdiunit;
+package org.jglue.cdiunit;
 
 import javax.enterprise.inject.Instance;
 
@@ -23,29 +23,50 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	private Class<?> _clazz;
+	private Weld _weld;
 
 	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
 		_clazz = clazz;
 	}
 
-	@TestAlternative
+	
 	protected Object createTest() throws Exception {
 
-		Weld weld = new Weld() {
+		_weld = new Weld() {
 			protected Deployment createDeployment(
 					ResourceLoader resourceLoader, Bootstrap bootstrap) {
 				return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
 			};
+			
+			
 		};
-		WeldContainer container = weld.initialize();
+		WeldContainer container = _weld.initialize();
 		Instance<?> select = container.instance().select(_clazz);
 		Object x = select.get();
 		return x;
 	}
+	
+	@Override
+	protected Statement methodBlock(FrameworkMethod method) {
+		final Statement defaultStatement = super.methodBlock(method);
+		return new Statement() {
+			
+			@Override
+			public void evaluate() throws Throwable {
+				defaultStatement.evaluate();
+				_weld.shutdown();
+			}
+		};
+		
+	}
+	
+	
 }
