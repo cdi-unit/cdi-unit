@@ -20,10 +20,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 
 @Stereotype
+@ApplicationScoped
 @Alternative
 @Target({ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
