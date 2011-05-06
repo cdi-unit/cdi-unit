@@ -64,10 +64,12 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		if(!_clazz.isAnnotationPresent(ApplicationScoped.class)) {
 			throw new InjectionException("Test class " + testClass + " must be annotated with @ApplicationScoped");
 		}
+		
 		BeanManager beanManager = _container.getBeanManager();
 		Set<Bean<?>> beans = beanManager.getBeans(_clazz);
 		Bean<T> bean = (Bean<T>) beans.iterator().next();
 		Context context = beanManager.getContext(ApplicationScoped.class);
+		
 		T object = context.get(bean, beanManager.createCreationalContext(bean));
 		return object;
 	}
