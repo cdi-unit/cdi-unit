@@ -16,6 +16,7 @@
 package org.jglue.cdiunit;
 
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
 @SupportClasses({A.class, B.class})
+@ApplicationScoped
 public class TestCdiUnitRunner {
 	
 	@Inject
