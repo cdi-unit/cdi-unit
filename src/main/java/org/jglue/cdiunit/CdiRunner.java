@@ -15,7 +15,13 @@
  */
 package org.jglue.cdiunit;
 
-import javax.enterprise.inject.Instance;
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.spi.Context;
+import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
@@ -31,6 +37,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	private Class<?> _clazz;
 	private Weld _weld;
+	private WeldContainer _container;
 
 	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
@@ -48,10 +55,21 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			
 			
 		};
-		WeldContainer container = _weld.initialize();
-		Instance<?> select = container.instance().select(_clazz);
-		Object x = select.get();
-		return x;
+		_container = _weld.initialize();
+		
+		return createTest(_clazz);
+	}
+	
+	private <T> T createTest(Class<T> testClass) {
+		if(!_clazz.isAnnotationPresent(ApplicationScoped.class)) {
+			throw new InjectionException("Test class " + testClass + " must be annotated with @ApplicationScoped");
+		}
+		BeanManager beanManager = _container.getBeanManager();
+		Set<Bean<?>> beans = beanManager.getBeans(_clazz);
+		Bean<T> bean = (Bean<T>) beans.iterator().next();
+		Context context = beanManager.getContext(ApplicationScoped.class);
+		T object = context.get(bean, beanManager.createCreationalContext(bean));
+		return object;
 	}
 	
 	@Override

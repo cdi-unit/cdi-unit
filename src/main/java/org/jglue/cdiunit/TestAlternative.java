@@ -25,7 +25,6 @@ import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 
 @Stereotype
-@ApplicationScoped
 @Alternative
 @Target({ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
