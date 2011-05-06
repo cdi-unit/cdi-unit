@@ -22,9 +22,15 @@ import javax.enterprise.context.spi.Context;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
+import org.jboss.weld.context.beanstore.BeanStore;
+import org.jboss.weld.context.beanstore.ConcurrentHashMapBeanStore;
+import org.jboss.weld.context.http.HttpConversationContext;
+import org.jboss.weld.context.http.HttpRequestContext;
+import org.jboss.weld.context.http.HttpSessionContext;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -32,6 +38,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.mockito.Mockito;
 
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
@@ -81,6 +88,16 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			
 			@Override
 			public void evaluate() throws Throwable {
+				HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+				HttpRequestContext httpRequestContext = _container.instance().select(HttpRequestContext.class).get();
+				httpRequestContext.associate(req);
+				httpRequestContext.activate();
+				HttpSessionContext httpSessionContext = _container.instance().select(HttpSessionContext.class).get();
+				httpSessionContext.associate(req);
+				httpSessionContext.activate();
+				HttpConversationContext httpConversationContext = _container.instance().select(HttpConversationContext.class).get();
+				httpConversationContext.associate(req);
+				httpConversationContext.activate();
 				defaultStatement.evaluate();
 				_weld.shutdown();
 			}
