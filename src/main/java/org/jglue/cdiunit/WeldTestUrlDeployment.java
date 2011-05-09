@@ -21,18 +21,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
+import javax.interceptor.Interceptor;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
+import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
+import org.jboss.weld.bootstrap.spi.Scanning;
 import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
 import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
-import org.jboss.weld.environment.se.discovery.url.URLScanner;
+import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.slf4j.Logger;
@@ -47,17 +51,27 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) {
 		super(bootstrap);
-		BeanDeploymentArchive archive = new URLScanner(resourceLoader, bootstrap, RESOURCES).scan();
-
+		//BeanDeploymentArchive archive = new URLScanner(resourceLoader, bootstrap, RESOURCES).scan();
+		BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING);
 		Set<String> discoveredClasses = new HashSet<String>();
 		discoveredClasses.add(testClass.getName());
-		Set<Class<?>> classesToProcess = new HashSet<Class<?>>();
+		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 		classesToProcess.add(testClass);
 		while (!classesToProcess.isEmpty()) {
 			Class<?> c = classesToProcess.iterator().next();
 			if (!classesProcessed.contains(c) && !c.isInterface() && !c.isPrimitive()) {
 				discoveredClasses.add(c.getName());
+				if(Extension.class.isAssignableFrom(c)) {
+					try {
+						_extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+				if(c.isAnnotationPresent(Interceptor.class)) {
+					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
+				}
 				SupportClasses supportClasses = c.getAnnotation(SupportClasses.class);
 				if (supportClasses != null) {
 					for (Class<?> supportClass : supportClasses.value()) {
@@ -86,12 +100,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.remove(c);
 		}
 		log.info("Discovered classes:" + discoveredClasses);
-		archive.getBeansXml().getEnabledAlternativeStereotypes()
+		
+		beansXml.getEnabledAlternativeStereotypes()
 				.add(new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
-
-		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive(archive.getId(), discoveredClasses, archive.getBeansXml());
-		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
+		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
+		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
+		
+		
 	}
 
 	@Override

@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
-import org.jboss.weld.context.beanstore.BeanStore;
-import org.jboss.weld.context.beanstore.ConcurrentHashMapBeanStore;
 import org.jboss.weld.context.http.HttpConversationContext;
 import org.jboss.weld.context.http.HttpRequestContext;
 import org.jboss.weld.context.http.HttpSessionContext;
@@ -62,7 +60,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			
 			
 		};
+		try {
 		_container = _weld.initialize();
+		}
+		catch(Throwable e){
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 		
 		return createTest(_clazz);
 	}
@@ -74,6 +78,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		
 		BeanManager beanManager = _container.getBeanManager();
 		Set<Bean<?>> beans = beanManager.getBeans(_clazz);
+		@SuppressWarnings("unchecked")
 		Bean<T> bean = (Bean<T>) beans.iterator().next();
 		Context context = beanManager.getContext(ApplicationScoped.class);
 		
