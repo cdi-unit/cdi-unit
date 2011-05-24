@@ -43,6 +43,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	private Class<?> _clazz;
 	private Weld _weld;
 	private WeldContainer _container;
+	private Throwable _startupException;
 
 	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
@@ -64,8 +65,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		_container = _weld.initialize();
 		}
 		catch(Throwable e){
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			_startupException = e;
 		}
 		
 		return createTest(_clazz);
@@ -93,6 +93,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			
 			@Override
 			public void evaluate() throws Throwable {
+				if(_startupException != null) {
+					throw _startupException;
+				}
 				HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 				HttpRequestContext httpRequestContext = _container.instance().select(HttpRequestContext.class).get();
 				httpRequestContext.associate(req);
