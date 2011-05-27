@@ -68,4 +68,14 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>jglue-releases</id>
+			<url>http://www.jglue.org/nexus/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>jglue-snapshots</id>
+			<url>http://www.jglue.org/nexus/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
