@@ -68,6 +68,10 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<scm>
+		<connection>ssh://git@github.com/BrynCooke/cdi-unit.git</connection>
+		<developerConnection>ssh://git@github.com/BrynCooke/cdi-unit.git</developerConnection>
+	</scm>
 	<distributionManagement>
 		<repository>
 			<id>jglue-releases</id>
