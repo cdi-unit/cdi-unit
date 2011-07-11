@@ -34,6 +34,7 @@ import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
+import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
 import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.metadata.BeansXmlImpl;
@@ -104,6 +105,9 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		beansXml.getEnabledAlternativeStereotypes()
 				.add(new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
 		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
+		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
+		
+		
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 		
@@ -112,7 +116,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	@Override
 	public Iterable<Metadata<Extension>> getExtensions() {
-		return Iterables.concat(super.getExtensions(), _extensions);
+		return _extensions;
 	}
 
 	public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
