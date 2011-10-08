@@ -43,8 +43,6 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
-
 public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	private final BeanDeploymentArchive _beanDeploymentArchive;
 	private Collection<Metadata<Extension>> _extensions = new ArrayList<Metadata<Extension>>();
@@ -59,6 +57,9 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 		classesToProcess.add(testClass);
+		classesToProcess.add(InConversationInterceptor.class);
+		classesToProcess.add(InRequestInterceptor.class);
+		classesToProcess.add(InConversationInterceptor.class);
 		while (!classesToProcess.isEmpty()) {
 			Class<?> c = classesToProcess.iterator().next();
 			if (!classesProcessed.contains(c) && !c.isInterface() && !c.isPrimitive()) {
@@ -104,13 +105,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		
 		beansXml.getEnabledAlternativeStereotypes()
 				.add(new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
+		
 		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
 		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
-		
+		_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(), TestScopeExtension.class.getName()));
 		
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
-		
+	
 		
 	}
 
@@ -127,3 +129,5 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		return _beanDeploymentArchive;
 	}
 }
+
+

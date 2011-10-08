@@ -15,13 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-import java.util.Set;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
@@ -50,68 +43,47 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		_clazz = clazz;
 	}
 
-	
 	protected Object createTest() throws Exception {
 
 		_weld = new Weld() {
 			protected Deployment createDeployment(
 					ResourceLoader resourceLoader, Bootstrap bootstrap) {
-				return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+				return new WeldTestUrlDeployment(resourceLoader, bootstrap,
+						_clazz);
 			};
-			
-			
+
 		};
 		try {
-		_container = _weld.initialize();
-		}
-		catch(Throwable e){
+			_container = _weld.initialize();
+		} catch (Throwable e) {
 			_startupException = e;
 		}
-		
+
 		return createTest(_clazz);
 	}
-	
+
 	private <T> T createTest(Class<T> testClass) {
-		if(!_clazz.isAnnotationPresent(ApplicationScoped.class)) {
-			throw new InjectionException("Test class " + testClass + " must be annotated with @ApplicationScoped");
-		}
-		
-		BeanManager beanManager = _container.getBeanManager();
-		Set<Bean<?>> beans = beanManager.getBeans(_clazz);
-		@SuppressWarnings("unchecked")
-		Bean<T> bean = (Bean<T>) beans.iterator().next();
-		Context context = beanManager.getContext(ApplicationScoped.class);
-		
-		T object = context.get(bean, beanManager.createCreationalContext(bean));
-		return object;
+		T t = _container.instance().select(testClass).get();
+
+		return t;
 	}
-	
+
 	@Override
 	protected Statement methodBlock(FrameworkMethod method) {
 		final Statement defaultStatement = super.methodBlock(method);
 		return new Statement() {
-			
+
 			@Override
 			public void evaluate() throws Throwable {
-				if(_startupException != null) {
+				if (_startupException != null) {
 					throw _startupException;
 				}
-				HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
-				HttpRequestContext httpRequestContext = _container.instance().select(HttpRequestContext.class).get();
-				httpRequestContext.associate(req);
-				httpRequestContext.activate();
-				HttpSessionContext httpSessionContext = _container.instance().select(HttpSessionContext.class).get();
-				httpSessionContext.associate(req);
-				httpSessionContext.activate();
-				HttpConversationContext httpConversationContext = _container.instance().select(HttpConversationContext.class).get();
-				httpConversationContext.associate(req);
-				httpConversationContext.activate();
+	
 				defaultStatement.evaluate();
 				_weld.shutdown();
 			}
 		};
-		
+
 	}
-	
-	
+
 }

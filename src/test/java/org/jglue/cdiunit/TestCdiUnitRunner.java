@@ -15,10 +15,10 @@
  */
 package org.jglue.cdiunit;
 
-
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
@@ -28,28 +28,38 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({A.class, B.class})
-@ApplicationScoped
+@SupportClasses({ A.class, B.class })
 public class TestCdiUnitRunner {
-	
+
 	@Inject
-	private B _b;
+	private Provider<B> _b;
 
 	@TestAlternative
 	@Produces
 	@Mock
 	private A _impl;
-	
-	
+
+	@Inject
+	private ContextController _contextController;
+
+	@Mock
+	private HttpServletRequest _mockRequest;
+
 	@Test
 	public void testInjections() {
-		Assert.assertNotNull(_b._a);
-		Assert.assertEquals(_impl, _b._a);
+		_contextController.openRequest(_mockRequest);
+		Assert.assertNotNull(_b.get()._a);
+		Assert.assertEquals(_impl, _b.get()._a);
+		Assert.assertEquals(_mockRequest, _b.get()._request);
+		_contextController.closeRequest();
 	}
-	
+
 	public static class B {
+		@Inject
+		private HttpServletRequest _request;
+
 		@Inject
 		private A _a;
 	}
-	
+
 }
