@@ -20,46 +20,40 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.Assert;
-
-import org.jglue.cdiunit.TestCdiUnitRunner.B;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({ A.class, B.class })
+@SupportClasses({ A.class, B.class, AImpl.class })
 public class TestCdiUnitRunner {
 
 	@Inject
 	private Provider<B> _b;
 
-	@TestAlternative
-	@Produces
-	@Mock
-	private A _impl;
-
 	@Inject
 	private ContextController _contextController;
 
 	@Mock
+	@Produces
 	private HttpServletRequest _mockRequest;
 
 	@Test
+	@InRequestScope
 	public void testInjections() {
-		_contextController.openRequest(_mockRequest);
-		Assert.assertNotNull(_b.get()._a);
-		Assert.assertEquals(_impl, _b.get()._a);
-		Assert.assertEquals(_mockRequest, _b.get()._request);
-		_contextController.closeRequest();
-	}
+		// _contextController.openRequest(_mockRequest);
+		// _b.get();
+		// Mockito.verify(_mockRequest,
+		// Mockito.atLeastOnce()).setAttribute(Mockito.anyString(),
+		// Mockito.any(B.class));
 
-	public static class B {
-		@Inject
-		private HttpServletRequest _request;
-
-		@Inject
-		private A _a;
+		B b1 = _b.get();
+		A a1 = b1.getA();
+		B b2 = _b.get();
+		System.out.println("Foo");
+		// Assert.assertNotNull(b._a);
+		// Assert.assertEquals(_impl, b._a);
+		// _contextController.closeRequest();
 	}
 
 }

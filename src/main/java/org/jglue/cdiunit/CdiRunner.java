@@ -15,13 +15,8 @@
  */
 package org.jglue.cdiunit;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
-import org.jboss.weld.context.http.HttpConversationContext;
-import org.jboss.weld.context.http.HttpRequestContext;
-import org.jboss.weld.context.http.HttpSessionContext;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -29,7 +24,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.mockito.Mockito;
 
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
@@ -46,10 +40,8 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	protected Object createTest() throws Exception {
 
 		_weld = new Weld() {
-			protected Deployment createDeployment(
-					ResourceLoader resourceLoader, Bootstrap bootstrap) {
-				return new WeldTestUrlDeployment(resourceLoader, bootstrap,
-						_clazz);
+			protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+				return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
 			};
 
 		};
@@ -78,7 +70,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				if (_startupException != null) {
 					throw _startupException;
 				}
-	
+
 				defaultStatement.evaluate();
 				_weld.shutdown();
 			}

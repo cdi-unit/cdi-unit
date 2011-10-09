@@ -50,7 +50,7 @@ public class MockExtension implements Extension {
 			}
 
 			public void postConstruct(T instance) {
-				injectionTarget.postConstruct(instance);	
+				injectionTarget.postConstruct(instance);
 			}
 
 			public void preDestroy(T instance) {

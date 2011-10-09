@@ -47,11 +47,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	private final BeanDeploymentArchive _beanDeploymentArchive;
 	private Collection<Metadata<Extension>> _extensions = new ArrayList<Metadata<Extension>>();
 	private static Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
-	
+
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) {
 		super(bootstrap);
-		//BeanDeploymentArchive archive = new URLScanner(resourceLoader, bootstrap, RESOURCES).scan();
-		BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING);
+		// BeanDeploymentArchive archive = new URLScanner(resourceLoader,
+		// bootstrap, RESOURCES).scan();
+		BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING);
 		Set<String> discoveredClasses = new HashSet<String>();
 		discoveredClasses.add(testClass.getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
@@ -64,14 +66,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			Class<?> c = classesToProcess.iterator().next();
 			if (!classesProcessed.contains(c) && !c.isInterface() && !c.isPrimitive()) {
 				discoveredClasses.add(c.getName());
-				if(Extension.class.isAssignableFrom(c)) {
+				if (Extension.class.isAssignableFrom(c)) {
 					try {
 						_extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}
 				}
-				if(c.isAnnotationPresent(Interceptor.class)) {
+				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
 				SupportClasses supportClasses = c.getAnnotation(SupportClasses.class);
@@ -84,7 +86,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				if (superClass != null && superClass != Object.class) {
 					classesToProcess.add(superClass);
 				}
-				
+
 				for (Field field : c.getDeclaredFields()) {
 					if (field.isAnnotationPresent(Inject.class)) {
 						Class<?> type = field.getType();
@@ -102,18 +104,19 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.remove(c);
 		}
 		log.info("Discovered classes:" + discoveredClasses);
-		
-		beansXml.getEnabledAlternativeStereotypes()
-				.add(new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
-		
+
+		beansXml.getEnabledAlternativeStereotypes().add(
+				new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
+
 		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
 		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
-		_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(), TestScopeExtension.class.getName()));
-		
+		TestScopeExtension value = new TestScopeExtension();
+		value.setTestClass(testClass);
+		_extensions.add(new MetadataImpl<Extension>(value, TestScopeExtension.class.getName()));
+
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
-	
-		
+
 	}
 
 	@Override
@@ -129,5 +132,3 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		return _beanDeploymentArchive;
 	}
 }
-
-
