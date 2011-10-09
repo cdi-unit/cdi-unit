@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit;
+package org.jglue.cdiunit.internal;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -21,6 +21,9 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.jglue.cdiunit.ContextController;
+import org.jglue.cdiunit.InRequestScope;
 
 @Interceptor
 @InRequestScope

@@ -15,6 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-public class AImpl implements A {
+public class AImpl implements AInterface {
 
 }

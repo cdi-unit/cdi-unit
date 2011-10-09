@@ -31,6 +31,7 @@ public class ContextController {
 
 	@Inject
 	private HttpConversationContext _conversationContext;
+	
 
 	public void openRequest(HttpServletRequest request) {
 		_requestContext.associate(request);
@@ -58,5 +59,7 @@ public class ContextController {
 	public void closeConversation() {
 		_conversationContext.deactivate();
 	}
+
+
 
 }

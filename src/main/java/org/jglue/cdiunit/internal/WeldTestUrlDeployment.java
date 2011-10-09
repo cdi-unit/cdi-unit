@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit;
+package org.jglue.cdiunit.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -40,6 +40,9 @@ import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jglue.cdiunit.MockExtension;
+import org.jglue.cdiunit.SupportClasses;
+import org.jglue.cdiunit.TestAlternative;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +62,8 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 		classesToProcess.add(testClass);
-		classesToProcess.add(InConversationInterceptor.class);
 		classesToProcess.add(InRequestInterceptor.class);
+		classesToProcess.add(InSessionInterceptor.class);
 		classesToProcess.add(InConversationInterceptor.class);
 		while (!classesToProcess.isEmpty()) {
 			Class<?> c = classesToProcess.iterator().next();

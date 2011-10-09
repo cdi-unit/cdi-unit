@@ -15,6 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-public interface A {
+public interface AInterface {
 
 }

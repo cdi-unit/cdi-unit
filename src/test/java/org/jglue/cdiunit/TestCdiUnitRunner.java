@@ -15,45 +15,110 @@
  */
 package org.jglue.cdiunit;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({ A.class, B.class, AImpl.class })
+@SupportClasses({ AInterface.class, BRequestScoped.class, CSessionScoped.class, DConversationScoped.class, AImpl.class })
 public class TestCdiUnitRunner {
 
 	@Inject
-	private Provider<B> _b;
+	private Provider<BRequestScoped> _requestScoped;
 
 	@Inject
-	private ContextController _contextController;
+	private Provider<CSessionScoped> _sessionScoped;
 
-	@Mock
+	@Inject
+	private Provider<DConversationScoped> _conversationScoped;
+
+	@Inject
+	private Provider<AInterface> _a;
+
 	@Produces
-	private HttpServletRequest _mockRequest;
+	public HttpServletRequest getRequest() {
+		return new DummyHttpRequest();
+	}
+
+	@Inject
+	public BRequestScoped _request;
 
 	@Test
 	@InRequestScope
-	public void testInjections() {
-		// _contextController.openRequest(_mockRequest);
-		// _b.get();
-		// Mockito.verify(_mockRequest,
-		// Mockito.atLeastOnce()).setAttribute(Mockito.anyString(),
-		// Mockito.any(B.class));
+	public void testRequestScope() {
+		BRequestScoped b1 = _requestScoped.get();
+		b1.setFoo("test"); // Force scoping
+		BRequestScoped b2 = _requestScoped.get();
+		Assert.assertEquals(b1, b2);
 
-		B b1 = _b.get();
-		A a1 = b1.getA();
-		B b2 = _b.get();
-		System.out.println("Foo");
-		// Assert.assertNotNull(b._a);
-		// Assert.assertEquals(_impl, b._a);
-		// _contextController.closeRequest();
+	}
+
+	@Test(expected = ContextNotActiveException.class)
+	public void testRequestScopeFail() {
+		BRequestScoped b1 = _requestScoped.get();
+		b1.setFoo("test"); // Force scoping
+	}
+
+	@Test
+	@InSessionScope
+	public void testSessionScope() {
+		CSessionScoped c1 = _sessionScoped.get();
+		c1.setFoo("test"); // Force scoping
+		CSessionScoped c2 = _sessionScoped.get();
+		Assert.assertEquals(c1, c2);
+
+	}
+
+	@Test(expected = ContextNotActiveException.class)
+	public void testSessionScopeFail() {
+		CSessionScoped c1 = _sessionScoped.get();
+		c1.setFoo("test"); // Force scoping
+	}
+
+	@Test
+	@InConversationScope
+	public void testConversationScope() {
+
+		DConversationScoped d1 = _conversationScoped.get();
+		d1.setFoo("test"); // Force scoping
+		DConversationScoped d2 = _conversationScoped.get();
+		Assert.assertEquals(d1, d2);
+
+	}
+
+	@Test(expected = ContextNotActiveException.class)
+	public void testConversationScopeFail() {
+		DConversationScoped d1 = _conversationScoped.get();
+		d1.setFoo("test"); // Force scoping
+	}
+
+	@Mock
+	@TestAlternative
+	@Produces
+	private AInterface _mockA;
+
+	/**
+	 * Test that we can use the test alternative annotation to specify that a
+	 * mock is used
+	 */
+	@Test
+	public void testTestAlternative() {
+		AInterface a1 = _a.get();
+		Assert.assertEquals(_mockA, a1);
 	}
 
 }
