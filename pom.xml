@@ -77,11 +77,11 @@
 	<distributionManagement>
 		<repository>
 			<id>jglue-releases</id>
-			<url>http://www.jglue.org/nexus/content/repositories/releases</url>
+			<url>http://jglue.org/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>jglue-snapshots</id>
-			<url>http://www.jglue.org/nexus/content/repositories/snapshots</url>
+			<url>http://jglue.org/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
