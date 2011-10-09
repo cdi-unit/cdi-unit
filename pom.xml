@@ -7,13 +7,14 @@
 	<version>0.9.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>cdiunit</name>
-	<url>http://www.jglue.org/cdi-unit</url>
+	<name>CDI-Unit</name>
+	<url>http://jglue.org/cdi-unit</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<distMgmtReleaseUrl>http://jglue.org/releases</distMgmtReleaseUrl>
+		<distMgmtSnapshotsUrl>http://jglue.org/snapshots</distMgmtSnapshotsUrl>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -77,11 +78,12 @@
 	<distributionManagement>
 		<repository>
 			<id>jglue-releases</id>
-			<url>http://jglue.org/releases</url>
+			<url>${distMgmtReleaseUrl}</url>
 		</repository>
 		<snapshotRepository>
 			<id>jglue-snapshots</id>
-			<url>http://jglue.org/snapshots</url>
+			<url>${distMgmtSnapshotsUrl}</url>
 		</snapshotRepository>
 	</distributionManagement>
+	
 </project>
