@@ -123,8 +123,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		beansXml.getEnabledAlternativeStereotypes().add(
 				new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
-
-		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
+		try {
+			Class.forName("org.mockito.Mock");
+			_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
+		}
+		catch(ClassNotFoundException e) {
+			
+		}
+		
 		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 		
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
