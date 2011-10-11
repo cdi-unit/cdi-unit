@@ -17,6 +17,7 @@ package org.jglue.cdiunit.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
@@ -101,6 +103,10 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 					if (field.isAnnotationPresent(Inject.class)) {
 						Class<?> type = field.getType();
 						classesToProcess.add(type);
+					}
+					if (field.getType().equals(Provider.class)) {
+						ParameterizedType type = (ParameterizedType)field.getGenericType();
+						classesToProcess.add((Class<?>)type.getActualTypeArguments()[0]);
 					}
 				}
 				for (Method method : c.getDeclaredMethods()) {

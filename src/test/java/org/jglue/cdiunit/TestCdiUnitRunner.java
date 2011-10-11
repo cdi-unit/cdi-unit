@@ -15,9 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -29,12 +26,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({ AInterface.class, BRequestScoped.class, CSessionScoped.class, DConversationScoped.class, AImpl.class })
+@SupportClasses({ AImpl.class })
 public class TestCdiUnitRunner {
 
 	@Inject
