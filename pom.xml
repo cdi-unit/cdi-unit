@@ -32,9 +32,14 @@
 			<version>1.8.5</version>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>0.9.20</version>
+			<version>0.9.30</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
