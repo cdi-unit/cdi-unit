@@ -24,22 +24,32 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InRequestScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Interceptor
 @InRequestScope
 public class InRequestInterceptor {
+	private static Logger log = LoggerFactory.getLogger(InRequestInterceptor.class);
+	
 	@Inject
 	private ContextController _contextController;
 
 	@Inject
 	private Provider<HttpServletRequest> _requestProvider;
 
+	
+	
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
 			_contextController.openRequest(_requestProvider.get());
 			return ctx.proceed();
-		} finally {
+		} catch(Exception e) {
+			log.error("Failed to open request context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
+			throw e;
+		}
+		finally {
 			_contextController.closeRequest();
 		}
 	}

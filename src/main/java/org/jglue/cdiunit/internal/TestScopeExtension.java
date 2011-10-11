@@ -32,7 +32,10 @@ public class TestScopeExtension implements Extension {
 
 	private Class<?> _testClass;
 
-	public void setTestClass(Class<?> testClass) {
+	public TestScopeExtension() {
+	}
+
+	public TestScopeExtension(Class<?> testClass) {
 		_testClass = testClass;
 	}
 

@@ -62,9 +62,16 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 		classesToProcess.add(testClass);
-		classesToProcess.add(InRequestInterceptor.class);
-		classesToProcess.add(InSessionInterceptor.class);
-		classesToProcess.add(InConversationInterceptor.class);
+		try {
+			Class.forName("javax.servlet.http.HttpServletRequest");
+			classesToProcess.add(InRequestInterceptor.class);
+			classesToProcess.add(InSessionInterceptor.class);
+			classesToProcess.add(InConversationInterceptor.class);
+			_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
+
+		}
+		catch(ClassNotFoundException e) {
+		}
 		while (!classesToProcess.isEmpty()) {
 			Class<?> c = classesToProcess.iterator().next();
 			if (!classesProcessed.contains(c) && !c.isInterface() && !c.isPrimitive()) {
@@ -113,10 +120,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
 		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
-		TestScopeExtension value = new TestScopeExtension();
-		value.setTestClass(testClass);
-		_extensions.add(new MetadataImpl<Extension>(value, TestScopeExtension.class.getName()));
-
+		
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 

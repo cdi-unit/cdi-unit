@@ -24,10 +24,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InSessionScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Interceptor
 @InSessionScope
 public class InSessionInterceptor {
+	
+	private static Logger log = LoggerFactory.getLogger(InSessionInterceptor.class);
+	
+	
 	@Inject
 	private ContextController _contextController;
 
@@ -39,6 +45,9 @@ public class InSessionInterceptor {
 		try {
 			_contextController.openSession(_requestProvider.get());
 			return ctx.proceed();
+		} catch(Exception e) {
+			log.error("Failed to open session context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
+			throw e;
 		} finally {
 			_contextController.closeSession();
 		}

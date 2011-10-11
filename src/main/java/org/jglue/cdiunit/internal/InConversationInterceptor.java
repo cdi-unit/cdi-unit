@@ -24,10 +24,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InConversationScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InConversationScope
 @Interceptor
 public class InConversationInterceptor {
+
+	private static Logger log = LoggerFactory.getLogger(InConversationInterceptor.class);
+	
 	@Inject
 	private ContextController _contextController;
 
@@ -39,6 +44,9 @@ public class InConversationInterceptor {
 		try {
 			_contextController.openConversation(_requestProvider.get());
 			return ctx.proceed();
+		} catch(Exception e) {
+			log.error("Failed to open conversation context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
+			throw e;
 		} finally {
 			_contextController.closeConversation();
 		}
