@@ -14,10 +14,10 @@ import org.junit.runner.RunWith;
 public class TestAlternativeAnnotations {
 
 	@Inject
-	private Provider<AImplementation1> _impl1;
+	private AImplementation1 _impl1;
 	
 	@Inject
-	private Provider<AImplementation2> _impl2;
+	private AImplementation2 _impl2;
 	
 	@Inject
 	private AInterface _impl;
