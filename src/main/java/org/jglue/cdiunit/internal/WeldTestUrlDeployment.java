@@ -45,6 +45,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.MockExtension;
 import org.jglue.cdiunit.SupportClasses;
 import org.jglue.cdiunit.TestAlternative;
+import org.jglue.cdiunit.TestAlternatives;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,8 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		// bootstrap, RESOURCES).scan();
 		BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
 				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING);
-		Set<String> discoveredClasses = new HashSet<String>();
+		Set<String> discoveredClasses = new LinkedHashSet<String>();
+		Set<String> alternatives = new HashSet<String>();
 		discoveredClasses.add(testClass.getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
@@ -94,6 +96,15 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 						classesToProcess.add(supportClass);
 					}
 				}
+				
+				TestAlternatives alternativeClasses = c.getAnnotation(TestAlternatives.class);
+				if (alternativeClasses != null) {
+					for (Class<?> alternativeClass : alternativeClasses.value()) {
+						classesToProcess.add(alternativeClass);
+						alternatives.add(alternativeClass.getName());
+					}
+				}
+				
 				Class<?> superClass = c.getSuperclass();
 				if (superClass != null && superClass != Object.class) {
 					classesToProcess.add(superClass);
@@ -119,10 +130,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			}
 			classesToProcess.remove(c);
 		}
-		log.info("Discovered classes:" + discoveredClasses);
-
+		
 		beansXml.getEnabledAlternativeStereotypes().add(
 				new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
+		for(String alternative : alternatives) {
+			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, testClass.getName()));	
+		}
+		
 		try {
 			Class.forName("org.mockito.Mock");
 			_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
@@ -135,7 +149,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		
 		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
-
+		log.debug("CDI-Unit discovered:");
+		for(String clazz : discoveredClasses) {
+			if(!clazz.startsWith("org.jglue.cdiunit.internal.")) {
+				log.debug(clazz);
+			}
+		}
+		
 	}
 
 	@Override
