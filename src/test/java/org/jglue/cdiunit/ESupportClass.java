@@ -15,6 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-public class Nissan implements AInterface {
+public class ESupportClass implements AInterface {
 
 }

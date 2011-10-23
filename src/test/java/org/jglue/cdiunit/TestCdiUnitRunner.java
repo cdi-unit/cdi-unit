@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({ Nissan.class })
+@SupportClasses({ ESupportClass.class })
 public class TestCdiUnitRunner {
 
 	@Inject
