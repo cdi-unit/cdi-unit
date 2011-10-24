@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<distMgmtReleasesUrl>http://jglue.org/releases</distMgmtReleasesUrl>
 		<distMgmtSnapshotsUrl>http://jglue.org/snapshots</distMgmtSnapshotsUrl>
+		<distMgmtSiteUrl>http://jglue.org/cdi-unit</distMgmtSiteUrl>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -124,5 +125,9 @@
 			<id>jglue-snapshots</id>
 			<url>${distMgmtSnapshotsUrl}</url>
 		</snapshotRepository>
+		<site>
+			<id>jglue.org</id>
+			<url>${distMgmtSiteUrl}</url>
+		</site>
 	</distributionManagement>
 </project>
