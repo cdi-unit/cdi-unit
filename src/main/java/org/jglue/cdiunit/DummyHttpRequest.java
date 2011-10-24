@@ -42,7 +42,7 @@ import javax.servlet.http.Part;
 import com.google.common.collect.Iterators;
 
 /**
- * Convenience class that can be used if trying to use conversation scope. If more complex mocking is required then it is better to use an existing servlet mcok framework.
+ * Convenience class that can be used if trying to use conversation scope. If more complex mocking is required then it is better to use an existing servlet mock framework.
  * @author bryn
  *
  */

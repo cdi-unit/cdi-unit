@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(CdiRunner.class)
-@TestAlternatives(AImplementation2.class)
+@ActivatedAlternatives(AImplementation2.class)
 public class TestAlternativeAnnotations {
 
 	@Inject

@@ -22,6 +22,10 @@ import org.jboss.weld.context.http.HttpConversationContext;
 import org.jboss.weld.context.http.HttpRequestContext;
 import org.jboss.weld.context.http.HttpSessionContext;
 
+/**
+ * @author bryn
+ * Use to explicitly open and close Request, Session and Conversation scopes.
+ */
 public class ContextController {
 	@Inject
 	private HttpRequestContext _requestContext;
@@ -33,29 +37,50 @@ public class ContextController {
 	private HttpConversationContext _conversationContext;
 	
 
+	/**
+	 * Start a request.
+	 * @param request The request to make available.
+	 */
 	public void openRequest(HttpServletRequest request) {
 		_requestContext.associate(request);
 		_requestContext.activate();
 	}
 
+	/**
+	 * Close the currently active request.
+	 */
 	public void closeRequest() {
 		_requestContext.deactivate();
 	}
 
+	/**
+	 * Start a session.
+	 * @param request The request object to use as storage.
+	 */
 	public void openSession(HttpServletRequest request) {
 		_sessionContext.associate(request);
 		_sessionContext.activate();
 	}
 
+	/**
+	 * Close the currently active session.
+	 */
 	public void closeSession() {
 		_sessionContext.deactivate();
 	}
 
+	/**
+	 * Start a new conversation.
+	 * @param request The request to use as storage.
+	 */
 	public void openConversation(HttpServletRequest request) {
 		_conversationContext.associate(request);
 		_conversationContext.activate();
 	}
 
+	/**
+	 * Close the currently active conversation.
+	 */
 	public void closeConversation() {
 		_conversationContext.deactivate();
 	}

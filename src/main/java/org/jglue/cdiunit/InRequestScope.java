@@ -23,6 +23,10 @@ import java.lang.annotation.Target;
 
 import javax.interceptor.InterceptorBinding;
 
+/**
+ * @author bryn
+ * Starts a request around the annotated method.
+ */
 @InterceptorBinding
 @Inherited
 @Target({ ElementType.METHOD, ElementType.TYPE })

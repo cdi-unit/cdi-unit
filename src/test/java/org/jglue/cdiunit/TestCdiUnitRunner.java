@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-@SupportClasses({ ESupportClass.class })
+@AdditionalClasses({ ESupportClass.class })
 public class TestCdiUnitRunner {
 
 	@Inject
@@ -101,7 +101,7 @@ public class TestCdiUnitRunner {
 	}
 
 	@Mock
-	@TestAlternative
+	@ProducesAlternative
 	@Produces
 	private AInterface _mockA;
 

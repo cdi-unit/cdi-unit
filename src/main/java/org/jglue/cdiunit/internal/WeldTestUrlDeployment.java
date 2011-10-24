@@ -42,10 +42,9 @@ import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jglue.cdiunit.MockExtension;
-import org.jglue.cdiunit.SupportClasses;
-import org.jglue.cdiunit.TestAlternative;
-import org.jglue.cdiunit.TestAlternatives;
+import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.ProducesAlternative;
+import org.jglue.cdiunit.ActivatedAlternatives;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,14 +89,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
-				SupportClasses supportClasses = c.getAnnotation(SupportClasses.class);
+				AdditionalClasses supportClasses = c.getAnnotation(AdditionalClasses.class);
 				if (supportClasses != null) {
 					for (Class<?> supportClass : supportClasses.value()) {
 						classesToProcess.add(supportClass);
 					}
 				}
 				
-				TestAlternatives alternativeClasses = c.getAnnotation(TestAlternatives.class);
+				ActivatedAlternatives alternativeClasses = c.getAnnotation(ActivatedAlternatives.class);
 				if (alternativeClasses != null) {
 					for (Class<?> alternativeClass : alternativeClasses.value()) {
 						classesToProcess.add(alternativeClass);
@@ -132,7 +131,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		}
 		
 		beansXml.getEnabledAlternativeStereotypes().add(
-				new MetadataImpl<String>(TestAlternative.class.getName(), TestAlternative.class.getName()));
+				new MetadataImpl<String>(ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
 		for(String alternative : alternatives) {
 			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, testClass.getName()));	
 		}

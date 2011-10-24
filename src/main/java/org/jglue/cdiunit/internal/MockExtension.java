@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit;
+package org.jglue.cdiunit.internal;
 
 import java.util.Set;
 

@@ -26,6 +26,10 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+/**
+ * @author bryn
+ * JUnit runner that uses a CDI container to create unit test objects. 
+ */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	private Class<?> _clazz;
