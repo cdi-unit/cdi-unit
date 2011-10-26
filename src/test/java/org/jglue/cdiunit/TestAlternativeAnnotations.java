@@ -16,7 +16,6 @@
 package org.jglue.cdiunit;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import junit.framework.Assert;
 
