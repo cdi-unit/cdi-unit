@@ -27,8 +27,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * @author bryn
- * JUnit runner that uses a CDI container to create unit test objects. 
+ * @author bryn JUnit runner that uses a CDI container to create unit test
+ *         objects.
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
@@ -43,18 +43,26 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	protected Object createTest() throws Exception {
+		try {
+			Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
 
-		_weld = new Weld() {
-			protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
-				return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+			_weld = new Weld() {
+				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+					return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+				};
+
 			};
 
-		};
-		try {
-			_container = _weld.initialize();
-		} catch (Throwable e) {
-			_startupException = e;
+			try {
+				_container = _weld.initialize();
+			} catch (Throwable e) {
+				_startupException = e;
+			}
+
+		} catch (NoSuchMethodException e) {
+			_startupException = new Exception("Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
 		}
+
 
 		return createTest(_clazz);
 	}
