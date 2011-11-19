@@ -24,8 +24,30 @@ import java.lang.annotation.Target;
 import javax.interceptor.InterceptorBinding;
 
 /**
- * @author bryn
  * Starts a conversation around the annotated method.
+ * 
+ * <pre>
+ * &#064;Test
+ * &#064;InConversationScope
+ * // This test will be run within the context of a conversation
+ * void testStart() {
+ * 	_starship.start();
+ * }
+ * </pre>
+ * <p>
+ * Remember to add an implementation of <a href=
+ * "http://download.oracle.com/javaee/1.3/api/javax/servlet/http/HttpServletRequest.html"
+ * >HttpServletRequest</a> to your test e.g.
+ * </p>
+ * 
+ * <pre>
+ * &#064;Produces
+ * HttpServletRequest getRequest() {
+ * 	return new DummyHttpRequest();
+ * }
+ * </pre>
+ * 
+ * @author Bryn Cooke
  */
 @InterceptorBinding
 @Inherited

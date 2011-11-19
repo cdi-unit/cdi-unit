@@ -23,6 +23,21 @@ import java.lang.annotation.Target;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 
+/**
+ * <code>&#064;ProducesAlternative</code> causes a produced variable or
+ * method to act as an enabled alternative overriding any other suitable
+ * injections.
+ * 
+ * <pre>
+ * &#064;Produces
+ * &#064;ProducesAlternative
+ * // This mock will be used instead!
+ * &#064;Mock
+ * Engine _engine;
+ * </pre>
+ * 
+ * @author Bryn Cooke
+ */
 @Stereotype
 @Alternative
 @Target({ ElementType.FIELD, ElementType.METHOD })

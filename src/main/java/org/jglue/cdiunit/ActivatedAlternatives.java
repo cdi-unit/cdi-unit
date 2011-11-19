@@ -20,6 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * <code>&#064;ActivatedAlternatives</code> adds classes to the CDI environment
+ * that are not discovered automatically and marks them as an activated
+ * alternative as if they were specified in beans.xml.
+ * 
+ * @author Bryn Cooke
+ */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActivatedAlternatives {

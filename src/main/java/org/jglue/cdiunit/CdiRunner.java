@@ -27,8 +27,22 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * @author bryn JUnit runner that uses a CDI container to create unit test
- *         objects.
+ * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
+ * create unit test objects. Simply add <code>&#064;RunWith(CdiRunner.class)</code>
+ * to your test class.
+ * 
+ * <pre>
+ * <code>
+ * &#064;RunWith(CdiRunner.class) // Runs the test with CDI-Unit
+ * class MyTest {
+ *   &#064;Inject
+ *   Something _something; // This will be injected before the tests are run!
+ * 
+ *   ... //The rest of the test goes here.
+ * }</code>
+ * </pre>
+ * 
+ * @author Bryn Cooke
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
@@ -60,9 +74,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			}
 
 		} catch (NoSuchMethodException e) {
-			_startupException = new Exception("Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
+			_startupException = new Exception(
+					"Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
 		}
-
 
 		return createTest(_clazz);
 	}

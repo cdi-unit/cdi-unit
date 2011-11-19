@@ -21,8 +21,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author bryn
  * 
+ * <code>&#064;AdditionalClasses</code> adds classes to the CDI environment that are not discovered automatically.
+ *  
+ * <pre>
+ * &#064;RunWith(CdiRunner.class)
+ * &#064;AdditionalClasses(WarpDrive.class) //WarpDrive is not discoverable from the unit test so explicitly make it available.
+ * class TestStarship {
+ * 
+ * 	&#064;Inject
+ * 	Starship _starship; //Starship has some resources that are in request scope.
+ * 
+ * 	&#064;Test
+ * 	void testStart() {
+ * 		_starship.start(); // Going to warp!
+ * 	}
+ * }
+ * </pre>
+ * 
+ * @author Bryn Cooke
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

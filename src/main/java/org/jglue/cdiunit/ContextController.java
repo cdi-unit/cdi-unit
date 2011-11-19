@@ -23,8 +23,35 @@ import org.jboss.weld.context.http.HttpRequestContext;
 import org.jboss.weld.context.http.HttpSessionContext;
 
 /**
- * @author bryn
  * Use to explicitly open and close Request, Session and Conversation scopes.
+ * <p>
+ * If you are testing code that runs over several requests then you may want to
+ * explicitly control activation and deactivation of scopes. Use
+ * ContextController to do this.
+ * </p>
+ * 
+ * <pre>
+ * 
+ * &#064;RunWith(CdiRunner.class)
+ * &#064;AdditionalClasses(RequestScopedWarpDrive.class)
+ * class TestStarship {
+ * 
+ * 	&#064;Inject
+ * 	ContextController _contextController; // Obtain an instance of the context controller.
+ * 
+ * 	&#064;Inject
+ * 	Starship _starship;
+ * 
+ * 	&#064;Test
+ * 	void testStart() {
+ * 		_contextController.openRequest(new DummyHttpRequest()); // Start a new request.
+ * 		_starship.start();
+ * 		_contextController.closeRequest(); // Close the current request.
+ * 	}
+ * }
+ * </pre>
+ * 
+ * @author Bryn Cooke
  */
 public class ContextController {
 	@Inject
@@ -35,11 +62,12 @@ public class ContextController {
 
 	@Inject
 	private HttpConversationContext _conversationContext;
-	
 
 	/**
 	 * Start a request.
-	 * @param request The request to make available.
+	 * 
+	 * @param request
+	 *            The request to make available.
 	 */
 	public void openRequest(HttpServletRequest request) {
 		_requestContext.associate(request);
@@ -55,7 +83,9 @@ public class ContextController {
 
 	/**
 	 * Start a session.
-	 * @param request The request object to use as storage.
+	 * 
+	 * @param request
+	 *            The request object to use as storage.
 	 */
 	public void openSession(HttpServletRequest request) {
 		_sessionContext.associate(request);
@@ -71,7 +101,9 @@ public class ContextController {
 
 	/**
 	 * Start a new conversation.
-	 * @param request The request to use as storage.
+	 * 
+	 * @param request
+	 *            The request to use as storage.
 	 */
 	public void openConversation(HttpServletRequest request) {
 		_conversationContext.associate(request);
@@ -84,7 +116,5 @@ public class ContextController {
 	public void closeConversation() {
 		_conversationContext.deactivate();
 	}
-
-
 
 }
