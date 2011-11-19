@@ -44,5 +44,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AdditionalClasses {
+	/**
+	 * Array of classes to make discoverable during testing.
+	 */
 	public Class<?>[] value();
 }

@@ -30,5 +30,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActivatedAlternatives {
+	/**
+	 * Array of alternative classes to make discoverable during testing and mark as activated.
+	 */
 	Class<?>[] value();
 }
