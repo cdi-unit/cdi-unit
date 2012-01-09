@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Extension;
@@ -45,17 +46,17 @@ public class TestScopeExtension implements Extension {
 			pat.setAnnotatedType(new ForwardingAnnotatedType<T>() {
 
 				@Override
-				protected AnnotatedType<T> delegate() {
+				public AnnotatedType<T> delegate() {
 					return annotatedType;
 				}
 
 				@SuppressWarnings("serial")
 				@Override
 				public Set<Annotation> getAnnotations() {
-					Set<Annotation> newAnnotations = new HashSet<Annotation>(super.getAnnotations());
-					newAnnotations.add(new AnnotationLiteral<Singleton>() {
-					});
-					return newAnnotations;
+					//Set<Annotation> newAnnotations = new HashSet<Annotation>(super.getAnnotations());
+					//newAnnotations.add(new AnnotationLiteral<ApplicationScoped>() {
+					//});
+					return delegate().getAnnotations();
 				}
 
 			});

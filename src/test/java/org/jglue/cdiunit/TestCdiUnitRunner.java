@@ -15,8 +15,11 @@
  */
 package org.jglue.cdiunit;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +32,15 @@ import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ ESupportClass.class })
-public class TestCdiUnitRunner {
+@ApplicationScoped
+public class TestCdiUnitRunner extends BaseTest {
 
+	@Inject
+	private AImplementation1 _aImpl;
+	
+	private boolean _postConstructCalled;
+
+	
 	@Inject
 	private Provider<BRequestScoped> _requestScoped;
 
@@ -43,13 +53,23 @@ public class TestCdiUnitRunner {
 	@Inject
 	private Provider<AInterface> _a;
 
+	@Inject
+	private BeanManager _beanManager;
+
+	@Inject
+	private FApplicationScoped _f1;
+	
+	@Inject
+	private FApplicationScoped _f2;
+	
+	
 	@Produces
 	public HttpServletRequest getRequest() {
 		return new DummyHttpRequest();
 	}
 
 	@Inject
-	public BRequestScoped _request;
+	private BRequestScoped _request;
 
 	@Test
 	@InRequestScope
@@ -115,4 +135,35 @@ public class TestCdiUnitRunner {
 		Assert.assertEquals(_mockA, a1);
 	}
 
+	@Test
+	public void testPostConstruct() {
+		Assert.assertTrue(_postConstructCalled);
+	}
+
+	@PostConstruct
+	public void postConstruct() {
+		_postConstructCalled = true;
+	}
+
+	@Test
+	public void testBeanManager() {
+		Assert.assertNotNull(getBeanManager());
+		Assert.assertNotNull(_beanManager);
+	}
+	
+	@Test
+	public void testSuper() {
+		Assert.assertNotNull(_aImpl.getBeanManager());
+	}
+	
+	
+	@Test
+	public void testApplicationScoped() {
+		Assert.assertNotNull(_f1);
+		Assert.assertNotNull(_f2);
+		Assert.assertEquals(_f1, _f2);
+		
+		AInterface a1 = _f1.getA();
+		Assert.assertEquals(_mockA, a1);
+	}
 }

@@ -70,7 +70,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.add(InRequestInterceptor.class);
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
-			_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
+			//_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 
 		}
 		catch(ClassNotFoundException e) {
