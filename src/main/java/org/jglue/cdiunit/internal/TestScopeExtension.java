@@ -30,6 +30,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
 
+import org.jboss.solder.literal.ApplicationScopedLiteral;
 import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
 
 public class TestScopeExtension implements Extension {
@@ -48,9 +49,7 @@ public class TestScopeExtension implements Extension {
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 		if (annotatedType.getJavaClass().equals(_testClass)) {
-			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(new AnnotationLiteral<Singleton>() {
-				private static final long serialVersionUID = -1853397287324789658L;
-			});
+			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(ApplicationScopedLiteral.INSTANCE);
 			pat.setAnnotatedType(builder.create());
 		}
 	}
