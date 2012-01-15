@@ -3,7 +3,7 @@
 
   <groupId>org.jglue</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>0.9.9-SNAPSHOT</version>
+  <version>0.9.9</version>
   <packaging>jar</packaging>
 
   <name>CDI-Unit</name>
