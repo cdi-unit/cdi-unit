@@ -16,18 +16,21 @@
 package org.jglue.cdiunit.internal;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
+import java.lang.reflect.Type;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AnnotatedConstructor;
+import javax.enterprise.inject.spi.AnnotatedField;
+import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
 
-import org.jboss.weld.introspector.ForwardingAnnotatedType;
+import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
 
 public class TestScopeExtension implements Extension {
 
@@ -39,27 +42,17 @@ public class TestScopeExtension implements Extension {
 	public TestScopeExtension(Class<?> testClass) {
 		_testClass = testClass;
 	}
+	
+	
 
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 		if (annotatedType.getJavaClass().equals(_testClass)) {
-			pat.setAnnotatedType(new ForwardingAnnotatedType<T>() {
-
-				@Override
-				public AnnotatedType<T> delegate() {
-					return annotatedType;
-				}
-
-				@SuppressWarnings("serial")
-				@Override
-				public Set<Annotation> getAnnotations() {
-					//Set<Annotation> newAnnotations = new HashSet<Annotation>(super.getAnnotations());
-					//newAnnotations.add(new AnnotationLiteral<ApplicationScoped>() {
-					//});
-					return delegate().getAnnotations();
-				}
-
+			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(new AnnotationLiteral<Singleton>() {
+				private static final long serialVersionUID = -1853397287324789658L;
 			});
+			pat.setAnnotatedType(builder.create());
 		}
 	}
+	
 }

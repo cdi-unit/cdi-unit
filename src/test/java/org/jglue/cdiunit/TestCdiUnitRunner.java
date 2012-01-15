@@ -22,6 +22,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
@@ -32,7 +33,6 @@ import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ ESupportClass.class })
-@ApplicationScoped
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
