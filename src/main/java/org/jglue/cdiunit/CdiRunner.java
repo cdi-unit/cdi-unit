@@ -15,11 +15,15 @@
  */
 package org.jglue.cdiunit;
 
+import javax.enterprise.inject.spi.BeanManager;
+
+import org.jboss.solder.beanManager.BeanManagerProvider;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jglue.cdiunit.internal.BeanManagerStore;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -28,8 +32,8 @@ import org.junit.runners.model.Statement;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
- * create unit test objects. Simply add <code>&#064;RunWith(CdiRunner.class)</code>
- * to your test class.
+ * create unit test objects. Simply add
+ * <code>&#064;RunWith(CdiRunner.class)</code> to your test class.
  * 
  * <pre>
  * <code>
@@ -68,6 +72,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			};
 
 			try {
+
 				_container = _weld.initialize();
 			} catch (Throwable e) {
 				_startupException = e;
@@ -82,6 +87,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	private <T> T createTest(Class<T> testClass) {
+
 		T t = _container.instance().select(testClass).get();
 
 		return t;
@@ -97,9 +103,18 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				if (_startupException != null) {
 					throw _startupException;
 				}
+				BeanManagerStore.setBeanManager(_container.getBeanManager());
+				try {
+					defaultStatement.evaluate();
 
-				defaultStatement.evaluate();
-				_weld.shutdown();
+				} finally {
+					try {
+						_weld.shutdown();
+					} finally {
+						BeanManagerStore.setBeanManager(null);
+					}
+				}
+
 			}
 		};
 
