@@ -48,4 +48,6 @@ public @interface AdditionalClasses {
 	 * Array of classes to make discoverable during testing.
 	 */
 	public Class<?>[] value();
+	
+	public String[] latebound();
 }

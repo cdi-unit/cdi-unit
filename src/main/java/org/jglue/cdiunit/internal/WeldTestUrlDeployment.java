@@ -64,6 +64,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		discoveredClasses.add(testClass.getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+		
 		classesToProcess.add(testClass);
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
@@ -89,10 +90,19 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
-				AdditionalClasses supportClasses = c.getAnnotation(AdditionalClasses.class);
-				if (supportClasses != null) {
-					for (Class<?> supportClass : supportClasses.value()) {
+				AdditionalClasses additionalClasses = c.getAnnotation(AdditionalClasses.class);
+				if (additionalClasses != null) {
+					for (Class<?> supportClass : additionalClasses.value()) {
 						classesToProcess.add(supportClass);
+					}
+					for(String lateBound : additionalClasses.latebound()) {
+						try {
+							Class<?> clazz = Class.forName(lateBound);
+							classesToProcess.add(clazz);
+						} catch (ClassNotFoundException e) {
+							throw new RuntimeException(e);
+						}
+						
 					}
 				}
 				
