@@ -95,7 +95,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 					for (Class<?> supportClass : additionalClasses.value()) {
 						classesToProcess.add(supportClass);
 					}
-					for(String lateBound : additionalClasses.latebound()) {
+					for(String lateBound : additionalClasses.late()) {
 						try {
 							Class<?> clazz = Class.forName(lateBound);
 							classesToProcess.add(clazz);

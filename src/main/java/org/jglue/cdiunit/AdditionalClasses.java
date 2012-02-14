@@ -49,5 +49,5 @@ public @interface AdditionalClasses {
 	 */
 	public Class<?>[] value();
 	
-	public String[] latebound();
+	public String[] late() default {};
 }
