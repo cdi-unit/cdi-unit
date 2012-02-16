@@ -8,7 +8,6 @@
 
   <name>CDI-Unit</name>
   <url>http://jglue.org/cdi-unit</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <distMgmtReleasesUrl>http://jglue.org/releases</distMgmtReleasesUrl>
