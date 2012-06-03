@@ -143,7 +143,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		beansXml.getEnabledAlternativeStereotypes().add(
 				new MetadataImpl<String>(ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
 		for(String alternative : alternatives) {
-			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, testClass.getName()));	
+			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, alternative));	
 		}
 		
 		try {
