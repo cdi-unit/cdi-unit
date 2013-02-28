@@ -15,26 +15,18 @@
  */
 package org.jglue.cdiunit.internal;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Set;
-
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedConstructor;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Singleton;
 
-import org.jboss.solder.literal.ApplicationScopedLiteral;
-import org.jboss.solder.reflection.annotated.AnnotatedTypeBuilder;
+import org.apache.deltaspike.core.api.literal.ApplicationScopedLiteral;
+import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 public class TestScopeExtension implements Extension {
 
+	private static final ApplicationScopedLiteral APPLICATION_SCOPED = new ApplicationScopedLiteral();
+	
 	private Class<?> _testClass;
 
 	public TestScopeExtension() {
@@ -49,7 +41,7 @@ public class TestScopeExtension implements Extension {
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 		if (annotatedType.getJavaClass().equals(_testClass)) {
-			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(ApplicationScopedLiteral.INSTANCE);
+			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(APPLICATION_SCOPED);
 			pat.setAnnotatedType(builder.create());
 		}
 	}

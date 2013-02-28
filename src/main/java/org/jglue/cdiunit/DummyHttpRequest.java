@@ -16,7 +16,10 @@
 package org.jglue.cdiunit;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Collection;
@@ -25,6 +28,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -52,7 +57,39 @@ import com.google.common.collect.Iterators;
 public class DummyHttpRequest implements HttpServletRequest {
 
 	private Map<String, Object> _attributes = new HashMap<String, Object>();
+	private Map<String, String[]> _parameters = new HashMap<String, String[]>();
 
+	private BufferedReader readerContent;
+	private ServletInputStream streamContent;
+	public DummyHttpRequest() {
+		
+	}
+	@Inject
+	private Provider<HttpSession> sessionProvider;
+	
+	private HttpSession session;
+
+	public void setContent(String content) {
+		setContent(content.getBytes());
+	}
+
+	public void setContent(byte[] content) {
+		setContent(new ByteArrayInputStream(content));
+	}
+
+	public void setContent(final InputStream content) {
+		streamContent = new ServletInputStream(){
+
+			@Override
+			public int read() throws IOException {
+				return content.read();
+			}
+			
+		};
+		readerContent = new BufferedReader(new InputStreamReader(content));  
+	}
+
+	
 	@Override
 	public AsyncContext getAsyncContext() {
 		return null;
@@ -90,7 +127,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
-		return null;
+		return streamContent;
 	}
 
 	@Override
@@ -120,26 +157,29 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public String getParameter(String arg0) {
-		return null;
+	public String getParameter(String key) {
+		String[] params = _parameters.get(key);
+		if (params == null) {
+			return null;
+		}
+		return params[0];
 	}
 
 	@Override
 	public Map<String, String[]> getParameterMap() {
 
-		return null;
+		return _parameters;
 	}
 
 	@Override
 	public Enumeration<String> getParameterNames() {
 
-		return null;
+		return Iterators.asEnumeration(_parameters.keySet().iterator());
 	}
 
 	@Override
-	public String[] getParameterValues(String arg0) {
-
-		return null;
+	public String[] getParameterValues(String key) {
+		return _parameters.get(key);
 	}
 
 	@Override
@@ -150,8 +190,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public BufferedReader getReader() throws IOException {
-
-		return null;
+		return readerContent;
 	}
 
 	@Override
@@ -237,7 +276,8 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
+	public void setCharacterEncoding(String arg0)
+			throws UnsupportedEncodingException {
 
 	}
 
@@ -248,13 +288,15 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
+	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1)
+			throws IllegalStateException {
 
 		return null;
 	}
 
 	@Override
-	public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
+	public boolean authenticate(HttpServletResponse arg0) throws IOException,
+			ServletException {
 
 		return false;
 	}
@@ -375,14 +417,18 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public HttpSession getSession() {
-
-		return null;
+		if (session == null) {
+			session = this.sessionProvider.get();
+		}
+		return session;
 	}
 
 	@Override
-	public HttpSession getSession(boolean arg0) {
-
-		return null;
+	public HttpSession getSession(boolean create) {
+		if (create == true && session == null) {
+			session = this.sessionProvider.get();
+		}
+		return session;
 	}
 
 	@Override

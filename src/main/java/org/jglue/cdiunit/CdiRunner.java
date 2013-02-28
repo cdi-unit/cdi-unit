@@ -15,15 +15,11 @@
  */
 package org.jglue.cdiunit;
 
-import javax.enterprise.inject.spi.BeanManager;
-
-import org.jboss.solder.beanManager.BeanManagerProvider;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jglue.cdiunit.internal.BeanManagerStore;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -62,11 +58,14 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	protected Object createTest() throws Exception {
 		try {
-			Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
+			Weld.class.getDeclaredMethod("createDeployment",
+					ResourceLoader.class, Bootstrap.class);
 
 			_weld = new Weld() {
-				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
-					return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+				protected Deployment createDeployment(
+						ResourceLoader resourceLoader, Bootstrap bootstrap) {
+					return new WeldTestUrlDeployment(resourceLoader, bootstrap,
+							_clazz);
 				};
 
 			};
@@ -103,16 +102,14 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				if (_startupException != null) {
 					throw _startupException;
 				}
-				BeanManagerStore.setBeanManager(_container.getBeanManager());
+
 				try {
 					defaultStatement.evaluate();
 
 				} finally {
-					try {
-						_weld.shutdown();
-					} finally {
-						BeanManagerStore.setBeanManager(null);
-					}
+
+					_weld.shutdown();
+
 				}
 
 			}

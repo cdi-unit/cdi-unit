@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class })
+@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class, DummyHttpRequest.class })
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
@@ -63,10 +63,6 @@ public class TestCdiUnitRunner extends BaseTest {
 	private FApplicationScoped _f2;
 	
 	
-	@Produces
-	public HttpServletRequest getRequest() {
-		return new DummyHttpRequest();
-	}
 
 	@Inject
 	private BRequestScoped _request;
