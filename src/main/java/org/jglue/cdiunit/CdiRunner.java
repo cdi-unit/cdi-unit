@@ -15,6 +15,8 @@
  */
 package org.jglue.cdiunit;
 
+import javax.naming.InitialContext;
+
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
@@ -45,7 +47,7 @@ import org.junit.runners.model.Statement;
  * @author Bryn Cooke
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
-
+	
 	private Class<?> _clazz;
 	private Weld _weld;
 	private WeldContainer _container;
@@ -102,12 +104,15 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				if (_startupException != null) {
 					throw _startupException;
 				}
-
+				System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
+				InitialContext initialContext = new InitialContext();
+				initialContext.bind("java:comp/BeanManager", _container.getBeanManager());
+				
 				try {
 					defaultStatement.evaluate();
 
 				} finally {
-
+					initialContext.close();
 					_weld.shutdown();
 
 				}
