@@ -10,6 +10,14 @@ import javax.servlet.http.HttpSessionContext;
 
 import com.google.common.collect.Iterators;
 
+/**
+ * Convenience class that can be used if trying to use scopes. If more complex
+ * mocking is required then it is better to use an existing servlet mock
+ * framework.
+ * 
+ * @author Bryn Cooke
+ * 
+ */
 public class DummyHttpSession implements HttpSession {
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 	@Override

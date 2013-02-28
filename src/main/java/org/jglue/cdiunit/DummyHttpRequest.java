@@ -61,9 +61,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	private BufferedReader readerContent;
 	private ServletInputStream streamContent;
-	public DummyHttpRequest() {
-		
-	}
+	
 	@Inject
 	private Provider<HttpSession> sessionProvider;
 	
