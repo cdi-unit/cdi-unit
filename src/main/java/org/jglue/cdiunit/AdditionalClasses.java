@@ -49,5 +49,8 @@ public @interface AdditionalClasses {
 	 */
 	public Class<?>[] value();
 	
+	/**
+	 * Array of class names to make discoverable during testing (late binding allows specifying classes that are package visible).
+	 */
 	public String[] late() default {};
 }
