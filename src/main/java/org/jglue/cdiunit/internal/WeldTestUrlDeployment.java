@@ -66,13 +66,12 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
 		
 		classesToProcess.add(testClass);
+		_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
 			classesToProcess.add(InRequestInterceptor.class);
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
-			_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-
 		}
 		catch(ClassNotFoundException e) {
 		}
