@@ -162,4 +162,6 @@ public class TestCdiUnitRunner extends BaseTest {
 		AInterface a1 = _f1.getA();
 		Assert.assertEquals(_mockA, a1);
 	}
+	
+
 }

@@ -23,6 +23,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
+import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -95,13 +96,17 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected Statement methodBlock(FrameworkMethod method) {
+	protected Statement methodBlock(final FrameworkMethod method) {
 		final Statement defaultStatement = super.methodBlock(method);
 		return new Statement() {
 
 			@Override
 			public void evaluate() throws Throwable {
+				
 				if (_startupException != null) {
+					if(method.getAnnotation(Test.class).expected() == _startupException.getClass()) {
+						return;
+					}
 					throw _startupException;
 				}
 				System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
