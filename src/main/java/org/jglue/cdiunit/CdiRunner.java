@@ -15,6 +15,8 @@
  */
 package org.jglue.cdiunit;
 
+import java.io.IOException;
+
 import javax.naming.InitialContext;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
@@ -48,83 +50,87 @@ import org.junit.runners.model.Statement;
  * @author Bryn Cooke
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
-	
-	private Class<?> _clazz;
-	private Weld _weld;
-	private WeldContainer _container;
-	private Throwable _startupException;
 
-	public CdiRunner(Class<?> clazz) throws InitializationError {
-		super(clazz);
-		_clazz = clazz;
-	}
+    private Class<?> _clazz;
+    private Weld _weld;
+    private WeldContainer _container;
+    private Throwable _startupException;
 
-	protected Object createTest() throws Exception {
-		try {
-			Weld.class.getDeclaredMethod("createDeployment",
-					ResourceLoader.class, Bootstrap.class);
+    public CdiRunner(Class<?> clazz) throws InitializationError {
+        super(clazz);
+        _clazz = clazz;
+    }
 
-			_weld = new Weld() {
-				protected Deployment createDeployment(
-						ResourceLoader resourceLoader, Bootstrap bootstrap) {
-					return new WeldTestUrlDeployment(resourceLoader, bootstrap,
-							_clazz);
-				};
+    protected Object createTest() throws Exception {
+        try {
+            Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
 
-			};
+            _weld = new Weld() {
+                protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+                    try {
+                        return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+                    } catch (IOException e) {
+                        _startupException = e;
+                        throw new RuntimeException(e);
+                    }
+                };
 
-			try {
+            };
 
-				_container = _weld.initialize();
-			} catch (Throwable e) {
-				_startupException = e;
-			}
+            try {
 
-		} catch (NoSuchMethodException e) {
-			_startupException = new Exception(
-					"Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
-		}
+                _container = _weld.initialize();
+            } catch (Throwable e) {
+                if (_startupException == null) {
+                    _startupException = e;
+                }
+            }
 
-		return createTest(_clazz);
-	}
+        } catch (NoSuchMethodException e) {
+            _startupException = new Exception(
+                    "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
+        }
 
-	private <T> T createTest(Class<T> testClass) {
+        return createTest(_clazz);
+    }
 
-		T t = _container.instance().select(testClass).get();
+    private <T> T createTest(Class<T> testClass) {
 
-		return t;
-	}
+        T t = _container.instance().select(testClass).get();
 
-	@Override
-	protected Statement methodBlock(final FrameworkMethod method) {
-		final Statement defaultStatement = super.methodBlock(method);
-		return new Statement() {
+        return t;
+    }
 
-			@Override
-			public void evaluate() throws Throwable {
-				
-				if (_startupException != null) {
-					if(method.getAnnotation(Test.class).expected() == _startupException.getClass()) {
-						return;
-					}
-					throw _startupException;
-				}
-				System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
-				InitialContext initialContext = new InitialContext();
-				initialContext.bind("java:comp/BeanManager", _container.getBeanManager());
-				
-				try {
-					defaultStatement.evaluate();
+    @Override
+    protected Statement methodBlock(final FrameworkMethod method) {
+        final Statement defaultStatement = super.methodBlock(method);
+        return new Statement() {
 
-				} finally {
-					initialContext.close();
-					_weld.shutdown();
+            @Override
+            public void evaluate() throws Throwable {
 
-				}
+                if (_startupException != null) {
+                    if (method.getAnnotation(Test.class).expected() == _startupException.getClass()) {
+                        return;
+                    }
+                    throw _startupException;
+                }
+                System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
+                InitialContext initialContext = new InitialContext();
+                initialContext.bind("java:comp/BeanManager", _container.getBeanManager());
 
-			}
-		};
+                try {
+                    defaultStatement.evaluate();
 
-	}
+                } finally {
+                    initialContext.close();
+                    _weld.shutdown();
+
+                }
+
+            }
+        };
+
+    }
 
 }

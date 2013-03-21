@@ -15,9 +15,12 @@
  */
 package org.jglue.cdiunit.internal;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,9 +57,12 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
     private final BeanDeploymentArchive _beanDeploymentArchive;
     private Collection<Metadata<Extension>> _extensions = new ArrayList<Metadata<Extension>>();
     private static Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
+    private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 
-    public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) {
+    public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) throws IOException {
         super(bootstrap);
+
+        populateCdiClasspathSet();
         // BeanDeploymentArchive archive = new URLScanner(resourceLoader,
         // bootstrap, RESOURCES).scan();
         BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
@@ -78,7 +84,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         }
         while (!classesToProcess.isEmpty()) {
             Class<?> c = classesToProcess.iterator().next();
-            if (!classesProcessed.contains(c) && !c.isPrimitive()) {
+            if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
                 classesProcessed.add(c);
                 discoveredClasses.add(c.getName());
                 if (Extension.class.isAssignableFrom(c)) {
@@ -92,7 +98,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                     beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
                 }
 
-                if (c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class)) {
+                if (isAlternativeStereotype(c)) {
                     beansXml.getEnabledAlternativeStereotypes().add(new MetadataImpl<String>(c.getName(), c.getName()));
 
                 }
@@ -117,7 +123,10 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                 if (alternativeClasses != null) {
                     for (Class<?> alternativeClass : alternativeClasses.value()) {
                         classesToProcess.add(alternativeClass);
-                        alternatives.add(alternativeClass.getName());
+
+                        if (!isAlternativeStereotype(alternativeClass)) {
+                            alternatives.add(alternativeClass.getName());
+                        }
                     }
                 }
 
@@ -171,6 +180,34 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
             }
         }
 
+    }
+
+    private void populateCdiClasspathSet() throws IOException {
+        URL[] classpath = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
+        for (URL url : classpath) {
+            URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
+            try {
+                URL resource = cl.getResource("META-INF/beans.xml");
+                URL resource2 = cl.getResource("WEB-INF/beans.xml");
+                boolean testClasses = url.getFile().endsWith("test-classes/");
+                if (resource != null || resource2 != null || testClasses) {
+                    cdiClasspathEntries.add(url);
+                }
+            } finally {
+                cl.close();
+            }
+        }
+
+    }
+
+    private boolean isCdiClass(Class<?> c) {
+        URL location = c.getProtectionDomain().getCodeSource().getLocation();
+        boolean isCdi = cdiClasspathEntries.contains(location);
+        return isCdi;
+    }
+
+    private boolean isAlternativeStereotype(Class<?> c) {
+        return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
     }
 
     @Override
