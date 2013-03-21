@@ -16,18 +16,26 @@
 package org.jglue.cdiunit.internal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
@@ -183,8 +191,27 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
     }
 
     private void populateCdiClasspathSet() throws IOException {
-        URL[] classpath = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
-        for (URL url : classpath) {
+        ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
+        List<URL> entries = new ArrayList<URL>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
+
+        // If this is surefire we need to get the original claspath
+        JarInputStream firstEntry = new JarInputStream(entries.get(0).openStream());
+        Manifest manifest = firstEntry.getManifest();
+        if (manifest != null) {
+            String classpath = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
+            if (classpath != null) {
+                String[] manifestEntries = classpath.split(" ?file:");
+                for (String entry : manifestEntries) {
+                    if (entry.length() > 0) {
+                        entries.add(new URL("file:" + entry));
+                    }
+                }
+            }
+
+        }
+        firstEntry.close();
+
+        for (URL url : entries) {
             URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
             try {
                 URL resource = cl.getResource("META-INF/beans.xml");
@@ -194,7 +221,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                     cdiClasspathEntries.add(url);
                 }
             } finally {
-                cl.close();
+                // cl.close();
             }
         }
 
