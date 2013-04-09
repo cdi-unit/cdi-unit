@@ -95,9 +95,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         }
         while (!classesToProcess.isEmpty()) {
             Class<?> c = classesToProcess.iterator().next();
-            if(c.getName().endsWith("Identity")) {
-                System.out.println("BReak");
-            }
+
             if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
                 classesProcessed.add(c);
                 discoveredClasses.add(c.getName());
