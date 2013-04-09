@@ -16,14 +16,11 @@
 package org.jglue.cdiunit.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,10 +28,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -61,8 +56,6 @@ import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.html.UrlCssBuilder;
 
 public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
     private final BeanDeploymentArchive _beanDeploymentArchive;
