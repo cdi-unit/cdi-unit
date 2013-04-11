@@ -1,7 +1,36 @@
-cdi-unit
+cdi-unit 
 ========
 
-Unit testing for CDI applications
+Unit testing for CDI applications. Supports EasyMock for mocking dependencies.
+
+See website for full details https://jglue.org/cdi-unit/
+
+```java
+class Starship {
+ 
+  @Inject
+  Engine engine; //We don't know the exact engine that this ship will have.
+ 
+  void start() {
+    engine.start();
+  }
+}
+
+@RunWith(CdiRunner.class)
+@AdditionalClasses(WarpDrive.class) // WarpDrive is available to use.
+class TestStarship {
+ 
+  @Inject
+  Starship starship;
+ 
+  @Test
+  public void testStart() {
+    starship.start(); // Going to warp!
+  }
+}
+
+```
+
 
 Copyright 2013 Bryn Cooke
  
