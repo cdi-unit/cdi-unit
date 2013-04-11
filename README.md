@@ -5,6 +5,15 @@ Unit testing for CDI applications. Supports EasyMock for mocking dependencies.
 
 See website for full details https://jglue.org/cdi-unit/
 
+```xml
+<dependency>
+  <groupId>org.jglue.cdi-unit</groupId>
+  <artifactId>cdi-unit</artifactId>
+  <version>2.0.7</version>
+  <scope>test</scope>
+</dependency>
+```
+
 ```java
 class Starship {
  
