@@ -78,6 +78,7 @@ public class ContextController {
 	 * Close the currently active request.
 	 */
 	public void closeRequest() {
+		_requestContext.invalidate();
 		_requestContext.deactivate();
 	}
 
@@ -96,6 +97,7 @@ public class ContextController {
 	 * Close the currently active session.
 	 */
 	public void closeSession() {
+		_sessionContext.invalidate();
 		_sessionContext.deactivate();
 	}
 
@@ -114,6 +116,7 @@ public class ContextController {
 	 * Close the currently active conversation.
 	 */
 	public void closeConversation() {
+		_conversationContext.invalidate();
 		_conversationContext.deactivate();
 	}
 
