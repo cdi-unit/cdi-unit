@@ -16,31 +16,30 @@
 package org.jglue.cdiunit;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
+import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class, DummyHttpRequest.class })
+@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class,
+		DummyHttpRequest.class, ScopedFactory.class, ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private AImplementation1 _aImpl;
-	
+
 	private boolean _postConstructCalled;
 
-	
 	@Inject
 	private Provider<BRequestScoped> _requestScoped;
 
@@ -58,11 +57,12 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private FApplicationScoped _f1;
-	
+
 	@Inject
 	private FApplicationScoped _f2;
-	
-	
+
+	@Inject
+	private ContextController _contextController;
 
 	@Inject
 	private BRequestScoped _request;
@@ -146,22 +146,41 @@ public class TestCdiUnitRunner extends BaseTest {
 		Assert.assertNotNull(getBeanManager());
 		Assert.assertNotNull(_beanManager);
 	}
-	
+
 	@Test
 	public void testSuper() {
 		Assert.assertNotNull(_aImpl.getBeanManager());
 	}
-	
-	
+
 	@Test
 	public void testApplicationScoped() {
 		Assert.assertNotNull(_f1);
 		Assert.assertNotNull(_f2);
 		Assert.assertEquals(_f1, _f2);
-		
+
 		AInterface a1 = _f1.getA();
 		Assert.assertEquals(_mockA, a1);
 	}
+
+	@Inject
+	private DummyHttpRequest _dummyHttpRequest;
+
+	@Inject
+	private Provider<Scoped> _scoped;
 	
+	@Mock
+	private Runnable disposeListener;
+
+	@Test
+	public void testContextController() {
+		_contextController.openRequest(_dummyHttpRequest);
+		
+		Scoped b1 = _scoped.get();
+		Scoped b2 = _scoped.get();
+		Assert.assertEquals(b1, b2);
+		b1.setDisposedListener(disposeListener);
+		_contextController.closeRequest();
+		Mockito.verify(disposeListener).run();
+	}
 
 }

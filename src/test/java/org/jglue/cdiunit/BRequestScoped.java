@@ -13,5 +13,5 @@ public class BRequestScoped {
 	public void setFoo(String foo) {
 		_foo = foo;
 	}
-
+	
 }
