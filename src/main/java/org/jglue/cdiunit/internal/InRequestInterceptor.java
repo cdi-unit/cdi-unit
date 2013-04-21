@@ -36,6 +36,7 @@ public class InRequestInterceptor {
 	private ContextController _contextController;
 
 	@Inject
+	@CdiUnitImpl
 	private Provider<HttpServletRequest> _requestProvider;
 
 	

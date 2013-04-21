@@ -37,6 +37,7 @@ public class InConversationInterceptor {
 	private ContextController _contextController;
 
 	@Inject
+	@CdiUnitImpl
 	private Provider<HttpServletRequest> _requestProvider;
 
 	@AroundInvoke

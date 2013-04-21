@@ -38,6 +38,7 @@ public class InSessionInterceptor {
 	private ContextController _contextController;
 
 	@Inject
+	@CdiUnitImpl
 	private Provider<HttpServletRequest> _requestProvider;
 
 	@AroundInvoke

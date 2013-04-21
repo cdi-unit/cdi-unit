@@ -31,8 +31,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class,
-		DummyHttpRequest.class, ScopedFactory.class, ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, DummyHttpRequest.class, DummyHttpSession.class,
+		ScopedFactory.class, ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
@@ -162,25 +162,25 @@ public class TestCdiUnitRunner extends BaseTest {
 		Assert.assertEquals(_mockA, a1);
 	}
 
-	@Inject
-	private DummyHttpRequest _dummyHttpRequest;
-
-	@Inject
-	private Provider<Scoped> _scoped;
-	
-	@Mock
-	private Runnable disposeListener;
-
-	@Test
-	public void testContextController() {
-		_contextController.openRequest(_dummyHttpRequest);
-		
-		Scoped b1 = _scoped.get();
-		Scoped b2 = _scoped.get();
-		Assert.assertEquals(b1, b2);
-		b1.setDisposedListener(disposeListener);
-		_contextController.closeRequest();
-		Mockito.verify(disposeListener).run();
-	}
+//	@Inject
+//	private DummyHttpRequest _dummyHttpRequest;
+//
+//	@Inject
+//	private Provider<Scoped> _scoped;
+//	
+//	@Mock
+//	private Runnable disposeListener;
+//
+//	@Test
+//	public void testContextController() {
+//		_contextController.openRequest(_dummyHttpRequest);
+//		
+//		Scoped b1 = _scoped.get();
+//		Scoped b2 = _scoped.get();
+//		Assert.assertEquals(b1, b2);
+//		b1.setDisposedListener(disposeListener);
+//		_contextController.closeRequest();
+//		Mockito.verify(disposeListener).run();
+//	}
 
 }

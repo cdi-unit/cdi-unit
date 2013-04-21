@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -42,14 +40,16 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
+
+import org.jboss.weld.servlet.SessionHolder;
 
 import com.google.common.collect.Iterators;
 
 /**
- * Convenience class that can be used if trying to use scopes. If more complex
- * mocking is required then it is better to use an existing servlet mock
- * framework.
+ * Convenience class that can be used if trying to use scopes. If more complex mocking is required then it is better to use an
+ * existing servlet mock framework.
  * 
  * @author Bryn Cooke
  * 
@@ -61,10 +61,8 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	private BufferedReader readerContent;
 	private ServletInputStream streamContent;
-	
-	@Inject
-	private Provider<HttpSession> sessionProvider;
-	
+
+
 	private HttpSession session;
 
 	public void setContent(String content) {
@@ -76,18 +74,17 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	public void setContent(final InputStream content) {
-		streamContent = new ServletInputStream(){
+		streamContent = new ServletInputStream() {
 
 			@Override
 			public int read() throws IOException {
 				return content.read();
 			}
-			
+
 		};
-		readerContent = new BufferedReader(new InputStreamReader(content));  
+		readerContent = new BufferedReader(new InputStreamReader(content));
 	}
 
-	
 	@Override
 	public AsyncContext getAsyncContext() {
 		return null;
@@ -274,8 +271,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public void setCharacterEncoding(String arg0)
-			throws UnsupportedEncodingException {
+	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
 
 	}
 
@@ -286,15 +282,13 @@ public class DummyHttpRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1)
-			throws IllegalStateException {
+	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
 
 		return null;
 	}
 
 	@Override
-	public boolean authenticate(HttpServletResponse arg0) throws IOException,
-			ServletException {
+	public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
 
 		return false;
 	}
@@ -416,7 +410,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 	@Override
 	public HttpSession getSession() {
 		if (session == null) {
-			session = this.sessionProvider.get();
+			session = new DummyHttpSession();
 		}
 		return session;
 	}
@@ -424,7 +418,8 @@ public class DummyHttpRequest implements HttpServletRequest {
 	@Override
 	public HttpSession getSession(boolean create) {
 		if (create == true && session == null) {
-			session = this.sessionProvider.get();
+			session = new DummyHttpSession();
+			SessionHolder.sessionCreated(new HttpSessionEvent(session));
 		}
 		return session;
 	}
