@@ -62,7 +62,6 @@ public class DummyHttpRequest implements HttpServletRequest {
 	private BufferedReader readerContent;
 	private ServletInputStream streamContent;
 
-
 	private HttpSession session;
 
 	public void setContent(String content) {
@@ -419,7 +418,6 @@ public class DummyHttpRequest implements HttpServletRequest {
 	public HttpSession getSession(boolean create) {
 		if (create == true && session == null) {
 			session = new DummyHttpSession();
-			SessionHolder.sessionCreated(new HttpSessionEvent(session));
 		}
 		return session;
 	}
