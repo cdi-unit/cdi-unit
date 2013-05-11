@@ -42,6 +42,7 @@ import javax.interceptor.Interceptor;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
+import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
@@ -70,7 +71,8 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         // BeanDeploymentArchive archive = new URLScanner(resourceLoader,
         // bootstrap, RESOURCES).scan();
         BeansXml beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-                new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING);
+                new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING,
+                null, BeanDiscoveryMode.ALL, null);
         Set<String> discoveredClasses = new LinkedHashSet<String>();
         Set<String> alternatives = new HashSet<String>();
         discoveredClasses.add(testClass.getName());
@@ -253,10 +255,12 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         return _extensions;
     }
 
+    @Override
     public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
         return Collections.singletonList(_beanDeploymentArchive);
     }
 
+    @Override
     public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
         return _beanDeploymentArchive;
     }
