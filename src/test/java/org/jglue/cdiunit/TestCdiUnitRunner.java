@@ -21,6 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
@@ -33,6 +34,7 @@ import org.mockito.Mockito;
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ ESupportClass.class, DummyHttpSession.class,
 		DummyHttpRequest.class, ScopedFactory.class, ExcludeExtension.class })
+@ActivatedAlternatives({DummyHttpSession.class, DummyHttpRequest.class})
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
@@ -163,7 +165,7 @@ public class TestCdiUnitRunner extends BaseTest {
 	}
 
 	@Inject
-	private DummyHttpRequest _dummyHttpRequest;
+	private HttpServletRequest _dummyHttpRequest;
 
 	@Inject
 	private Provider<Scoped> _scoped;

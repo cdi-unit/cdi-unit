@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.AsyncContext;
@@ -42,8 +43,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
 
+import org.jboss.weld.servlet.SessionHolder;
 import com.google.common.collect.Iterators;
 
 /**
@@ -54,6 +57,7 @@ import com.google.common.collect.Iterators;
  * @author Bryn Cooke
  * 
  */
+@Alternative
 public class DummyHttpRequest implements HttpServletRequest {
 
 	private Map<String, Object> _attributes = new HashMap<String, Object>();
@@ -417,6 +421,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 	public HttpSession getSession() {
 		if (session == null) {
 			session = this.sessionProvider.get();
+			SessionHolder.sessionCreated(new HttpSessionEvent(session));
 		}
 		return session;
 	}
@@ -425,7 +430,8 @@ public class DummyHttpRequest implements HttpServletRequest {
 	public HttpSession getSession(boolean create) {
 		if (create == true && session == null) {
 			session = this.sessionProvider.get();
-		}
+			SessionHolder.sessionCreated(new HttpSessionEvent(session));
+	}
 		return session;
 	}
 

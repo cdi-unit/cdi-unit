@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.inject.Alternative;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
@@ -18,6 +19,7 @@ import com.google.common.collect.Iterators;
  * @author Bryn Cooke
  * 
  */
+@Alternative
 public class DummyHttpSession implements HttpSession {
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 	@Override
