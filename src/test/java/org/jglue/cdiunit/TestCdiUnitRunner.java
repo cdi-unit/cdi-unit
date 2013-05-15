@@ -25,6 +25,7 @@ import javax.inject.Provider;
 import junit.framework.Assert;
 
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
+import org.jglue.cdiunit.internal.CdiUnitRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -162,25 +163,25 @@ public class TestCdiUnitRunner extends BaseTest {
 		Assert.assertEquals(_mockA, a1);
 	}
 
-//	@Inject
-//	private DummyHttpRequest _dummyHttpRequest;
-//
-//	@Inject
-//	private Provider<Scoped> _scoped;
-//	
-//	@Mock
-//	private Runnable disposeListener;
-//
-//	@Test
-//	public void testContextController() {
-//		_contextController.openRequest(_dummyHttpRequest);
-//		
-//		Scoped b1 = _scoped.get();
-//		Scoped b2 = _scoped.get();
-//		Assert.assertEquals(b1, b2);
-//		b1.setDisposedListener(disposeListener);
-//		_contextController.closeRequest();
-//		Mockito.verify(disposeListener).run();
-//	}
+	@Inject
+	private DummyHttpRequest _dummyHttpRequest;
+
+	@Inject
+	private Provider<Scoped> _scoped;
+	
+	@Mock
+	private Runnable disposeListener;
+
+	@Test
+	public void testContextController() {
+		_contextController.openRequest(_dummyHttpRequest);
+		
+		Scoped b1 = _scoped.get();
+		Scoped b2 = _scoped.get();
+		Assert.assertEquals(b1, b2);
+		b1.setDisposedListener(disposeListener);
+		_contextController.closeRequest();
+		Mockito.verify(disposeListener).run();
+	}
 
 }

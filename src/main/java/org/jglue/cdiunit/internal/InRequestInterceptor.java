@@ -36,15 +36,15 @@ public class InRequestInterceptor {
 	private ContextController _contextController;
 
 	@Inject
-	@CdiUnitImpl
-	private Provider<HttpServletRequest> _requestProvider;
+	@CdiUnitRequest
+	private Provider<Object> _requestProvider;
 
 	
 	
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
-			_contextController.openRequest(_requestProvider.get());
+			_contextController.openRequest((HttpServletRequest)_requestProvider.get());
 			return ctx.proceed();
 		} catch(Exception e) {
 			log.error("Failed to open request context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
