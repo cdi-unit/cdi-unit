@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.weld.context.http.HttpConversationContext;
 import org.jboss.weld.context.http.HttpRequestContext;
 import org.jboss.weld.context.http.HttpSessionContext;
+import org.jglue.cdiunit.internal.SessionHolderAwareRequest;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -70,7 +71,7 @@ public class ContextController {
 	 *            The request to make available.
 	 */
 	public void openRequest(HttpServletRequest request) {
-		_requestContext.associate(request);
+		_requestContext.associate(new SessionHolderAwareRequest(request));
 		_requestContext.activate();
 	}
 
@@ -89,7 +90,7 @@ public class ContextController {
 	 *            The request object to use as storage.
 	 */
 	public void openSession(HttpServletRequest request) {
-		_sessionContext.associate(request);
+		_sessionContext.associate(new SessionHolderAwareRequest(request));
 		_sessionContext.activate();
 	}
 
@@ -108,7 +109,7 @@ public class ContextController {
 	 *            The request to use as storage.
 	 */
 	public void openConversation(HttpServletRequest request) {
-		_conversationContext.associate(request);
+		_conversationContext.associate(new SessionHolderAwareRequest(request));
 		_conversationContext.activate();
 	}
 

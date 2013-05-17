@@ -15,6 +15,7 @@
  */
 package org.jglue.cdiunit.internal;
 
+import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
@@ -37,12 +38,24 @@ public class InConversationInterceptor {
 	private ContextController _contextController;
 
 	@Inject
-	private Provider<HttpServletRequest> _requestProvider;
+	@CdiUnitRequest
+	private Provider<Object> _requestProvider;
 
+	@Inject
+	private Provider<HttpServletRequest> _cdi1Provider;
+	
+	
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
-			_contextController.openConversation(_requestProvider.get());
+			HttpServletRequest httpServletRequest;
+			try {
+				httpServletRequest = (HttpServletRequest)_requestProvider.get();
+			}
+			catch(UnsatisfiedResolutionException e) {
+				httpServletRequest = _cdi1Provider.get();
+			}
+			_contextController.openConversation(httpServletRequest);
 			return ctx.proceed();
 		} catch(Exception e) {
 			log.error("Failed to open conversation context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);

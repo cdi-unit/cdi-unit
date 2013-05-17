@@ -29,6 +29,7 @@ import javax.inject.Provider;
 import junit.framework.Assert;
 
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
+import org.jglue.cdiunit.internal.CdiUnitRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
