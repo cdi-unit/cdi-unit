@@ -34,6 +34,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
@@ -54,6 +55,8 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.ProducesAlternative;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +89,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
             classesToProcess.add(InConversationInterceptor.class);
         } catch (ClassNotFoundException e) {
         }
+        
+        Set<Method> producesMethods = new HashSet<Method>();
+        Reflections reflections = new Reflections("", new MethodAnnotationsScanner());
+        producesMethods.addAll(reflections.getMethodsAnnotatedWith(Produces.class));
+
         while (!classesToProcess.isEmpty()) {
+
             Class<?> c = classesToProcess.iterator().next();
 
             if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
@@ -157,7 +166,16 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                         }
                     }
                 }
+                
+                // Add all producers that are in charge of building this class
+                for (Method producesMethod : producesMethods) {
+                	if (producesMethod.getReturnType().equals(c)) {
+                		classesToProcess.add(producesMethod.getDeclaringClass());
+                	}
+                }
             }
+            
+            
             classesToProcess.remove(c);
         }
 
