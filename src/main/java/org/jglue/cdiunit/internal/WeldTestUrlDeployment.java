@@ -18,6 +18,7 @@ package org.jglue.cdiunit.internal;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -97,7 +98,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
             if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
                 classesProcessed.add(c);
                 discoveredClasses.add(c.getName());
-                if (Extension.class.isAssignableFrom(c)) {
+                if (Extension.class.isAssignableFrom(c) && ! Modifier.isAbstract(c.getModifiers())) {
                     try {
                         _extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
                     } catch (Exception e) {
