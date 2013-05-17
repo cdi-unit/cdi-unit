@@ -55,8 +55,6 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.ProducesAlternative;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +88,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         } catch (ClassNotFoundException e) {
         }
         
-        Set<Method> producesMethods = new HashSet<Method>();
-        Reflections reflections = new Reflections("", new MethodAnnotationsScanner());
-        producesMethods.addAll(reflections.getMethodsAnnotatedWith(Produces.class));
+
 
         while (!classesToProcess.isEmpty()) {
 
@@ -150,7 +146,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                 }
 
                 for (Field field : c.getDeclaredFields()) {
-                    if (field.isAnnotationPresent(Inject.class)) {
+                    if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
                         Class<?> type = field.getType();
                         classesToProcess.add(type);
                     }
@@ -160,18 +156,11 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
                     }
                 }
                 for (Method method : c.getDeclaredMethods()) {
-                    if (method.isAnnotationPresent(Inject.class)) {
+                    if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
                         for (Class<?> param : method.getParameterTypes()) {
                             classesToProcess.add(param);
                         }
                     }
-                }
-                
-                // Add all producers that are in charge of building this class
-                for (Method producesMethod : producesMethods) {
-                	if (producesMethod.getReturnType().equals(c)) {
-                		classesToProcess.add(producesMethod.getDeclaringClass());
-                	}
                 }
             }
             

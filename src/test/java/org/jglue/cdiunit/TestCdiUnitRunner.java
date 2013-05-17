@@ -15,9 +15,13 @@
  */
 package org.jglue.cdiunit;
 
+import java.lang.annotation.Annotation;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -31,8 +35,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class,
-		DummyHttpRequest.class, ScopedFactory.class, ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class, DummyHttpRequest.class, ScopedFactory.class,
+		ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
@@ -66,6 +70,14 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private BRequestScoped _request;
+
+	@Produces
+	private ProducedViaField _produced;
+	
+	@Produces
+	public ProducedViaMethod getProducedViaMethod() {
+		return new ProducedViaMethod(2);
+	}
 
 	@Test
 	@InRequestScope
@@ -122,8 +134,7 @@ public class TestCdiUnitRunner extends BaseTest {
 	private AInterface _mockA;
 
 	/**
-	 * Test that we can use the test alternative annotation to specify that a
-	 * mock is used
+	 * Test that we can use the test alternative annotation to specify that a mock is used
 	 */
 	@Test
 	public void testTestAlternative() {
@@ -167,14 +178,14 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private Provider<Scoped> _scoped;
-	
+
 	@Mock
 	private Runnable disposeListener;
 
 	@Test
 	public void testContextController() {
 		_contextController.openRequest(_dummyHttpRequest);
-		
+
 		Scoped b1 = _scoped.get();
 		Scoped b2 = _scoped.get();
 		Assert.assertEquals(b1, b2);
@@ -183,4 +194,28 @@ public class TestCdiUnitRunner extends BaseTest {
 		Mockito.verify(disposeListener).run();
 	}
 
+	@Test
+	public void testProducedViaField() {
+		_produced = new ProducedViaField(2);
+		ProducedViaField produced = getContextualInstance(_beanManager, ProducedViaField.class);
+		Assert.assertEquals(_produced, produced);
+	}
+	
+	@Test
+	public void testProducedViaMethod() {
+		ProducedViaMethod produced = getContextualInstance(_beanManager, ProducedViaMethod.class);
+		Assert.assertNotNull(produced);
+	}
+
+	public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {
+		T result = null;
+		Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type, qualifiers));
+		if (bean != null) {
+			CreationalContext<T> context = manager.createCreationalContext(bean);
+			if (context != null) {
+				result = (T) manager.getReference(bean, type, context);
+			}
+		}
+		return result;
+	}
 }
