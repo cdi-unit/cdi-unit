@@ -1,7 +1,7 @@
 cdi-unit 
 ========
 
-Unit testing for CDI applications. Supports EasyMock for mocking dependencies.
+Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
 See website for full details https://jglue.org/cdi-unit/
 
