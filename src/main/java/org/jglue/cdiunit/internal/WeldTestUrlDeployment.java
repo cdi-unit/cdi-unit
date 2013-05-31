@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -205,7 +206,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 
-		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("unitTest", discoveredClasses, beansXml);
+		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
 		_beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 		log.debug("CDI-Unit discovered:");
 		for (String clazz : discoveredClasses) {
