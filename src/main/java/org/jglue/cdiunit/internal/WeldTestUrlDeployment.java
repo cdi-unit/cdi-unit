@@ -58,6 +58,7 @@ import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.AdditionalExtensions;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,6 +150,19 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 							throw new RuntimeException(e);
 						}
 
+					}
+				}
+
+				AdditionalExtensions additionalExtensions = c.getAnnotation(AdditionalExtensions.class);
+				if (additionalExtensions != null) {
+					for (Class<?> clazz : additionalExtensions.value()) {
+						try {
+							_extensions.add(new MetadataImpl<Extension>((Extension) clazz.newInstance(), clazz.getName()));
+						} catch (InstantiationException ex) {
+							throw new RuntimeException(ex);
+						} catch (IllegalAccessException ex) {
+							throw new RuntimeException(ex);
+						}
 					}
 				}
 
