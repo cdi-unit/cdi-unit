@@ -290,4 +290,8 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
 		return _beanDeploymentArchive;
 	}
+	
+	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
+		return _beanDeploymentArchive;
+	}
 }

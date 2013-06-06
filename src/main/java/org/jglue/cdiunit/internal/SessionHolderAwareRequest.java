@@ -3,6 +3,8 @@ package org.jglue.cdiunit.internal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -212,11 +214,7 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 	public HttpSession getSession(boolean create) {
 		HttpSession session = delegate.getSession(create);
 		if (session != null && this.session == null) {
-			try {
-				SessionHolder.sessionCreated(new HttpSessionEvent(session));
-			} catch (NoClassDefFoundError e) {
-
-			}
+			notifySessionHolder(session);
 			this.session = session;
 		}
 		return session;
@@ -241,14 +239,28 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 	public HttpSession getSession() {
 		HttpSession session = delegate.getSession();
 		if (session != null && this.session == null) {
-			try {
-				SessionHolder.sessionCreated(new HttpSessionEvent(session));
-			} catch (NoClassDefFoundError e) {
-
-			}
+			notifySessionHolder(session);
 			this.session = session;
 		}
 		return session;
+	}
+
+	private void notifySessionHolder(HttpSession session) {
+		try {
+			Method m = SessionHolder.class.getMethod("sessionCreated", HttpSession.class);
+			m.invoke(null, session);
+		} catch (NoSuchMethodException e) {
+			Method m;
+			try {
+				m = SessionHolder.class.getMethod("sessionCreated", HttpSessionEvent.class);
+				m.invoke(null, new HttpSessionEvent(session));
+			} catch (Exception e1) {
+				throw new RuntimeException(e);
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int getLocalPort() {
