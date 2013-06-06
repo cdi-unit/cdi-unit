@@ -249,7 +249,10 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 		try {
 			Method m = SessionHolder.class.getMethod("sessionCreated", HttpSession.class);
 			m.invoke(null, session);
-		} catch (NoSuchMethodException e) {
+		} catch(NoClassDefFoundError e) {
+			
+		}
+		catch (NoSuchMethodException e) {
 			Method m;
 			try {
 				m = SessionHolder.class.getMethod("sessionCreated", HttpSessionEvent.class);
