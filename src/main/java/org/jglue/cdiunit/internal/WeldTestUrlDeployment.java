@@ -54,6 +54,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.ProducesAlternative;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +77,10 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         discoveredClasses.add(testClass.getName());
         Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
         Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+        Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
 
         classesToProcess.add(testClass);
+        
         _extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
         try {
             Class.forName("javax.servlet.http.HttpServletRequest");
@@ -88,6 +91,11 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         }
         while (!classesToProcess.isEmpty()) {
             Class<?> c = classesToProcess.iterator().next();
+            
+            if (classesToIgnore.contains(c))
+            {
+            	break;
+            }
 
             if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
                 classesProcessed.add(c);
@@ -187,7 +195,20 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
     }
 
-    private void populateCdiClasspathSet() throws IOException {
+    private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass)
+	{
+    	Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
+    	for (Field field : testClass.getDeclaredFields()) {
+    		if (field.isAnnotationPresent(Mock.class)) {
+    			Class<?> type = field.getType();
+    			mockedClasses.add(type);
+    		}
+    	}		
+		return mockedClasses;
+	}
+
+
+	private void populateCdiClasspathSet() throws IOException {
         ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
         List<URL> entries = new ArrayList<URL>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
 
