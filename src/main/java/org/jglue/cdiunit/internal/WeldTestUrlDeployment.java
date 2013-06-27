@@ -92,12 +92,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
         while (!classesToProcess.isEmpty()) {
             Class<?> c = classesToProcess.iterator().next();
             
-            if (classesToIgnore.contains(c))
-            {
-            	break;
-            }
-
-            if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive()) {
+            if (isCdiClass(c) && !classesProcessed.contains(c) && !c.isPrimitive() && !classesToIgnore.contains(c)) {
                 classesProcessed.add(c);
                 discoveredClasses.add(c.getName());
                 if (Extension.class.isAssignableFrom(c)) {
