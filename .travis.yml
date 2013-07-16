@@ -1,0 +1,9 @@
+language: java
+notifications:
+  email:
+    - bryncooke@gmail.com
+jdk:
+  - oraclejdk7
+  - openjdk7
+  - openjdk6
+
