@@ -4,8 +4,8 @@ notifications:
     - bryncooke@gmail.com
 jdk:
   - oraclejdk7
-  - openjdk7
-  - openjdk6
+  - oraclejdk6
+
 env:
   matrix:
     - WELD_VERSION=2.0.2.Final
@@ -16,4 +16,4 @@ env:
     - WELD_VERSION=2.0.1.Final
 
 
-script: "mvn clean install -Dweld.version=${WELD_VERSION}"
+script: "mvn clean install -Dweld.test.version=${WELD_VERSION}"

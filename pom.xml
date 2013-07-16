@@ -19,7 +19,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.version>2.0.2.Final</weld.version>
+		<weld.test.version>2.0.2.Final</weld.test.version>
 	</properties>
 
 	<licenses>
@@ -32,10 +32,18 @@
 
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se</artifactId>
-			<version>${weld.version}</version>
+			<scope>compile</scope>
+			<version>2.0.2.Final</version>
+		</dependency>
+				<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se</artifactId>
+			<scope>test</scope>
+			<version>${weld.test.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
