@@ -6,4 +6,14 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
+env:
+  matrix:
+    - WELD_VERSION=2.0.2.Final
+    - WELD_VERSION=2.0.1.Final
+    - WELD_VERSION=2.0.0.SP1
+    - WELD_VERSION=1.1.13.Final
+    - WELD_VERSION=2.0.0.Final
+    - WELD_VERSION=2.0.1.Final
 
+
+script: "mvn clean install -Dweld.version=${WELD_VERSION}"
