@@ -1,18 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jglue.cdi-unit</groupId>
-	<artifactId>cdi-unit-parent</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<artifactId>cdi-unit-tests</artifactId>
+	<packaging>jar</packaging>
 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<groupId>org.jglue.cdi-unit</groupId>
+		<artifactId>cdi-unit-parent</artifactId>
+		<version>2.1.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>CDI-Unit-Parent</name>
+	<name>CDI-Unit-Tests</name>
 	<url>http://jglue.org/cdi-unit</url>
-	<description>JUnit runner for testing CDI based projects.</description>
+	<description>CDI-Unit test suite.</description>
 	<developers>
 		<developer>
 			<name>Bryn Cooke</name>
@@ -31,13 +30,66 @@
 		</license>
 	</licenses>
 
-	<modules>
-		<module>cdi-unit</module>
-		<module>cdi-unit-tests</module>
-	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jglue.cdi-unit</groupId>
+			<artifactId>cdi-unit</artifactId>
+			<version>2.1.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.weld.se</groupId>
+					<artifactId>weld-se</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se</artifactId>
+			<version>${weld.test.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.9</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
+			<version>0.3-incubating</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-api</artifactId>
+			<version>0.3-incubating</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
