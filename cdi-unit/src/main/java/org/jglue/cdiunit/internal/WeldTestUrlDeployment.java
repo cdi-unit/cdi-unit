@@ -59,6 +59,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.ProducesAlternative;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,16 +94,17 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		discoveredClasses.add(testClass.getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
 
 		classesToProcess.add(testClass);
 		_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 
-		// Weld2 need this extension to prevent a clash when supplying our own http objects.
+		// Weld2 need this extension to prevent a clash when supplying our own
+		// http objects.
 		try {
-		_extensions.add(new MetadataImpl<Extension>(new HttpObjectsExtension(), HttpObjectsExtension.class.getName()));
-		}
-		catch(NoClassDefFoundError e){
-			
+			_extensions.add(new MetadataImpl<Extension>(new HttpObjectsExtension(), HttpObjectsExtension.class.getName()));
+		} catch (NoClassDefFoundError e) {
+
 		}
 
 		try {
@@ -117,7 +119,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 			Class<?> c = classesToProcess.iterator().next();
 
-			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c)) && !classesProcessed.contains(c) && !c.isPrimitive()) {
+			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c)) && !classesProcessed.contains(c) && !c.isPrimitive() && !classesToIgnore.contains(c)) {
 				classesProcessed.add(c);
 				discoveredClasses.add(c.getName());
 				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
@@ -217,6 +219,17 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	}
 
+	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
+		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
+		for (Field field : testClass.getDeclaredFields()) {
+			if (field.isAnnotationPresent(Mock.class)) {
+				Class<?> type = field.getType();
+				mockedClasses.add(type);
+			}
+		}
+		return mockedClasses;
+	}
+
 	private void populateCdiClasspathSet() throws IOException {
 		ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
 		List<URL> entries = new ArrayList<URL>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
@@ -290,7 +303,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
 		return _beanDeploymentArchive;
 	}
-	
+
 	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
 		return _beanDeploymentArchive;
 	}
