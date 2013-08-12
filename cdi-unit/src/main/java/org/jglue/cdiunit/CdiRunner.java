@@ -89,6 +89,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         } catch (NoSuchMethodException e) {
             _startupException = new Exception(
                     "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
+        } catch (ClassFormatError e) {
+            _startupException = new Exception(
+                    "There were class format errors. This is often caused by API only jars on the classpath. If you are using maven then you need to place these after the CDI unit dependency as 'provided' scope is still available during testing.", e);
+        }
+        catch (Throwable e) {
+            _startupException = new Exception(
+                    "Unable to start weld", e);
         }
 
         return createTest(_clazz);
@@ -134,3 +141,4 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     }
 
 }
+
