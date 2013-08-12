@@ -24,6 +24,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.ProcessInjectionTarget;
 
+import org.easymock.EasyMockSupport;
 import org.mockito.MockitoAnnotations;
 
 public class MockExtension implements Extension {
@@ -34,6 +35,7 @@ public class MockExtension implements Extension {
 			public T produce(CreationalContext<T> ctx) {
 				T o = injectionTarget.produce(ctx);
 				MockitoAnnotations.initMocks(o);
+				EasyMockSupport.injectMocks(o);
 				return o;
 			}
 
