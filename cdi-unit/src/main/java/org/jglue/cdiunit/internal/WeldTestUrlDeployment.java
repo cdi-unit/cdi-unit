@@ -201,7 +201,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		try {
 			Class.forName("org.mockito.Mock");
-			_extensions.add(new MetadataImpl<Extension>(new MockExtension(), MockExtension.class.getName()));
+			_extensions.add(new MetadataImpl<Extension>(new MockitoExtension(), MockitoExtension.class.getName()));
+		} catch (ClassNotFoundException e) {
+
+		}
+		
+		try {
+			Class.forName("org.easymock.EasyMockRunner");
+			_extensions.add(new MetadataImpl<Extension>(new EasyMockExtension(), EasyMockExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
