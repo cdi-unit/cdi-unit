@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>cdi-unit-tests-gradle</artifactId>
+	<packaging>pom</packaging>
+	<parent>
+		<groupId>org.jglue.cdi-unit</groupId>
+		<artifactId>cdi-unit-parent</artifactId>
+		<version>2.1.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<name>CDI-Unit-Tests</name>
+	<url>http://jglue.org/cdi-unit</url>
+	<description>CDI-Unit test suite.</description>
+	<developers>
+		<developer>
+			<name>Bryn Cooke</name>
+		</developer>
+	</developers>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<weld.test.version>2.0.2.Final</weld.test.version>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+
+	<dependencies>
+		
+	
+
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.fortasoft</groupId>
+				<artifactId>gradle-maven-plugin</artifactId>
+				<version>1.0.5</version>
+				<configuration>
+					<tasks>
+					    <task>clean</task>
+						<task>build</task>
+					</tasks>
+					<args>
+					 <arg>-PprojectVersionProp=${project.version}</arg> 
+					</args>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>invoke</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

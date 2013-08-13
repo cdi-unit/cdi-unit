@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+	testCompile group: 'junit', name:'junit', version:'4.8.2'
+	testCompile group: 'org.jglue.cdi-unit', name:'cdi-unit', version:projectVersionProp	
+	
+}
