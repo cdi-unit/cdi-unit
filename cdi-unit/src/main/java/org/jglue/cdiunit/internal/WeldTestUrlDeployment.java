@@ -42,6 +42,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
@@ -109,6 +110,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		// Weld2 need this extension to prevent a clash when supplying our own
 		// http objects.
 		try {
+			HttpServletRequest.class.getName();
 			_extensions.add(new MetadataImpl<Extension>(
 					new HttpObjectsExtension(), HttpObjectsExtension.class
 							.getName()));

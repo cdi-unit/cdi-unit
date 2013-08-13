@@ -34,6 +34,9 @@
 	<modules>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests</module>
+		<module>cdi-unit-tests-bare</module>
+		<module>cdi-unit-tests-mockito</module>
+		<module>cdi-unit-tests-easymock</module>
 	</modules>
 	<build>
 		<plugins>
