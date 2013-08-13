@@ -9,7 +9,7 @@
 		<version>2.1.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>CDI-Unit-Tests</name>
+	<name>CDI-Unit-Tests-Bare</name>
 	<url>http://jglue.org/cdi-unit</url>
 	<description>CDI-Unit test suite.</description>
 	<developers>
