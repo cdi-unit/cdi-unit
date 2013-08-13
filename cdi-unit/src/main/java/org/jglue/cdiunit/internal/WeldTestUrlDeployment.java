@@ -272,8 +272,9 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				}
 				URL resource = cl.getResource("META-INF/beans.xml");
 
-				boolean testClasses = url.getFile().endsWith("/test-classes/");
-				if (resource != null || testClasses) {
+				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
+				boolean gradleClasses = url.getFile().endsWith("/classes/test/");
+				if (resource != null || mavenClasses || gradleClasses ) {
 					cdiClasspathEntries.add(url);
 				}
 
