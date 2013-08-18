@@ -1,6 +1,6 @@
 package org.jglue.cdiunit;
 
-import org.apache.deltaspike.core.api.exclude.annotation.Exclude;
+import org.apache.deltaspike.core.api.exclude.Exclude;
 
 
 
