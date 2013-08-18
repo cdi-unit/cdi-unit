@@ -32,8 +32,13 @@
 
 
 	<dependencies>
-		
-	
+
+		<dependency>
+			<groupId>org.jglue.cdi-unit</groupId>
+			<artifactId>cdi-unit</artifactId>
+			<version>2.1.1-SNAPSHOT</version>
+
+		</dependency>
 
 
 	</dependencies>
@@ -45,11 +50,11 @@
 				<version>1.0.5</version>
 				<configuration>
 					<tasks>
-					    <task>clean</task>
+						<task>clean</task>
 						<task>build</task>
 					</tasks>
 					<args>
-					 <arg>-PprojectVersionProp=${project.version}</arg> 
+						<arg>-PprojectVersionProp=${project.version}</arg>
 					</args>
 				</configuration>
 				<executions>
