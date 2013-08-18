@@ -6,6 +6,6 @@ repositories {
 
 dependencies {
 	testCompile group: 'junit', name:'junit', version:'4.8.2'
-	testCompile group: 'org.jglue.cdi-unit', name:'cdi-unit', version:projectVersionProp	
-	
+	testCompile files('../cdi-unit/target/cdi-unit-' + projectVersionProp + '.jar')
+	testCompile group: 'org.jboss.weld.se', name:'weld-se-core', version:'2.0.2.Final'	
 }

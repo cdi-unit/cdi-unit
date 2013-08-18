@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(CdiRunner.class)
-public class TestCdiRunner extends NgCdiRunner {
+public class TestCdiRunner {
 
     @Inject
     AInterface a;

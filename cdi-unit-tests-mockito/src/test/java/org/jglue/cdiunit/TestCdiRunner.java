@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 @RunWith(CdiRunner.class)
-public class TestCdiRunner extends NgCdiRunner {
+public class TestCdiRunner {
 
 	@Inject
 	AInterface a;
