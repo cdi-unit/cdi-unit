@@ -31,10 +31,14 @@ import org.jboss.weld.servlet.SessionHolder;
 public class SessionHolderAwareRequest implements HttpServletRequest {
 
 	private HttpServletRequest delegate;
+	private HttpSession session;
 
-	public SessionHolderAwareRequest(HttpServletRequest delegate) {
+	public SessionHolderAwareRequest(HttpServletRequest delegate, HttpSession session) {
 		this.delegate = delegate;
-
+		this.session = session;
+		if(this.session != null) {
+			notifySessionHolder(session);
+		}
 	}
 
 	public Object getAttribute(String name) {
@@ -209,16 +213,7 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 		return delegate.getServletPath();
 	}
 
-	private HttpSession session;
 
-	public HttpSession getSession(boolean create) {
-		HttpSession session = delegate.getSession(create);
-		if (session != null && this.session == null) {
-			notifySessionHolder(session);
-			this.session = session;
-		}
-		return session;
-	}
 
 	public String getRealPath(String path) {
 		return delegate.getRealPath(path);
@@ -236,13 +231,21 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 		return delegate.getLocalAddr();
 	}
 
-	public HttpSession getSession() {
-		HttpSession session = delegate.getSession();
-		if (session != null && this.session == null) {
-			notifySessionHolder(session);
-			this.session = session;
+	
+
+	public HttpSession getSession(boolean create) {
+		if(session == null && create) {
+			session = delegate.getSession(create);
+			if (session != null) {
+				notifySessionHolder(session);
+			}
 		}
 		return session;
+	}
+	
+	public HttpSession getSession() {
+		
+		return getSession(true);
 	}
 
 	private void notifySessionHolder(HttpSession session) {

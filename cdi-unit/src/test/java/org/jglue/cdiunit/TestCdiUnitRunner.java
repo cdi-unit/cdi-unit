@@ -254,6 +254,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		
 		CSessionScoped b2 = sessionScoped.get();
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
+		Assert.assertNotNull(b2.getFoo());
 		
 	}
 

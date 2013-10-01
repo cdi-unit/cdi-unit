@@ -95,7 +95,7 @@ public class ContextController {
 		if(currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
-		currentRequest = createRequest(request);
+		currentRequest = new SessionHolderAwareRequest(request, currentSession);
 		lifecycle.requestInitialized(currentRequest, null);
 	}
 
@@ -154,12 +154,6 @@ public class ContextController {
 		conversation.end();
 	}
 
-	private HttpServletRequest createRequest(HttpServletRequest request) {
-		if (currentRequest == null) {
-			currentRequest = new SessionHolderAwareRequest(request);
-		}
 
-		return currentRequest;
-	}
 
 }
