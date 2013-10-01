@@ -54,6 +54,7 @@
 					</tasks>
 					<args>
 						<arg>-PprojectVersionProp=${project.version}</arg>
+						<arg>-PweldVersionProp=${weld.test.version}</arg>
 					</args>
 				</configuration>
 				<executions>
