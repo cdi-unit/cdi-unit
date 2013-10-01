@@ -31,7 +31,7 @@ import javax.interceptor.InterceptorBinding;
  * &#064;InSessionScope
  * // This test will be run within the context of a session
  * void testStart() {
- * 	_starship.start();
+ * 	starship.start();
  * }
  * </pre>
  * 

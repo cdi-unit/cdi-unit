@@ -22,10 +22,10 @@ import org.testng.annotations.BeforeMethod;
 @SuppressWarnings("unchecked")
 public class NgCdiRunner {
 
-    private final Class<?> _clazz = this.getClass();
-    private Weld _weld;
-    private WeldContainer _container;
-    private InitialContext _initialContext;
+    private final Class<?> clazz = this.getClass();
+    private Weld weld;
+    private WeldContainer container;
+    private InitialContext initialContext;
 
     /**
      * Setup CDI environment for the class.<br>
@@ -40,12 +40,12 @@ public class NgCdiRunner {
                     "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
         }
 
-        _weld = new Weld() {
+        weld = new Weld() {
 
             @Override
             protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                 try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -59,18 +59,18 @@ public class NgCdiRunner {
      */
     @BeforeMethod(alwaysRun = true)
     public void initializeCdi() {
-        _container = _weld.initialize();
-        BeanManager beanManager = _container.getBeanManager();
+        container = weld.initialize();
+        BeanManager beanManager = container.getBeanManager();
         CreationalContext creationalContext = beanManager.createCreationalContext(null);
-        AnnotatedType annotatedType = beanManager.createAnnotatedType(_clazz);
+        AnnotatedType annotatedType = beanManager.createAnnotatedType(clazz);
         InjectionTarget injectionTarget = beanManager.createInjectionTarget(annotatedType);
         injectionTarget.inject(this, creationalContext);
 
         System.setProperty("java.naming.factory.initial",
                 "org.jglue.cdiunit.internal.CdiUnitContextFactory");
         try {
-            _initialContext = new InitialContext();
-            _initialContext.bind("java:comp/BeanManager", beanManager);
+            initialContext = new InitialContext();
+            initialContext.bind("java:comp/BeanManager", beanManager);
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
@@ -82,12 +82,12 @@ public class NgCdiRunner {
      */
     @AfterMethod(alwaysRun = true)
     public void shutdownCdi() {
-        if (_weld != null) {
-            _weld.shutdown();
+        if (weld != null) {
+            weld.shutdown();
         }
-        if (_initialContext != null) {
+        if (initialContext != null) {
             try {
-                _initialContext.close();
+                initialContext.close();
             } catch (NamingException e) {
                 throw new RuntimeException(e);
             }

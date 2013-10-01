@@ -4,14 +4,14 @@ import javax.enterprise.context.RequestScoped;
 
 @RequestScoped
 public class BRequestScoped {
-	private String _foo;
+	private String foo;
 	
 	public String getFoo() {
-		return _foo;
+		return foo;
 	}
 	
 	public void setFoo(String foo) {
-		_foo = foo;
+		this.foo = foo;
 	}
 	
 }

@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
@@ -40,39 +41,39 @@ import org.mockito.Mockito;
 public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
-	private AImplementation1 _aImpl;
+	private AImplementation1 aImpl;
 
-	private boolean _postConstructCalled;
-
-	@Inject
-	private Provider<BRequestScoped> _requestScoped;
+	private boolean postConstructCalled;
 
 	@Inject
-	private Provider<CSessionScoped> _sessionScoped;
+	private Provider<BRequestScoped> requestScoped;
 
 	@Inject
-	private Provider<DConversationScoped> _conversationScoped;
+	private Provider<CSessionScoped> sessionScoped;
 
 	@Inject
-	private Provider<AInterface> _a;
+	private Provider<DConversationScoped> conversationScoped;
 
 	@Inject
-	private BeanManager _beanManager;
+	private Provider<AInterface> a;
 
 	@Inject
-	private FApplicationScoped _f1;
+	private BeanManager beanManager;
 
 	@Inject
-	private FApplicationScoped _f2;
+	private FApplicationScoped f1;
 
 	@Inject
-	private ContextController _contextController;
+	private FApplicationScoped f2;
 
 	@Inject
-	private BRequestScoped _request;
+	private ContextController contextController;
+
+	@Inject
+	private BRequestScoped request;
 
 	@Produces
-	private ProducedViaField _produced;
+	private ProducedViaField produced;
 	
 	@Produces
 	public ProducedViaMethod getProducedViaMethod() {
@@ -82,128 +83,208 @@ public class TestCdiUnitRunner extends BaseTest {
 	@Test
 	@InRequestScope
 	public void testRequestScope() {
-		BRequestScoped b1 = _requestScoped.get();
+		BRequestScoped b1 = requestScoped.get();
 		b1.setFoo("test"); // Force scoping
-		BRequestScoped b2 = _requestScoped.get();
+		BRequestScoped b2 = requestScoped.get();
 		Assert.assertEquals(b1, b2);
 
 	}
 
 	@Test(expected = ContextNotActiveException.class)
 	public void testRequestScopeFail() {
-		BRequestScoped b1 = _requestScoped.get();
+		BRequestScoped b1 = requestScoped.get();
 		b1.setFoo("test"); // Force scoping
 	}
 
 	@Test
+	@InRequestScope
 	@InSessionScope
 	public void testSessionScope() {
-		CSessionScoped c1 = _sessionScoped.get();
+		CSessionScoped c1 = sessionScoped.get();
 		c1.setFoo("test"); // Force scoping
-		CSessionScoped c2 = _sessionScoped.get();
+		CSessionScoped c2 = sessionScoped.get();
 		Assert.assertEquals(c1, c2);
 
 	}
 
 	@Test(expected = ContextNotActiveException.class)
 	public void testSessionScopeFail() {
-		CSessionScoped c1 = _sessionScoped.get();
+		CSessionScoped c1 = sessionScoped.get();
 		c1.setFoo("test"); // Force scoping
 	}
 
 	@Test
+	@InRequestScope
 	@InConversationScope
 	public void testConversationScope() {
 
-		DConversationScoped d1 = _conversationScoped.get();
+		DConversationScoped d1 = conversationScoped.get();
 		d1.setFoo("test"); // Force scoping
-		DConversationScoped d2 = _conversationScoped.get();
+		DConversationScoped d2 = conversationScoped.get();
 		Assert.assertEquals(d1, d2);
 
 	}
 
 	@Test(expected = ContextNotActiveException.class)
 	public void testConversationScopeFail() {
-		DConversationScoped d1 = _conversationScoped.get();
+		DConversationScoped d1 = conversationScoped.get();
 		d1.setFoo("test"); // Force scoping
 	}
 
 	@Mock
 	@ProducesAlternative
 	@Produces
-	private AInterface _mockA;
+	private AInterface mockA;
 
 	/**
 	 * Test that we can use the test alternative annotation to specify that a mock is used
 	 */
 	@Test
 	public void testTestAlternative() {
-		AInterface a1 = _a.get();
-		Assert.assertEquals(_mockA, a1);
+		AInterface a1 = a.get();
+		Assert.assertEquals(mockA, a1);
 	}
 
 	@Test
 	public void testPostConstruct() {
-		Assert.assertTrue(_postConstructCalled);
+		Assert.assertTrue(postConstructCalled);
 	}
 
 	@PostConstruct
 	public void postConstruct() {
-		_postConstructCalled = true;
+		postConstructCalled = true;
 	}
 
 	@Test
 	public void testBeanManager() {
 		Assert.assertNotNull(getBeanManager());
-		Assert.assertNotNull(_beanManager);
+		Assert.assertNotNull(beanManager);
 	}
 
 	@Test
 	public void testSuper() {
-		Assert.assertNotNull(_aImpl.getBeanManager());
+		Assert.assertNotNull(aImpl.getBeanManager());
 	}
 
 	@Test
 	public void testApplicationScoped() {
-		Assert.assertNotNull(_f1);
-		Assert.assertNotNull(_f2);
-		Assert.assertEquals(_f1, _f2);
+		Assert.assertNotNull(f1);
+		Assert.assertNotNull(f2);
+		Assert.assertEquals(f1, f2);
 
-		AInterface a1 = _f1.getA();
-		Assert.assertEquals(_mockA, a1);
+		AInterface a1 = f1.getA();
+		Assert.assertEquals(mockA, a1);
 	}
 
 	@Inject
-	private DummyHttpRequest _dummyHttpRequest;
+	private DummyHttpRequest dummyHttpRequest;
 
 	@Inject
-	private Provider<Scoped> _scoped;
+	private Provider<Scoped> scoped;
 
 	@Mock
 	private Runnable disposeListener;
 
 	@Test
 	public void testContextController() {
-		_contextController.openRequest(_dummyHttpRequest);
+		contextController.openRequest(dummyHttpRequest);
 
-		Scoped b1 = _scoped.get();
-		Scoped b2 = _scoped.get();
+		Scoped b1 = scoped.get();
+		Scoped b2 = scoped.get();
 		Assert.assertEquals(b1, b2);
 		b1.setDisposedListener(disposeListener);
-		_contextController.closeRequest();
+		contextController.closeRequest();
 		Mockito.verify(disposeListener).run();
+	}
+	
+	@Test
+	public void testContextControllerRequestScoped() {
+		contextController.openRequest(new DummyHttpRequest());
+
+		BRequestScoped b1 = requestScoped.get();
+		b1.setFoo("Bar");
+		BRequestScoped b2 = requestScoped.get();
+		Assert.assertSame(b1.getFoo(), b2.getFoo());
+		contextController.closeRequest();
+		contextController.openRequest(new DummyHttpRequest());
+		BRequestScoped b3 = requestScoped.get();
+		Assert.assertEquals(null, b3.getFoo());
+	}
+	
+	@Test
+	public void testContextControllerSessionScoped() {
+		contextController.openRequest(new DummyHttpRequest());
+		contextController.openSession();
+
+		
+		
+		CSessionScoped b1 = sessionScoped.get();
+		b1.setFoo("Bar");
+		CSessionScoped b2 = sessionScoped.get();
+		Assert.assertEquals(b1.getFoo(), b2.getFoo());
+		contextController.closeRequest();
+		contextController.closeSession();
+		
+		
+		contextController.openRequest(new DummyHttpRequest());
+		contextController.openSession();
+		CSessionScoped b3 = sessionScoped.get();
+		Assert.assertEquals(null, b3.getFoo());
+		
+	}
+	
+	@Test
+	public void testContextControllerSessionScopedWithRequest() {
+		contextController.openRequest(new DummyHttpRequest());
+
+		contextController.openSession();
+
+		CSessionScoped b1 = sessionScoped.get();
+		b1.setFoo("Bar");	
+
+		BRequestScoped r1 = requestScoped.get();
+		b1.setFoo("Bar");
+		BRequestScoped r2 = requestScoped.get();
+		Assert.assertSame(r1.getFoo(), r2.getFoo());
+		contextController.closeRequest();
+		contextController.openRequest(new DummyHttpRequest());
+		BRequestScoped r3 = requestScoped.get();
+		Assert.assertEquals(null, r3.getFoo());
+		
+		
+		CSessionScoped b2 = sessionScoped.get();
+		Assert.assertEquals(b1.getFoo(), b2.getFoo());
+		
 	}
 
 	@Test
+	public void testContextControllerConversationScoped() {
+		contextController.openRequest(new DummyHttpRequest());
+		contextController.openConversation();
+
+		DConversationScoped b1 = conversationScoped.get();
+		b1.setFoo("Bar");
+		DConversationScoped b2 = conversationScoped.get();
+		Assert.assertEquals(b1.getFoo(), b2.getFoo());
+		contextController.closeConversation();
+		contextController.closeRequest();
+		contextController.openRequest(new DummyHttpRequest());
+		contextController.openConversation();
+		DConversationScoped b3 = conversationScoped.get();
+		Assert.assertEquals(null, b3.getFoo());
+	}
+	
+
+	@Test
 	public void testProducedViaField() {
-		_produced = new ProducedViaField(2);
-		ProducedViaField produced = getContextualInstance(_beanManager, ProducedViaField.class);
-		Assert.assertEquals(_produced, produced);
+		produced = new ProducedViaField(2);
+		ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
+		Assert.assertEquals(produced, produced);
 	}
 	
 	@Test
 	public void testProducedViaMethod() {
-		ProducedViaMethod produced = getContextualInstance(_beanManager, ProducedViaMethod.class);
+		ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
 		Assert.assertNotNull(produced);
 	}
 

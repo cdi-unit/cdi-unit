@@ -15,13 +15,10 @@
  */
 package org.jglue.cdiunit.internal;
 
-import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InSessionScope;
@@ -31,38 +28,18 @@ import org.slf4j.LoggerFactory;
 @Interceptor
 @InSessionScope
 public class InSessionInterceptor {
-	
-	private static Logger log = LoggerFactory.getLogger(InSessionInterceptor.class);
-	
-	
-	@Inject
-	private ContextController _contextController;
+
+	private static Logger log = LoggerFactory
+			.getLogger(InSessionInterceptor.class);
 
 	@Inject
-	@CdiUnitRequest
-	private Provider<Object> _requestProvider;
+	private ContextController contextController;
 
-	@Inject
-	private Provider<HttpServletRequest> _cdi1Provider;
-	
-	
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
-		try {
-			HttpServletRequest httpServletRequest;
-			try {
-				httpServletRequest = (HttpServletRequest)_requestProvider.get();
-			}
-			catch(UnsatisfiedResolutionException e) {
-				httpServletRequest = _cdi1Provider.get();
-			}
-			_contextController.openSession(httpServletRequest);
-			return ctx.proceed();
-		} catch(Exception e) {
-			log.error("Failed to open session context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
-			throw e;
-		} finally {
-			_contextController.closeSession();
-		}
+
+		contextController.openSession();
+		return ctx.proceed();
+
 	}
 }

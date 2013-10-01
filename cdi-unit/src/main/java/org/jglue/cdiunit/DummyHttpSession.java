@@ -96,7 +96,7 @@ public class DummyHttpSession implements HttpSession {
 
 	@Override
 	public void invalidate() {
-
+		attributes.clear();
 	}
 
 	@Override

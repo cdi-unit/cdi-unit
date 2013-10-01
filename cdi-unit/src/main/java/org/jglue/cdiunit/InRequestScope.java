@@ -31,7 +31,7 @@ import javax.interceptor.InterceptorBinding;
  * &#064;InRequestScope
  * // This test will be run within the context of a request
  * void testStart() {
- * 	_starship.start();
+ * 	starship.start();
  * }
  * </pre>
  * 

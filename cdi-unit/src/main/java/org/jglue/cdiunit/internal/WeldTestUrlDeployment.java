@@ -64,8 +64,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
-	private final BeanDeploymentArchive _beanDeploymentArchive;
-	private Collection<Metadata<Extension>> _extensions = new ArrayList<Metadata<Extension>>();
+	private final BeanDeploymentArchive beanDeploymentArchive;
+	private Collection<Metadata<Extension>> extensions = new ArrayList<Metadata<Extension>>();
 	private static Logger log = LoggerFactory
 			.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
@@ -104,14 +104,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
 
 		classesToProcess.add(testClass);
-		_extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(
+		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(
 				testClass), TestScopeExtension.class.getName()));
 
 		// Weld2 need this extension to prevent a clash when supplying our own
 		// http objects.
 		try {
 			HttpServletRequest.class.getName();
-			_extensions.add(new MetadataImpl<Extension>(
+			extensions.add(new MetadataImpl<Extension>(
 					new HttpObjectsExtension(), HttpObjectsExtension.class
 							.getName()));
 		} catch (NoClassDefFoundError e) {
@@ -138,7 +138,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				if (Extension.class.isAssignableFrom(c)
 						&& !Modifier.isAbstract(c.getModifiers())) {
 					try {
-						_extensions.add(new MetadataImpl<Extension>(
+						extensions.add(new MetadataImpl<Extension>(
 								(Extension) c.newInstance(), c.getName()));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
@@ -226,7 +226,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		try {
 			Class.forName("org.mockito.Mock");
-			_extensions.add(new MetadataImpl<Extension>(new MockitoExtension(),
+			extensions.add(new MetadataImpl<Extension>(new MockitoExtension(),
 					MockitoExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
@@ -234,19 +234,19 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		try {
 			Class.forName("org.easymock.EasyMockRunner");
-			_extensions
+			extensions
 					.add(new MetadataImpl<Extension>(new EasyMockExtension(),
 							EasyMockExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
 
-		_extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(),
+		extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(),
 				WeldSEBeanRegistrant.class.getName()));
 
-		_beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit"
+		beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit"
 				+ UUID.randomUUID(), discoveredClasses, beansXml);
-		_beanDeploymentArchive.getServices().add(ResourceLoader.class,
+		beanDeploymentArchive.getServices().add(ResourceLoader.class,
 				resourceLoader);
 		log.debug("CDI-Unit discovered:");
 		for (String clazz : discoveredClasses) {
@@ -356,18 +356,18 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	@Override
 	public Iterable<Metadata<Extension>> getExtensions() {
-		return _extensions;
+		return extensions;
 	}
 
 	public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
-		return Collections.singletonList(_beanDeploymentArchive);
+		return Collections.singletonList(beanDeploymentArchive);
 	}
 
 	public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
-		return _beanDeploymentArchive;
+		return beanDeploymentArchive;
 	}
 
 	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
-		return _beanDeploymentArchive;
+		return beanDeploymentArchive;
 	}
 }

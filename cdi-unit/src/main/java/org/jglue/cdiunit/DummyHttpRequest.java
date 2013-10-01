@@ -53,8 +53,8 @@ import com.google.common.collect.Iterators;
  */
 public class DummyHttpRequest implements HttpServletRequest {
 
-	private Map<String, Object> _attributes = new HashMap<String, Object>();
-	private Map<String, String[]> _parameters = new HashMap<String, String[]>();
+	private Map<String, Object> attributes = new HashMap<String, Object>();
+	private Map<String, String[]> parameters = new HashMap<String, String[]>();
 
 	private BufferedReader readerContent;
 	private ServletInputStream streamContent;
@@ -88,12 +88,12 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public Object getAttribute(String key) {
-		return _attributes.get(key);
+		return attributes.get(key);
 	}
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
-		return Iterators.asEnumeration(_attributes.keySet().iterator());
+		return Iterators.asEnumeration(attributes.keySet().iterator());
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public String getParameter(String key) {
-		String[] params = _parameters.get(key);
+		String[] params = parameters.get(key);
 		if (params == null) {
 			return null;
 		}
@@ -159,18 +159,18 @@ public class DummyHttpRequest implements HttpServletRequest {
 	@Override
 	public Map<String, String[]> getParameterMap() {
 
-		return _parameters;
+		return parameters;
 	}
 
 	@Override
 	public Enumeration<String> getParameterNames() {
 
-		return Iterators.asEnumeration(_parameters.keySet().iterator());
+		return Iterators.asEnumeration(parameters.keySet().iterator());
 	}
 
 	@Override
 	public String[] getParameterValues(String key) {
-		return _parameters.get(key);
+		return parameters.get(key);
 	}
 
 	@Override
@@ -263,7 +263,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 
 	@Override
 	public void setAttribute(String key, Object value) {
-		_attributes.put(key, value);
+		attributes.put(key, value);
 	}
 
 	@Override

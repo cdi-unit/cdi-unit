@@ -6,10 +6,10 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class FApplicationScoped {
 	@Inject
-	private AInterface _a;
+	private AInterface a;
 	
 	public AInterface getA() {
-		return _a;
+		return a;
 	}
 	
 }

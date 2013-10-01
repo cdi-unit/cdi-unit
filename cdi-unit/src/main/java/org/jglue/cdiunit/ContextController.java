@@ -15,12 +15,17 @@
  */
 package org.jglue.cdiunit;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.jboss.weld.context.http.HttpConversationContext;
-import org.jboss.weld.context.http.HttpRequestContext;
-import org.jboss.weld.context.http.HttpSessionContext;
+import org.jboss.weld.bean.builtin.BeanManagerProxy;
+import org.jboss.weld.servlet.HttpContextLifecycle;
+import org.jboss.weld.servlet.spi.helpers.AcceptingHttpContextActivationFilter;
 import org.jglue.cdiunit.internal.SessionHolderAwareRequest;
 
 /**
@@ -38,32 +43,48 @@ import org.jglue.cdiunit.internal.SessionHolderAwareRequest;
  * class TestStarship {
  * 
  * 	&#064;Inject
- * 	ContextController _contextController; // Obtain an instance of the context controller.
+ * 	ContextController contextController; // Obtain an instance of the context
+ * 											// controller.
  * 
  * 	&#064;Inject
- * 	Starship _starship;
+ * 	Starship starship;
  * 
  * 	&#064;Test
  * 	void testStart() {
- * 		_contextController.openRequest(new DummyHttpRequest()); // Start a new request.
- * 		_starship.start();
- * 		_contextController.closeRequest(); // Close the current request.
+ * 		contextController.openRequest(new DummyHttpRequest()); // Start a new
+ * 																// request.
+ * 		starship.start();
+ * 		contextController.closeRequest(); // Close the current request.
  * 	}
  * }
  * </pre>
  * 
  * @author Bryn Cooke
  */
+@ApplicationScoped
 public class ContextController {
-	@Inject
-	private HttpRequestContext _requestContext;
+
+	private HttpServletRequest currentRequest;
 
 	@Inject
-	private HttpSessionContext _sessionContext;
+	private BeanManager beanManager;
+	
+	private HttpContextLifecycle lifecycle;
 
+	private HttpSession currentSession;
+	
+	
 	@Inject
-	private HttpConversationContext _conversationContext;
-
+	private Conversation conversation;
+	
+	@PostConstruct
+	public void setup() {
+		
+		lifecycle = new HttpContextLifecycle(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE);
+		lifecycle.setConversationActivationEnabled(true);
+	}
+	
+	
 	/**
 	 * Start a request.
 	 * 
@@ -71,16 +92,19 @@ public class ContextController {
 	 *            The request to make available.
 	 */
 	public void openRequest(HttpServletRequest request) {
-		_requestContext.associate(new SessionHolderAwareRequest(request));
-		_requestContext.activate();
+		if(currentRequest != null) {
+			throw new RuntimeException("A request is already open");
+		}
+		currentRequest = createRequest(request);
+		lifecycle.requestInitialized(currentRequest, null);
 	}
 
 	/**
 	 * Close the currently active request.
 	 */
 	public void closeRequest() {
-		_requestContext.invalidate();
-		_requestContext.deactivate();
+		lifecycle.requestDestroyed(currentRequest);
+		currentRequest = null;
 	}
 
 	/**
@@ -89,17 +113,25 @@ public class ContextController {
 	 * @param request
 	 *            The request object to use as storage.
 	 */
-	public void openSession(HttpServletRequest request) {
-		_sessionContext.associate(new SessionHolderAwareRequest(request));
-		_sessionContext.activate();
+	public void openSession() {
+		if(currentSession != null) {
+			throw new RuntimeException("A session is already open");
+		}
+		if(currentRequest == null) {
+			throw new RuntimeException("A session can only be created in the context of a request");
+		}
+		
+		currentSession = currentRequest.getSession();
+		lifecycle.sessionCreated(currentSession);
 	}
 
 	/**
 	 * Close the currently active session.
 	 */
 	public void closeSession() {
-		_sessionContext.invalidate();
-		_sessionContext.deactivate();
+		
+		lifecycle.sessionDestroyed(currentSession);
+		currentSession = null;
 	}
 
 	/**
@@ -108,17 +140,26 @@ public class ContextController {
 	 * @param request
 	 *            The request to use as storage.
 	 */
-	public void openConversation(HttpServletRequest request) {
-		_conversationContext.associate(new SessionHolderAwareRequest(request));
-		_conversationContext.activate();
+	public void openConversation() {
+		if(currentRequest == null) {
+			throw new RuntimeException("A conversation can only be created in the context of a request");
+		}
+		conversation.begin();
 	}
 
 	/**
 	 * Close the currently active conversation.
 	 */
 	public void closeConversation() {
-		_conversationContext.invalidate();
-		_conversationContext.deactivate();
+		conversation.end();
+	}
+
+	private HttpServletRequest createRequest(HttpServletRequest request) {
+		if (currentRequest == null) {
+			currentRequest = new SessionHolderAwareRequest(request);
+		}
+
+		return currentRequest;
 	}
 
 }

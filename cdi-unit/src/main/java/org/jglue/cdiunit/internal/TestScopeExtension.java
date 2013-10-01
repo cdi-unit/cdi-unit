@@ -25,23 +25,23 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 public class TestScopeExtension implements Extension {
 
-	private static final ApplicationScopedLiteral APPLICATION_SCOPED = new ApplicationScopedLiteral();
+	private static final ApplicationScopedLiteral APPLICATIONSCOPED = new ApplicationScopedLiteral();
 	
-	private Class<?> _testClass;
+	private Class<?> testClass;
 
 	public TestScopeExtension() {
 	}
 
 	public TestScopeExtension(Class<?> testClass) {
-		_testClass = testClass;
+		this.testClass = testClass;
 	}
 	
 	
 
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		if (annotatedType.getJavaClass().equals(_testClass)) {
-			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(APPLICATION_SCOPED);
+		if (annotatedType.getJavaClass().equals(testClass)) {
+			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(APPLICATIONSCOPED);
 			pat.setAnnotatedType(builder.create());
 		}
 	}

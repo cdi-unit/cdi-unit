@@ -41,7 +41,7 @@ import org.junit.runners.model.Statement;
  * &#064;RunWith(CdiRunner.class) // Runs the test with CDI-Unit
  * class MyTest {
  *   &#064;Inject
- *   Something _something; // This will be injected before the tests are run!
+ *   Something something; // This will be injected before the tests are run!
  * 
  *   ... //The rest of the test goes here.
  * }</code>
@@ -51,26 +51,26 @@ import org.junit.runners.model.Statement;
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
-    private Class<?> _clazz;
-    private Weld _weld;
-    private WeldContainer _container;
-    private Throwable _startupException;
+    private Class<?> clazz;
+    private Weld weld;
+    private WeldContainer container;
+    private Throwable startupException;
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
-        _clazz = clazz;
+        this.clazz = clazz;
     }
 
     protected Object createTest() throws Exception {
         try {
             Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
 
-            _weld = new Weld() {
+            weld = new Weld() {
                 protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                     try {
-                        return new WeldTestUrlDeployment(resourceLoader, bootstrap, _clazz);
+                        return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
                     } catch (IOException e) {
-                        _startupException = e;
+                        startupException = e;
                         throw new RuntimeException(e);
                     }
                 };
@@ -79,31 +79,31 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
             try {
 
-                _container = _weld.initialize();
+                container = weld.initialize();
             } catch (Throwable e) {
-                if (_startupException == null) {
-                    _startupException = e;
+                if (startupException == null) {
+                    startupException = e;
                 }
             }
 
         } catch (NoSuchMethodException e) {
-            _startupException = new Exception(
+            startupException = new Exception(
                     "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
         } catch (ClassFormatError e) {
-            _startupException = new Exception(
+            startupException = new Exception(
                     "There were class format errors. This is often caused by API only jars on the classpath. If you are using maven then you need to place these after the CDI unit dependency as 'provided' scope is still available during testing.", e);
         }
         catch (Throwable e) {
-            _startupException = new Exception(
+            startupException = new Exception(
                     "Unable to start weld", e);
         }
 
-        return createTest(_clazz);
+        return createTest(clazz);
     }
 
     private <T> T createTest(Class<T> testClass) {
 
-        T t = _container.instance().select(testClass).get();
+        T t = container.instance().select(testClass).get();
 
         return t;
     }
@@ -116,22 +116,22 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             @Override
             public void evaluate() throws Throwable {
 
-                if (_startupException != null) {
-                    if (method.getAnnotation(Test.class).expected() == _startupException.getClass()) {
+                if (startupException != null) {
+                    if (method.getAnnotation(Test.class).expected() == startupException.getClass()) {
                         return;
                     }
-                    throw _startupException;
+                    throw startupException;
                 }
                 System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
                 InitialContext initialContext = new InitialContext();
-                initialContext.bind("java:comp/BeanManager", _container.getBeanManager());
+                initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 
                 try {
                     defaultStatement.evaluate();
 
                 } finally {
                     initialContext.close();
-                    _weld.shutdown();
+                    weld.shutdown();
 
                 }
 

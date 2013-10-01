@@ -8,14 +8,14 @@ import javax.enterprise.context.SessionScoped;
 public class CSessionScoped implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String _foo;
+	private String foo;
 
 	public String getFoo() {
-		return _foo;
+		return foo;
 	}
 
 	public void setFoo(String foo) {
-		_foo = foo;
+		this.foo = foo;
 	}
 
 }

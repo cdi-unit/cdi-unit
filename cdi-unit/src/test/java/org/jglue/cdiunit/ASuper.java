@@ -5,9 +5,9 @@ import javax.inject.Inject;
 
 public class ASuper {
 	@Inject
-	private BeanManager _beanManager;
+	private BeanManager beanManager;
 
 	public BeanManager getBeanManager() {
-		return _beanManager;
+		return beanManager;
 	}
 }

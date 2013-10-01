@@ -28,18 +28,18 @@ import org.junit.runner.RunWith;
 public class TestAlternativeAnnotations {
 
 	@Inject
-	private AImplementation1 _impl1;
+	private AImplementation1 impl1;
 	
 	@Inject
-	private AImplementation2 _impl2;
+	private AImplementation2 impl2;
 	
 	@Inject
-	private AInterface _impl;
+	private AInterface impl;
 	
 	@Test
 	public void testAlternativeSelected() {
 
-		Assert.assertTrue("Should have been impl2", _impl instanceof AImplementation2);
+		Assert.assertTrue("Should have been impl2", impl instanceof AImplementation2);
 	}
 	
 }

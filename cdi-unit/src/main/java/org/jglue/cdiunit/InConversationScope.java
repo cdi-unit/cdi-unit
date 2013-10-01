@@ -31,7 +31,7 @@ import javax.interceptor.InterceptorBinding;
  * &#064;InConversationScope
  * // This test will be run within the context of a conversation
  * void testStart() {
- * 	_starship.start();
+ * 	starship.start();
  * }
  * </pre>
  * <p>

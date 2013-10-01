@@ -5,9 +5,9 @@ import javax.inject.Inject;
 
 public class BaseTest {
 	@Inject
-	private BeanManager _beanManager;
+	private BeanManager beanManager;
 
 	public BeanManager getBeanManager() {
-		return _beanManager;
+		return beanManager;
 	}
 }

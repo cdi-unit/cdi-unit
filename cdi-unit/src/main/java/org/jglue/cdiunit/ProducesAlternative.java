@@ -33,7 +33,7 @@ import javax.enterprise.inject.Stereotype;
  * &#064;ProducesAlternative
  * // This mock will be used instead!
  * &#064;Mock
- * Engine _engine;
+ * Engine engine;
  * </pre>
  * 
  * @author Bryn Cooke

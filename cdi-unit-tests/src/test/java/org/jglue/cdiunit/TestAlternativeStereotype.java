@@ -12,18 +12,18 @@ import org.junit.runner.RunWith;
 @AdditionalClasses(StereotypeAlternative.class)
 public class TestAlternativeStereotype {
     @Inject
-    private AImplementation1 _impl1;
+    private AImplementation1 impl1;
     
     @Inject
-    private AImplementation3 _impl3;
+    private AImplementation3 impl3;
     
     @Inject
-    private AInterface _impl;
+    private AInterface impl;
     
     @Test
     public void testAlternativeSelected() {
 
-        Assert.assertTrue("Should have been impl3", _impl instanceof AImplementation3);
+        Assert.assertTrue("Should have been impl3", impl instanceof AImplementation3);
     }
 
    

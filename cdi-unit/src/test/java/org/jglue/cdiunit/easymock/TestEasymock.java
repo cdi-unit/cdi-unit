@@ -32,16 +32,16 @@ public class TestEasymock {
 
 	@Mock
 	@Produces
-	private AInterface _mockA;
+	private AInterface mockA;
 	
 	@Inject
-	private Provider<AInterface> _a;
+	private Provider<AInterface> a;
 	
 	@Test
 	public void testEasyMock() {
-		AInterface a1 = _a.get();
-		Assert.assertEquals(_mockA, a1);
-		Assert.assertNotNull(_mockA);
+		AInterface a1 = a.get();
+		Assert.assertEquals(mockA, a1);
+		Assert.assertNotNull(mockA);
 	}
 
 }
