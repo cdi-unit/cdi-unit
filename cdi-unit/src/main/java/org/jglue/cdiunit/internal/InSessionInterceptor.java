@@ -29,17 +29,18 @@ import org.slf4j.LoggerFactory;
 @InSessionScope
 public class InSessionInterceptor {
 
-	private static Logger log = LoggerFactory
-			.getLogger(InSessionInterceptor.class);
-
+	
 	@Inject
 	private ContextController contextController;
 
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 
-		contextController.openSession();
-		return ctx.proceed();
+		try {
+			return ctx.proceed();
+		} finally {
+			contextController.closeSession();
+		}
 
 	}
 }

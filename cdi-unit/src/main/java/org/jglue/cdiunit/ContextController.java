@@ -74,9 +74,6 @@ public class ContextController {
 	private HttpSession currentSession;
 	
 	
-	@Inject
-	private Conversation conversation;
-	
 	@PostConstruct
 	public void setup() {
 		
@@ -95,7 +92,7 @@ public class ContextController {
 		if(currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
-		currentRequest = new SessionHolderAwareRequest(request, currentSession);
+		currentRequest = new SessionHolderAwareRequest(lifecycle, request, currentSession);
 		lifecycle.requestInitialized(currentRequest, null);
 	}
 
@@ -104,56 +101,27 @@ public class ContextController {
 	 */
 	public void closeRequest() {
 		lifecycle.requestDestroyed(currentRequest);
+		currentSession = currentRequest.getSession(false);
 		currentRequest = null;
 	}
 
-	/**
-	 * Start a session.
-	 * 
-	 * @param request
-	 *            The request object to use as storage.
-	 */
-	public void openSession() {
-		if(currentSession != null) {
-			throw new RuntimeException("A session is already open");
-		}
-		if(currentRequest == null) {
-			throw new RuntimeException("A session can only be created in the context of a request");
-		}
-		
-		currentSession = currentRequest.getSession();
-		lifecycle.sessionCreated(currentSession);
-	}
-
+	
+	
 	/**
 	 * Close the currently active session.
 	 */
 	public void closeSession() {
-		
-		lifecycle.sessionDestroyed(currentSession);
-		currentSession = null;
-	}
-
-	/**
-	 * Start a new conversation.
-	 * 
-	 * @param request
-	 *            The request to use as storage.
-	 */
-	public void openConversation() {
-		if(currentRequest == null) {
-			throw new RuntimeException("A conversation can only be created in the context of a request");
+		if(currentRequest != null) {
+			currentSession = currentRequest.getSession(false); 
 		}
-		conversation.begin();
+		
+		if(currentSession != null) {
+			lifecycle.sessionDestroyed(currentSession);
+			currentSession = null;	
+		}
 	}
 
-	/**
-	 * Close the currently active conversation.
-	 */
-	public void closeConversation() {
-		conversation.end();
-	}
-
+	
 
 
 }

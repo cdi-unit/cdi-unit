@@ -26,14 +26,18 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
 
+import org.jboss.weld.servlet.HttpContextLifecycle;
 import org.jboss.weld.servlet.SessionHolder;
+import org.jglue.cdiunit.ContextController;
 
 public class SessionHolderAwareRequest implements HttpServletRequest {
 
 	private HttpServletRequest delegate;
 	private HttpSession session;
+	private HttpContextLifecycle lifecycle;
 
-	public SessionHolderAwareRequest(HttpServletRequest delegate, HttpSession session) {
+	public SessionHolderAwareRequest(HttpContextLifecycle lifecycle, HttpServletRequest delegate, HttpSession session) {
+		this.lifecycle = lifecycle;
 		this.delegate = delegate;
 		this.session = session;
 		if(this.session != null) {
@@ -237,6 +241,7 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 		if(session == null && create) {
 			session = delegate.getSession(create);
 			if (session != null) {
+				lifecycle.sessionCreated(session);
 				notifySessionHolder(session);
 			}
 		}

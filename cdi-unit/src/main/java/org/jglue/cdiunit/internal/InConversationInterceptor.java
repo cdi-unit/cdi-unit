@@ -15,6 +15,7 @@
  */
 package org.jglue.cdiunit.internal;
 
+import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
@@ -22,7 +23,6 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InConversationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,20 +35,22 @@ public class InConversationInterceptor {
 			.getLogger(InConversationInterceptor.class);
 
 	@Inject
-	private ContextController contextController;
+	private Conversation conversation;
 
 	@Inject
 	@CdiUnitRequest
 	private Provider<Object> requestProvider;
 
-	@Inject
-	private Provider<HttpServletRequest> cdi1Provider;
 
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 
-		contextController.openConversation();
-		return ctx.proceed();
+		conversation.begin();
+		try {
+			return ctx.proceed();
+		} finally {
+			conversation.end();
+		}
 
 	}
 }
