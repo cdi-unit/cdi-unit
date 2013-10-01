@@ -3,8 +3,6 @@ package org.jglue.cdiunit.internal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -23,26 +21,20 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
 
 import org.jboss.weld.servlet.HttpContextLifecycle;
-import org.jboss.weld.servlet.SessionHolder;
-import org.jglue.cdiunit.ContextController;
 
-public class SessionHolderAwareRequest implements HttpServletRequest {
+public class LifecycleAwareRequest implements HttpServletRequest {
 
 	private HttpServletRequest delegate;
 	private HttpSession session;
 	private HttpContextLifecycle lifecycle;
 
-	public SessionHolderAwareRequest(HttpContextLifecycle lifecycle, HttpServletRequest delegate, HttpSession session) {
+	public LifecycleAwareRequest(HttpContextLifecycle lifecycle, HttpServletRequest delegate, HttpSession session) {
 		this.lifecycle = lifecycle;
 		this.delegate = delegate;
 		this.session = session;
-		if(this.session != null) {
-			notifySessionHolder(session);
-		}
 	}
 
 	public Object getAttribute(String name) {
@@ -242,7 +234,6 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 			session = delegate.getSession(create);
 			if (session != null) {
 				lifecycle.sessionCreated(session);
-				notifySessionHolder(session);
 			}
 		}
 		return session;
@@ -253,26 +244,7 @@ public class SessionHolderAwareRequest implements HttpServletRequest {
 		return getSession(true);
 	}
 
-	private void notifySessionHolder(HttpSession session) {
-		try {
-			Method m = SessionHolder.class.getMethod("sessionCreated", HttpSession.class);
-			m.invoke(null, session);
-		} catch(NoClassDefFoundError e) {
-			
-		}
-		catch (NoSuchMethodException e) {
-			Method m;
-			try {
-				m = SessionHolder.class.getMethod("sessionCreated", HttpSessionEvent.class);
-				m.invoke(null, new HttpSessionEvent(session));
-			} catch (Exception e1) {
-				throw new RuntimeException(e);
-			}
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
 
 	public int getLocalPort() {
 		return delegate.getLocalPort();

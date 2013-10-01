@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.jboss.weld.bean.builtin.BeanManagerProxy;
 import org.jboss.weld.servlet.HttpContextLifecycle;
 import org.jboss.weld.servlet.spi.helpers.AcceptingHttpContextActivationFilter;
-import org.jglue.cdiunit.internal.SessionHolderAwareRequest;
+import org.jglue.cdiunit.internal.LifecycleAwareRequest;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -92,7 +92,7 @@ public class ContextController {
 		if(currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
-		currentRequest = new SessionHolderAwareRequest(lifecycle, request, currentSession);
+		currentRequest = new LifecycleAwareRequest(lifecycle, request, currentSession);
 		lifecycle.requestInitialized(currentRequest, null);
 	}
 
