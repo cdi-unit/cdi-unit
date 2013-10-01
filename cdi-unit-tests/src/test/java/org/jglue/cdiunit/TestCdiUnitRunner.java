@@ -71,6 +71,9 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private BRequestScoped request;
+	
+	@Inject
+	private Conversation conversation;
 
 	@Produces
 	private ProducedViaField produced;
@@ -214,8 +217,7 @@ public class TestCdiUnitRunner extends BaseTest {
 	@Test
 	public void testContextControllerSessionScoped() {
 		contextController.openRequest(new DummyHttpRequest());
-		contextController.openSession();
-
+		
 		
 		
 		CSessionScoped b1 = sessionScoped.get();
@@ -227,7 +229,6 @@ public class TestCdiUnitRunner extends BaseTest {
 		
 		
 		contextController.openRequest(new DummyHttpRequest());
-		contextController.openSession();
 		CSessionScoped b3 = sessionScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 		
@@ -237,8 +238,7 @@ public class TestCdiUnitRunner extends BaseTest {
 	public void testContextControllerSessionScopedWithRequest() {
 		contextController.openRequest(new DummyHttpRequest());
 
-		contextController.openSession();
-
+		
 		CSessionScoped b1 = sessionScoped.get();
 		b1.setFoo("Bar");	
 
@@ -254,22 +254,23 @@ public class TestCdiUnitRunner extends BaseTest {
 		
 		CSessionScoped b2 = sessionScoped.get();
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
+		Assert.assertNotNull(b2.getFoo());
 		
 	}
 
 	@Test
 	public void testContextControllerConversationScoped() {
 		contextController.openRequest(new DummyHttpRequest());
-		contextController.openConversation();
+		conversation.begin();
 
 		DConversationScoped b1 = conversationScoped.get();
 		b1.setFoo("Bar");
 		DConversationScoped b2 = conversationScoped.get();
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
-		contextController.closeConversation();
+		conversation.end();
 		contextController.closeRequest();
 		contextController.openRequest(new DummyHttpRequest());
-		contextController.openConversation();
+		conversation.begin();
 		DConversationScoped b3 = conversationScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 	}
