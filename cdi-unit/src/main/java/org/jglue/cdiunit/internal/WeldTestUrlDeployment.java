@@ -327,7 +327,8 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
 				boolean gradleClasses = url.getFile()
-						.endsWith("/classes/test/");
+						.endsWith("/classes/test/") || url.getFile()
+						.endsWith("/classes/main/");
 				if (resource != null || mavenClasses || gradleClasses) {
 					cdiClasspathEntries.add(url);
 				}
