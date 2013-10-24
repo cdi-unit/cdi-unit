@@ -15,9 +15,10 @@
  */
 package org.jglue.cdiunit;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -76,8 +77,16 @@ public class ContextController {
 	
 	@PostConstruct
 	public void setup() {
-		
-		lifecycle = new HttpContextLifecycle(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE);
+		try {
+			lifecycle = new HttpContextLifecycle(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE, true, true);
+		}
+		catch(NoSuchMethodError e) {
+			try {
+				lifecycle = HttpContextLifecycle.class.getConstructor(BeanManager.class, AcceptingHttpContextActivationFilter.class).newInstance(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE);
+			} catch (Exception e1) {
+				throw new RuntimeException(e1);
+			}
+		}
 		lifecycle.setConversationActivationEnabled(true);
 	}
 	
