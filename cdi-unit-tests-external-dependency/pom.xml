@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>cdi-unit-tests-external-dependency</artifactId>
+	<packaging>jar</packaging>
+	<parent>
+		<groupId>org.jglue.cdi-unit</groupId>
+		<artifactId>cdi-unit-parent</artifactId>
+		<version>2.2.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<name>CDI-Unit-Tests-ExternalDependency</name>
+	<url>http://jglue.org/cdi-unit</url>
+	<description>CDI-Unit test suite.</description>
+	<developers>
+		<developer>
+			<name>Bryn Cooke</name>
+		</developer>
+	</developers>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<weld.test.version>2.1.0.Final</weld.test.version>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+
+	</dependencies>
+
+</project>

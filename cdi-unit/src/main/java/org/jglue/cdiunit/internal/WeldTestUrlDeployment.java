@@ -15,6 +15,9 @@
  */
 package org.jglue.cdiunit.internal;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -34,6 +37,8 @@ import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
@@ -58,6 +63,7 @@ import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.AdditionalClasspath;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -66,30 +72,23 @@ import org.slf4j.LoggerFactory;
 public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
 	private Collection<Metadata<Extension>> extensions = new ArrayList<Metadata<Extension>>();
-	private static Logger log = LoggerFactory
-			.getLogger(WeldTestUrlDeployment.class);
+	private static Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 
-	public WeldTestUrlDeployment(ResourceLoader resourceLoader,
-			Bootstrap bootstrap, Class<?> testClass) throws IOException {
+	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) throws IOException {
 		super(bootstrap);
 
 		populateCdiClasspathSet();
 		BeansXml beansXml;
 		try {
-			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING,
-					new URL("file:cdi-unit"), BeanDiscoveryMode.ALL, "cdi-unit");
+			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
+							"file:cdi-unit"), BeanDiscoveryMode.ALL, "cdi-unit");
 		} catch (NoClassDefFoundError e) {
 			try {
-				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0]
-						.newInstance(new ArrayList<Metadata<String>>(),
-								new ArrayList<Metadata<String>>(),
-								new ArrayList<Metadata<String>>(),
-								new ArrayList<Metadata<String>>(),
-								Scanning.EMPTY_SCANNING);
+				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
+						new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+						Scanning.EMPTY_SCANNING);
 			} catch (Exception e1) {
 				throw new RuntimeException(e1);
 			}
@@ -104,16 +103,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
 
 		classesToProcess.add(testClass);
-		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(
-				testClass), TestScopeExtension.class.getName()));
+		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 
 		// Weld2 need this extension to prevent a clash when supplying our own
 		// http objects.
 		try {
 			HttpServletRequest.class.getName();
-			extensions.add(new MetadataImpl<Extension>(
-					new HttpObjectsExtension(), HttpObjectsExtension.class
-							.getName()));
+			extensions.add(new MetadataImpl<Extension>(new HttpObjectsExtension(), HttpObjectsExtension.class.getName()));
 		} catch (NoClassDefFoundError e) {
 
 		}
@@ -130,33 +126,27 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 			Class<?> c = classesToProcess.iterator().next();
 
-			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c))
-					&& !classesProcessed.contains(c) && !c.isPrimitive()
+			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c)) && !classesProcessed.contains(c) && !c.isPrimitive()
 					&& !classesToIgnore.contains(c)) {
 				classesProcessed.add(c);
 				discoveredClasses.add(c.getName());
-				if (Extension.class.isAssignableFrom(c)
-						&& !Modifier.isAbstract(c.getModifiers())) {
+				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
 					try {
-						extensions.add(new MetadataImpl<Extension>(
-								(Extension) c.newInstance(), c.getName()));
+						extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}
 				}
 				if (c.isAnnotationPresent(Interceptor.class)) {
-					beansXml.getEnabledInterceptors().add(
-							new MetadataImpl<String>(c.getName(), c.getName()));
+					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
 
 				if (isAlternativeStereotype(c)) {
-					beansXml.getEnabledAlternativeStereotypes().add(
-							new MetadataImpl<String>(c.getName(), c.getName()));
+					beansXml.getEnabledAlternativeStereotypes().add(new MetadataImpl<String>(c.getName(), c.getName()));
 
 				}
 
-				AdditionalClasses additionalClasses = c
-						.getAnnotation(AdditionalClasses.class);
+				AdditionalClasses additionalClasses = c.getAnnotation(AdditionalClasses.class);
 				if (additionalClasses != null) {
 					for (Class<?> supportClass : additionalClasses.value()) {
 						classesToProcess.add(supportClass);
@@ -172,8 +162,20 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 					}
 				}
 
-				ActivatedAlternatives alternativeClasses = c
-						.getAnnotation(ActivatedAlternatives.class);
+				AdditionalClasspath additionalClasspath = c.getAnnotation(AdditionalClasspath.class);
+				if (additionalClasspath != null) {
+					for (Class<?> supportClass : additionalClasspath.value()) {
+						File path = new File(supportClass.getProtectionDomain().getCodeSource().getLocation().getPath());
+						if (path.isDirectory()) {
+							registerClassesInDirectory(path.getPath(), path, classesToProcess);
+						} else {
+							registerClassesInArchive(path, classesToProcess);
+						}
+
+					}
+				}
+
+				ActivatedAlternatives alternativeClasses = c.getAnnotation(ActivatedAlternatives.class);
 				if (alternativeClasses != null) {
 					for (Class<?> alternativeClass : alternativeClasses.value()) {
 						classesToProcess.add(alternativeClass);
@@ -190,21 +192,17 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				}
 
 				for (Field field : c.getDeclaredFields()) {
-					if (field.isAnnotationPresent(Inject.class)
-							|| field.isAnnotationPresent(Produces.class)) {
+					if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
 						Class<?> type = field.getType();
 						classesToProcess.add(type);
 					}
 					if (field.getType().equals(Provider.class)) {
-						ParameterizedType type = (ParameterizedType) field
-								.getGenericType();
-						classesToProcess.add((Class<?>) type
-								.getActualTypeArguments()[0]);
+						ParameterizedType type = (ParameterizedType) field.getGenericType();
+						classesToProcess.add((Class<?>) type.getActualTypeArguments()[0]);
 					}
 				}
 				for (Method method : c.getDeclaredMethods()) {
-					if (method.isAnnotationPresent(Inject.class)
-							|| method.isAnnotationPresent(Produces.class)) {
+					if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
 						for (Class<?> param : method.getParameterTypes()) {
 							classesToProcess.add(param);
 						}
@@ -216,38 +214,30 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		}
 
 		beansXml.getEnabledAlternativeStereotypes().add(
-				new MetadataImpl<String>(ProducesAlternative.class.getName(),
-						ProducesAlternative.class.getName()));
+				new MetadataImpl<String>(ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
 
 		for (String alternative : alternatives) {
-			beansXml.getEnabledAlternativeClasses().add(
-					new MetadataImpl<String>(alternative, alternative));
+			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, alternative));
 		}
 
 		try {
 			Class.forName("org.mockito.Mock");
-			extensions.add(new MetadataImpl<Extension>(new MockitoExtension(),
-					MockitoExtension.class.getName()));
+			extensions.add(new MetadataImpl<Extension>(new MockitoExtension(), MockitoExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
 
 		try {
 			Class.forName("org.easymock.EasyMockRunner");
-			extensions
-					.add(new MetadataImpl<Extension>(new EasyMockExtension(),
-							EasyMockExtension.class.getName()));
+			extensions.add(new MetadataImpl<Extension>(new EasyMockExtension(), EasyMockExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
 
-		extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(),
-				WeldSEBeanRegistrant.class.getName()));
+		extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 
-		beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit"
-				+ UUID.randomUUID(), discoveredClasses, beansXml);
-		beanDeploymentArchive.getServices().add(ResourceLoader.class,
-				resourceLoader);
+		beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
+		beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 		log.debug("CDI-Unit discovered:");
 		for (String clazz : discoveredClasses) {
 			if (!clazz.startsWith("org.jglue.cdiunit.internal.")) {
@@ -255,6 +245,51 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			}
 		}
 
+	}
+
+	private void registerClassesInArchive(File path, Set<Class<?>> classesToProcess) {
+		ZipInputStream zip = null;
+		try {
+			zip = new ZipInputStream(new FileInputStream(path));
+			for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+				String name = entry.getName();
+				if (name.endsWith(".class") && !entry.isDirectory()) {
+
+					classesToProcess.add(Class.forName(name.substring(0, name.length() - 6).replace(File.separatorChar, '.')));
+				}
+			}
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (zip != null) {
+				try {
+					zip.close();
+				} catch (IOException e) {
+				
+				}
+			}
+		}
+	}
+
+	private void registerClassesInDirectory(String root, File path, Set<Class<?>> discoveredClasses) {
+
+		for (File file : path.listFiles()) {
+			if (!file.isDirectory()) {
+				String pathString = file.getPath();
+				if (pathString.endsWith(".class")) {
+					try {
+						discoveredClasses.add(Class.forName(pathString.substring(root.length() + 1, pathString.length() - 6)
+								.replace(File.separatorChar, '.')));
+					} catch (ClassNotFoundException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			} else {
+				registerClassesInDirectory(root, file, discoveredClasses);
+			}
+
+		}
 	}
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
@@ -288,16 +323,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	private void populateCdiClasspathSet() throws IOException {
 		ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
-		List<URL> entries = new ArrayList<URL>(
-				Arrays.asList(((URLClassLoader) classLoader).getURLs()));
+		List<URL> entries = new ArrayList<URL>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
 
 		// If this is surefire we need to get the original claspath
-		JarInputStream firstEntry = new JarInputStream(entries.get(0)
-				.openStream());
+		JarInputStream firstEntry = new JarInputStream(entries.get(0).openStream());
 		Manifest manifest = firstEntry.getManifest();
 		if (manifest != null) {
-			String classpath = (String) manifest.getMainAttributes().get(
-					Attributes.Name.CLASS_PATH);
+			String classpath = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
 			if (classpath != null) {
 				String[] manifestEntries = classpath.split(" ?file:");
 				for (String entry : manifestEntries) {
@@ -314,8 +346,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
 			try {
 				if (url.getFile().endsWith("/classes/")) {
-					URL webInfBeans = new URL(url,
-							"../../src/main/webapp/WEB-INF/beans.xml");
+					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
 					try {
 						webInfBeans.openConnection();
 						cdiClasspathEntries.add(url);
@@ -326,9 +357,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				URL resource = cl.getResource("META-INF/beans.xml");
 
 				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
-				boolean gradleClasses = url.getFile()
-						.endsWith("/classes/test/") || url.getFile()
-						.endsWith("/classes/main/");
+				boolean gradleClasses = url.getFile().endsWith("/classes/test/") || url.getFile().endsWith("/classes/main/");
 				if (resource != null || mavenClasses || gradleClasses) {
 					cdiClasspathEntries.add(url);
 				}
@@ -351,8 +380,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	}
 
 	private boolean isAlternativeStereotype(Class<?> c) {
-		return c.isAnnotationPresent(Stereotype.class)
-				&& c.isAnnotationPresent(Alternative.class);
+		return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
 	}
 
 	@Override

@@ -19,7 +19,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>2.0.2.Final</weld.test.version>
+		
 	</properties>
 
 	<licenses>
@@ -32,6 +32,7 @@
 
 	<modules>
 		<module>cdi-unit</module>
+		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests</module>
 		<module>cdi-unit-tests-bare</module>
 		<module>cdi-unit-tests-mockito</module>
