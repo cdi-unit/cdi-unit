@@ -17,7 +17,6 @@ package org.jglue.cdiunit.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -63,11 +62,18 @@ import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.AdditionalClasspath;
+import org.jglue.cdiunit.AdditionalClasspaths;
+import org.jglue.cdiunit.AdditionalPackages;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.mockito.Mock;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 
 public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
@@ -162,15 +168,36 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 					}
 				}
 
-				AdditionalClasspath additionalClasspath = c.getAnnotation(AdditionalClasspath.class);
-				if (additionalClasspath != null) {
-					for (Class<?> supportClass : additionalClasspath.value()) {
-						File path = new File(supportClass.getProtectionDomain().getCodeSource().getLocation().getPath());
-						if (path.isDirectory()) {
-							registerClassesInDirectory(path.getPath(), path, classesToProcess);
-						} else {
-							registerClassesInArchive(path, classesToProcess);
-						}
+				AdditionalClasspaths additionalClasspaths = c.getAnnotation(AdditionalClasspaths.class);
+				if (additionalClasspaths != null) {
+					for (Class<?> additionalClasspath : additionalClasspaths.value()) {
+
+						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(
+								new SubTypesScanner(false), new ResourcesScanner()).setUrls(
+								new File(additionalClasspath.getProtectionDomain().getCodeSource().getLocation().getPath())
+										.toURI().toURL()));
+						classesToProcess.addAll(reflections.getSubTypesOf(Object.class));
+
+					}
+				}
+
+				AdditionalPackages additionalPackages = c.getAnnotation(AdditionalPackages.class);
+				if (additionalPackages != null) {
+					for (Class<?> additionalPackage : additionalPackages.value()) {
+						final String packageName = additionalPackage.getPackage().getName();
+						Reflections reflections = new Reflections(new ConfigurationBuilder()
+								.setScanners(new SubTypesScanner(false), new ResourcesScanner())
+								.setUrls(
+										new File(additionalPackage.getProtectionDomain().getCodeSource().getLocation().getPath())
+												.toURI().toURL()).filterInputsBy(new Predicate<String>() {
+
+									@Override
+									public boolean apply(String input) {
+										return input.startsWith(packageName) && !input.substring(packageName.length() + 1, input.length() - 6).contains(".");
+										
+									}
+								}));
+						classesToProcess.addAll(reflections.getSubTypesOf(Object.class));
 
 					}
 				}
@@ -247,50 +274,6 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	}
 
-	private void registerClassesInArchive(File path, Set<Class<?>> classesToProcess) {
-		ZipInputStream zip = null;
-		try {
-			zip = new ZipInputStream(new FileInputStream(path));
-			for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-				String name = entry.getName();
-				if (name.endsWith(".class") && !entry.isDirectory()) {
-
-					classesToProcess.add(Class.forName(name.substring(0, name.length() - 6).replace(File.separatorChar, '.')));
-				}
-			}
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (zip != null) {
-				try {
-					zip.close();
-				} catch (IOException e) {
-				
-				}
-			}
-		}
-	}
-
-	private void registerClassesInDirectory(String root, File path, Set<Class<?>> discoveredClasses) {
-
-		for (File file : path.listFiles()) {
-			if (!file.isDirectory()) {
-				String pathString = file.getPath();
-				if (pathString.endsWith(".class")) {
-					try {
-						discoveredClasses.add(Class.forName(pathString.substring(root.length() + 1, pathString.length() - 6)
-								.replace(File.separatorChar, '.')));
-					} catch (ClassNotFoundException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			} else {
-				registerClassesInDirectory(root, file, discoveredClasses);
-			}
-
-		}
-	}
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
 		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();

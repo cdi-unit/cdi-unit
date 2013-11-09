@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * class TestStarship {
  * 
  * 	&#064;Inject
- * 	Starship starship; //Starship has some resources that are in request scope.
+ * 	Starship starship; //Starship has an engine.
  * 
  * 	&#064;Test
  * 	void testStart() {

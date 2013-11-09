@@ -48,6 +48,7 @@
 				<artifactId>gradle-maven-plugin</artifactId>
 				<version>1.0.5</version>
 				<configuration>
+				    <gradleVersion>1.8</gradleVersion>
 					<tasks>
 						<task>clean</task>
 						<task>build</task>

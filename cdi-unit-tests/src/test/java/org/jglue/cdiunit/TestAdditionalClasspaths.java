@@ -7,9 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@AdditionalClasspath(ExternalInterface.class)
+@AdditionalClasspaths(ExternalInterface.class)
 @RunWith(CdiRunner.class)
-public class TestExternalDependency {
+public class TestAdditionalClasspaths {
 	
 	@Inject
 	private ExternalInterface external;
