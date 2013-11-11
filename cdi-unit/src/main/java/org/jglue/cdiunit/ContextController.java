@@ -109,9 +109,11 @@ public class ContextController {
 	 * Close the currently active request.
 	 */
 	public void closeRequest() {
-		lifecycle.requestDestroyed(currentRequest);
-		currentSession = currentRequest.getSession(false);
-		currentRequest = null;
+		if (currentRequest != null) {
+            lifecycle.requestDestroyed(currentRequest);
+            currentSession = currentRequest.getSession(false);
+        }
+        currentRequest = null;
 	}
 
 	
