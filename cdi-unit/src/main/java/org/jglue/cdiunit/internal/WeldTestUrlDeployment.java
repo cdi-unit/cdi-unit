@@ -64,6 +64,7 @@ import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
+import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.mockito.Mock;
 import org.reflections.Reflections;
@@ -122,9 +123,13 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
-			classesToProcess.add(InRequestInterceptor.class);
-			classesToProcess.add(InSessionInterceptor.class);
-			classesToProcess.add(InConversationInterceptor.class);
+		    Class.forName(ContextController.class.getName());
+            classesToProcess.add(InRequestInterceptor.class);
+            classesToProcess.add(InSessionInterceptor.class);
+            classesToProcess.add(InConversationInterceptor.class);
+		} catch (NoClassDefFoundError e) {
+            log.warn("Used version of weld seems not to be compatible with with this cdi-unit version, " +
+                    "deactivating support for special scopes.");
 		} catch (ClassNotFoundException e) {
 		}
 
