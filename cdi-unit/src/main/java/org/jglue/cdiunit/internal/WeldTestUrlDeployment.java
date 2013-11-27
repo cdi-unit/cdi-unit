@@ -110,7 +110,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-
+                extensions.add(new MetadataImpl<Extension>(new ViewContextExtension(), ViewContextExtension.class.getName()));
 		// Weld2 need this extension to prevent a clash when supplying our own
 		// http objects.
 		try {
