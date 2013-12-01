@@ -15,8 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.BeanManager;
@@ -25,7 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.weld.bean.builtin.BeanManagerProxy;
+import org.jboss.weld.manager.BeanManagerImpl;
 import org.jboss.weld.servlet.HttpContextLifecycle;
+import org.jboss.weld.servlet.spi.HttpContextActivationFilter;
 import org.jboss.weld.servlet.spi.helpers.AcceptingHttpContextActivationFilter;
 import org.jglue.cdiunit.internal.LifecycleAwareRequest;
 
@@ -75,16 +75,43 @@ public class ContextController {
 	private HttpSession currentSession;
 	
 	
+	private void setupWeld20() throws Exception {
+		lifecycle = HttpContextLifecycle.class.getConstructor(BeanManagerImpl.class)
+				.newInstance(BeanManagerProxy.unwrap(beanManager));
+	}
+
+	private void setupWeldUnknownVersion() throws Exception {
+		lifecycle = HttpContextLifecycle.class.getConstructor(
+				BeanManagerImpl.class, AcceptingHttpContextActivationFilter.class)
+				.newInstance(BeanManagerProxy.unwrap(beanManager),
+						AcceptingHttpContextActivationFilter.INSTANCE);
+	}
+
+	private void setupWeld21() throws Exception {
+		lifecycle = HttpContextLifecycle.class.getConstructor(
+				BeanManagerImpl.class, HttpContextActivationFilter.class, boolean.class, boolean.class)
+				.newInstance(BeanManagerProxy.unwrap(beanManager),
+						AcceptingHttpContextActivationFilter.INSTANCE, true, true);
+	}
+
 	@PostConstruct
 	public void setup() {
+		/**
+		 * The order of attempts to load Weld is important.
+		 * Constructors with added parameters have to be tried after those without them
+		 * to avoid NoClassDefFoundError.
+		 */
 		try {
-			lifecycle = new HttpContextLifecycle(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE, true, true);
-		}
-		catch(NoSuchMethodError e) {
+			setupWeld20();
+		} catch (Exception e1) {
 			try {
-				lifecycle = HttpContextLifecycle.class.getConstructor(BeanManager.class, AcceptingHttpContextActivationFilter.class).newInstance(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE);
-			} catch (Exception e1) {
-				throw new RuntimeException(e1);
+				setupWeldUnknownVersion();
+			} catch (Exception e2) {
+				try {
+					setupWeld21();
+				} catch (Exception e3) {
+					throw new RuntimeException(e1);
+				}
 			}
 		}
 		lifecycle.setConversationActivationEnabled(true);
