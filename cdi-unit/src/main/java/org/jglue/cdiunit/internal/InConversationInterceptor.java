@@ -37,9 +37,7 @@ public class InConversationInterceptor {
 	@Inject
 	private Conversation conversation;
 
-	@Inject
-	@CdiUnitRequest
-	private Provider<Object> requestProvider;
+
 
 
 	@AroundInvoke

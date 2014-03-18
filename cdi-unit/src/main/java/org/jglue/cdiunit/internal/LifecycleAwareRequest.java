@@ -24,15 +24,17 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.jboss.weld.servlet.HttpContextLifecycle;
+import org.jglue.cdiunit.ContextController;
 
 public class LifecycleAwareRequest implements HttpServletRequest {
 
 	private HttpServletRequest delegate;
 	private HttpSession session;
-	private HttpContextLifecycle lifecycle;
+	private ContextController contextController;
 
-	public LifecycleAwareRequest(HttpContextLifecycle lifecycle, HttpServletRequest delegate, HttpSession session) {
-		this.lifecycle = lifecycle;
+	public LifecycleAwareRequest(ContextController contextController, HttpServletRequest delegate, HttpSession session) {
+		
+		this.contextController = contextController;
 		this.delegate = delegate;
 		this.session = session;
 	}
@@ -233,7 +235,7 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		if(session == null && create) {
 			session = delegate.getSession(create);
 			if (session != null) {
-				lifecycle.sessionCreated(session);
+				contextController.sessionCreated(session);
 			}
 		}
 		return session;

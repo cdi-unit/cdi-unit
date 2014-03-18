@@ -15,18 +15,24 @@
  */
 package org.jglue.cdiunit;
 
-import java.lang.reflect.InvocationTargetException;
+
+import java.util.Iterator;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 
-import org.jboss.weld.bean.builtin.BeanManagerProxy;
-import org.jboss.weld.servlet.HttpContextLifecycle;
-import org.jboss.weld.servlet.spi.helpers.AcceptingHttpContextActivationFilter;
+import org.jboss.weld.servlet.WeldListener;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 import org.jglue.cdiunit.internal.LifecycleAwareRequest;
 
 /**
@@ -70,24 +76,33 @@ public class ContextController {
 	@Inject
 	private BeanManager beanManager;
 	
-	private HttpContextLifecycle lifecycle;
+	@Inject
+	private WeldListener listener;
+
 
 	private HttpSession currentSession;
 	
 	
+	@Inject
+	@CdiUnitServlet
+	private Instance<Object> instance;
+	
+	private ServletContext context;
+	
 	@PostConstruct
-	public void setup() {
-		try {
-			lifecycle = new HttpContextLifecycle(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE, true, true);
-		}
-		catch(NoSuchMethodError e) {
-			try {
-				lifecycle = HttpContextLifecycle.class.getConstructor(BeanManager.class, AcceptingHttpContextActivationFilter.class).newInstance(BeanManagerProxy.unwrap(beanManager), AcceptingHttpContextActivationFilter.INSTANCE);
-			} catch (Exception e1) {
-				throw new RuntimeException(e1);
+	void initContext() {
+		for(Iterator<Object> pos = instance.iterator(); pos.hasNext(); ) {
+			Object o = pos.next();
+			if(o instanceof ServletContext) {
+				context = (ServletContext) o;
 			}
 		}
-		lifecycle.setConversationActivationEnabled(true);
+		listener.contextInitialized(new ServletContextEvent(context));
+	}
+	
+	@PreDestroy
+	void destroyContext() {
+		listener.contextDestroyed(new ServletContextEvent(context));
 	}
 	
 	
@@ -101,8 +116,10 @@ public class ContextController {
 		if(currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
-		currentRequest = new LifecycleAwareRequest(lifecycle, request, currentSession);
-		lifecycle.requestInitialized(currentRequest, null);
+		
+		currentRequest = new LifecycleAwareRequest(this, request, currentSession);
+		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
+		
 	}
 
 	/**
@@ -110,7 +127,7 @@ public class ContextController {
 	 */
 	public void closeRequest() {
 		if (currentRequest != null) {
-            lifecycle.requestDestroyed(currentRequest);
+            listener.requestDestroyed(new ServletRequestEvent(context, currentRequest));
             currentSession = currentRequest.getSession(false);
         }
         currentRequest = null;
@@ -127,9 +144,14 @@ public class ContextController {
 		}
 		
 		if(currentSession != null) {
-			lifecycle.sessionDestroyed(currentSession);
+			listener.sessionDestroyed(new HttpSessionEvent(currentSession));
 			currentSession = null;	
 		}
+	}
+
+	public void sessionCreated(HttpSession session) {
+		currentSession = session;
+		listener.sessionCreated(new HttpSessionEvent(currentSession));
 	}
 
 	

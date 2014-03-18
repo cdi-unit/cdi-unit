@@ -60,10 +60,14 @@ import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jboss.weld.servlet.WeldListener;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
+import org.jglue.cdiunit.DummyHttpRequest;
+import org.jglue.cdiunit.DummyHttpSession;
+import org.jglue.cdiunit.DummyServletContext;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.mockito.Mock;
 import org.reflections.Reflections;
@@ -125,6 +129,10 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.add(InRequestInterceptor.class);
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
+			discoveredClasses.add(WeldListener.class.getName());
+			classesToProcess.add(DummyServletContext.class);
+			classesToProcess.add(DummyHttpRequest.class);
+			classesToProcess.add(DummyHttpSession.class);
 		} catch (ClassNotFoundException e) {
 		}
 
@@ -328,6 +336,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		for (URL url : entries) {
 			URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
 			try {
+				System.out.println(url);
 				if (url.getFile().endsWith("/classes/")) {
 					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
 					try {
@@ -340,13 +349,14 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 				URL resource = cl.getResource("META-INF/beans.xml");
 
 				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
+				boolean generatedClasses = url.getFile().contains("/generated-classes/");
 				boolean gradleClasses = url.getFile().endsWith("/classes/test/") || url.getFile().endsWith("/classes/main/");
-				if (resource != null || mavenClasses || gradleClasses) {
+				if (resource != null || mavenClasses || gradleClasses || generatedClasses) {
 					cdiClasspathEntries.add(url);
 				}
 
 			} finally {
-				// cl.close();
+				 cl.close();
 			}
 		}
 

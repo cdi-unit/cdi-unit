@@ -7,11 +7,13 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessBeanAttributes;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.weld.bean.builtin.ee.HttpServletRequestBean;
 import org.jboss.weld.bean.builtin.ee.HttpSessionBean;
+import org.jboss.weld.bean.builtin.ee.ServletContextBean;
 import org.jboss.weld.literal.DefaultLiteral;
 
 public class HttpObjectsExtension implements Extension {
@@ -20,16 +22,16 @@ public class HttpObjectsExtension implements Extension {
 		final BeanAttributes beanAttributes = bean.getBeanAttributes();
 		Set types = beanAttributes.getTypes();
 		Set qualifiers = beanAttributes.getQualifiers();
-		if (qualifiers.contains(DefaultLiteral.INSTANCE) && (types.contains(HttpServletRequest.class) || types.contains(HttpSession.class)) && !types.contains(HttpSessionBean.class) && !types.contains(HttpServletRequestBean.class)) {
+		if (qualifiers.contains(DefaultLiteral.INSTANCE) && (types.contains(HttpServletRequest.class) || types.contains(HttpSession.class) || types.contains(ServletContext.class)) && !types.contains(HttpSessionBean.class) && !types.contains(HttpServletRequestBean.class)&& !types.contains(ServletContextBean.class)) {
 			
 			final Set modifiedTypes = new HashSet(types);
 			final Set modifiedQualifiers = new HashSet(qualifiers);
-			if(types.contains(HttpServletRequest.class)) {
-				modifiedQualifiers.add(CdiUnitRequestLiteral.INSTANCE);
-			}
+			
+			modifiedQualifiers.add(CdiUnitServletLiteral.INSTANCE);
 			
 			modifiedTypes.remove(HttpSession.class);
 			modifiedTypes.remove(HttpServletRequest.class);
+			modifiedTypes.remove(ServletContext.class);
 
 						
 			

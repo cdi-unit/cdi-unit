@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -45,13 +46,17 @@ import javax.servlet.http.Part;
 import com.google.common.collect.Iterators;
 
 /**
- * Convenience class that can be used if trying to use scopes. If more complex mocking is required then it is better to use an
- * existing servlet mock framework.
+ * Convenience class that can be used if trying to use scopes. If more complex
+ * mocking is required then it is better to use an existing servlet mock
+ * framework.
  * 
  * @author Bryn Cooke
  * 
  */
 public class DummyHttpRequest implements HttpServletRequest {
+
+	@Inject
+	private DummyServletContext servletContext;
 
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 	private Map<String, String[]> parameters = new HashMap<String, String[]>();
@@ -235,7 +240,7 @@ public class DummyHttpRequest implements HttpServletRequest {
 	@Override
 	public ServletContext getServletContext() {
 
-		return null;
+		return servletContext;
 	}
 
 	@Override

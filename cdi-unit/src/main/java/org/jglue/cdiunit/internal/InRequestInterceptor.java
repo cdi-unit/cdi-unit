@@ -21,6 +21,7 @@ import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
@@ -37,8 +38,8 @@ public class InRequestInterceptor {
 	private ContextController contextController;
 
 	@Inject
-	@CdiUnitRequest
-	private Provider<Object> requestProvider;
+	@CdiUnitServlet
+	private Provider<ServletRequest> requestProvider;
 
 	@Inject
 	private Provider<HttpServletRequest> cdi1Provider;

@@ -18,7 +18,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>2.1.0.Final</weld.test.version>
+		<weld.test.version>1.1.16.Final</weld.test.version>
 	</properties>
 
 	<licenses>
@@ -38,14 +38,14 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.jboss.weld.se</groupId>
-					<artifactId>weld-se</artifactId>
+					<artifactId>weld-se-core</artifactId>
 				</exclusion>
 			</exclusions>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se</artifactId>
+			<artifactId>weld-se-core</artifactId>
 			<version>${weld.test.version}</version>
 			<scope>test</scope>
 		</dependency>
