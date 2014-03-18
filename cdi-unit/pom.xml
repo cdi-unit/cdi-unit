@@ -96,6 +96,12 @@
          <artifactId>reflections</artifactId>
          <version>0.9.9-RC1</version>
      </dependency>
+	 <dependency>
+	  <groupId>com.sun.faces</groupId>
+	  <artifactId>jsf-api</artifactId>
+	  <version>2.2.1</version>
+	  <type>jar</type>
+	 </dependency>
 	</dependencies>
 	<build>
 		<plugins>
