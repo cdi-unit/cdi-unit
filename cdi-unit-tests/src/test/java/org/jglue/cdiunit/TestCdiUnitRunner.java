@@ -36,7 +36,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, DummyHttpSession.class, DummyHttpRequest.class, ScopedFactory.class,
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
 		ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
@@ -179,8 +179,6 @@ public class TestCdiUnitRunner extends BaseTest {
 		Assert.assertEquals(mockA, a1);
 	}
 
-	@Inject
-	private DummyHttpRequest dummyHttpRequest;
 
 	@Inject
 	private Provider<Scoped> scoped;
@@ -190,7 +188,7 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Test
 	public void testContextController() {
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 
 		Scoped b1 = scoped.get();
 		Scoped b2 = scoped.get();
@@ -200,23 +198,26 @@ public class TestCdiUnitRunner extends BaseTest {
 		Mockito.verify(disposeListener).run();
 	}
 	
+
+	
+	
 	@Test
 	public void testContextControllerRequestScoped() {
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 
 		BRequestScoped b1 = requestScoped.get();
 		b1.setFoo("Bar");
 		BRequestScoped b2 = requestScoped.get();
 		Assert.assertSame(b1.getFoo(), b2.getFoo());
 		contextController.closeRequest();
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		BRequestScoped b3 = requestScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 	}
 	
 	@Test
 	public void testContextControllerSessionScoped() {
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		
 		
 		
@@ -228,7 +229,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		contextController.closeSession();
 		
 		
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		CSessionScoped b3 = sessionScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 		
@@ -236,7 +237,7 @@ public class TestCdiUnitRunner extends BaseTest {
 	
 	@Test
 	public void testContextControllerSessionScopedWithRequest() {
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 
 		
 		CSessionScoped b1 = sessionScoped.get();
@@ -247,7 +248,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		BRequestScoped r2 = requestScoped.get();
 		Assert.assertSame(r1.getFoo(), r2.getFoo());
 		contextController.closeRequest();
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		BRequestScoped r3 = requestScoped.get();
 		Assert.assertEquals(null, r3.getFoo());
 		
@@ -260,7 +261,7 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Test
 	public void testContextControllerConversationScoped() {
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		conversation.begin();
 
 		DConversationScoped b1 = conversationScoped.get();
@@ -269,7 +270,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
 		conversation.end();
 		contextController.closeRequest();
-		contextController.openRequest(dummyHttpRequest);
+		contextController.openRequest();
 		conversation.begin();
 		DConversationScoped b3 = conversationScoped.get();
 		Assert.assertEquals(null, b3.getFoo());

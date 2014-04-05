@@ -16,7 +16,6 @@
 package org.jglue.cdiunit.internal;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,8 +35,6 @@ import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
@@ -46,7 +43,6 @@ import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
-import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
@@ -65,9 +61,6 @@ import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
-import org.jglue.cdiunit.DummyHttpRequest;
-import org.jglue.cdiunit.DummyHttpSession;
-import org.jglue.cdiunit.DummyServletContext;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.mockito.Mock;
 import org.reflections.Reflections;
@@ -115,14 +108,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 
-		// Weld2 need this extension to prevent a clash when supplying our own
-		// http objects.
-		try {
-			HttpServletRequest.class.getName();
-			extensions.add(new MetadataImpl<Extension>(new HttpObjectsExtension(), HttpObjectsExtension.class.getName()));
-		} catch (NoClassDefFoundError e) {
-
-		}
+	
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
@@ -130,9 +116,11 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
 			discoveredClasses.add(WeldListener.class.getName());
-			classesToProcess.add(DummyServletContext.class);
-			classesToProcess.add(DummyHttpRequest.class);
-			classesToProcess.add(DummyHttpSession.class);
+			classesToProcess.add(MockHttpServletRequestImpl.class);
+			classesToProcess.add(MockHttpServletResponseImpl.class);
+			classesToProcess.add(MockHttpSessionImpl.class);
+			classesToProcess.add(MockServletContext.class);
+			
 		} catch (ClassNotFoundException e) {
 		}
 

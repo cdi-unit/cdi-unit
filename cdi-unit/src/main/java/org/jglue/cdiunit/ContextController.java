@@ -16,14 +16,12 @@
 package org.jglue.cdiunit;
 
 
-import java.util.Iterator;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequestEvent;
@@ -34,6 +32,7 @@ import javax.servlet.http.HttpSessionEvent;
 import org.jboss.weld.servlet.WeldListener;
 import org.jglue.cdiunit.internal.CdiUnitServlet;
 import org.jglue.cdiunit.internal.LifecycleAwareRequest;
+import org.jglue.cdiunit.internal.MockHttpServletRequestImpl;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -75,28 +74,20 @@ public class ContextController {
 
 	@Inject
 	private BeanManager beanManager;
-	
-	@Inject
-	private WeldListener listener;
 
 
 	private HttpSession currentSession;
 	
-	
 	@Inject
 	@CdiUnitServlet
-	private Instance<Object> instance;
-	
 	private ServletContext context;
+	
+	@Inject
+	@ApplicationScoped
+	private WeldListener listener;
 	
 	@PostConstruct
 	void initContext() {
-		for(Iterator<Object> pos = instance.iterator(); pos.hasNext(); ) {
-			Object o = pos.next();
-			if(o instanceof ServletContext) {
-				context = (ServletContext) o;
-			}
-		}
 		listener.contextInitialized(new ServletContextEvent(context));
 	}
 	
@@ -105,6 +96,11 @@ public class ContextController {
 		listener.contextDestroyed(new ServletContextEvent(context));
 	}
 	
+
+
+	@Inject
+	@CdiUnitServlet
+	private Provider<MockHttpServletRequestImpl> requestProvider;
 	
 	/**
 	 * Start a request.
@@ -112,14 +108,21 @@ public class ContextController {
 	 * @param request
 	 *            The request to make available.
 	 */
-	public void openRequest(HttpServletRequest request) {
+	public HttpServletRequest openRequest() {
 		if(currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
 		
-		currentRequest = new LifecycleAwareRequest(this, request, currentSession);
-		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
+		MockHttpServletRequestImpl request = requestProvider.get();
+
+		if (currentSession != null) {
+			request.setSession(currentSession);
+			request.getSession();
+		}
 		
+		currentRequest = new LifecycleAwareRequest(listener, request);
+		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
+		return currentRequest;
 	}
 
 	/**
@@ -149,9 +152,8 @@ public class ContextController {
 		}
 	}
 
-	public void sessionCreated(HttpSession session) {
-		currentSession = session;
-		listener.sessionCreated(new HttpSessionEvent(currentSession));
+	public HttpSession getSession() {
+		return currentSession;
 	}
 
 	

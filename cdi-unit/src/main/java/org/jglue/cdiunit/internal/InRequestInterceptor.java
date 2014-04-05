@@ -32,36 +32,24 @@ import org.slf4j.LoggerFactory;
 @Interceptor
 @InRequestScope
 public class InRequestInterceptor {
-	private static Logger log = LoggerFactory.getLogger(InRequestInterceptor.class);
+	private static Logger log = LoggerFactory
+			.getLogger(InRequestInterceptor.class);
 
 	@Inject
 	private ContextController contextController;
 
-	@Inject
-	@CdiUnitServlet
-	private Provider<ServletRequest> requestProvider;
-
-	@Inject
-	private Provider<HttpServletRequest> cdi1Provider;
-
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
-			HttpServletRequest httpServletRequest;
-			try {
-				httpServletRequest = (HttpServletRequest)requestProvider.get();
-			}
-			catch(UnsatisfiedResolutionException e) {
-				httpServletRequest = cdi1Provider.get();
-			}
 			
-			contextController.openRequest(httpServletRequest);
+			contextController.openRequest();
 			return ctx.proceed();
-		} catch(Exception e) {
-			log.error("Failed to open request context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29", e);
+		} catch (Exception e) {
+			log.error(
+					"Failed to open request context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29",
+					e);
 			throw e;
-		}
-		finally {
+		} finally {
 			contextController.closeRequest();
 		}
 	}

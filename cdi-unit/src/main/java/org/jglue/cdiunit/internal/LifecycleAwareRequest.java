@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2011 Bryn Cooke
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jglue.cdiunit.internal;
 
 import java.io.BufferedReader;
@@ -9,6 +24,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
@@ -21,22 +37,26 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
-import org.jboss.weld.servlet.HttpContextLifecycle;
-import org.jglue.cdiunit.ContextController;
+import org.jboss.weld.exceptions.UnsupportedOperationException;
+import org.jboss.weld.servlet.WeldListener;
 
+@CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
 
-	private HttpServletRequest delegate;
-	private HttpSession session;
-	private ContextController contextController;
+	@Inject
+	private WeldListener listener;
 
-	public LifecycleAwareRequest(ContextController contextController, HttpServletRequest delegate, HttpSession session) {
-		
-		this.contextController = contextController;
+	private HttpServletRequest delegate;
+
+	public LifecycleAwareRequest(
+			@SuppressWarnings("deprecation") WeldListener listener,
+			HttpServletRequest delegate) {
+		this.listener = listener;
 		this.delegate = delegate;
-		this.session = session;
 	}
 
 	public Object getAttribute(String name) {
@@ -63,7 +83,8 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return delegate.getCharacterEncoding();
 	}
 
-	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
+	public void setCharacterEncoding(String env)
+			throws UnsupportedEncodingException {
 		delegate.setCharacterEncoding(env);
 	}
 
@@ -211,8 +232,6 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return delegate.getServletPath();
 	}
 
-
-
 	public String getRealPath(String path) {
 		return delegate.getRealPath(path);
 	}
@@ -229,24 +248,19 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return delegate.getLocalAddr();
 	}
 
-	
-
 	public HttpSession getSession(boolean create) {
-		if(session == null && create) {
-			session = delegate.getSession(create);
-			if (session != null) {
-				contextController.sessionCreated(session);
-			}
+		HttpSession previousSession = delegate.getSession(false);
+		HttpSession session = delegate.getSession(create);
+		if (previousSession == null && session != null) {
+			listener.sessionCreated(new HttpSessionEvent(session));
 		}
 		return session;
 	}
-	
+
 	public HttpSession getSession() {
-		
+
 		return getSession(true);
 	}
-
-	
 
 	public int getLocalPort() {
 		return delegate.getLocalPort();
@@ -276,11 +290,13 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return delegate.isRequestedSessionIdFromUrl();
 	}
 
-	public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
+	public boolean authenticate(HttpServletResponse response)
+			throws IOException, ServletException {
 		return delegate.authenticate(response);
 	}
 
-	public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+	public AsyncContext startAsync(ServletRequest servletRequest,
+			ServletResponse servletResponse) throws IllegalStateException {
 		return delegate.startAsync(servletRequest, servletResponse);
 	}
 
@@ -294,10 +310,6 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 
 	public Collection<Part> getParts() throws IOException, ServletException {
 		return delegate.getParts();
-	}
-
-	public boolean isAsyncStarted() {
-		return delegate.isAsyncStarted();
 	}
 
 	public Part getPart(String name) throws IOException, ServletException {
@@ -314,6 +326,28 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 
 	public DispatcherType getDispatcherType() {
 		return delegate.getDispatcherType();
+	}
+
+	@Override
+	public boolean isAsyncStarted() {
+	
+		return false;
+	}
+	
+	@Override
+	public long getContentLengthLong() {
+		return getContentLength();
+	}
+
+	@Override
+	public String changeSessionId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> clazz)
+			throws IOException, ServletException {
+		throw new UnsupportedOperationException();
 	}
 
 }
