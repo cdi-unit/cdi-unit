@@ -40,6 +40,11 @@ class TestStarship {
 
 ```
 
+Acknowledgements
+This project uses Mockrunner https://github.com/mockrunner/mockrunner/commits/master under Apache licence.
+Some code has been shamelessly copied to provide CDI support.
+
+
 
 Copyright 2013 Bryn Cooke
  

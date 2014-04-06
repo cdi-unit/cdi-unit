@@ -82,6 +82,11 @@ public class ContextController {
 	@CdiUnitServlet
 	private ServletContext context;
 	
+	
+	@Inject
+    @CdiUnitServlet
+	private HttpSession session;
+	
 	@Inject
 	@ApplicationScoped
 	private WeldListener listener;

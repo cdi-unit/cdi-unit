@@ -116,10 +116,12 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
 			discoveredClasses.add(WeldListener.class.getName());
+			classesToProcess.add(MockServletContextImpl.class);
+			classesToProcess.add(MockHttpSessionImpl.class);
 			classesToProcess.add(MockHttpServletRequestImpl.class);
 			classesToProcess.add(MockHttpServletResponseImpl.class);
-			classesToProcess.add(MockHttpSessionImpl.class);
-			classesToProcess.add(MockServletContext.class);
+			
+			
 			
 		} catch (ClassNotFoundException e) {
 		}
