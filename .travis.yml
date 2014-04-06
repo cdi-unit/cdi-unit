@@ -9,6 +9,7 @@ jdk:
 env:
 
   matrix:
+    - WELD_VERSION=2.2.0.CR1
     - WELD_VERSION=2.1.2.Final
     - WELD_VERSION=2.1.1.Final
     - WELD_VERSION=2.1.0.Final
