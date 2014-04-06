@@ -26,10 +26,13 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
+import org.jboss.weld.context.ConversationContext;
+import org.jboss.weld.context.http.Http;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -259,9 +262,13 @@ public class TestCdiUnitRunner extends BaseTest {
 		
 	}
 
+  
+	
 	@Test
 	public void testContextControllerConversationScoped() {
-		contextController.openRequest();
+		HttpServletRequest request = contextController.openRequest();
+		request.getSession(true);
+		
 		conversation.begin();
 
 		DConversationScoped b1 = conversationScoped.get();
@@ -271,6 +278,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		conversation.end();
 		contextController.closeRequest();
 		contextController.openRequest();
+		
 		conversation.begin();
 		DConversationScoped b3 = conversationScoped.get();
 		Assert.assertEquals(null, b3.getFoo());

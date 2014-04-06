@@ -15,7 +15,6 @@
  */
 package org.jglue.cdiunit;
 
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.jboss.weld.context.ConversationContext;
+import org.jboss.weld.context.http.Http;
 import org.jboss.weld.servlet.WeldListener;
 import org.jglue.cdiunit.internal.CdiUnitServlet;
 import org.jglue.cdiunit.internal.LifecycleAwareRequest;
@@ -75,38 +76,38 @@ public class ContextController {
 	@Inject
 	private BeanManager beanManager;
 
-
 	private HttpSession currentSession;
-	
+
 	@Inject
 	@CdiUnitServlet
 	private ServletContext context;
-	
-	
+
 	@Inject
-    @CdiUnitServlet
+	@CdiUnitServlet
 	private HttpSession session;
-	
+
 	@Inject
 	@ApplicationScoped
 	private WeldListener listener;
-	
+
 	@PostConstruct
 	void initContext() {
 		listener.contextInitialized(new ServletContextEvent(context));
 	}
-	
+
 	@PreDestroy
 	void destroyContext() {
 		listener.contextDestroyed(new ServletContextEvent(context));
 	}
-	
-
 
 	@Inject
 	@CdiUnitServlet
 	private Provider<MockHttpServletRequestImpl> requestProvider;
-	
+
+	@Inject
+	@Http
+	private ConversationContext conversationContext;
+
 	/**
 	 * Start a request.
 	 * 
@@ -114,19 +115,23 @@ public class ContextController {
 	 *            The request to make available.
 	 */
 	public HttpServletRequest openRequest() {
-		if(currentRequest != null) {
+		if (currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
-		
+
 		MockHttpServletRequestImpl request = requestProvider.get();
 
 		if (currentSession != null) {
 			request.setSession(currentSession);
 			request.getSession();
 		}
-		
+
 		currentRequest = new LifecycleAwareRequest(listener, request);
-		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
+		listener.requestInitialized(new ServletRequestEvent(context,
+				currentRequest));
+		if (!conversationContext.isActive()) {
+			conversationContext.activate();
+		}
 		return currentRequest;
 	}
 
@@ -135,33 +140,29 @@ public class ContextController {
 	 */
 	public void closeRequest() {
 		if (currentRequest != null) {
-            listener.requestDestroyed(new ServletRequestEvent(context, currentRequest));
-            currentSession = currentRequest.getSession(false);
-        }
-        currentRequest = null;
+			listener.requestDestroyed(new ServletRequestEvent(context,
+					currentRequest));
+			currentSession = currentRequest.getSession(false);
+		}
+		currentRequest = null;
 	}
 
-	
-	
 	/**
 	 * Close the currently active session.
 	 */
 	public void closeSession() {
-		if(currentRequest != null) {
-			currentSession = currentRequest.getSession(false); 
+		if (currentRequest != null) {
+			currentSession = currentRequest.getSession(false);
 		}
-		
-		if(currentSession != null) {
+
+		if (currentSession != null) {
 			listener.sessionDestroyed(new HttpSessionEvent(currentSession));
-			currentSession = null;	
+			currentSession = null;
 		}
 	}
 
 	public HttpSession getSession() {
 		return currentSession;
 	}
-
-	
-
 
 }
