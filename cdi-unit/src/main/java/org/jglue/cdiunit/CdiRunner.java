@@ -20,10 +20,12 @@ import java.io.IOException;
 import javax.naming.InitialContext;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.Test;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -63,9 +65,19 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
     protected Object createTest() throws Exception {
         try {
-            Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
-
+     
             weld = new Weld() {
+            	@Override
+            	protected Deployment createDeployment(
+            			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
+            		try {
+                        return new Weld11TestUrlDeployment(resourceLoader, bootstrap, clazz);
+                    } catch (IOException e) {
+                        startupException = e;
+                        throw new RuntimeException(e);
+                    }
+            	}
+            	
                 protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                     try {
                         return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
@@ -86,9 +98,6 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 }
             }
 
-        } catch (NoSuchMethodException e) {
-            startupException = new Exception(
-                    "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
         } catch (ClassFormatError e) {
             startupException = new Exception(
                     "There were class format errors. This is often caused by API only jars on the classpath. If you are using maven then you need to place these after the CDI unit dependency as 'provided' scope is still available during testing.", e);

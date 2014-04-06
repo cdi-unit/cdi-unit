@@ -46,14 +46,15 @@ import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.ServiceRegistry;
+import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
 import org.jboss.weld.bootstrap.spi.BeansXml;
+import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
-import org.jboss.weld.environment.se.discovery.AbstractWeldSEDeployment;
-import org.jboss.weld.environment.se.discovery.ImmutableBeanDeploymentArchive;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
@@ -73,14 +74,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 
-public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
+public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
 	private Collection<Metadata<Extension>> extensions = new ArrayList<Metadata<Extension>>();
 	private static Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
+	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) throws IOException {
-		super(bootstrap);
 
 		populateCdiClasspathSet();
 		BeansXml beansXml;
@@ -262,7 +263,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 		extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 
-		beanDeploymentArchive = new ImmutableBeanDeploymentArchive("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
+		beanDeploymentArchive = new BeanDeploymentArchiveImpl("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
 		beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
 		log.debug("CDI-Unit discovered:");
 		for (String clazz : discoveredClasses) {
@@ -382,5 +383,11 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 
 	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
 		return beanDeploymentArchive;
+	}
+
+
+	@Override
+	public ServiceRegistry getServices() {
+		return serviceRegistry;
 	}
 }

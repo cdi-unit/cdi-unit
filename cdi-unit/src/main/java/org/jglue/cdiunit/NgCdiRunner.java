@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -41,8 +42,16 @@ public class NgCdiRunner {
         }
 
         weld = new Weld() {
-
-            @Override
+        	@Override
+        	protected Deployment createDeployment(
+        			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
+        		try {
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+        	}
+            
             protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                 try {
                     return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
