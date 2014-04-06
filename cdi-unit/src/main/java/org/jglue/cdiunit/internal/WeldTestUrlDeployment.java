@@ -37,6 +37,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.Extension;
@@ -221,7 +222,7 @@ public class WeldTestUrlDeployment extends AbstractWeldSEDeployment {
 						Class<?> type = field.getType();
 						classesToProcess.add(type);
 					}
-					if (field.getType().equals(Provider.class)) {
+					if (field.getType().equals(Provider.class)  || field.getType().equals(Instance.class)) {
 						ParameterizedType type = (ParameterizedType) field.getGenericType();
 						classesToProcess.add((Class<?>) type.getActualTypeArguments()[0]);
 					}
