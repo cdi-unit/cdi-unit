@@ -28,16 +28,12 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
-import junit.framework.Assert;
-
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
-import org.jglue.cdiunit.internal.CdiUnitServlet;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
@@ -202,22 +198,36 @@ public class TestCdiUnitRunner extends BaseTest {
 		Mockito.verify(disposeListener).run();
 	}
 	
-
+	@Inject
+	private HttpServletRequest requestProvider;
 	
 	
 	@Test
 	public void testContextControllerRequestScoped() {
-		contextController.openRequest();
+		HttpServletRequest r1 = contextController.openRequest();
+		r1.setAttribute("test", "test");
 
+		HttpServletRequest r2 = requestProvider;
+		
+		
+		
 		BRequestScoped b1 = requestScoped.get();
 		b1.setFoo("Bar");
 		BRequestScoped b2 = requestScoped.get();
+		Assert.assertEquals("test", r2.getAttribute("test"));
+		
 		Assert.assertSame(b1.getFoo(), b2.getFoo());
 		contextController.closeRequest();
-		contextController.openRequest();
+		HttpServletRequest r3 = contextController.openRequest();
+		r3.setAttribute("test", "test2");
+		HttpServletRequest r4 = requestProvider;
+		
+		Assert.assertEquals("test2", r4.getAttribute("test"));
 		BRequestScoped b3 = requestScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 	}
+	
+	
 	
 	@Test
 	public void testContextControllerSessionScoped() {
