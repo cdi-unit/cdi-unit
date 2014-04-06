@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,11 +38,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.jboss.weld.servlet.WeldListener;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 @CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
@@ -334,21 +333,7 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return false;
 	}
 	
-	@Override
-	public long getContentLengthLong() {
-		return getContentLength();
-	}
 
-	@Override
-	public String changeSessionId() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <T extends HttpUpgradeHandler> T upgrade(Class<T> clazz)
-			throws IOException, ServletException {
-		throw new UnsupportedOperationException();
-	}
 
 
 }

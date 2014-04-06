@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -27,15 +27,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import com.mockrunner.base.NestedApplicationException;
-import com.mockrunner.mock.web.MockServletOutputStream;
-import com.mockrunner.mock.web.WebConstants;
-import com.mockrunner.util.common.CaseAwareMap;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
@@ -66,7 +64,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 	 * Resets the state of this object to the default values
 	 */
 	public void resetAll() {
-		headers = new CaseAwareMap();
+		headers = new TreeMap(String.CASE_INSENSITIVE_ORDER);
 		characterEncoding = "ISO-8859-1";
 		bufferSize = 8192;
 		wasErrorSent = false;
@@ -290,13 +288,12 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 
 	private String getDateString(long date) {
 		Date dateValue = new Date(date);
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				WebConstants.DATE_FORMAT_HEADER, Locale.US);
+		SimpleDateFormat dateFormat = new SimpleDateFormat(WebConstants.DATE_FORMAT_HEADER, Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return dateFormat.format(dateValue);
 	}
 
-	@Override
+	
 	public void setContentLengthLong(long len) {
 		contentLength = len;
 	}

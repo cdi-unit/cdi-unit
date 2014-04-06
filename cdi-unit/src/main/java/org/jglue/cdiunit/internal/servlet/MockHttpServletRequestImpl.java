@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.inject.Inject;
@@ -48,16 +49,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
-
-import com.mockrunner.base.NestedApplicationException;
-import com.mockrunner.mock.web.MockRequestDispatcher;
-import com.mockrunner.mock.web.MockServletInputStream;
-import com.mockrunner.mock.web.WebConstants;
-import com.mockrunner.util.common.CaseAwareMap;
+import org.jglue.cdiunit.internal.AsyncContextImpl;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
@@ -132,7 +128,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest
         locales = new Vector();
         requestDispatchers = new HashMap();
         method = "GET";
-        headers = new CaseAwareMap();
+        headers = new TreeMap(String.CASE_INSENSITIVE_ORDER);
         requestedSessionIdIsFromCookie = true;
         protocol = "HTTP/1.1";
         serverName = "localhost";
@@ -822,10 +818,6 @@ public class MockHttpServletRequestImpl implements HttpServletRequest
         return servletContext;
     }
 
-	@Override
-	public long getContentLengthLong() {
-		return contentLength;
-	}
 
 	@Override
 	public AsyncContext startAsync() throws IllegalStateException {
@@ -855,11 +847,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public String changeSessionId() {
-		throw new UnsupportedOperationException();
-	}
-
+	
 	@Override
 	public boolean authenticate(HttpServletResponse response)
 			throws IOException, ServletException {
@@ -886,12 +874,8 @@ public class MockHttpServletRequestImpl implements HttpServletRequest
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass)
-			throws IOException, ServletException {
-		throw new UnsupportedOperationException();
-	}
-    
+	
+
 	
 	
 	

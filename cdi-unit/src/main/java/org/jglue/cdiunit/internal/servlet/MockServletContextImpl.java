@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,9 +48,9 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 
-import com.mockrunner.mock.web.MockRequestDispatcher;
-import com.mockrunner.util.common.StreamUtil;
+import com.google.common.io.ByteStreams;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
@@ -325,7 +326,11 @@ public class MockServletContextImpl implements ServletContext {
 
 	public synchronized void setResourceAsStream(String path,
 			InputStream inputStream) {
-		setResourceAsStream(path, StreamUtil.getStreamAsByteArray(inputStream));
+		try {
+			setResourceAsStream(path, ByteStreams.toByteArray(inputStream));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public synchronized void setResourceAsStream(String path, byte[] data) {
@@ -574,8 +579,5 @@ public class MockServletContextImpl implements ServletContext {
 
 	}
 
-	@Override
-	public String getVirtualServerName() {
-		throw new UnsupportedOperationException();
-	}
+
 }

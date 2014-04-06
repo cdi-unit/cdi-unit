@@ -78,7 +78,8 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
@@ -90,17 +91,7 @@
 			<artifactId>deltaspike-core-api</artifactId>
 			<version>0.5</version>
 		</dependency>
-		<dependency>
-			<groupId>com.mockrunner</groupId>
-			<artifactId>mockrunner-servlet</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>servlet-api</artifactId>
-					<groupId>org.apache.tomcat</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+	
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
 
-import com.mockrunner.mock.web.MockSessionContext;
+import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
