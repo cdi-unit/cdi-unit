@@ -34,13 +34,7 @@ public class NgCdiRunner {
      */
     @BeforeClass(alwaysRun = true)
     protected void setupCdi() {
-        try {
-            Weld.class.getDeclaredMethod("createDeployment", ResourceLoader.class, Bootstrap.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(
-                    "Weld 1.0.1 is not supported, please use weld 1.1.0 or newer. If you are using maven add\n<dependency>\n  <groupId>org.jboss.weld.se</groupId>\n  <artifactId>weld-se-core</artifactId>\n  <version>1.1.0.Final</version>\n</dependency>\n to your pom.");
-        }
-
+        
         weld = new Weld() {
         	@Override
         	protected Deployment createDeployment(
