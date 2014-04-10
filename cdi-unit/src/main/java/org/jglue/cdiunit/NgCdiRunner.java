@@ -36,7 +36,7 @@ public class NgCdiRunner {
     protected void setupCdi() {
         
         weld = new Weld() {
-        	@Override
+        	
         	protected Deployment createDeployment(
         			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
         		try {

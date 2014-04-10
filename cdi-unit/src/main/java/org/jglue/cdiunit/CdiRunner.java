@@ -67,7 +67,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         try {
      
             weld = new Weld() {
-            	@Override
+            	
             	protected Deployment createDeployment(
             			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
             		try {
