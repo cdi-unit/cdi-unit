@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActivatedAlternatives {
 	/**
-	 * Array of alternative classes to make discoverable during testing and mark as activated.
+	 * @return Array of alternative classes to make discoverable during testing and mark as activated.
 	 */
 	Class<?>[] value();
 }

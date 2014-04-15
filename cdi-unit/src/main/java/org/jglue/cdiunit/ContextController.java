@@ -110,9 +110,7 @@ public class ContextController {
 
 	/**
 	 * Start a request.
-	 * 
-	 * @param request
-	 *            The request to make available.
+	 * @return The request opened.
 	 */
 	public HttpServletRequest openRequest() {
 		if (currentRequest != null) {

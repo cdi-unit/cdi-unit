@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AdditionalClasspaths {
 	/**
-	 * Array of classes that belong to classpath entries to make discoverable during testing.
+	 * @return Array of classes that belong to classpath entries to make discoverable during testing.
 	 */
 	public Class<?>[] value();
 }

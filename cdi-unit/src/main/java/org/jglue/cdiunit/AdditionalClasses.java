@@ -44,13 +44,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AdditionalClasses {
+
 	/**
-	 * Array of classes to make discoverable during testing.
+	 * @return Array of classes to make discoverable during testing.
 	 */
 	public Class<?>[] value();
 	
 	/**
-	 * Array of class names to make discoverable during testing (late binding allows specifying classes that are package visible).
+	 * @return Array of class names to make discoverable during testing (late binding allows specifying classes that are package visible).
 	 */
 	public String[] late() default {};
 }
