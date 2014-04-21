@@ -9,7 +9,7 @@ See website for full details https://jglue.org/cdi-unit/
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>2.2.0</version>
+  <version>3.0.0</version>
   <scope>test</scope>
 </dependency>
 ```
