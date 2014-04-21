@@ -3,7 +3,7 @@ cdi-unit
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
-See website for full details https://jglue.org/cdi-unit/
+See website for full details http://jglue.org/cdi-unit-user-guide/
 
 ```xml
 <dependency>
