@@ -115,7 +115,15 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-		extensions.add(new MetadataImpl<Extension>(new ViewContextExtension(), ViewContextExtension.class.getName()));
+		
+		try {
+			Class.forName("javax.faces.view.ViewScoped");
+			extensions.add(new MetadataImpl<Extension>(new ViewContextExtension(), ViewContextExtension.class.getName()));
+		}
+		catch(ClassNotFoundException e) {
+			
+		}
+		
 		
 
 		try {
