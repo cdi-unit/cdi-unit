@@ -25,8 +25,8 @@ import javax.enterprise.inject.spi.Extension;
  *
  * @author russell
  */
-public class ViewContextExtension implements Extension{
-    public ViewContextExtension(){
+public class ViewScopeExtension implements Extension{
+    public ViewScopeExtension(){
         
     }
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager){
