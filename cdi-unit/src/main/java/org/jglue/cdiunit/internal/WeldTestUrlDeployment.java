@@ -115,6 +115,8 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
+		extensions.add(new MetadataImpl<Extension>(new ViewContextExtension(), ViewContextExtension.class.getName()));
+		
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
@@ -127,13 +129,12 @@ public class WeldTestUrlDeployment implements Deployment {
 			classesToProcess.add(MockHttpServletRequestImpl.class);
 			classesToProcess.add(MockHttpServletResponseImpl.class);
 
-			//If this is an old version of weld then add the producers
+			// If this is an old version of weld then add the producers
 			try {
 				Class.forName("org.jboss.weld.bean.AbstractSyntheticBean");
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				classesToProcess.add(ServletObjectsProducer.class);
-			} 
+			}
 
 		} catch (ClassNotFoundException e) {
 		}
@@ -361,7 +362,7 @@ public class WeldTestUrlDeployment implements Deployment {
 				try {
 					cl.close();
 				} catch (NoSuchMethodError e) {
-					//We may be running on Java6
+					// We may be running on Java6
 				}
 			}
 		}
