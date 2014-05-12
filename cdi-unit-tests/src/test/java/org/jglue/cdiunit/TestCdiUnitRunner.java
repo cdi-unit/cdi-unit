@@ -43,6 +43,7 @@ import org.mockito.Mockito;
 		ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
+	
 	@Inject
 	private AImplementation1 aImpl;
 

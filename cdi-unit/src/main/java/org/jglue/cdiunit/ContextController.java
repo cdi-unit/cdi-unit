@@ -132,6 +132,17 @@ public class ContextController {
 		}
 		return currentRequest;
 	}
+	
+	/**
+	 * @return Returns the current in progress request or throws an excweption if the request was not active
+	 */
+	public HttpServletRequest currentRequest() {
+		if (currentRequest == null) {
+			throw new RuntimeException("A request has not been opened");
+		}
+
+		return currentRequest;
+	}
 
 	/**
 	 * Close the currently active request.

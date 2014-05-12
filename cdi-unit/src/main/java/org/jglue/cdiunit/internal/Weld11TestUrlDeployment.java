@@ -26,7 +26,6 @@ public class Weld11TestUrlDeployment extends WeldTestUrlDeployment implements CD
 	public Weld11TestUrlDeployment(ResourceLoader resourceLoader,
 			Bootstrap bootstrap, Class<?> testClass) throws IOException {
 		super(resourceLoader, bootstrap, testClass);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

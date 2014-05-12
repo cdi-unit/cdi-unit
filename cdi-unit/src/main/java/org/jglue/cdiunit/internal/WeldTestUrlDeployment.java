@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
+import org.jboss.weld.bean.AbstractSyntheticBean;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -68,6 +69,7 @@ import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
 import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
+import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
 import org.mockito.Mock;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -114,8 +116,6 @@ public class WeldTestUrlDeployment implements Deployment {
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
 
-	
-
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
 			classesToProcess.add(InRequestInterceptor.class);
@@ -126,9 +126,15 @@ public class WeldTestUrlDeployment implements Deployment {
 			classesToProcess.add(MockHttpSessionImpl.class);
 			classesToProcess.add(MockHttpServletRequestImpl.class);
 			classesToProcess.add(MockHttpServletResponseImpl.class);
-			
-			
-			
+
+			//If this is an old version of weld then add the producers
+			try {
+				Class.forName("org.jboss.weld.bean.AbstractSyntheticBean");
+			}
+			catch (ClassNotFoundException e) {
+				classesToProcess.add(ServletObjectsProducer.class);
+			} 
+
 		} catch (ClassNotFoundException e) {
 		}
 
@@ -197,8 +203,9 @@ public class WeldTestUrlDeployment implements Deployment {
 
 									@Override
 									public boolean apply(String input) {
-										return input.startsWith(packageName) && !input.substring(packageName.length() + 1, input.length() - 6).contains(".");
-										
+										return input.startsWith(packageName)
+												&& !input.substring(packageName.length() + 1, input.length() - 6).contains(".");
+
 									}
 								}));
 						classesToProcess.addAll(reflections.getSubTypesOf(Object.class));
@@ -227,7 +234,7 @@ public class WeldTestUrlDeployment implements Deployment {
 						Class<?> type = field.getType();
 						classesToProcess.add(type);
 					}
-					if (field.getType().equals(Provider.class)  || field.getType().equals(Instance.class)) {
+					if (field.getType().equals(Provider.class) || field.getType().equals(Instance.class)) {
 						ParameterizedType type = (ParameterizedType) field.getGenericType();
 						classesToProcess.add((Class<?>) type.getActualTypeArguments()[0]);
 					}
@@ -277,7 +284,6 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 
 	}
-
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
 		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
@@ -352,7 +358,11 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 
 			} finally {
-				 cl.close();
+				try {
+					cl.close();
+				} catch (NoSuchMethodError e) {
+					//We may be running on Java6
+				}
 			}
 		}
 
@@ -388,7 +398,6 @@ public class WeldTestUrlDeployment implements Deployment {
 	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
 		return beanDeploymentArchive;
 	}
-
 
 	@Override
 	public ServiceRegistry getServices() {
