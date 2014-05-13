@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-Mockito</name>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.jglue.cdi-unit</groupId>
 			<artifactId>cdi-unit</artifactId>
-			<version>3.0.1</version>
+			<version>3.0.2-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.jboss.weld.se</groupId>
