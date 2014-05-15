@@ -126,6 +126,15 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 		
 		
+		try {
+			Class.forName("javax.ejb.EJB");
+			extensions.add(new MetadataImpl<Extension>(new EjbExtension(), EjbExtension.class.getName()));
+		}
+		catch(ClassNotFoundException e) {
+			
+		}
+		
+		
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
