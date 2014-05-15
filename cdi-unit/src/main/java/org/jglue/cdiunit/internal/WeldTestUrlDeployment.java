@@ -64,6 +64,7 @@ import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
+import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
@@ -358,11 +359,11 @@ public class WeldTestUrlDeployment implements Deployment {
 					}
 				}
 				URL resource = cl.getResource("META-INF/beans.xml");
-
+				boolean cdiUnit = url.equals(CdiRunner.class.getProtectionDomain().getCodeSource().getLocation());
 				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
 				boolean generatedClasses = url.getFile().contains("/generated-classes/");
 				boolean gradleClasses = url.getFile().endsWith("/classes/test/") || url.getFile().endsWith("/classes/main/");
-				if (resource != null || mavenClasses || gradleClasses || generatedClasses) {
+				if (cdiUnit || resource != null || mavenClasses || gradleClasses || generatedClasses) {
 					cdiClasspathEntries.add(url);
 				}
 
