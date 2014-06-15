@@ -131,7 +131,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                     }
                     throw startupException;
                 }
-                System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.CdiUnitContextFactory");
+                System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
                 InitialContext initialContext = new InitialContext();
                 initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 

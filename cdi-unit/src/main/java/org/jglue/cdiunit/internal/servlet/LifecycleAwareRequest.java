@@ -41,7 +41,6 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.Part;
 
 import org.jboss.weld.servlet.WeldListener;
-import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 @CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {

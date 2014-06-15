@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.jsf;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;

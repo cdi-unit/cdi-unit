@@ -1,4 +1,4 @@
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.ejb;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

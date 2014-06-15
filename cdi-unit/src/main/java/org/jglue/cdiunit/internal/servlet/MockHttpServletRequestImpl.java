@@ -52,8 +52,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
-import org.jglue.cdiunit.internal.AsyncContextImpl;
-import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.

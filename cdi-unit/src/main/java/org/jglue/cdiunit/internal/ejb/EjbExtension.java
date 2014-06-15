@@ -1,4 +1,4 @@
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.ejb;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -16,7 +16,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
-import org.jglue.cdiunit.internal.EJbQualifier.EJbQualifierLiteral;
+import org.jglue.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;
 
 public class EjbExtension implements Extension {
 

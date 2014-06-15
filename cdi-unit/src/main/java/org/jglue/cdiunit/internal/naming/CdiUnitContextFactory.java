@@ -1,4 +1,4 @@
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.naming;
 
 import java.util.Hashtable;
 

@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSessionEvent;
 import org.jboss.weld.context.ConversationContext;
 import org.jboss.weld.context.http.Http;
 import org.jboss.weld.servlet.WeldListener;
-import org.jglue.cdiunit.internal.CdiUnitServlet;
+import org.jglue.cdiunit.internal.servlet.CdiUnitServlet;
 import org.jglue.cdiunit.internal.servlet.LifecycleAwareRequest;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 

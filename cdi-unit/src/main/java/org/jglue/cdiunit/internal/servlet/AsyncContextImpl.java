@@ -1,4 +1,4 @@
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncListener;

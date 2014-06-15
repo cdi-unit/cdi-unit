@@ -48,7 +48,6 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
-import org.jglue.cdiunit.internal.CdiUnitServlet;
 
 import com.google.common.io.ByteStreams;
 

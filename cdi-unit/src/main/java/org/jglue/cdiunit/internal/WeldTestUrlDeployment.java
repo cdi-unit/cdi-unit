@@ -45,7 +45,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
-import org.jboss.weld.bean.AbstractSyntheticBean;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -66,11 +65,17 @@ import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
 import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;
+import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
+import org.jglue.cdiunit.internal.ejb.EjbExtension;
+import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
+import org.jglue.cdiunit.internal.mockito.MockitoExtension;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
 import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
 import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsExtension;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsProducers;
 import org.mockito.Mock;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -134,7 +139,14 @@ public class WeldTestUrlDeployment implements Deployment {
 			
 		}
 		
-		
+		try {
+			Class.forName("javax.ejb.EJB");
+			extensions.add(new MetadataImpl<Extension>(new JaxRsExtension(), JaxRsExtension.class.getName()));
+			classesToProcess.add(JaxRsProducers.class);
+		}
+		catch(ClassNotFoundException e) {
+			
+		}
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
@@ -357,7 +369,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		for (URL url : entries) {
 			URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
 			try {
-				System.out.println(url);
+				
 				if (url.getFile().endsWith("/classes/")) {
 					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
 					try {
@@ -383,6 +395,10 @@ public class WeldTestUrlDeployment implements Deployment {
 					// We may be running on Java6
 				}
 			}
+		}
+		log.debug("CDI classpath entries discovered:");
+		for(URL url : cdiClasspathEntries) {
+			log.debug("{}", url);
 		}
 
 	}
