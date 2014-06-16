@@ -70,7 +70,7 @@ public class NgCdiRunner {
         injectionTarget.inject(this, creationalContext);
 
         System.setProperty("java.naming.factory.initial",
-                "org.jglue.cdiunit.internal.CdiUnitContextFactory");
+                "org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
         try {
             initialContext = new InitialContext();
             initialContext.bind("java:comp/BeanManager", beanManager);
