@@ -87,7 +87,6 @@ public class ContextController {
 	private HttpSession session;
 
 	@Inject
-	@ApplicationScoped
 	private WeldListener listener;
 
 	@PostConstruct
