@@ -25,7 +25,7 @@ public class EjbExtension implements Extension {
 		boolean modified = false;
 		AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType);
-		pat.setAnnotatedType(builder.create());
+		
 
 		Stateless stateless = annotatedType.getAnnotation(Stateless.class);
 

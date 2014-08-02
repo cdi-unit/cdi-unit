@@ -15,14 +15,10 @@
  */
 package org.jglue.cdiunit.internal;
 
-import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InRequestScope;
@@ -41,14 +37,15 @@ public class InRequestInterceptor {
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
-			
-			contextController.openRequest();
+			try {
+				contextController.openRequest();
+
+			} catch (Exception e) {
+				log.error("Failed to open request context", e);
+				throw e;
+
+			}
 			return ctx.proceed();
-		} catch (Exception e) {
-			log.error(
-					"Failed to open request context. This can occur is you are using cal10n-0.7.4, see http://jira.qos.ch/browse/CAL-29",
-					e);
-			throw e;
 		} finally {
 			contextController.closeRequest();
 		}

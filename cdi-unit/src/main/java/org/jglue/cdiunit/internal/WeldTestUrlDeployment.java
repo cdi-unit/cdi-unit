@@ -17,6 +17,7 @@ package org.jglue.cdiunit.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -67,6 +68,8 @@ import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
 import org.jglue.cdiunit.internal.ejb.EjbExtension;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsExtension;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsProducers;
 import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
 import org.jglue.cdiunit.internal.mockito.MockitoExtension;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
@@ -74,12 +77,9 @@ import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
 import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
 import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
 import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
-import org.jglue.cdiunit.internal.jaxrs.JaxRsExtension;
-import org.jglue.cdiunit.internal.jaxrs.JaxRsProducers;
 import org.mockito.Mock;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +140,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 		
 		try {
-			Class.forName("javax.ejb.EJB");
+			Class.forName("javax.ws.rs.GET");
 			extensions.add(new MetadataImpl<Extension>(new JaxRsExtension(), JaxRsExtension.class.getName()));
 			classesToProcess.add(JaxRsProducers.class);
 		}
@@ -172,11 +172,13 @@ public class WeldTestUrlDeployment implements Deployment {
 		while (!classesToProcess.isEmpty()) {
 
 			Class<?> c = classesToProcess.iterator().next();
-
+			
 			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c)) && !classesProcessed.contains(c) && !c.isPrimitive()
 					&& !classesToIgnore.contains(c)) {
 				classesProcessed.add(c);
-				discoveredClasses.add(c.getName());
+				if(!c.isAnnotation()) {
+					discoveredClasses.add(c.getName());
+				}
 				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
 					try {
 						extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
@@ -213,12 +215,11 @@ public class WeldTestUrlDeployment implements Deployment {
 				if (additionalClasspaths != null) {
 					for (Class<?> additionalClasspath : additionalClasspaths.value()) {
 
-						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(
-								new SubTypesScanner(false), new ResourcesScanner()).setUrls(
+						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(new TypesScanner()).setUrls(
 								new File(additionalClasspath.getProtectionDomain().getCodeSource().getLocation().getPath())
 										.toURI().toURL()));
-						classesToProcess.addAll(reflections.getSubTypesOf(Object.class));
-
+						
+						classesToProcess.addAll(ReflectionUtils.forNames(reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(), new ClassLoader[]{getClass().getClassLoader()}));
 					}
 				}
 
@@ -227,7 +228,7 @@ public class WeldTestUrlDeployment implements Deployment {
 					for (Class<?> additionalPackage : additionalPackages.value()) {
 						final String packageName = additionalPackage.getPackage().getName();
 						Reflections reflections = new Reflections(new ConfigurationBuilder()
-								.setScanners(new SubTypesScanner(false), new ResourcesScanner())
+								.setScanners(new TypesScanner())
 								.setUrls(
 										new File(additionalPackage.getProtectionDomain().getCodeSource().getLocation().getPath())
 												.toURI().toURL()).filterInputsBy(new Predicate<String>() {
@@ -239,7 +240,7 @@ public class WeldTestUrlDeployment implements Deployment {
 
 									}
 								}));
-						classesToProcess.addAll(reflections.getSubTypesOf(Object.class));
+						classesToProcess.addAll(ReflectionUtils.forNames(reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(), new ClassLoader[]{getClass().getClassLoader()}));
 
 					}
 				}
@@ -254,6 +255,14 @@ public class WeldTestUrlDeployment implements Deployment {
 						}
 					}
 				}
+				
+				for(Annotation a : c.getAnnotations()) {
+				
+					if(!a.annotationType().getPackage().getName().equals("org.jglue.cdiunit")) {
+						classesToProcess.add(a.annotationType());	
+					}
+				}
+				
 
 				Class<?> superClass = c.getSuperclass();
 				if (superClass != null && superClass != Object.class) {
@@ -315,6 +324,8 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 
 	}
+
+	
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
 		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
