@@ -17,6 +17,7 @@ import org.jglue.cdiunit.AdditionalClasspaths;
  *
  */
 @AdditionalClasspaths({RepositoryExtension.class})
+@SupportDeltaspikeJpa
 @SupportDeltaspikePartialBean
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SupportDeltaspikeData {
