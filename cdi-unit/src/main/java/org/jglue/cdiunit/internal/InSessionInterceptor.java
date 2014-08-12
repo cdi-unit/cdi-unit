@@ -22,8 +22,6 @@ import javax.interceptor.InvocationContext;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InSessionScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Interceptor
 @InSessionScope

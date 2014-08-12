@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2014 Bryn Cooke
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jglue.cdiunit;
 
 import javax.ejb.EJB;
@@ -11,6 +26,7 @@ import org.jglue.cdiunit.TestEjb.EJBStateful;
 import org.jglue.cdiunit.TestEjb.EJBStatefulNamed;
 import org.jglue.cdiunit.TestEjb.EJBStateless;
 import org.jglue.cdiunit.TestEjb.EJBStatelessNamed;
+import org.jglue.cdiunit.internal.ejb.SupportEjb;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +34,7 @@ import org.junit.runner.RunWith;
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ EJBStateless.class, EJBStatelessNamed.class, EJBStateful.class, EJBStatefulNamed.class, EJBSingleton.class,
 		EJBSingletonNamed.class })
+@SupportEjb
 public class TestEjb {
 
 	@EJB

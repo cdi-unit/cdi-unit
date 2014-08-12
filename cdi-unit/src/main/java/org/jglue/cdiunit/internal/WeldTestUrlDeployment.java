@@ -67,9 +67,6 @@ import org.jglue.cdiunit.AdditionalPackages;
 import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
-import org.jglue.cdiunit.internal.ejb.EjbExtension;
-import org.jglue.cdiunit.internal.jaxrs.JaxRsExtension;
-import org.jglue.cdiunit.internal.jaxrs.JaxRsProducers;
 import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
 import org.jglue.cdiunit.internal.mockito.MockitoExtension;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
@@ -130,23 +127,9 @@ public class WeldTestUrlDeployment implements Deployment {
 			
 		}
 		
+
 		
-		try {
-			Class.forName("javax.ejb.EJB");
-			extensions.add(new MetadataImpl<Extension>(new EjbExtension(), EjbExtension.class.getName()));
-		}
-		catch(ClassNotFoundException e) {
-			
-		}
 		
-		try {
-			Class.forName("javax.ws.rs.GET");
-			extensions.add(new MetadataImpl<Extension>(new JaxRsExtension(), JaxRsExtension.class.getName()));
-			classesToProcess.add(JaxRsProducers.class);
-		}
-		catch(ClassNotFoundException e) {
-			
-		}
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");

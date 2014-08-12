@@ -11,11 +11,13 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
+import org.jglue.cdiunit.internal.jaxrs.SupportJaxRs;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(CdiRunner.class)
+@SupportJaxRs
 public class TestJaxRs {
 
 	@Inject

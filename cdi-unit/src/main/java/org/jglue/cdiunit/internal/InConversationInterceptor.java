@@ -17,11 +17,9 @@ package org.jglue.cdiunit.internal;
 
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.jglue.cdiunit.InConversationScope;
 import org.slf4j.Logger;

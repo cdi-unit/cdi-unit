@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.deltaspike;
+package org.jglue.cdiunit.internal.ejb;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
-import org.apache.deltaspike.core.impl.scope.DeltaSpikeContextExtension;
-import org.jglue.cdiunit.AdditionalClasspaths;
+import org.jglue.cdiunit.AdditionalClasses;
 
 /**
- * Enable support for DeltaSpike core in this test.
+ * Enable support for Ejb
+ * 
  * @author bryn
  *
  */
-@AdditionalClasspaths({ BeanManagerProvider.class,
-		DeltaSpikeContextExtension.class })
+@AdditionalClasses({EjbExtension.class })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SupportDeltaspikeCore {
+public @interface SupportEjb {
 
 }

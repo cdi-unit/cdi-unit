@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.deltaspike;
+package org.jglue.cdiunit.internal.jaxrs;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
-import org.apache.deltaspike.core.impl.scope.DeltaSpikeContextExtension;
-import org.jglue.cdiunit.AdditionalClasspaths;
+import org.jglue.cdiunit.AdditionalClasses;
 
 /**
- * Enable support for DeltaSpike core in this test.
+ * Enable support for JaxRs mocking.
+ * 
  * @author bryn
  *
  */
-@AdditionalClasspaths({ BeanManagerProvider.class,
-		DeltaSpikeContextExtension.class })
+@AdditionalClasses({JaxRsExtension.class, JaxRsProducers.class })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SupportDeltaspikeCore {
+public @interface SupportJaxRs {
 
 }
