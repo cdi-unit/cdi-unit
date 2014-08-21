@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal.ejb;
+package org.jglue.cdiunit.ejb;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.internal.ejb.EjbExtension;
 
 /**
  * Enable support for Ejb

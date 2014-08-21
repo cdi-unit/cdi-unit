@@ -26,7 +26,7 @@ import org.jglue.cdiunit.TestEjb.EJBStateful;
 import org.jglue.cdiunit.TestEjb.EJBStatefulNamed;
 import org.jglue.cdiunit.TestEjb.EJBStateless;
 import org.jglue.cdiunit.TestEjb.EJBStatelessNamed;
-import org.jglue.cdiunit.internal.ejb.SupportEjb;
+import org.jglue.cdiunit.ejb.SupportEjb;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

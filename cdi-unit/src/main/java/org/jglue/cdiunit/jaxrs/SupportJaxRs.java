@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal.jaxrs;
+package org.jglue.cdiunit.jaxrs;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsExtension;
+import org.jglue.cdiunit.internal.jaxrs.JaxRsProducers;
 
 /**
  * Enable support for JaxRs mocking.
