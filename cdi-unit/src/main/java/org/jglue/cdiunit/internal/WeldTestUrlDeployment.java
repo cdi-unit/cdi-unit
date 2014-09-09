@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -118,18 +119,13 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-		
+
 		try {
 			Class.forName("javax.faces.view.ViewScoped");
 			extensions.add(new MetadataImpl<Extension>(new ViewScopeExtension(), ViewScopeExtension.class.getName()));
-		}
-		catch(ClassNotFoundException e) {
-			
-		}
-		
+		} catch (ClassNotFoundException e) {
 
-		
-		
+		}
 
 		try {
 			Class.forName("javax.servlet.http.HttpServletRequest");
@@ -155,11 +151,11 @@ public class WeldTestUrlDeployment implements Deployment {
 		while (!classesToProcess.isEmpty()) {
 
 			Class<?> c = classesToProcess.iterator().next();
-			
+
 			if ((isCdiClass(c) || Extension.class.isAssignableFrom(c)) && !classesProcessed.contains(c) && !c.isPrimitive()
 					&& !classesToIgnore.contains(c)) {
 				classesProcessed.add(c);
-				if(!c.isAnnotation()) {
+				if (!c.isAnnotation()) {
 					discoveredClasses.add(c.getName());
 				}
 				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
@@ -198,11 +194,14 @@ public class WeldTestUrlDeployment implements Deployment {
 				if (additionalClasspaths != null) {
 					for (Class<?> additionalClasspath : additionalClasspaths.value()) {
 
-						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(new TypesScanner()).setUrls(
-								new File(additionalClasspath.getProtectionDomain().getCodeSource().getLocation().getPath())
-										.toURI().toURL()));
-						
-						classesToProcess.addAll(ReflectionUtils.forNames(reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(), new ClassLoader[]{getClass().getClassLoader()}));
+						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(new TypesScanner())
+								.setUrls(
+										new File(additionalClasspath.getProtectionDomain().getCodeSource().getLocation()
+												.getPath()).toURI().toURL()));
+
+						classesToProcess.addAll(ReflectionUtils.forNames(
+								reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(),
+								new ClassLoader[] { getClass().getClassLoader() }));
 					}
 				}
 
@@ -223,7 +222,9 @@ public class WeldTestUrlDeployment implements Deployment {
 
 									}
 								}));
-						classesToProcess.addAll(ReflectionUtils.forNames(reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(), new ClassLoader[]{getClass().getClassLoader()}));
+						classesToProcess.addAll(ReflectionUtils.forNames(
+								reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(),
+								new ClassLoader[] { getClass().getClassLoader() }));
 
 					}
 				}
@@ -238,35 +239,34 @@ public class WeldTestUrlDeployment implements Deployment {
 						}
 					}
 				}
-				
-				for(Annotation a : c.getAnnotations()) {
-				
-					if(!a.annotationType().getPackage().getName().equals("org.jglue.cdiunit")) {
-						classesToProcess.add(a.annotationType());	
+
+				for (Annotation a : c.getAnnotations()) {
+
+					if (!a.annotationType().getPackage().getName().equals("org.jglue.cdiunit")) {
+						classesToProcess.add(a.annotationType());
 					}
 				}
-				
 
-				Class<?> superClass = c.getSuperclass();
+				Type superClass = c.getGenericSuperclass();
 				if (superClass != null && superClass != Object.class) {
-					classesToProcess.add(superClass);
+					addClassesToProcess(classesToProcess, superClass);
 				}
 
 				for (Field field : c.getDeclaredFields()) {
 					if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
-						Class<?> type = field.getType();
-						classesToProcess.add(type);
+						addClassesToProcess(classesToProcess, field.getGenericType());
 					}
 					if (field.getType().equals(Provider.class) || field.getType().equals(Instance.class)) {
-						ParameterizedType type = (ParameterizedType) field.getGenericType();
-						classesToProcess.add((Class<?>) type.getActualTypeArguments()[0]);
+						addClassesToProcess(classesToProcess, field.getGenericType());
 					}
 				}
 				for (Method method : c.getDeclaredMethods()) {
 					if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
-						for (Class<?> param : method.getParameterTypes()) {
-							classesToProcess.add(param);
+						for (Type param : method.getGenericParameterTypes()) {
+							addClassesToProcess(classesToProcess, param);
 						}
+						addClassesToProcess(classesToProcess, method.getGenericReturnType());
+
 					}
 				}
 			}
@@ -308,7 +308,19 @@ public class WeldTestUrlDeployment implements Deployment {
 
 	}
 
-	
+	private void addClassesToProcess(Collection<Class<?>> classesToProcess, Type type) {
+
+		if (type instanceof Class) {
+			classesToProcess.add((Class<?>)type);
+		}
+		if(type instanceof ParameterizedType) {
+			ParameterizedType ptype = (ParameterizedType)type;
+			classesToProcess.add((Class<?>)ptype.getRawType());
+			for(Type arg : ptype.getActualTypeArguments()) {
+				addClassesToProcess(classesToProcess, arg);
+			}
+		}
+	}
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
 		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
@@ -363,7 +375,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		for (URL url : entries) {
 			URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
 			try {
-				
+
 				if (url.getFile().endsWith("/classes/")) {
 					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
 					try {
@@ -391,7 +403,7 @@ public class WeldTestUrlDeployment implements Deployment {
 			}
 		}
 		log.debug("CDI classpath entries discovered:");
-		for(URL url : cdiClasspathEntries) {
+		for (URL url : cdiClasspathEntries) {
 			log.debug("{}", url);
 		}
 

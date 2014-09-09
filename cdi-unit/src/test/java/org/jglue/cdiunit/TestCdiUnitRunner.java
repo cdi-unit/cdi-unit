@@ -16,11 +16,14 @@
 package org.jglue.cdiunit;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -78,11 +81,26 @@ public class TestCdiUnitRunner extends BaseTest {
 	@Produces
 	private ProducedViaField produced;
 	
+	@Inject
+	Instance<List<?>> generics;
+
+	
+	@Produces
+	
+	List<Object> producedList = new ArrayList<Object>();
+	
+	
 	@Produces
 	public ProducedViaMethod getProducedViaMethod() {
 		return new ProducedViaMethod(2);
 	}
 
+	
+	@Test
+	public void testGenerics() {
+		Assert.assertEquals(producedList, generics.get());
+	}
+	
 	@Test
 	@InRequestScope
 	public void testRequestScope() {
