@@ -29,6 +29,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
+import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.internal.servlet.CdiUnitServlet;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
@@ -82,21 +83,24 @@ public class JaxRsProducers {
 	@RequestScoped
 	@JaxRsQualifier
 	public Request getRequest() {
-		return new MockRequest(getHttpServletRequest());
+		return new RequestImpl(getHttpServletRequest(), getHttpServletResponse());
 	}
+
+	
 	
 	@Produces
 	@RequestScoped
 	@JaxRsQualifier
 	public UriInfo getUriInfo() {
-		return new MockUriInfo(getHttpServletRequest());
+		return ServletUtil.extractUriInfo(getHttpServletRequest(), "");
+		
 	}
 	
 	@Produces
 	@RequestScoped
 	@JaxRsQualifier
 	public HttpHeaders getHttpHeaders() {
-		return new MockHttpHeaders(getHttpServletRequest());
+		return ServletUtil.extractHttpHeaders(getHttpServletRequest());
 	}
 	
 	@Produces

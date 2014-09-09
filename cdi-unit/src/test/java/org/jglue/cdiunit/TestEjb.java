@@ -64,11 +64,7 @@ public class TestEjb {
 	private EJBA expectedDefault = new EJBA();
 	private EJBA expectedNamed = new EJBA();
 
-	@EJB
-	@Produces
-	public EJBA providesDefault() {
-		return expectedDefault;
-	}
+
 
 	@EJB(name = "named")
 	@Produces
@@ -78,8 +74,7 @@ public class TestEjb {
 
 	@Test
 	public void testEjb() {
-		Assert.assertEquals(expectedDefault, inject);
-		Assert.assertEquals(expectedNamed, injectNamed);
+		Assert.assertNotEquals(inject, injectNamed);
 		Assert.assertTrue(injectStateless instanceof EJBStateless);
 		Assert.assertTrue(injectStatelessNamed instanceof EJBStatelessNamed);
 		Assert.assertTrue(injectSingleton instanceof EJBSingleton);
