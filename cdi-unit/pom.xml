@@ -144,7 +144,7 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 			<version>3.0.8.Final</version>
-			<scope>test</scope>
+			
 		</dependency>
 	</dependencies>
 	<build>
