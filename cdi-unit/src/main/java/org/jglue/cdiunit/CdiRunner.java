@@ -72,7 +72,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		try {
 			for(Method m : clazz.getMethods()) {
 				m.getReturnType();
-				m.getParameters();
+				m.getParameterTypes();
 				m.getParameterAnnotations();
 			}
 			for(Field f : clazz.getFields()) {
