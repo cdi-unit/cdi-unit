@@ -58,8 +58,8 @@ import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
  * 
  * 	&#064;Test
  * 	void testStart() {
- * 		contextController.openRequest(new DummyHttpRequest()); // Start a new
- * 																// request.
+ * 		contextController.openRequest(); // Start a new request.
+ *
  * 		starship.start();
  * 		contextController.closeRequest(); // Close the current request.
  * 	}
@@ -67,11 +67,12 @@ import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
  * </pre>
  * 
  * @author Bryn Cooke
+ * @author Lars-Fredrik Smedberg
  */
 @ApplicationScoped
 public class ContextController {
 
-	private HttpServletRequest currentRequest;
+	private ThreadLocal<HttpServletRequest> requests;
 
 	@Inject
 	private BeanManager beanManager;
@@ -91,12 +92,16 @@ public class ContextController {
 
 	@PostConstruct
 	void initContext() {
+
+		requests = new ThreadLocal<HttpServletRequest>();
 		listener.contextInitialized(new ServletContextEvent(context));
 	}
 
 	@PreDestroy
 	void destroyContext() {
+
 		listener.contextDestroyed(new ServletContextEvent(context));
+		requests = null;
 	}
 
 	@Inject
@@ -112,6 +117,8 @@ public class ContextController {
 	 * @return The request opened.
 	 */
 	public HttpServletRequest openRequest() {
+
+		HttpServletRequest currentRequest = requests.get();
 		if (currentRequest != null) {
 			throw new RuntimeException("A request is already open");
 		}
@@ -119,16 +126,19 @@ public class ContextController {
 		MockHttpServletRequestImpl request = requestProvider.get();
 
 		if (currentSession != null) {
+
 			request.setSession(currentSession);
 			request.getSession();
 		}
 
 		currentRequest = new LifecycleAwareRequest(listener, request);
-		listener.requestInitialized(new ServletRequestEvent(context,
-				currentRequest));
+		requests.set(currentRequest);
+
+		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
 		if (!conversationContext.isActive()) {
 			conversationContext.activate();
 		}
+
 		return currentRequest;
 	}
 	
@@ -136,6 +146,8 @@ public class ContextController {
 	 * @return Returns the current in progress request or throws an excweption if the request was not active
 	 */
 	public HttpServletRequest currentRequest() {
+
+		HttpServletRequest currentRequest = requests.get();
 		if (currentRequest == null) {
 			throw new RuntimeException("A request has not been opened");
 		}
@@ -147,23 +159,29 @@ public class ContextController {
 	 * Close the currently active request.
 	 */
 	public void closeRequest() {
+
+		HttpServletRequest currentRequest = requests.get();
 		if (currentRequest != null) {
-			listener.requestDestroyed(new ServletRequestEvent(context,
-					currentRequest));
+
+			listener.requestDestroyed(new ServletRequestEvent(context, currentRequest));
 			currentSession = currentRequest.getSession(false);
 		}
-		currentRequest = null;
+
+		requests.remove();
 	}
 
 	/**
 	 * Close the currently active session.
 	 */
 	public void closeSession() {
+
+		HttpServletRequest currentRequest = requests.get();
 		if (currentRequest != null) {
 			currentSession = currentRequest.getSession(false);
 		}
 
 		if (currentSession != null) {
+
 			listener.sessionDestroyed(new HttpSessionEvent(currentSession));
 			currentSession = null;
 		}
@@ -172,5 +190,4 @@ public class ContextController {
 	public HttpSession getSession() {
 		return currentSession;
 	}
-
 }
