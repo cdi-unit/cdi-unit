@@ -18,11 +18,7 @@ package org.jglue.cdiunit.internal;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -396,9 +392,14 @@ public class WeldTestUrlDeployment implements Deployment {
 
 			} finally {
 				try {
-					cl.close();
-				} catch (NoSuchMethodError e) {
-					// We may be running on Java6
+					Method method = cl.getClass().getMethod("close");
+					method.invoke(cl);
+				} catch (NoSuchMethodException e) {
+					//Ignore, we might be running on Java 6
+				} catch (IllegalAccessException e) {
+					//Ignore, we might be running on Java 6
+				} catch (InvocationTargetException e) {
+					//Ignore, we might be running on Java 6
 				}
 			}
 		}
