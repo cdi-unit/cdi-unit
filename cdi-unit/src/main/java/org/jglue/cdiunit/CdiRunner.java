@@ -22,12 +22,14 @@ import java.net.URL;
 
 import javax.naming.InitialContext;
 
+import org.jboss.weld.bootstrap.WeldBootstrap;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jboss.weld.util.reflection.Formats;
 import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.Test;
@@ -86,6 +88,10 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 	protected Object createTest() throws Exception {
 		try {
+			String version = Formats.version(WeldBootstrap.class.getPackage());
+			if("2.2.8 (Final)".equals(version) || "2.2.7 (Final)".equals(version)) {
+				startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");	
+			}
 
 			weld = new Weld() {
 
@@ -108,7 +114,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				};
 
 			};
-
+			  
 			try {
 
 				container = weld.initialize();
