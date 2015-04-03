@@ -1,17 +1,37 @@
 apply plugin: 'java'
 
 repositories {
-    
+
     mavenCentral()
     mavenLocal()
 }
 
+sourceSets {
+    integTest {
+        java.srcDir file('src/integTest/java')
+        resources.srcDir file('src/integTest/resources')
+    }
+}
+
+task integTest(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+}
+
+check.dependsOn integTest
+
 dependencies {
-	testCompile group: 'junit', name:'junit', version:'4.8.2'
-	testCompile group: 'org.slf4j', name:'slf4j-api', version:'1.7.5'
-	testCompile files('../cdi-unit/target/cdi-unit-' + projectVersionProp + '.jar')
-	testCompile group: 'org.jboss.weld.se', name:'weld-se-core', version:weldVersionProp
-	testCompile group: 'org.apache.deltaspike.core', name:'deltaspike-core-impl', version:'0.6'	
-	testCompile group: 'org.reflections', name:'reflections', version: '0.9.9-RC1'
-	 
+    integTestCompile sourceSets.main.output
+    integTestCompile configurations.testCompile
+    integTestCompile sourceSets.test.output
+    integTestRuntime configurations.testRuntime
+
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    testCompile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
+    testCompile files('../cdi-unit/target/cdi-unit-' + projectVersionProp + '.jar')
+    testCompile group: 'org.jboss.weld.se', name: 'weld-se-core', version: weldVersionProp
+    testCompile group: 'org.apache.deltaspike.core', name: 'deltaspike-core-impl', version: '0.6'
+    testCompile(group: 'org.reflections', name: 'reflections', version: '0.9.9') {
+    }
+
 }
