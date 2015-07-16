@@ -15,6 +15,11 @@
  */
 package org.jglue.cdiunit.internal.servlet;
 
+import org.jglue.cdiunit.internal.CdiUnitInitialListener;
+
+import javax.inject.Inject;
+import javax.servlet.*;
+import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -24,34 +29,16 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.Part;
-
-import org.jboss.weld.servlet.WeldListener;
-
 @CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
 
 	@Inject
-	private WeldListener listener;
+	private CdiUnitInitialListener listener;
 
 	private HttpServletRequest delegate;
 
 	public LifecycleAwareRequest(
-			@SuppressWarnings("deprecation") WeldListener listener,
+			CdiUnitInitialListener listener,
 			HttpServletRequest delegate) {
 		this.listener = listener;
 		this.delegate = delegate;

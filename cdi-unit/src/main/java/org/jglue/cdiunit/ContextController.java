@@ -15,6 +15,13 @@
  */
 package org.jglue.cdiunit;
 
+import org.jboss.weld.context.ConversationContext;
+import org.jboss.weld.context.http.Http;
+import org.jglue.cdiunit.internal.CdiUnitInitialListener;
+import org.jglue.cdiunit.internal.servlet.CdiUnitServlet;
+import org.jglue.cdiunit.internal.servlet.LifecycleAwareRequest;
+import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -27,13 +34,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
-
-import org.jboss.weld.context.ConversationContext;
-import org.jboss.weld.context.http.Http;
-import org.jboss.weld.servlet.WeldListener;
-import org.jglue.cdiunit.internal.servlet.CdiUnitServlet;
-import org.jglue.cdiunit.internal.servlet.LifecycleAwareRequest;
-import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -88,7 +88,7 @@ public class ContextController {
 	private HttpSession session;
 
 	@Inject
-	private WeldListener listener;
+	private CdiUnitInitialListener listener;
 
 	@PostConstruct
 	void initContext() {
@@ -143,7 +143,7 @@ public class ContextController {
 	}
 	
 	/**
-	 * @return Returns the current in progress request or throws an excweption if the request was not active
+	 * @return Returns the current in progress request or throws an exception if the request was not active
 	 */
 	public HttpServletRequest currentRequest() {
 
