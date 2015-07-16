@@ -379,7 +379,7 @@ public class WeldTestUrlDeployment implements Deployment {
 				boolean cdiUnit = url.equals(CdiRunner.class.getProtectionDomain().getCodeSource().getLocation());
 				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
 				boolean generatedClasses = url.getFile().contains("/generated-classes/");
-				boolean gradleClasses = url.getFile().endsWith("/classes/test/") || url.getFile().endsWith("/classes/main/");
+				boolean gradleClasses = url.getFile().matches(".*/classes/[\\w\\-]*/");
 				if (cdiUnit || resource != null || mavenClasses || gradleClasses || generatedClasses) {
 					cdiClasspathEntries.add(url);
 				}

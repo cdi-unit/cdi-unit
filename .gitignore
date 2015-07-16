@@ -1,4 +1,5 @@
 target
+build
 .*
 !/.gitignore
 !/.travis.yml
