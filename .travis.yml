@@ -2,7 +2,7 @@ sudo: false
 language: java
 notifications:
   email:
-    - bryncooke@gmail.com
+    - alpapad@gmail.com
 jdk:
   - oraclejdk7
 
