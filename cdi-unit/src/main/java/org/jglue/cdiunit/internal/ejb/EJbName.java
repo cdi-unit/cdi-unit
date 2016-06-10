@@ -26,17 +26,15 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
-public @interface EJbQualifier {
+public @interface EJbName {
 	String name() default "";
 
-	public static class EJbQualifierLiteral extends AnnotationLiteral<EJbQualifier> implements EJbQualifier {
+	public static class EJbNameLiteral extends AnnotationLiteral<EJbName> implements EJbName {
 
 		private static final long serialVersionUID = 6325669711688098239L;
 		private final String name;
 				
-		public final static EJbQualifierLiteral INSTANCE = new EJbQualifierLiteral("");
-		
-		public EJbQualifierLiteral(String name) {
+		public EJbNameLiteral(String name) {
 			this.name = name;
 		}
 
@@ -44,5 +42,11 @@ public @interface EJbQualifier {
 		public String name() {
 			return name;
 		}
+
+		@Override
+		public String toString() {
+			return "EJbQualifierLiteral [name=" + name + "]";
+		}
+		
 	}
 }

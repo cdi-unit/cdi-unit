@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 public class TestEjb {
 
 	@EJB
-	private EJBI inject;
+	private EJBA inject;
 
 	@EJB(beanName = "named")
 	private EJBI injectNamed;
@@ -66,7 +66,7 @@ public class TestEjb {
 
 
 
-	@EJB(name = "named")
+	@EJB(beanName = "named")
 	@Produces
 	public EJBA providesNamed() {
 		return expectedNamed;
@@ -87,6 +87,7 @@ public class TestEjb {
 
 	}
 
+	@Stateless
 	public static class EJBA implements EJBI {
 
 	}
@@ -96,7 +97,7 @@ public class TestEjb {
 
 	}
 
-	@Stateless
+	@Stateless(name="TestEjb.EJBStateless")
 	public static class EJBStateless implements EJBI {
 
 	}
@@ -106,7 +107,7 @@ public class TestEjb {
 
 	}
 
-	@Stateless
+	@Stateless(name="TestEjb.EJBStateful")
 	public static class EJBStateful implements EJBI {
 
 	}
@@ -116,7 +117,7 @@ public class TestEjb {
 
 	}
 
-	@Singleton
+	@Singleton(name="TestEjb.EJBSingleton")
 	public static class EJBSingleton implements EJBI {
 
 	}

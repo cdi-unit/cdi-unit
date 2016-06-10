@@ -15,10 +15,12 @@
  */
 package org.jglue.cdiunit.internal.ejb;
 
+
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.AnnotatedField;
@@ -29,7 +31,9 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.jboss.weld.literal.DefaultLiteral;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import org.jglue.cdiunit.internal.ejb.EJbName.EJbNameLiteral;
 import org.jglue.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;
 
 public class EjbExtension implements Extension {
@@ -44,61 +48,56 @@ public class EjbExtension implements Extension {
 		Stateless stateless = annotatedType.getAnnotation(Stateless.class);
 
 		if (stateless != null) {
-			builder.addToClass(new EJbQualifierLiteral(stateless.name().isEmpty() ? getUnqualifiedName(annotatedType) : stateless
-					.name()));
+			processClass(builder, stateless.name());
 			modified = true;
 		}
 
 		Stateful stateful = annotatedType.getAnnotation(Stateful.class);
+		
 		if (stateful != null) {
-			builder.addToClass(new EJbQualifierLiteral(stateful.name().isEmpty() ? getUnqualifiedName(annotatedType) : stateful
-					.name()));
+			processClass(builder, stateful.name());
 			modified = true;
 		}
 		try {
 			Singleton singleton = annotatedType.getAnnotation(Singleton.class);
 			if (singleton != null) {
-				builder.addToClass(new EJbQualifierLiteral(singleton.name().isEmpty() ? getUnqualifiedName(annotatedType)
-						: singleton.name()));
+				processClass(builder, singleton.name());
 				modified = true;
 			}
 		} catch (NoClassDefFoundError e) {
 			// EJB 3.0
 		}
 
-		for (AnnotatedMethod method : annotatedType.getMethods()) {
+		for (AnnotatedMethod<? super T> method : annotatedType.getMethods()) {
 			EJB ejb = method.getAnnotation(EJB.class);
 			if (ejb != null) {
-				Produces produces = method.getAnnotation(Produces.class);
+				builder.addToMethod(method, EJbQualifierLiteral.INSTANCE);
+				builder.removeFromMethod(method, EJB.class);
+				modified = true;
 				if (!ejb.beanName().isEmpty()) {
-					builder.addToMethod(method, new EJbQualifierLiteral(ejb.beanName()));
-					modified = true;
-				}
-				if (!ejb.name().isEmpty()) {
-					builder.addToMethod(method, new EJbQualifierLiteral(ejb.name()));
-					modified = true;
+					builder.addToMethod(method,new EJbNameLiteral(ejb.beanName()));
+				} else {
+					builder.addToMethod(method,DefaultLiteral.INSTANCE);
 				}
 			}
 		}
 
-		for (AnnotatedField field : annotatedType.getFields()) {
+		for (AnnotatedField<? super T> field : annotatedType.getFields()) {
 			EJB ejb = field.getAnnotation(EJB.class);
 			if (ejb != null) {
-
+				modified = true;
 				Produces produces = field.getAnnotation(Produces.class);
 				if (produces == null) {
-					builder.addToField(field, new AnnotationLiteral<Inject>() {
-					});
-					modified = true;
+					builder.addToField(field, new AnnotationLiteral<Inject>(){private static final long serialVersionUID = 1L;});
 				}
+				
+				builder.removeFromField(field, EJB.class);
+				builder.addToField(field, EJbQualifierLiteral.INSTANCE);
 				if (!ejb.beanName().isEmpty()) {
-					builder.addToField(field, new EJbQualifierLiteral(ejb.beanName()));
-					modified = true;
-				}
-				if (!ejb.name().isEmpty()) {
-					builder.addToField(field, new EJbQualifierLiteral(ejb.name()));
-					modified = true;
-				}
+					builder.addToField(field,new EJbNameLiteral(ejb.beanName()));
+				} else {
+					builder.addToField(field, DefaultLiteral.INSTANCE);
+				}	
 			}
 		}
 		if (modified) {
@@ -106,12 +105,14 @@ public class EjbExtension implements Extension {
 		}
 	}
 
-	private <T> String getUnqualifiedName(AnnotatedType<?> annotatedType) {
-		String name = annotatedType.getJavaClass().getName();
-		if (name.lastIndexOf('.') > 0) {
-			name = name.substring(name.lastIndexOf('.') + 1); // Map$Entry
-			name = name.replace('$', '.'); // Map.Entry
+	
+	private static <T> void processClass(AnnotatedTypeBuilder<T> builder, String name ) {
+		builder.addToClass(new AnnotationLiteral<ApplicationScoped>(){private static final long serialVersionUID = 1L;});
+		builder.addToClass(EJbQualifierLiteral.INSTANCE);
+		if(!name.isEmpty() ) {
+			builder.addToClass(new EJbNameLiteral(name));
+		} else {
+			builder.addToClass(DefaultLiteral.INSTANCE);
 		}
-		return name;
 	}
 }
