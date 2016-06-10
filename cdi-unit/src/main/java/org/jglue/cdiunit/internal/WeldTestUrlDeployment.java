@@ -369,7 +369,7 @@ public class WeldTestUrlDeployment implements Deployment {
 				if (url.getFile().endsWith("/classes/")) {
 					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
 					try {
-						webInfBeans.openConnection();
+						webInfBeans.openConnection().connect();;
 						cdiClasspathEntries.add(url);
 					} catch (IOException e) {
 
