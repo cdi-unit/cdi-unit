@@ -63,6 +63,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	private WeldContainer container;
 	private Throwable startupException;
 	private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
+	private FrameworkMethod frameworkMethod;
 
 	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(checkClass(clazz));
@@ -97,7 +98,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 					try {
-						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, clazz);
+						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, clazz, frameworkMethod.getMethod());
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
@@ -106,7 +107,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
 					try {
-						return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
+						return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz, frameworkMethod.getMethod());
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
@@ -158,15 +159,16 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected Statement methodBlock(final FrameworkMethod method) {
-		final Statement defaultStatement = super.methodBlock(method);
+	protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
+		this.frameworkMethod = frameworkMethod;
+		final Statement defaultStatement = super.methodBlock(frameworkMethod);
 		return new Statement() {
 
 			@Override
 			public void evaluate() throws Throwable {
 
 				if (startupException != null) {
-					if (method.getAnnotation(Test.class).expected() == startupException.getClass()) {
+					if (frameworkMethod.getAnnotation(Test.class).expected() == startupException.getClass()) {
 						return;
 					}
 					throw startupException;

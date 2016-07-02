@@ -81,7 +81,7 @@ public class WeldTestUrlDeployment implements Deployment {
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
-	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass) throws IOException {
+	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
 
 		populateCdiClasspathSet();
 		BeansXml beansXml;
@@ -109,6 +109,9 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		classesToProcess.add(testClass);
 		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
+		if (testMethod != null) {
+			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testMethod), ProducerConfigExtension.class.getName()));
+		}
 
 		try {
 			Class.forName("javax.faces.view.ViewScoped");

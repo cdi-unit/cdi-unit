@@ -1,6 +1,7 @@
 package org.jglue.cdiunit;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -29,18 +30,17 @@ public class NgCdiRunner {
     private InitialContext initialContext;
 
     /**
-     * Setup CDI environment for the class.<br>
-     * INTERNAL: Do not use.
+     * Initialize the CDI container.<br>
+     * PUBLIC: Should be used only in DataProvider methods which require injection.
      */
-    @BeforeClass(alwaysRun = true)
-    protected void setupCdi() {
-        
+    @BeforeMethod(alwaysRun = true)
+    public void initializeCdi(final Method method) {
         weld = new Weld() {
         	
         	protected Deployment createDeployment(
         			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
         		try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz, method);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -48,20 +48,13 @@ public class NgCdiRunner {
             
             protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                 try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz);
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz, method);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
-    }
 
-    /**
-     * Initialize the CDI container.<br>
-     * PUBLIC: Should be used only in DataProvider methods which require injection.
-     */
-    @BeforeMethod(alwaysRun = true)
-    public void initializeCdi() {
         container = weld.initialize();
         BeanManager beanManager = container.getBeanManager();
         CreationalContext creationalContext = beanManager.createCreationalContext(null);
