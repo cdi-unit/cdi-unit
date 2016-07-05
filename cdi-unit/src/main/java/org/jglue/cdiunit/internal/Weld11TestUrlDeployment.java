@@ -16,6 +16,7 @@
 package org.jglue.cdiunit.internal;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.spi.CDI11Deployment;
@@ -24,8 +25,8 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 public class Weld11TestUrlDeployment extends WeldTestUrlDeployment implements CDI11Deployment {
 
 	public Weld11TestUrlDeployment(ResourceLoader resourceLoader,
-			Bootstrap bootstrap, Class<?> testClass) throws IOException {
-		super(resourceLoader, bootstrap, testClass);
+			Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
+		super(resourceLoader, bootstrap, testClass, testMethod);
 	}
 	
 }
