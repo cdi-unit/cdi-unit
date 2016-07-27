@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>3.1.4-SNAPSHOT</version>
+		<version>3.1.4</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-ExternalDependency</name>
