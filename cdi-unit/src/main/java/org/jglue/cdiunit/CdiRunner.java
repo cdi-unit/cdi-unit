@@ -151,7 +151,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
-	private <T> T createTest(Class<T> testClass) {
+	protected <T> T createTest(Class<T> testClass) throws Exception {
 
 		T t = container.instance().select(testClass).get();
 
