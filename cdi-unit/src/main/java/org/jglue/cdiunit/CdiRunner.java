@@ -87,6 +87,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		return clazz;
 	}
 
+	@Override
 	protected Object createTest() throws Exception {
 		try {
 			String version = Formats.version(WeldBootstrap.class.getPackage());
