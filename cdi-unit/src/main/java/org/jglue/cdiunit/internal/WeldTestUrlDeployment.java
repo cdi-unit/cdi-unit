@@ -84,26 +84,18 @@ public class WeldTestUrlDeployment implements Deployment {
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
 
 		populateCdiClasspathSet();
+		Object[] initArgs = new Object[] {
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
+				"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false
+		};
+		Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
 		BeansXml beansXml;
 		try {
-			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-							"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false);
-		} catch (NoClassDefFoundError e) {
-			try {
-				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
-						new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-						Scanning.EMPTY_SCANNING, new URL("file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit");
-			} catch (Exception e1) {
-				try {
-					beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
-							new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-							Scanning.EMPTY_SCANNING);
-				} catch (Exception e2) {
-					throw new RuntimeException(e);
-				}
-			}
-
+			beansXml = (BeansXml) beansXmlConstructor.newInstance(
+					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();

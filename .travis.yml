@@ -4,7 +4,7 @@ notifications:
   email:
     - bryncooke@gmail.com
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 env:
 
