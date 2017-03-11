@@ -88,14 +88,20 @@ public class WeldTestUrlDeployment implements Deployment {
 		try {
 			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
 					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-							"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit");
+							"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false);
 		} catch (NoClassDefFoundError e) {
 			try {
 				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
 						new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-						Scanning.EMPTY_SCANNING);
+						Scanning.EMPTY_SCANNING, new URL("file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit");
 			} catch (Exception e1) {
-				throw new RuntimeException(e1);
+				try {
+					beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
+							new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+							Scanning.EMPTY_SCANNING);
+				} catch (Exception e2) {
+					throw new RuntimeException(e);
+				}
 			}
 
 		}

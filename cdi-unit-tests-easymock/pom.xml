@@ -34,14 +34,6 @@
 		<dependency>
 			<groupId>org.jglue.cdi-unit</groupId>
 			<artifactId>cdi-unit</artifactId>
-			<version>3.1.5-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.weld.se</groupId>
-					<artifactId>weld-se</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
