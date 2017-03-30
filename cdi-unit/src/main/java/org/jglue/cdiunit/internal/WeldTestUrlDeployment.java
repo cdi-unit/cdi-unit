@@ -15,43 +15,11 @@
  */
 package org.jglue.cdiunit.internal;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.jar.Attributes;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
-
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Stereotype;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.interceptor.Interceptor;
-
+import com.google.common.base.Predicate;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
-import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
-import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
-import org.jboss.weld.bootstrap.spi.BeansXml;
-import org.jboss.weld.bootstrap.spi.Deployment;
-import org.jboss.weld.bootstrap.spi.Metadata;
-import org.jboss.weld.bootstrap.spi.Scanning;
+import org.jboss.weld.bootstrap.spi.*;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
@@ -60,11 +28,7 @@ import org.jglue.cdiunit.*;
 import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
 import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
 import org.jglue.cdiunit.internal.mockito.MockitoExtension;
-import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
-import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
-import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
-import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
-import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
+import org.jglue.cdiunit.internal.servlet.*;
 import org.mockito.Mock;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
@@ -72,7 +36,25 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
+import javax.decorator.Decorator;
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Stereotype;
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.interceptor.Interceptor;
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
@@ -160,6 +142,10 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
+				}
+
+				if (c.isAnnotationPresent(Decorator.class)) {
+					beansXml.getEnabledDecorators().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
 
 				if (isAlternativeStereotype(c)) {
