@@ -18,7 +18,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>1.1.16.Final</weld.test.version>
+		<weld.test.version>2.4.2.SP1</weld.test.version>
 	</properties>
 
 	<licenses>
