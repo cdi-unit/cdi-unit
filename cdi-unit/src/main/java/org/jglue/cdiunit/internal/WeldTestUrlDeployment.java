@@ -84,6 +84,8 @@ public class WeldTestUrlDeployment implements Deployment {
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
 
 		populateCdiClasspathSet();
+		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
+		// final boolean will not be passed to the constructor for earlier versions.
 		Object[] initArgs = new Object[] {
 				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
 				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
