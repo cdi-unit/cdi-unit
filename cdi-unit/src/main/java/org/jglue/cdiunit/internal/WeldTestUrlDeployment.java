@@ -34,6 +34,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
+import javax.decorator.Decorator;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -160,6 +161,10 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
+				}
+
+				if (c.isAnnotationPresent(Decorator.class)) {
+					beansXml.getEnabledDecorators().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
 
 				if (isAlternativeStereotype(c)) {
