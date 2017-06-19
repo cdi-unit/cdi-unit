@@ -62,8 +62,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	private Weld weld;
 	private WeldContainer container;
 	private Throwable startupException;
-	private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
 	private FrameworkMethod frameworkMethod;
+	private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
+	private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
 	public CdiRunner(Class<?> clazz) throws InitializationError {
 		super(checkClass(clazz));
@@ -173,8 +174,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 					}
 					throw startupException;
 				}
-				if (System.getProperty("java.naming.factory.initial") == null) {
-					System.setProperty("java.naming.factory.initial", "org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
+				String oldFactory = System.getProperty(JNDI_FACTORY_PROPERTY);
+				if (oldFactory == null) {
+					System.setProperty(JNDI_FACTORY_PROPERTY, "org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
 				}
 				InitialContext initialContext = new InitialContext();
 				initialContext.bind("java:comp/BeanManager", container.getBeanManager());
@@ -185,7 +187,11 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				} finally {
 					initialContext.close();
 					weld.shutdown();
-
+					if (oldFactory != null) {
+						System.setProperty(JNDI_FACTORY_PROPERTY, oldFactory);
+					} else {
+						System.clearProperty(JNDI_FACTORY_PROPERTY);
+					}
 				}
 
 			}
