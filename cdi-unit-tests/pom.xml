@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>3.1.5-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests</name>
@@ -18,7 +18,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>1.1.16.Final</weld.test.version>
+		<weld.test.version>2.4.2.SP1</weld.test.version>
 	</properties>
 
 	<licenses>
@@ -35,14 +35,6 @@
 		<dependency>
 			<groupId>org.jglue.cdi-unit</groupId>
 			<artifactId>cdi-unit</artifactId>
-			<version>3.1.5-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.weld.se</groupId>
-					<artifactId>weld-se-core</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -54,14 +46,10 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
+			<artifactId>mockito-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -78,7 +66,7 @@
 		<dependency>
 			<groupId>org.jglue.cdi-unit</groupId>
 			<artifactId>cdi-unit-tests-external-dependency</artifactId>
-			<version>3.1.5-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

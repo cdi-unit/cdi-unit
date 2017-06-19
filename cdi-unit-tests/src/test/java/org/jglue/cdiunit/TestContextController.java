@@ -62,7 +62,7 @@ public class TestContextController {
 
 	@Produces
 	@RequestScoped
-	private TestCounter createTestCounter() {
+	TestCounter createTestCounter() {
 		return new TestCounter(counter.getAndIncrement());
 	}
 

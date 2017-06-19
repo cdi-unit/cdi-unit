@@ -4,11 +4,15 @@ notifications:
   email:
     - bryncooke@gmail.com
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 env:
 
   matrix:
+    - WELD_VERSION=2.4.2.Final
+    - WELD_VERSION=2.4.1.Final
+    - WELD_VERSION=2.4.0.Final
+    - WELD_VERSION=2.3.5.Final
     - WELD_VERSION=2.3.4.Final
     - WELD_VERSION=2.2.13.Final
     - WELD_VERSION=2.2.12.Final
@@ -32,8 +36,5 @@ env:
     - WELD_VERSION=2.0.3.Final
     - WELD_VERSION=2.0.2.Final
     - WELD_VERSION=2.0.1.Final
-    - WELD_VERSION=1.1.16.Final
-    - WELD_VERSION=1.1.15.Final
-   
 
 script: "mvn clean install -Dweld.test.version=${WELD_VERSION}"
