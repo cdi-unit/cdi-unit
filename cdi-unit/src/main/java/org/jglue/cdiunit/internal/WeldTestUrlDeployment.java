@@ -93,7 +93,7 @@ public class WeldTestUrlDeployment implements Deployment {
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
-	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
+	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
 
 		populateCdiClasspathSet();
 		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
@@ -123,15 +123,15 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();
 		Set<String> alternatives = new HashSet<String>();
-		discoveredClasses.add(testClass.getName());
+		discoveredClasses.add(testConfiguration.getTestClass().getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
-		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
+		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
-		classesToProcess.add(testClass);
-		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-		if (testMethod != null) {
-			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testMethod), ProducerConfigExtension.class.getName()));
+		classesToProcess.add(testConfiguration.getTestClass());
+		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
+		if (testConfiguration.getTestMethod() != null) {
+			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
 		}
 
 		try {
@@ -161,6 +161,8 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		} catch (ClassNotFoundException e) {
 		}
+
+		classesToProcess.addAll(testConfiguration.getAdditionalClasses());
 
 		while (!classesToProcess.isEmpty()) {
 

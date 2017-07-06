@@ -30,6 +30,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jboss.weld.util.reflection.Formats;
+import org.jglue.cdiunit.internal.TestConfiguration;
 import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.Test;
@@ -88,16 +89,21 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		return clazz;
 	}
 
+	protected TestConfiguration createTestConfiguration() {
+		return new TestConfiguration(clazz, frameworkMethod.getMethod());
+	}
+
 	@Override
 	protected Object createTest() throws Exception {
 		try {
 			checkSupportedVersion();
+			final TestConfiguration testConfiguration = createTestConfiguration();
 
 			weld = new Weld() {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 					try {
-						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, clazz, frameworkMethod.getMethod());
+						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
@@ -106,7 +112,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
 					try {
-						return new WeldTestUrlDeployment(resourceLoader, bootstrap, clazz, frameworkMethod.getMethod());
+						return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
