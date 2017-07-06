@@ -18,6 +18,7 @@ package org.jglue.cdiunit.internal;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -95,26 +96,29 @@ public class WeldTestUrlDeployment implements Deployment {
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
 
 		populateCdiClasspathSet();
+		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
+		// final boolean will not be passed to the constructor for earlier versions.
+		Object[] initArgs = new Object[] {
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
+				"file:cdi-unit"), null, "cdi-unit", false
+		};
+		Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
 		BeansXml beansXml;
 		try {
-			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-					"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false);
+			initArgs[6] = BeanDiscoveryMode.ANNOTATED;
+			beansXml = (BeansXml) beansXmlConstructor.newInstance(
+					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
 		} catch (NoClassDefFoundError e) {
 			try {
-				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
-						new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-						Scanning.EMPTY_SCANNING, new URL("file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit");
-			} catch (Throwable e1) {
-				try {
-					beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
-							new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-							Scanning.EMPTY_SCANNING);
-				} catch (Exception e2) {
-					throw new RuntimeException(e);
-				}
+				beansXml = (BeansXml) beansXmlConstructor.newInstance(
+						Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
 			}
-
+			catch (Exception e3) {
+				throw new RuntimeException(e3);
+			}
+		} catch (Exception e2) {
+			throw new RuntimeException(e2);
 		}
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();
