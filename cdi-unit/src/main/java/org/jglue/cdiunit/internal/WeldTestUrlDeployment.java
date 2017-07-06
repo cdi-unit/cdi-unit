@@ -18,7 +18,13 @@ package org.jglue.cdiunit.internal;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -57,7 +63,12 @@ import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jglue.cdiunit.*;
+import org.jglue.cdiunit.ActivatedAlternatives;
+import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.AdditionalClasspaths;
+import org.jglue.cdiunit.AdditionalPackages;
+import org.jglue.cdiunit.CdiRunner;
+import org.jglue.cdiunit.ProducesAlternative;
 import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
 import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
 import org.jglue.cdiunit.internal.mockito.MockitoExtension;
@@ -82,7 +93,7 @@ public class WeldTestUrlDeployment implements Deployment {
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
-	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
+	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
 
 		populateCdiClasspathSet();
 		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
@@ -90,28 +101,37 @@ public class WeldTestUrlDeployment implements Deployment {
 		Object[] initArgs = new Object[] {
 				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
 				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-				"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false
+				"file:cdi-unit"), null, "cdi-unit", false
 		};
 		Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
 		BeansXml beansXml;
 		try {
+			initArgs[6] = BeanDiscoveryMode.ANNOTATED;
 			beansXml = (BeansXml) beansXmlConstructor.newInstance(
 					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (NoClassDefFoundError e) {
+			try {
+				beansXml = (BeansXml) beansXmlConstructor.newInstance(
+						Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
+			}
+			catch (Exception e3) {
+				throw new RuntimeException(e3);
+			}
+		} catch (Exception e2) {
+			throw new RuntimeException(e2);
 		}
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();
 		Set<String> alternatives = new HashSet<String>();
-		discoveredClasses.add(testClass.getName());
+		discoveredClasses.add(testConfiguration.getTestClass().getName());
 		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
 		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
-		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testClass);
+		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
-		classesToProcess.add(testClass);
-		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testClass), TestScopeExtension.class.getName()));
-		if (testMethod != null) {
-			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testMethod), ProducerConfigExtension.class.getName()));
+		classesToProcess.add(testConfiguration.getTestClass());
+		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
+		if (testConfiguration.getTestMethod() != null) {
+			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
 		}
 
 		try {
@@ -141,6 +161,8 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		} catch (ClassNotFoundException e) {
 		}
+
+		classesToProcess.addAll(testConfiguration.getAdditionalClasses());
 
 		while (!classesToProcess.isEmpty()) {
 
