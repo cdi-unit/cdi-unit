@@ -34,6 +34,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
+import javax.decorator.Decorator;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -84,20 +85,20 @@ public class WeldTestUrlDeployment implements Deployment {
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, Class<?> testClass, Method testMethod) throws IOException {
 
 		populateCdiClasspathSet();
+		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
+		// final boolean will not be passed to the constructor for earlier versions.
+		Object[] initArgs = new Object[] {
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
+				"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit", false
+		};
+		Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
 		BeansXml beansXml;
 		try {
-			beansXml = new BeansXmlImpl(new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-							"file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit");
-		} catch (NoClassDefFoundError e) {
-			try {
-				beansXml = (BeansXml) BeansXmlImpl.class.getConstructors()[0].newInstance(new ArrayList<Metadata<String>>(),
-						new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-						Scanning.EMPTY_SCANNING);
-			} catch (Exception e1) {
-				throw new RuntimeException(e1);
-			}
-
+			beansXml = (BeansXml) beansXmlConstructor.newInstance(
+					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();
@@ -160,6 +161,10 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				if (c.isAnnotationPresent(Interceptor.class)) {
 					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
+				}
+
+				if (c.isAnnotationPresent(Decorator.class)) {
+					beansXml.getEnabledDecorators().add(new MetadataImpl<String>(c.getName(), c.getName()));
 				}
 
 				if (isAlternativeStereotype(c)) {
