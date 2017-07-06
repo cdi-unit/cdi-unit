@@ -140,11 +140,8 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	private void checkSupportedVersion() {
 		String version = Formats.version(WeldBootstrap.class.getPackage());
 		if("2.2.8 (Final)".equals(version) || "2.2.7 (Final)".equals(version)) {
-      startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");
-    }
-		if(version.startsWith("1.")) {
-      startupException = new Exception("Weld 1.x. is no longer supported. Suggest upgrading to latest 2.x");
-    }
+     		 startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");
+    	}
 	}
 
 	private static ClassFormatError parseClassFormatError(ClassFormatError e) {

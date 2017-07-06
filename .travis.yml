@@ -36,5 +36,8 @@ env:
     - WELD_VERSION=2.0.3.Final
     - WELD_VERSION=2.0.2.Final
     - WELD_VERSION=2.0.1.Final
+    - WELD_VERSION=1.1.16.Final
+    - WELD_VERSION=1.1.15.Final
+    - WELD_VERSION=1.1.14.Final
 
 script: "mvn clean install -Dweld.test.version=${WELD_VERSION}"
