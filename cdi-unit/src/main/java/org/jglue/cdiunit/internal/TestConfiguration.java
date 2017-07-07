@@ -21,7 +21,7 @@ public class TestConfiguration {
     }
 
     public TestConfiguration(Class<?> testClass, Method testMethod) {
-        this(testClass, testMethod, Collections.EMPTY_SET);
+        this(testClass, testMethod, Collections.emptySet());
     }
 
     private final Class<?> testClass;
