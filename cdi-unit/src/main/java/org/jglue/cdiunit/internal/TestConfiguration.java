@@ -14,11 +14,14 @@ public class TestConfiguration {
     public TestConfiguration(Class<?> testClass, Method testMethod, Collection<Class<?>> additionalClasses) {
         this.testClass = testClass;
         this.testMethod = testMethod;
-        this.additionalClasses = additionalClasses != null ? additionalClasses : new ArrayList<>();
+        if (additionalClasses == null) {
+            throw new NullPointerException("Expected AdditionalClasses not null.");
+        }
+        this.additionalClasses = additionalClasses;
     }
 
     public TestConfiguration(Class<?> testClass, Method testMethod) {
-        this(testClass, testMethod, null);
+        this(testClass, testMethod, new ArrayList<>());
     }
 
     private final Class<?> testClass;
