@@ -39,13 +39,13 @@ public class NgCdiRunner {
      */
     @BeforeMethod(alwaysRun = true)
     public void initializeCdi(final Method method) {
-        final TestConfiguration testConfiguration = new TestConfiguration(clazz, method);
+        final TestConfiguration testConfig = createTestConfiguration(method);
         weld = new Weld() {
         	
         	protected Deployment createDeployment(
         			ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
         		try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -53,7 +53,7 @@ public class NgCdiRunner {
             
             protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
                 try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
+                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
