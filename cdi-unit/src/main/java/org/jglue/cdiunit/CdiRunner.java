@@ -97,13 +97,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	protected Object createTest() throws Exception {
 		try {
 			checkSupportedVersion();
-			final TestConfiguration testConfiguration = createTestConfiguration();
+			final TestConfiguration testConfig = createTestConfiguration();
 
 			weld = new Weld() {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 					try {
-						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
+						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
@@ -112,7 +112,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
 					try {
-						return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfiguration);
+						return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
 					} catch (IOException e) {
 						startupException = e;
 						throw new RuntimeException(e);
