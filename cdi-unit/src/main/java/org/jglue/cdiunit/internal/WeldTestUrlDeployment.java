@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -96,30 +97,7 @@ public class WeldTestUrlDeployment implements Deployment {
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
 
 		populateCdiClasspathSet();
-		// The constructor parameter isTrimmed was added for Weld 2.4.2 [WELD-2314], so the
-		// final boolean will not be passed to the constructor for earlier versions.
-		Object[] initArgs = new Object[] {
-				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-				new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING, new URL(
-				"file:cdi-unit"), null, "cdi-unit", false
-		};
-		Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
-		BeansXml beansXml;
-		try {
-			initArgs[6] = BeanDiscoveryMode.ANNOTATED;
-			beansXml = (BeansXml) beansXmlConstructor.newInstance(
-					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
-		} catch (NoClassDefFoundError e) {
-			try {
-				beansXml = (BeansXml) beansXmlConstructor.newInstance(
-						Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
-			}
-			catch (Exception e3) {
-				throw new RuntimeException(e3);
-			}
-		} catch (Exception e2) {
-			throw new RuntimeException(e2);
-		}
+		BeansXml beansXml = createBeansXml();
 
 		Set<String> discoveredClasses = new LinkedHashSet<String>();
 		Set<String> alternatives = new HashSet<String>();
@@ -326,6 +304,36 @@ public class WeldTestUrlDeployment implements Deployment {
 			}
 		}
 
+	}
+
+	private static Object annotatedDiscoveryMode() {
+		try {
+			return BeanDiscoveryMode.ANNOTATED;
+		} catch (NoClassDefFoundError e) {
+			// No such enum in Weld 1.x, but the constructor for BeansXmlImpl has fewer parameters so we don't need it
+			return null;
+		}
+	}
+
+	private static BeansXml createBeansXml() {
+		try {
+			// The constructor for BeansXmlImpl has added more parameters in newer Weld versions. The parameter list
+			// is truncated in older version of Weld where the number of parameters is shorter, thus omitting the
+			// newer parameters.
+			Object[] initArgs = new Object[] {
+					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
+					new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING,
+					// These were added in Weld 2.0:
+					new URL("file:cdi-unit"), annotatedDiscoveryMode(), "cdi-unit",
+					// isTrimmed: added in Weld 2.4.2 [WELD-2314]:
+					false
+			};
+			Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
+			return (BeansXml) beansXmlConstructor.newInstance(
+					Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
+		} catch (MalformedURLException | ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void addClassesToProcess(Collection<Class<?>> classesToProcess, Type type) {
