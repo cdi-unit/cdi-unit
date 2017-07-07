@@ -1,8 +1,8 @@
 package org.jglue.cdiunit.internal;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Defines, how the WeldTestUrlDeployment should initialize Weld.
@@ -21,7 +21,7 @@ public class TestConfiguration {
     }
 
     public TestConfiguration(Class<?> testClass, Method testMethod) {
-        this(testClass, testMethod, new ArrayList<>());
+        this(testClass, testMethod, Collections.EMPTY_SET);
     }
 
     private final Class<?> testClass;
