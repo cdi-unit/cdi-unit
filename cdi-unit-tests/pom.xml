@@ -16,10 +16,6 @@
 			<name>Bryn Cooke</name>
 		</developer>
 	</developers>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>2.4.2.SP1</weld.test.version>
-	</properties>
 
 	<licenses>
 		<license>
@@ -80,5 +76,25 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>weld3plus</id>
+			<activation>
+				<property>
+					<name>weld3plus</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.weld.module</groupId>
+					<artifactId>weld-web</artifactId>
+					<version>${weld.test.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 </project>

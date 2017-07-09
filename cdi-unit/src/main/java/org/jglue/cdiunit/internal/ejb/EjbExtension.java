@@ -31,7 +31,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.jboss.weld.literal.DefaultLiteral;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 import org.jglue.cdiunit.internal.ejb.EJbName.EJbNameLiteral;
 import org.jglue.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;

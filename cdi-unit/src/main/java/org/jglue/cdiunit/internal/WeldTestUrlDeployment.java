@@ -51,6 +51,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
+import com.google.common.base.Predicate;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -62,7 +63,6 @@ import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.metadata.BeansXmlImpl;
-import org.jboss.weld.metadata.MetadataImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ActivatedAlternatives;
 import org.jglue.cdiunit.AdditionalClasses;
@@ -85,12 +85,10 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
 	private Collection<Metadata<Extension>> extensions = new ArrayList<Metadata<Extension>>();
-	private static Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
+	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
@@ -107,14 +105,14 @@ public class WeldTestUrlDeployment implements Deployment {
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
 		classesToProcess.add(testConfiguration.getTestClass());
-		extensions.add(new MetadataImpl<Extension>(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
+		extensions.add(createMetadata(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
 		if (testConfiguration.getTestMethod() != null) {
-			extensions.add(new MetadataImpl<Extension>(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
+			extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
 		}
 
 		try {
 			Class.forName("javax.faces.view.ViewScoped");
-			extensions.add(new MetadataImpl<Extension>(new ViewScopeExtension(), ViewScopeExtension.class.getName()));
+			extensions.add(createMetadata(new ViewScopeExtension(), ViewScopeExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
@@ -124,7 +122,7 @@ public class WeldTestUrlDeployment implements Deployment {
 			classesToProcess.add(InRequestInterceptor.class);
 			classesToProcess.add(InSessionInterceptor.class);
 			classesToProcess.add(InConversationInterceptor.class);
-			discoveredClasses.add(CdiUnitInitialListener.class.getName());
+			classesToProcess.add(CdiUnitInitialListenerProducer.class);
 			classesToProcess.add(MockServletContextImpl.class);
 			classesToProcess.add(MockHttpSessionImpl.class);
 			classesToProcess.add(MockHttpServletRequestImpl.class);
@@ -154,21 +152,21 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
 					try {
-						extensions.add(new MetadataImpl<Extension>((Extension) c.newInstance(), c.getName()));
+						extensions.add(createMetadata((Extension) c.newInstance(), c.getName()));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}
 				}
 				if (c.isAnnotationPresent(Interceptor.class)) {
-					beansXml.getEnabledInterceptors().add(new MetadataImpl<String>(c.getName(), c.getName()));
+					beansXml.getEnabledInterceptors().add(createMetadata(c.getName(), c.getName()));
 				}
 
 				if (c.isAnnotationPresent(Decorator.class)) {
-					beansXml.getEnabledDecorators().add(new MetadataImpl<String>(c.getName(), c.getName()));
+					beansXml.getEnabledDecorators().add(createMetadata(c.getName(), c.getName()));
 				}
 
 				if (isAlternativeStereotype(c)) {
-					beansXml.getEnabledAlternativeStereotypes().add(new MetadataImpl<String>(c.getName(), c.getName()));
+					beansXml.getEnabledAlternativeStereotypes().add(createMetadata(c.getName(), c.getName()));
 
 				}
 
@@ -273,27 +271,27 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 
 		beansXml.getEnabledAlternativeStereotypes().add(
-				new MetadataImpl<String>(ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
+				createMetadata(ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
 
 		for (String alternative : alternatives) {
-			beansXml.getEnabledAlternativeClasses().add(new MetadataImpl<String>(alternative, alternative));
+			beansXml.getEnabledAlternativeClasses().add(createMetadata(alternative, alternative));
 		}
 
 		try {
 			Class.forName("org.mockito.Mock");
-			extensions.add(new MetadataImpl<Extension>(new MockitoExtension(), MockitoExtension.class.getName()));
+			extensions.add(createMetadata(new MockitoExtension(), MockitoExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
 
 		try {
 			Class.forName("org.easymock.EasyMockRunner");
-			extensions.add(new MetadataImpl<Extension>(new EasyMockExtension(), EasyMockExtension.class.getName()));
+			extensions.add(createMetadata(new EasyMockExtension(), EasyMockExtension.class.getName()));
 		} catch (ClassNotFoundException e) {
 
 		}
 
-		extensions.add(new MetadataImpl<Extension>(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
+		extensions.add(createMetadata(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 
 		beanDeploymentArchive = new BeanDeploymentArchiveImpl("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
 		beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
@@ -304,6 +302,22 @@ public class WeldTestUrlDeployment implements Deployment {
 			}
 		}
 
+	}
+
+	private static <T> Metadata<T> createMetadata(T value, String location) {
+		try {
+			return new org.jboss.weld.bootstrap.spi.helpers.MetadataImpl<>(value, location);
+		} catch (NoClassDefFoundError e) {
+			// MetadataImpl moved to a new package in Weld 3.0
+			try {
+				//noinspection unchecked
+				Class<Metadata<T>> oldClass = (Class<Metadata<T>>) Class.forName("org.jboss.weld.metadata.MetadataImpl");
+				Constructor<Metadata<T>> ctor = oldClass.getConstructor(Object.class, String.class);
+				return ctor.newInstance(value, location);
+			} catch (ReflectiveOperationException e1) {
+				throw new RuntimeException(e1);
+			}
+		}
 	}
 
 	private static Object annotatedDiscoveryMode() {
