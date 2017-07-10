@@ -204,9 +204,8 @@ public class WeldTestUrlDeployment implements Deployment {
 						final String packageName = additionalPackage.getPackage().getName();
 						Reflections reflections = new Reflections(new ConfigurationBuilder()
 								.setScanners(new TypesScanner())
-								.setUrls(
-										new File(additionalPackage.getProtectionDomain().getCodeSource().getLocation().getPath())
-												.toURI().toURL()).filterInputsBy(new Predicate<String>() {
+								.setUrls(additionalPackage.getProtectionDomain().getCodeSource().getLocation()
+												).filterInputsBy(new Predicate<String>() {
 
 									@Override
 									public boolean apply(String input) {
