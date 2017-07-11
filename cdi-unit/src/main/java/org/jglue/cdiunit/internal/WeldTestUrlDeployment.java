@@ -308,8 +308,9 @@ public class WeldTestUrlDeployment implements Deployment {
 		try {
 			return new org.jboss.weld.bootstrap.spi.helpers.MetadataImpl<>(value, location);
 		} catch (NoClassDefFoundError e) {
-			// MetadataImpl moved to a new package in Weld 3.0
+			// MetadataImpl moved to a new package in Weld 2.4, old copy removed in 3.0
 			try {
+				// If Weld < 2.4, the new package isn't there, so we try the old package.
 				//noinspection unchecked
 				Class<Metadata<T>> oldClass = (Class<Metadata<T>>) Class.forName("org.jboss.weld.metadata.MetadataImpl");
 				Constructor<Metadata<T>> ctor = oldClass.getConstructor(Object.class, String.class);
