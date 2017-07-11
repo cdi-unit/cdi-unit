@@ -82,8 +82,7 @@
 			<id>weld.test.3plus</id>
 			<activation>
 				<property>
-					<name>weld.test.3plus</name>
-					<value>true</value>
+					<name>!weld.test.1or2</name>
 				</property>
 			</activation>
 			<dependencies>
