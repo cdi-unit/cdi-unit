@@ -42,7 +42,7 @@ script:
 - |
   set -e
   if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]
-    then WELD3PLUS=false
-    else WELD3PLUS=true
+    then WELD_TEST_3PLUS=false
+    else WELD_TEST_3PLUS=true
   fi
-  mvn clean install -Dweld.test.version=${WELD_VERSION} -Dweld3plus=${WELD3PLUS}
+  mvn clean install -Dweld.test.version=${WELD_VERSION} -Dweld.test.3plus=${WELD_TEST_3PLUS}

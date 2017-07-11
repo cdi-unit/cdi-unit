@@ -2,7 +2,7 @@
 
 # Refer to .travis.yml for good combinations to test
 
-mvn clean install -Dweld.test.version=3.0.0.Final -Dweld3plus
+mvn clean install -Dweld.test.version=3.0.0.Final -Dweld.test.3plus
 mvn verify -pl \!cdi-unit -Dweld.test.version=2.4.2.Final
 mvn verify -pl \!cdi-unit -Dweld.test.version=2.4.0.Final
 mvn verify -pl \!cdi-unit -Dweld.test.version=2.3.5.Final

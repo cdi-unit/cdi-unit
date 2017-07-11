@@ -23,10 +23,10 @@
 		<!--<weld.test.version>2.1.0.Final</weld.test.version>-->
 		<!--<weld.test.version>2.2.0.Final</weld.test.version>-->
 		<weld.test.version>2.4.2.SP1</weld.test.version>
-		<!-- Note that Weld 3 tests also require -Dweld3plus -->
+		<!-- Note that Weld 3 tests also require -Dweld.test.3plus -->
 		<!--<weld.test.version>3.0.0.Final</weld.test.version>-->
 
-		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld3plus profile. -->
+		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
 		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
 	</properties>
 
@@ -107,10 +107,10 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>weld3plus</id>
+			<id>weld.test.3plus</id>
 			<activation>
 				<property>
-					<name>weld3plus</name>
+					<name>weld.test.3plus</name>
 					<value>true</value>
 				</property>
 			</activation>
