@@ -16,10 +16,6 @@
 			<name>Bryn Cooke</name>
 		</developer>
 	</developers>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>2.1.0.Final</weld.test.version>
-	</properties>
 
 	<licenses>
 		<license>

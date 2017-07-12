@@ -16,10 +16,6 @@
 			<name>Bryn Cooke</name>
 		</developer>
 	</developers>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<weld.test.version>2.1.0.Final</weld.test.version>
-	</properties>
 
 	<licenses>
 		<license>
@@ -38,7 +34,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se</artifactId>
+			<artifactId>${weld-se-shaded.artifact}</artifactId>
 			<version>${weld.test.version}</version>
 			<scope>test</scope>
 		</dependency>
