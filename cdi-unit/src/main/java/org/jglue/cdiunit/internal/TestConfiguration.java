@@ -49,7 +49,7 @@ public class TestConfiguration {
      * Can be used by special runners to change the initialization of Weld.
      *
      * @return classes to be created by weld if possible (if they are not annotations) or whose
-     * @AdditionalClasses or @ActivatedAlternatives are to be created additionally.
+     * {@link org.jglue.cdiunit.AdditionalClasses} or {@link org.jglue.cdiunit.ActivatedAlternatives} are to be created additionally.
      */
     public Collection<Class<?>> getAdditionalClasses() {
         return additionalClasses;

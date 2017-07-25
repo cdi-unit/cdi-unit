@@ -36,6 +36,7 @@ public class NgCdiRunner {
     /**
      * Initialize the CDI container.<br>
      * PUBLIC: Should be used only in DataProvider methods which require injection.
+     * @param method The method to test.
      */
     @BeforeMethod(alwaysRun = true)
     public void initializeCdi(final Method method) {
