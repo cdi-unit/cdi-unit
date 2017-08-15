@@ -26,6 +26,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -429,10 +431,7 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				URL resource = cl.getResource("META-INF/beans.xml");
 				boolean cdiUnit = url.equals(CdiRunner.class.getProtectionDomain().getCodeSource().getLocation());
-				boolean mavenClasses = url.getFile().endsWith("/test-classes/");
-				boolean generatedClasses = url.getFile().contains("/generated-classes/");
-				boolean gradleClasses = url.getFile().matches(".*/classes/[\\w\\-]*/");
-				if (cdiUnit || resource != null || mavenClasses || gradleClasses || generatedClasses) {
+				if (cdiUnit || resource != null || isDirectoryOnClasspath(url)) {
 					cdiClasspathEntries.add(url);
 				}
 
@@ -454,6 +453,17 @@ public class WeldTestUrlDeployment implements Deployment {
 			log.debug("{}", url);
 		}
 
+	}
+
+	private boolean isDirectoryOnClasspath(URL classpathEntry) {
+		try {
+			return new File(classpathEntry.toURI()).isDirectory();
+		} catch (IllegalArgumentException e) {
+			// Ignore, thrown by File constructor for unsupported URIs
+		} catch (URISyntaxException e) {
+			// Ignore, does not denote an URI that points to a directory
+		}
+		return false;
 	}
 
 	private boolean isCdiClass(Class<?> c) {
