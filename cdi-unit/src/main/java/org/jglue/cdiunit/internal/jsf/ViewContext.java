@@ -31,7 +31,7 @@ import javax.faces.view.ViewScoped;
  */
 public class ViewContext implements Context{
 
-    private static Map<String, Object> viewMap = new HashMap<String,Object>();
+    private Map<String, Object> viewMap = new HashMap<String,Object>();
     
     @Override
     public Class<? extends Annotation> getScope() {
