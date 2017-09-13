@@ -12,14 +12,26 @@ import org.junit.runner.RunWith;
 public class TestViewScope {
 	@Inject
 	private Provider<ViewScopedClass> viewScoped;
-	
-	
+
+	@Inject
+	private G2ViewScoped g2ViewScoped;
+
+
 	@Test
 	public void test() {
 		Assert.assertEquals(viewScoped.get().test(), viewScoped.get().test());
-		
 	}
-	
+
+	@Test
+	public void testViewScoped() {
+		g2ViewScoped.test();
+	}
+
+	@Test
+	public void testViewScopedAgain() {
+		g2ViewScoped.test();
+	}
+
 	
 	@ViewScoped
 	public static class ViewScopedClass {
