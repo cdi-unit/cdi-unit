@@ -1,19 +1,19 @@
 # CDI-Unit user guide
 
 1.  [Quickstart](#quickstart)
-2.  [CDI-Unit annotations](#annotations)
-3.  [Example unit test](#example)
-4.  [Controlling the CDI environment](#controllingEnvironment)
-5.  [Using mocks](#mocks)
-6.  [Using alternatives](#alternatives)
-7.  [Using scopes](#scopes)
-8.  [Using a specific version of Weld](#weldVersions)
-9.  [TestNG support](#testNg)
-10.  [EJB support](#ejb)
-11.  [Deltaspike support](#deltaspike)
-12.  [JaxRS support](#jaxRs)
+2.  [CDI-Unit annotations](#cdi-unit-annotations)
+3.  [Example unit test](#example-unit-test)
+4.  [Controlling the CDI environment](#controlling-the-cdi-environment)
+5.  [Using mocks](#using-mocks)
+6.  [Using alternatives](#using-alternatives)
+7.  [Using scopes](#using-scopes)
+8.  [Using a specific version of Weld](#using-a-specific-version-of-weld)
+9.  [TestNG support](#testng-support)
+10.  [EJB support](#ejb-support)
+11.  [Deltaspike support](#deltaspike-support)
+12.  [JaxRS support](#jaxrs-support)
 
-### 1\. Quickstart
+### Quickstart
 
 Testing your Java [CDI](http://download.oracle.com/javaee/6/tutorial/doc/giwhb.html) application with CDI-Unit couldn't be easier. Just specify `@RunWith(CdiRunner.class)` on your [JUnit4](http://www.junit.org/) test class to enable injection directly into the test class.
 
@@ -27,7 +27,7 @@ class MyTest {
 }
 ```
 
-### 2\. CDI-Unit Annotations
+### CDI-Unit Annotations
 
 CDI Unit provides the discovery annotations that affect the classes available to the unit test:
 
@@ -41,9 +41,9 @@ In addition [scoping annotations](#scopes) can be used to simulate scopes for me
 *   @InSessonScope – Starts a session for the method call.
 *   @InConversationScope – Starts converation for the method call.
 
-### 3\. Example unit test
+### Example unit test
 
-Suppose you have a class <span class="s1">Starship</span> that injects <span class="s1">WarpDrive</span> that implements <span class="s1">Engine</span>:
+Suppose you have a class <span class="s1">Starship</span> that injects ```WarpDrive``` that implements ```Engine```:
 
 ```java
 class Starship { // We want to test this!
@@ -85,7 +85,7 @@ class TestStarship {
 
 WarpDrive will be injected into the Starship which will then be injected in to your unit test.
 
-### 4\. Controlling the CDI environment
+### Controlling the CDI environment
 
 CDI-Unit will try to discover what classes should be available to the CDI environment automatically, but sometimes this is not possible. In this scenario we can use the @AdditionalClasses/@AdditionalPackages/@AdditionalClasspath annotations
 
@@ -132,7 +132,7 @@ CDI will automatically search for an implementation of Engine when trying to cre
 
 To make it easy to figure out what is in the CDI environment CDI-Unit prints all of the classes added to the environment at DEBUG log level during startup.
 
-### 5\. Using mocks
+### Using mocks
 
 To test classes in isolation we shouldn't be using their dependencies. Instead we should be using a [mock](http://en.wikipedia.org/wiki/Mock_object). There are many mocking libraries out there, however CDI-Unit has extra support for [Mockito](http://code.google.com/p/mockito/) [@Mock](http://docs.mockito.googlecode.com/hg/latest/index.html?org/mockito/Mockito.html) annotations and  [EasyMock](http://easymock.org/) [@Mock](http://easymock.org/EasyMock3_2_Documentation.html) annotations
 
@@ -162,7 +162,7 @@ class TestStarship {
 
 That's it! Starship will be injected with our mock engine which we then verify the interaction with.
 
-### 6\. Using alternatives
+### Using alternatives
 
 CDI is all about automatic configuration, but sometimes you need to give a hint as to which implementation to use. This is usually done via beans.xml, but in CDI-Unit we specify alternatives using annotations.
 
@@ -223,7 +223,7 @@ class TestStarship {
 }
 ```
 
-### 7\. Using scopes
+### Using scopes
 
 CDI-Unit has built in support for Request, Session and Conversation scopes using @InRequestScope, @InSessionScope and @InConversationScope.
 
@@ -296,7 +296,7 @@ ContextController has methods to control Request and Session scopes.
 
 Note that if you close a session while a request is active then it will not be closed until the request is also closed.
 
-### 8\. Using a specific version of Weld
+### Using a specific version of Weld
 
 CDI-Unit will automatically use the version of Weld that was available when it was released. However in your project you may want to use a specific version. To achieve this simply exclude the weld dependency that from CDI-Unit and include the version you want in your pom. For example:
 
@@ -323,7 +323,7 @@ CDI-Unit will automatically use the version of Weld that was available when it w
 
 ```
 
-### 9\. TestNg support
+### TestNg support
 
 A base class NgCdiRunner can be used to add CDI-Unit to your TestNG tests. For example:
 
@@ -341,7 +341,7 @@ class TestStarship extends NgCdiRunner { //Extending NgCdiRunner adds CDI-Unit f
 }
 ```
 
-### 10\. Ejb support
+### Ejb support
 
 Once a test class is annotated with @SupportEjb then @EJB may be used to inject classes. The optional name or beanName parameter may be used either specify unqualified class name or the corresponding name on @Stateless or @Singleton
 
@@ -373,7 +373,7 @@ class EJBStatelessNamed implements EJBI {
 }
 ```
 
-### 11\. Deltaspike support
+### Deltaspike support
 
 Once a test class is annotated with @SupportDeltaspikeCore @SupportDeltaspikeData @SupportDeltaspikeJpa @SupportDeltaspikePartialBean then the corresponding deltaspike module can be used. The deltaspike modules must be on the classpath.
 
@@ -408,7 +408,7 @@ class TestDeltaspikeTransactions {
 }
 ```
 
-### 12\. JaxRs support
+### JaxRs support
 
 Once a test class is annotated with @SupportJaxRs then many JaxRs classes are available for injection. This means that you can inject your web service classes and call the methods directly.
 
