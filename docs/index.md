@@ -26,6 +26,15 @@ class MyTest {
   ...
 }
 ```
+Make sure you've added the cdi-unit dependency to your build file
+```xml
+<dependency>
+  <groupId>org.jglue.cdi-unit</groupId>
+  <artifactId>cdi-unit</artifactId>
+  <version>4.0.1</version>
+  <scope>test</scope>
+</dependency>
+```
 
 ### CDI-Unit Annotations
 
@@ -305,7 +314,7 @@ CDI-Unit will automatically use the version of Weld that was available when it w
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>3.0.0</version>
+  <version>4.0.1</version>
   <exclusions>
     <exclusion>
       <groupId>org.jboss.weld.se</groupId>
