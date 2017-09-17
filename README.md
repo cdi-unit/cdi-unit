@@ -5,6 +5,8 @@ Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
 See website for full details http://bryncooke.github.io/cdi-unit
 
+Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
+
 ```xml
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
@@ -40,13 +42,13 @@ class TestStarship {
 
 ```
 
-###Acknowledgements
+### Acknowledgements
 This project uses code from shamelessly copied from:
 
 [Mockrunner](https://github.com/mockrunner/mockrunner) under Apache license.
 [Resteasy](http://resteasy.jboss.org/) under Apache license.
 
-###License
+### License
 Copyright 2013 Bryn Cooke
  
 Licensed under the Apache License, Version 2.0 (the "License");
