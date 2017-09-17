@@ -43,7 +43,7 @@ In addition [scoping annotations](#scopes) can be used to simulate scopes for me
 
 ### Example unit test
 
-Suppose you have a class <span class="s1">Starship</span> that injects ```WarpDrive``` that implements ```Engine```:
+Suppose you have a class ```Starship``` that injects ```WarpDrive``` that implements ```Engine```:
 
 ```java
 class Starship { // We want to test this!
