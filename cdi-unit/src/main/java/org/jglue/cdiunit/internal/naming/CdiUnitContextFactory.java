@@ -23,12 +23,8 @@ import javax.naming.spi.InitialContextFactory;
 
 public class CdiUnitContextFactory implements InitialContextFactory {
 
-	private static ThreadLocal<CdiUnitContext> context = new ThreadLocal<CdiUnitContext>() {
-		@Override
-		protected CdiUnitContext initialValue() {
-			return new CdiUnitContext();
-		}
-	};
+	private static final ThreadLocal<CdiUnitContext> context =
+			ThreadLocal.withInitial(CdiUnitContext::new);
 
 	@Override
 	public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {

@@ -22,15 +22,10 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 import org.jglue.cdiunit.InConversationScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @InConversationScope
 @Interceptor
 public class InConversationInterceptor {
-
-	private static Logger log = LoggerFactory
-			.getLogger(InConversationInterceptor.class);
 
 	@Inject
 	private Conversation conversation;
