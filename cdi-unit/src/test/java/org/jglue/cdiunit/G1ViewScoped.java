@@ -9,11 +9,11 @@ import javax.inject.Named;
 @ViewScoped
 @Named
 public class G1ViewScoped {
-	private static int test;
+	private static int timesConstructed;
 	public G1ViewScoped() {
-		test++;
+		timesConstructed++;
 	}
-	public int test() {
-		return test;
+	public int timesConstructed() {
+		return timesConstructed;
 	}
 }

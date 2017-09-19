@@ -14,12 +14,12 @@ public class G2ViewScoped {
 	@Inject
 	private G1ViewScoped g1ViewScoped;
 
-	private static int test;
+	private static int timesConstructed;
 
 	public G2ViewScoped() {
-		test++;
+		timesConstructed++;
 	}
-	public int test() {
-		return 1000 * test + g1ViewScoped.test();
+	public int getRuntimeId() {
+		return 1000 * timesConstructed + g1ViewScoped.timesConstructed();
 	}
 }

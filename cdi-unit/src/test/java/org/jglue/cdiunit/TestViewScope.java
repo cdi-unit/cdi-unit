@@ -4,10 +4,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 @RunWith(CdiRunner.class)
 public class TestViewScope {
 	@Inject
@@ -19,28 +19,28 @@ public class TestViewScope {
 
 	@Test
 	public void test() {
-		Assert.assertEquals(viewScoped.get().test(), viewScoped.get().test());
+		Assert.assertEquals(viewScoped.get().getTimesConstructed(), viewScoped.get().getTimesConstructed());
 	}
 
 	@Test
 	public void testViewScoped() {
-		g2ViewScoped.test();
+		g2ViewScoped.getRuntimeId();
 	}
 
 	@Test
 	public void testViewScopedAgain() {
-		g2ViewScoped.test();
+		g2ViewScoped.getRuntimeId();
 	}
 
 	
 	@ViewScoped
 	public static class ViewScopedClass {
-		private static int test;
+		private static int timesConstructed;
 		public ViewScopedClass() {
-			test++;
+			timesConstructed++;
 		}
-		public int test() {
-			return test;
+		public int getTimesConstructed() {
+			return timesConstructed;
 		}
 	}
 }
