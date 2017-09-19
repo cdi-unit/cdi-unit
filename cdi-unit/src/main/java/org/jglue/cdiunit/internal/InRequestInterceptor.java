@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 @Interceptor
 @InRequestScope
 public class InRequestInterceptor {
-	private static Logger log = LoggerFactory
+	private static final Logger log = LoggerFactory
 			.getLogger(InRequestInterceptor.class);
 
 	@Inject

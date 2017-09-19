@@ -29,9 +29,10 @@ import javax.faces.view.ViewScoped;
  *
  * @author russell
  */
+// TODO bean.getName() is null for unnamed beans (may return wrong bean). Should try bean.getTypes()
 public class ViewContext implements Context{
 
-    private static Map<String, Object> viewMap = new HashMap<String,Object>();
+    private final Map<String, Object> viewMap = new HashMap<>();
     
     @Override
     public Class<? extends Annotation> getScope() {
@@ -40,11 +41,11 @@ public class ViewContext implements Context{
 
     @Override
     public <T> T get(Contextual<T> cntxtl, CreationalContext<T> cc) {
-        Bean bean = (Bean) cntxtl;
+        Bean<T> bean = (Bean<T>) cntxtl;
         if (viewMap.containsKey(bean.getName())){
             return (T) viewMap.get(bean.getName());
         }else{
-            T t = (T) bean.create(cc);
+            T t = bean.create(cc);
             viewMap.put(bean.getName(), t);
             return t;
         }
@@ -52,7 +53,7 @@ public class ViewContext implements Context{
 
     @Override
     public <T> T get(Contextual<T> cntxtl) {
-        Bean bean = (Bean) cntxtl;
+        Bean<T> bean = (Bean<T>) cntxtl;
         if (viewMap.containsKey(bean.getName())){
             return (T) viewMap.get(bean.getName());
         }else{
