@@ -26,7 +26,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -395,9 +394,34 @@ public class WeldTestUrlDeployment implements Deployment {
 		return mockedClasses;
 	}
 
+	private Object getFieldVal(Object object, String fieldName) {
+		try {
+			Field field = object.getClass().getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field.get(object);
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void populateCdiClasspathSet() throws IOException {
 		ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
-		List<URL> entries = new ArrayList<URL>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
+		List<URL> entries;
+		if (classLoader instanceof URLClassLoader) {
+			entries = new ArrayList<>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
+		} else {
+			// h/t to lukehutch (fast-classpath-scanner)
+			// This should work for jdk.internal.loader.BuiltinClassLoader and
+			// jdk.internal.loader.ClassLoaders.AppClassLoader.
+			// This reflection requires JVM option --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED
+			// and may not work at all after Java 9.
+			Object urlClassPath = getFieldVal(classLoader, "ucp");
+			if (urlClassPath == null) {
+				throw new RuntimeException("Unknown ClassLoader: "+classLoader);
+			}
+			//noinspection unchecked
+			entries = (List<URL>) getFieldVal(urlClassPath, "path");
+		}
 
 		// If this is surefire we need to get the original claspath
 		JarInputStream firstEntry = new JarInputStream(entries.get(0).openStream());
