@@ -108,6 +108,16 @@
 	</build>
 	<profiles>
 		<profile>
+			<id>java9</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<!-- For surefire tests -->
+				<argLine>--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
+			</properties>
+		</profile>
+		<profile>
 			<id>weld.test.3plus</id>
 			<activation>
 				<property>
