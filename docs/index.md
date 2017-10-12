@@ -12,6 +12,7 @@
 10.  [EJB support](#ejb-support)
 11.  [Deltaspike support](#deltaspike-support)
 12.  [JaxRS support](#jaxrs-support)
+13.  [Java 9 support](#java-9-support)
 
 ### Quickstart
 
@@ -463,3 +464,27 @@ public static class ExampleWebService {
 
 }
 ```
+
+### Java 9 support
+
+CDI-Unit does not currently support Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit uses reflection to obtain information about classloaders and classpath entries. These JVM-internal classloaders have changed in Java 9, so you will need CDI-Unit 4.0.2 or later.
+
+Also, reflection on these JVM-internal classloaders is prevented by default (and will probably be completely prevented in a future version of Java). We're still looking for a long-term solution which won't depend on JVM internals, but for now, **you will need to execute your tests with this JVM parameter**: `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`
+
+If you use Maven and maven-surefire-plugin, you can add this parameter by setting the property `argLine` to `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`. This is how CDI-Unit's own tests ensure this is done when building on Java 9:
+
+```xml
+<profiles>
+    <profile>
+        <id>java9</id>
+        <activation>
+            <jdk>[9,)</jdk>
+        </activation>
+        <properties>
+            <!-- For surefire tests -->
+            <argLine>--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
+        </properties>
+    </profile>
+</profiles>
+```
+Note that `argLine` won't apply if you use Surefire's options `forkCount=0` or `forkMode=never`. In that case, you will need to change the JVM arguments for Maven itself (try editing `MAVEN_OPTS`, `.mavenrc` or `.mvn/jvm.config`).
