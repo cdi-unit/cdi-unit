@@ -4,6 +4,7 @@ notifications:
   email:
     - bryncooke@gmail.com
 jdk:
+  - oraclejdk9
   - oraclejdk8
 
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/

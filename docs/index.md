@@ -12,6 +12,7 @@
 10.  [EJB support](#ejb-support)
 11.  [Deltaspike support](#deltaspike-support)
 12.  [JaxRS support](#jaxrs-support)
+13.  [Java 9 support](#java-9-support)
 
 ### Quickstart
 
@@ -23,7 +24,7 @@ class MyTest {
   @Inject
   Something something; // This will be injected before the tests are run!
 
-  ...
+  // ...
 }
 ```
 Make sure you've added the cdi-unit dependency to your build file
@@ -48,7 +49,7 @@ In addition [scoping annotations](#scopes) can be used to simulate scopes for me
 
 *   @InRequestScope – Starts a request for the method call. 
 *   @InSessonScope – Starts a session for the method call.
-*   @InConversationScope – Starts converation for the method call.
+*   @InConversationScope – Starts conversation for the method call.
 
 ### Example unit test
 
@@ -72,7 +73,7 @@ interface Engine {
 }
 
 class WarpDrive implements Engine {
-  ...
+  // ...
 }
 ```
 
@@ -180,7 +181,7 @@ Imagine you have an alternative implementation of Engine that you want to inject
 ```java
 @Alternative
 class TranswarpDrive implements Engine {
-  ...
+  // ...
 }
 ```
 
@@ -188,7 +189,7 @@ The TranswarpDrive class would normally need to be enabled via beans.xml.
 
 **Enabling alternative classes:**
 
-The @ActivatedAlternatives annotaton like @AdditionalClasses will allow discovery of a class for testing, however it also [enables the alternative](http://docs.jboss.org/weld/reference/1.1.0.Final/en-US/html_single/#alternatives).
+The @ActivatedAlternatives annotation like @AdditionalClasses will allow discovery of a class for testing, however it also [enables the alternative](http://docs.jboss.org/weld/reference/1.1.0.Final/en-US/html_single/#alternatives).
 
 The [StarshipTest](#example) can be modified to use the new type of engine.
 
@@ -210,7 +211,7 @@ class TestStarship {
 
 **Producing alternatives:**
 
-Sometimes you want to create an alternative at runtime. The @ProducesAlternative annotation marks the class/field/method as an alternative therefore overridding any other implementation that is found during the discovery process. 
+Sometimes you want to create an alternative at runtime. The @ProducesAlternative annotation marks the class/field/method as an alternative therefore overriding any other implementation that is found during the discovery process. 
 
 ```java
 @RunWith(CdiRunner.class)
@@ -251,7 +252,7 @@ class Starship {
 
 @RequestScoped // This object will only be available from within a request
 class RequestScopedWarpDrive implements Engine {
-  ...
+  // ...
 }
 
 ```
@@ -310,26 +311,26 @@ Note that if you close a session while a request is active then it will not be c
 CDI-Unit will automatically use the version of Weld that was available when it was released. However in your project you may want to use a specific version. To achieve this simply exclude the weld dependency that from CDI-Unit and include the version you want in your pom. For example:
 
 ```xml
-
-<dependency>
-  <groupId>org.jglue.cdi-unit</groupId>
-  <artifactId>cdi-unit</artifactId>
-  <version>4.0.1</version>
-  <exclusions>
-    <exclusion>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se-core</artifactId>
-    </exclusion>
-  </exclusions>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>org.jboss.weld.se</groupId>
-  <artifactId>weld-se-core</artifactId>
-  <version><!--Your weld version--></version>
-  <scope>test</scope>
-</dependency>
-
+<dependencies>
+  <dependency>
+    <groupId>org.jglue.cdi-unit</groupId>
+    <artifactId>cdi-unit</artifactId>
+    <version>4.0.1</version>
+    <exclusions>
+      <exclusion>
+        <groupId>org.jboss.weld.se</groupId>
+        <artifactId>weld-se-core</artifactId>
+      </exclusion>
+    </exclusions>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.jboss.weld.se</groupId>
+    <artifactId>weld-se-core</artifactId>
+    <version><!--Your weld version--></version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
 ```
 
 ### TestNg support
@@ -337,7 +338,7 @@ CDI-Unit will automatically use the version of Weld that was available when it w
 A base class NgCdiRunner can be used to add CDI-Unit to your TestNG tests. For example:
 
 ```java
-ActivatedAlternatives(TranswarpDrive.class)
+@ActivatedAlternatives(TranswarpDrive.class)
 class TestStarship extends NgCdiRunner { //Extending NgCdiRunner adds CDI-Unit functionality
 
   @Inject
@@ -368,7 +369,6 @@ class TestEjb {
 
     @EJB(beanName = "EJBByClass")
     EJBI injectStateless;
-  }
 }
 
 class EJB implements EJBI {
@@ -463,3 +463,27 @@ public static class ExampleWebService {
 
 }
 ```
+
+### Java 9 support
+
+CDI-Unit does not currently support Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit uses reflection to obtain information about classloaders and classpath entries. These JVM-internal classloaders have changed in Java 9, so you will need CDI-Unit 4.0.2 or later.
+
+Also, reflection on these JVM-internal classloaders is prevented by default (and will probably be completely prevented in a future version of Java). We're still looking for a long-term solution which won't depend on JVM internals, but for now, **you will need to execute your tests with this JVM parameter**: `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`
+
+If you use Maven and maven-surefire-plugin, you can add this parameter by setting the property `argLine` to `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`. This is how CDI-Unit's own tests ensure this is done when building on Java 9:
+
+```xml
+<profiles>
+    <profile>
+        <id>java9</id>
+        <activation>
+            <jdk>[9,)</jdk>
+        </activation>
+        <properties>
+            <!-- For surefire tests -->
+            <argLine>--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
+        </properties>
+    </profile>
+</profiles>
+```
+Note that `argLine` won't apply if you use Surefire's options `forkCount=0` or `forkMode=never`. In that case, you will need to change the JVM arguments for Maven itself (try editing `MAVEN_OPTS`, `.mavenrc` or `.mvn/jvm.config`).
