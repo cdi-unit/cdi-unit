@@ -16,6 +16,7 @@
 package org.jglue.cdiunit.internal.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -48,8 +49,6 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
@@ -326,10 +325,21 @@ public class MockServletContextImpl implements ServletContext {
 	public synchronized void setResourceAsStream(String path,
 			InputStream inputStream) {
 		try {
-			setResourceAsStream(path, ByteStreams.toByteArray(inputStream));
+			setResourceAsStream(path, toByteArray(inputStream));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static byte[] toByteArray(InputStream in) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		byte[] buffer = new byte[8192];
+		for (int read; (read = in.read(buffer)) != -1; ) {
+			out.write(buffer, 0, read);
+		}
+
+		return out.toByteArray();
 	}
 
 	public synchronized void setResourceAsStream(String path, byte[] data) {

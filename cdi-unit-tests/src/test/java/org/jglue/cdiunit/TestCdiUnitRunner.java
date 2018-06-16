@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Assert;
 
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
-import org.jboss.weld.context.ConversationContext;
-import org.jboss.weld.context.http.Http;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
