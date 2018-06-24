@@ -1,10 +1,11 @@
 sudo: false
 language: java
-notifications:
-  email:
-    - bryncooke@gmail.com
+#notifications:
+#  email:
+#    - bryncooke@gmail.com
 jdk:
-  - oraclejdk9
+  # current LTS versions
+  - openjdk8
   - oraclejdk8
 
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/
@@ -16,29 +17,55 @@ before_cache:
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
 env:
-
 # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
 # Current strategy is, for each supported minor version of Weld, to test one early point release plus
 # the most recent point release, plus some point releases which caused problems.
-  matrix:
-    - WELD_VERSION=3.0.2.Final
-    - WELD_VERSION=3.0.0.Final
-    - WELD_VERSION=2.4.4.Final
-    # BeansXmlImpl was changed in 2.4.2
-    - WELD_VERSION=2.4.2.Final
-    - WELD_VERSION=2.4.0.Final
-    - WELD_VERSION=2.3.5.Final
-    - WELD_VERSION=2.3.0.Final
-    - WELD_VERSION=2.2.13.Final
-    #  2.2.7, 2.2.8 not supported, but 2.2.9 is
-    - WELD_VERSION=2.2.9.Final
-    - WELD_VERSION=2.2.0.Final
-    - WELD_VERSION=2.1.2.Final
-    - WELD_VERSION=2.1.0.Final
-    - WELD_VERSION=2.0.4.Final
-    - WELD_VERSION=2.0.1.Final
-    - WELD_VERSION=1.1.16.Final
-    - WELD_VERSION=1.1.14.Final
+  - WELD_VERSION=3.0.4.Final
+  - WELD_VERSION=3.0.0.Final
+  - WELD_VERSION=2.4.4.Final
+  # BeansXmlImpl was changed in 2.4.2
+  - WELD_VERSION=2.4.2.Final
+  - WELD_VERSION=2.4.0.Final
+  - WELD_VERSION=2.3.5.Final
+  - WELD_VERSION=2.3.0.Final
+  - WELD_VERSION=2.2.13.Final
+  #  2.2.7, 2.2.8 not supported, but 2.2.9 is
+  - WELD_VERSION=2.2.9.Final
+  - WELD_VERSION=2.2.0.Final
+  - WELD_VERSION=2.1.2.Final
+  - WELD_VERSION=2.1.0.Final
+  - WELD_VERSION=2.0.4.Final
+  - WELD_VERSION=2.0.1.Final
+  - WELD_VERSION=1.1.16.Final
+  - WELD_VERSION=1.1.14.Final
+
+matrix:
+  # we also test JDK 9+ on the latest version of Weld
+  include:
+  # already EOL
+  - jdk: openjdk9
+    env: WELD_VERSION=3.0.4.Final
+  # feature release
+  - jdk: openjdk10
+    env: WELD_VERSION=3.0.4.Final
+  # upcoming LTS
+  - jdk: openjdk11
+    env: WELD_VERSION=3.0.4.Final
+  # early access
+  - jdk: openjdk-ea
+    env: WELD_VERSION=3.0.4.Final
+  # already EOL
+#  - jdk: oraclejdk9
+#    env: WELD_VERSION=3.0.4.Final
+  # feature release
+  - jdk: oraclejdk10
+    env: WELD_VERSION=3.0.4.Final
+  # upcoming LTS
+#  - jdk: oraclejdk11
+#    env: WELD_VERSION=3.0.4.Final
+  # early access
+  - jdk: oraclejdk-ea
+    env: WELD_VERSION=3.0.4.Final
 
 script:
 - |

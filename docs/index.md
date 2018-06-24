@@ -12,7 +12,7 @@
 10.  [EJB support](#ejb-support)
 11.  [Deltaspike support](#deltaspike-support)
 12.  [JaxRS support](#jaxrs-support)
-13.  [Java 9 support](#java-9-support)
+13.  [Support for Java 9 and later](#support-for-java-9-and-later)
 
 ### Quickstart
 
@@ -464,7 +464,7 @@ public static class ExampleWebService {
 }
 ```
 
-### Java 9 support
+### Support for Java 9 and later
 
 CDI-Unit does not currently support Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit uses reflection to obtain information about classloaders and classpath entries. These JVM-internal classloaders have changed in Java 9, so you will need CDI-Unit 4.0.2 or later.
 
