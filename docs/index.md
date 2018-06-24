@@ -13,6 +13,7 @@
 11.  [Deltaspike support](#deltaspike-support)
 12.  [JaxRS support](#jaxrs-support)
 13.  [Support for Java 9 and later](#support-for-java-9-and-later)
+14.  [Changelog](#changelog)
 
 ### Quickstart
 
@@ -466,24 +467,18 @@ public static class ExampleWebService {
 
 ### Support for Java 9 and later
 
-CDI-Unit does not currently support Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit uses reflection to obtain information about classloaders and classpath entries. These JVM-internal classloaders have changed in Java 9, so you will need CDI-Unit 4.0.2 or later.
+CDI-Unit has not been tested with Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit 4.1.0 (or later) uses FastClasspathScanner to obtain information about classloaders and classpath entries.
 
-Also, reflection on these JVM-internal classloaders is prevented by default (and will probably be completely prevented in a future version of Java). We're still looking for a long-term solution which won't depend on JVM internals, but for now, **you will need to execute your tests with this JVM parameter**: `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`
+### Changelog
 
-If you use Maven and maven-surefire-plugin, you can add this parameter by setting the property `argLine` to `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED`. This is how CDI-Unit's own tests ensure this is done when building on Java 9:
+#### 4.1
+CDI-Unit no longer depends on Reflections or Guava, so if you need
+these dependencies you should add them to your project directly. It
+now requires FastClasspathScanner 3.x. The JVM argument
+`--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is no longer
+required.
 
-```xml
-<profiles>
-    <profile>
-        <id>java9</id>
-        <activation>
-            <jdk>[9,)</jdk>
-        </activation>
-        <properties>
-            <!-- For surefire tests -->
-            <argLine>--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
-        </properties>
-    </profile>
-</profiles>
-```
-Note that `argLine` won't apply if you use Surefire's options `forkCount=0` or `forkMode=never`. In that case, you will need to change the JVM arguments for Maven itself (try editing `MAVEN_OPTS`, `.mavenrc` or `.mvn/jvm.config`).
+#### 4.0
+CDI-Unit requires Java 8 or higher. The JVM argument
+`--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is required on
+Java 9 or higher (but only in version 4.0).

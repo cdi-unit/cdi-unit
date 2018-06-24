@@ -1,6 +1,5 @@
 package org.jglue.cdiunit.internal;
 
-import com.google.common.collect.Maps;
 import org.jglue.cdiunit.ProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class ProducerConfigExtension implements Extension {
 
 	@SuppressWarnings("unused")
 	void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) throws Exception {
-		Map<Class<? extends Annotation>, Annotation> values = Maps.newHashMap();
+		Map<Class<? extends Annotation>, Annotation> values = new HashMap<>();
 		// get class annotations first:
 		addConfigValues(values, testMethod.getDeclaringClass().getAnnotations());
 		// method annotations will override class annotations:
