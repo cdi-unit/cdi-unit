@@ -188,8 +188,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 				testConfiguration = createTestConfiguration();
 				if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
 					initWeld(testConfiguration);
+					defaultStatement.evaluate();
+					weld.shutdown();
+					weld = null;
 				}
-				defaultStatement.evaluate();
+				else {
+					defaultStatement.evaluate();
+				}
 			}
 
 		};
