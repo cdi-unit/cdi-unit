@@ -41,31 +41,24 @@ env:
 
 matrix:
   # we also test JDK 9+ on the latest version of Weld
+  # note that the first WELD_VERSION above will be used by default
   include:
   # already EOL
   - jdk: openjdk9
-    env: WELD_VERSION=3.0.4.Final
   # feature release
   - jdk: openjdk10
-    env: WELD_VERSION=3.0.4.Final
   # upcoming LTS
   - jdk: openjdk11
-    env: WELD_VERSION=3.0.4.Final
   # early access
   - jdk: openjdk-ea
-    env: WELD_VERSION=3.0.4.Final
   # already EOL
 #  - jdk: oraclejdk9
-#    env: WELD_VERSION=3.0.4.Final
   # feature release
   - jdk: oraclejdk10
-    env: WELD_VERSION=3.0.4.Final
   # upcoming LTS
 #  - jdk: oraclejdk11
-#    env: WELD_VERSION=3.0.4.Final
   # early access
   - jdk: oraclejdk-ea
-    env: WELD_VERSION=3.0.4.Final
 
 script:
 - |
