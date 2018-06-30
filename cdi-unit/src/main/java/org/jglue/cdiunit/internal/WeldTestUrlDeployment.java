@@ -17,10 +17,10 @@ package org.jglue.cdiunit.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +42,7 @@ import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 import javax.decorator.Decorator;
 import javax.enterprise.inject.Alternative;
@@ -52,7 +54,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
 
-import com.google.common.base.Predicate;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -80,17 +81,16 @@ import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
 import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
 import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
 import org.mockito.Mock;
-import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
-	private Collection<Metadata<Extension>> extensions = new ArrayList<Metadata<Extension>>();
+	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
-	private Set<URL> cdiClasspathEntries = new HashSet<URL>();
+	private Set<URL> cdiClasspathEntries = new HashSet<>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
@@ -98,11 +98,11 @@ public class WeldTestUrlDeployment implements Deployment {
 		populateCdiClasspathSet();
 		BeansXml beansXml = createBeansXml();
 
-		Set<String> discoveredClasses = new LinkedHashSet<String>();
-		Set<String> alternatives = new HashSet<String>();
+		Set<String> discoveredClasses = new LinkedHashSet<>();
+		Set<String> alternatives = new HashSet<>();
 		discoveredClasses.add(testConfiguration.getTestClass().getName());
-		Set<Class<?>> classesToProcess = new LinkedHashSet<Class<?>>();
-		Set<Class<?>> classesProcessed = new HashSet<Class<?>>();
+		Set<Class<?>> classesToProcess = new LinkedHashSet<>();
+		Set<Class<?>> classesProcessed = new HashSet<>();
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
 		classesToProcess.add(testConfiguration.getTestClass());
@@ -112,8 +112,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		try {
 			Class.forName("javax.faces.view.ViewScoped");
 			extensions.add(createMetadata(new ViewScopeExtension(), ViewScopeExtension.class.getName()));
-		} catch (ClassNotFoundException e) {
-
+		} catch (ClassNotFoundException ignore) {
 		}
 
 		try {
@@ -133,8 +132,7 @@ public class WeldTestUrlDeployment implements Deployment {
 			} catch (ClassNotFoundException e) {
 				classesToProcess.add(ServletObjectsProducer.class);
 			}
-
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException ignore) {
 		}
 
 		classesToProcess.addAll(testConfiguration.getAdditionalClasses());
@@ -151,6 +149,7 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 				if (Extension.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
 					try {
+//						extensions.add(createMetadata((Extension) c.getConstructor().newInstance(), c.getName()));
 						extensions.add(createMetadata((Extension) c.newInstance(), c.getName()));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
@@ -166,60 +165,50 @@ public class WeldTestUrlDeployment implements Deployment {
 
 				if (isAlternativeStereotype(c)) {
 					beansXml.getEnabledAlternativeStereotypes().add(createMetadata(c.getName(), c.getName()));
-
 				}
 
 				AdditionalClasses additionalClasses = c.getAnnotation(AdditionalClasses.class);
 				if (additionalClasses != null) {
-					for (Class<?> supportClass : additionalClasses.value()) {
-						classesToProcess.add(supportClass);
-					}
+					Collections.addAll(classesToProcess, additionalClasses.value());
 					for (String lateBound : additionalClasses.late()) {
-						try {
-							Class<?> clazz = Class.forName(lateBound);
-							classesToProcess.add(clazz);
-						} catch (ClassNotFoundException e) {
-							throw new RuntimeException(e);
-						}
-
+						classesToProcess.add(loadClass(lateBound));
 					}
 				}
 
 				AdditionalClasspaths additionalClasspaths = c.getAnnotation(AdditionalClasspaths.class);
 				if (additionalClasspaths != null) {
-					for (Class<?> additionalClasspath : additionalClasspaths.value()) {
-
-						Reflections reflections = new Reflections(new ConfigurationBuilder().setScanners(new TypesScanner())
-								.setUrls(
-										new File(additionalClasspath.getProtectionDomain().getCodeSource().getLocation()
-												.getPath()).toURI().toURL()));
-
-						classesToProcess.addAll(ReflectionUtils.forNames(
-								reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(),
-								new ClassLoader[] { getClass().getClassLoader() }));
-					}
+					Object[] urls = Arrays.stream(additionalClasspaths.value())
+							.map(this::getClasspathURL)
+							.toArray();
+					ScanResult scan = new FastClasspathScanner()
+							.overrideClasspath(urls)
+							.scan();
+					List<Class<?>> classes = scan.getNamesOfAllClasses()
+							.stream()
+							.map(this::loadClass)
+							.collect(Collectors.toList());
+					classesToProcess.addAll(classes);
 				}
 
 				AdditionalPackages additionalPackages = c.getAnnotation(AdditionalPackages.class);
 				if (additionalPackages != null) {
 					for (Class<?> additionalPackage : additionalPackages.value()) {
 						final String packageName = additionalPackage.getPackage().getName();
-						Reflections reflections = new Reflections(new ConfigurationBuilder()
-								.setScanners(new TypesScanner())
-								.setUrls(additionalPackage.getProtectionDomain().getCodeSource().getLocation()
-												).filterInputsBy(new Predicate<String>() {
+						URL url = getClasspathURL(additionalPackage);
 
-									@Override
-									public boolean apply(String input) {
-										return input.startsWith(packageName)
-												&& !input.substring(packageName.length() + 1, input.length() - 6).contains(".");
+						// It might be more efficient to scan all packageNames at once, but we
+						// might pick up classes from a different package's classpath entry, which
+						// would be a change in behaviour (but perhaps less surprising?).
+						ScanResult scan = new FastClasspathScanner(packageName)
+								.disableRecursiveScanning()
+								.overrideClasspath(url)
+								.scan();
 
-									}
-								}));
-						classesToProcess.addAll(ReflectionUtils.forNames(
-								reflections.getStore().get(TypesScanner.class.getSimpleName()).keySet(),
-								new ClassLoader[] { getClass().getClassLoader() }));
-
+						List<Class<?>> classes = scan.getNamesOfAllClasses()
+								.stream()
+								.map(this::loadClass)
+								.collect(Collectors.toList());
+						classesToProcess.addAll(classes);
 					}
 				}
 
@@ -235,7 +224,6 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 
 				for (Annotation a : c.getAnnotations()) {
-
 					if (!a.annotationType().getPackage().getName().equals("org.jglue.cdiunit")) {
 						classesToProcess.add(a.annotationType());
 					}
@@ -259,6 +247,7 @@ public class WeldTestUrlDeployment implements Deployment {
 						for (Type param : method.getGenericParameterTypes()) {
 							addClassesToProcess(classesToProcess, param);
 						}
+						// TODO PERF we might be adding classes which we already processed
 						addClassesToProcess(classesToProcess, method.getGenericReturnType());
 
 					}
@@ -278,15 +267,13 @@ public class WeldTestUrlDeployment implements Deployment {
 		try {
 			Class.forName("org.mockito.Mock");
 			extensions.add(createMetadata(new MockitoExtension(), MockitoExtension.class.getName()));
-		} catch (ClassNotFoundException e) {
-
+		} catch (ClassNotFoundException ignore) {
 		}
 
 		try {
 			Class.forName("org.easymock.EasyMockRunner");
 			extensions.add(createMetadata(new EasyMockExtension(), EasyMockExtension.class.getName()));
-		} catch (ClassNotFoundException e) {
-
+		} catch (ClassNotFoundException ignore) {
 		}
 
 		extensions.add(createMetadata(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
@@ -300,6 +287,14 @@ public class WeldTestUrlDeployment implements Deployment {
 			}
 		}
 
+	}
+
+	private Class<?> loadClass(String name) {
+		try {
+			return getClass().getClassLoader().loadClass(name);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static <T> Metadata<T> createMetadata(T value, String location) {
@@ -350,11 +345,11 @@ public class WeldTestUrlDeployment implements Deployment {
 	}
 
 	private void addClassesToProcess(Collection<Class<?>> classesToProcess, Type type) {
-
 		if (type instanceof Class) {
 			classesToProcess.add((Class<?>)type);
 		}
-		if(type instanceof ParameterizedType) {
+
+		if (type instanceof ParameterizedType) {
 			ParameterizedType ptype = (ParameterizedType)type;
 			classesToProcess.add((Class<?>)ptype.getRawType());
 			for(Type arg : ptype.getActualTypeArguments()) {
@@ -364,109 +359,60 @@ public class WeldTestUrlDeployment implements Deployment {
 	}
 
 	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
-		Set<Class<?>> mockedClasses = new HashSet<Class<?>>();
+		Set<Class<?>> mockedClasses = new HashSet<>();
 
 		try {
-
 			for (Field field : testClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(Mock.class)) {
 					Class<?> type = field.getType();
 					mockedClasses.add(type);
 				}
 			}
-		} catch (NoClassDefFoundError e) {
-
+		} catch (NoClassDefFoundError ignore) {
+			// no Mockito
 		}
 
 		try {
-
 			for (Field field : testClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(org.easymock.Mock.class)) {
 					Class<?> type = field.getType();
 					mockedClasses.add(type);
 				}
 			}
-		} catch (NoClassDefFoundError e) {
-
+		} catch (NoClassDefFoundError ignore) {
+			// no EasyMock
 		}
 		return mockedClasses;
 	}
 
-	private Object getFieldVal(Object object, String fieldName) {
-		try {
-			Field field = object.getClass().getDeclaredField(fieldName);
-			field.setAccessible(true);
-			return field.get(object);
-		} catch (IllegalAccessException | NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private void populateCdiClasspathSet() throws IOException {
-		ClassLoader classLoader = WeldTestUrlDeployment.class.getClassLoader();
-		List<URL> entries;
-		if (classLoader instanceof URLClassLoader) {
-			entries = new ArrayList<>(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
-		} else {
-			// h/t to lukehutch (fast-classpath-scanner)
-			// This should work for jdk.internal.loader.BuiltinClassLoader and
-			// jdk.internal.loader.ClassLoaders.AppClassLoader.
-			// This reflection requires JVM option --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED
-			// and may not work at all after Java 9.
-			Object urlClassPath = getFieldVal(classLoader, "ucp");
-			if (urlClassPath == null) {
-				throw new RuntimeException("Unknown ClassLoader: "+classLoader);
-			}
-			//noinspection unchecked
-			entries = (List<URL>) getFieldVal(urlClassPath, "path");
+		List<URL> entryList = new FastClasspathScanner().scan()
+				.getUniqueClasspathElementURLs();
+		// cdiClasspathEntries doesn't preserve order, so HashSet is fine
+		Set<URL> entrySet = new HashSet<>(entryList);
+
+		for (URL url : entryList) {
+			entrySet.addAll(getEntriesFromManifestClasspath(url));
 		}
 
-		// If this is surefire we need to get the original claspath
-		JarInputStream firstEntry = new JarInputStream(entries.get(0).openStream());
-		Manifest manifest = firstEntry.getManifest();
-		if (manifest != null) {
-			String classpath = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
-			if (classpath != null) {
-				String[] manifestEntries = classpath.split(" ?file:");
-				for (String entry : manifestEntries) {
-					if (entry.length() > 0) {
-						entries.add(new URL("file:" + entry));
-					}
-				}
-			}
-
-		}
-		firstEntry.close();
-
-		for (URL url : entries) {
-			URLClassLoader cl = new URLClassLoader(new URL[] { url }, null);
-			try {
-
+		for (URL url : entrySet) {
+			try (URLClassLoader classLoader = new URLClassLoader(new URL[]{ url },
+					null)) {
+				// TODO this seems pretty Maven-specific, and fragile
 				if (url.getFile().endsWith("/classes/")) {
-					URL webInfBeans = new URL(url, "../../src/main/webapp/WEB-INF/beans.xml");
-					try {
-						webInfBeans.openConnection().connect();;
+					URL webInfBeans = new URL(url,
+							"../../src/main/webapp/WEB-INF/beans.xml");
+					try (InputStream ignore = webInfBeans.openStream()) {
 						cdiClasspathEntries.add(url);
-					} catch (IOException e) {
-
+					} catch (IOException ignore) {
+						// no such file
 					}
 				}
-				URL resource = cl.getResource("META-INF/beans.xml");
-				boolean cdiUnit = url.equals(CdiRunner.class.getProtectionDomain().getCodeSource().getLocation());
-				if (cdiUnit || resource != null || isDirectoryOnClasspath(url)) {
+				// TODO beans.xml is no longer required by CDI (1.1+)
+				URL beansXml = classLoader.getResource("META-INF/beans.xml");
+				boolean isCdiUnit = url.equals(getClasspathURL(CdiRunner.class));
+				if (isCdiUnit || beansXml != null || isDirectory(url)) {
 					cdiClasspathEntries.add(url);
-				}
-
-			} finally {
-				try {
-					Method method = cl.getClass().getMethod("close");
-					method.invoke(cl);
-				} catch (NoSuchMethodException e) {
-					//Ignore, we might be running on Java 6
-				} catch (IllegalAccessException e) {
-					//Ignore, we might be running on Java 6
-				} catch (InvocationTargetException e) {
-					//Ignore, we might be running on Java 6
 				}
 			}
 		}
@@ -474,28 +420,54 @@ public class WeldTestUrlDeployment implements Deployment {
 		for (URL url : cdiClasspathEntries) {
 			log.debug("{}", url);
 		}
-
 	}
 
-	private boolean isDirectoryOnClasspath(URL classpathEntry) {
+	private URL getClasspathURL(Class<?> clazz) {
+		CodeSource codeSource = clazz.getProtectionDomain()
+				.getCodeSource();
+		return codeSource != null ? codeSource.getLocation() : null;
+	}
+
+	private static Set<URL> getEntriesFromManifestClasspath(URL url)
+			throws IOException {
+		Set<URL> manifestURLs = new HashSet<>();
+		// If this is a surefire manifest-only jar we need to get the original classpath.
+		// When testing cdi-unit-tests through Maven, this finds extra entries compared to FCS:
+		// eg ".../cdi-unit/cdi-unit-tests/target/classes"
+		try (InputStream in = url.openStream();
+				JarInputStream jar = new JarInputStream(in)) {
+			Manifest manifest = jar.getManifest();
+			if (manifest != null) {
+				String classpath = (String) manifest.getMainAttributes()
+						.get(Attributes.Name.CLASS_PATH);
+				if (classpath != null) {
+					String[] manifestEntries = classpath.split(" ?file:");
+					for (String entry : manifestEntries) {
+						if (entry.length() > 0) {
+							// entries is a Set, so this won't add duplicates
+							manifestURLs.add(new URL("file:" + entry));
+						}
+					}
+				}
+			}
+		}
+		return manifestURLs;
+	}
+
+	private boolean isDirectory(URL classpathEntry) {
 		try {
 			return new File(classpathEntry.toURI()).isDirectory();
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException ignore) {
 			// Ignore, thrown by File constructor for unsupported URIs
-		} catch (URISyntaxException e) {
+		} catch (URISyntaxException ignore) {
 			// Ignore, does not denote an URI that points to a directory
 		}
 		return false;
 	}
 
 	private boolean isCdiClass(Class<?> c) {
-		if (c.getProtectionDomain().getCodeSource() == null) {
-			return false;
-		}
-		URL location = c.getProtectionDomain().getCodeSource().getLocation();
-		boolean isCdi = cdiClasspathEntries.contains(location);
-		return isCdi;
-
+		URL location = getClasspathURL(c);
+		return location != null && cdiClasspathEntries.contains(location);
 	}
 
 	private boolean isAlternativeStereotype(Class<?> c) {

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jglue.cdi-unit</groupId>
 	<artifactId>cdi-unit-parent</artifactId>
-	<version>4.0.3-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -16,6 +16,9 @@
 		<developer>
 			<name>Bryn Cooke</name>
 		</developer>
+		<developer>
+			<name>Sean Flanigan</name>
+		</developer>
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +28,8 @@
 		<!--<weld.test.version>2.1.0.Final</weld.test.version>-->
 		<!--<weld.test.version>2.2.0.Final</weld.test.version>-->
 		<!--<weld.test.version>2.4.2.SP1</weld.test.version>-->
-		<weld.test.version>3.0.0.Final</weld.test.version>
+		<!--<weld.test.version>3.0.0.Final</weld.test.version>-->
+		<weld.test.version>3.0.4.Final</weld.test.version>
 
 		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
 		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
@@ -108,16 +112,6 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>java9</id>
-			<activation>
-				<jdk>[9,)</jdk>
-			</activation>
-			<properties>
-				<!-- For surefire tests -->
-				<argLine>--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
-			</properties>
-		</profile>
-		<profile>
 			<id>weld.test.3plus</id>
 			<activation>
 				<property>
@@ -165,6 +159,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>io.github.lukehutch</groupId>
+				<artifactId>fast-classpath-scanner</artifactId>
+				<version>3.1.0</version>
+			</dependency>
+			<dependency>
 				<groupId>org.jglue.cdi-unit</groupId>
 				<artifactId>cdi-unit</artifactId>
 				<version>${project.version}</version>
@@ -173,7 +172,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.7.15</version>
+				<version>2.19.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>

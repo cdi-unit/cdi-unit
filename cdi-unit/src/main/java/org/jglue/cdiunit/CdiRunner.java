@@ -111,6 +111,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 			weld = new Weld() {
 
+				// override for Weld 2.0, 3.0
 				protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 					try {
 						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
@@ -120,6 +121,8 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 					}
 				}
 
+				// override for Weld 1.x
+				@SuppressWarnings("unused")
 				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
 					try {
 						return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
@@ -127,7 +130,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 						startupException = e;
 						throw new RuntimeException(e);
 					}
-				};
+				}
 
 			};
 			  

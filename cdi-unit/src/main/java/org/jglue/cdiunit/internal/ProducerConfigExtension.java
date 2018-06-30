@@ -1,6 +1,5 @@
 package org.jglue.cdiunit.internal;
 
-import com.google.common.collect.Maps;
 import org.jglue.cdiunit.ProducerConfig;
 
 import javax.enterprise.context.Dependent;
@@ -23,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ProducerConfigExtension implements Extension {
 
 	private final TestConfiguration testConfiguration;
-	private final Map<Class<? extends Annotation>, Map<Method, Annotation>> configurations = Maps.newHashMap();
+	private final Map<Class<? extends Annotation>, Map<Method, Annotation>> configurations = new HashMap<>();
 
 	@SuppressWarnings("unused")
 	public ProducerConfigExtension() {
@@ -69,7 +69,7 @@ public class ProducerConfigExtension implements Extension {
 			if (!Modifier.isPublic(annotation.annotationType().getModifiers())) {
 				throw new RuntimeException("ProducerConfig annotation classes must be public");
 			}
-			values.computeIfAbsent(annotation.annotationType(), k -> Maps.newHashMap()).put(m, annotation);
+			values.computeIfAbsent(annotation.annotationType(), k -> new HashMap<>()).put(m, annotation);
 		}
 	}
 

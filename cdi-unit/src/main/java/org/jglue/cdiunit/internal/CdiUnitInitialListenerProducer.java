@@ -29,7 +29,7 @@ public class CdiUnitInitialListenerProducer
                 factory.setSuperclass(weldListenerClass);
                 factory.setInterfaces(new Class[] { CdiUnitInitialListener.class } );
                 classToUse = factory.createClass();
-            } catch (Exception e1) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e1) {
                 throw new RuntimeException(e1);
             }
         }
