@@ -29,7 +29,7 @@ public class TestConfiguration {
     }
 
     private final Class<?> testClass;
-    private final Method testMethod;
+    private Method testMethod;
     private final Collection<Class<?>> additionalClasses;
     private final IsolationLevel isolationLevel;
 
@@ -48,6 +48,10 @@ public class TestConfiguration {
      */
     public Method getTestMethod() {
         return testMethod;
+    }
+
+    public void setTestMethod(Method testMethod) {
+        this.testMethod = testMethod;
     }
 
     /**

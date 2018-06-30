@@ -106,10 +106,8 @@ public class WeldTestUrlDeployment implements Deployment {
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
 		classesToProcess.add(testConfiguration.getTestClass());
-		extensions.add(createMetadata(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
-		if (testConfiguration.getTestMethod() != null) {
-			extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
-		}
+		extensions.add(createMetadata(new TestScopeExtension(testConfiguration), TestScopeExtension.class.getName()));
+		extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration), ProducerConfigExtension.class.getName()));
 
 		try {
 			Class.forName("javax.faces.view.ViewScoped");

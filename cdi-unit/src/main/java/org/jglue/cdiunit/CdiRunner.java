@@ -92,12 +92,12 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	protected TestConfiguration createTestConfiguration() {
-		return new TestConfiguration(clazz, frameworkMethod != null ? frameworkMethod.getMethod() : null);
+		return new TestConfiguration(clazz, null);
 	}
 
 	@Override
 	protected Object createTest() {
-		testConfiguration = createTestConfiguration();
+		testConfiguration.setTestMethod(frameworkMethod.getMethod());
 		initWeld(testConfiguration);
 		return createTest(clazz);
 	}
