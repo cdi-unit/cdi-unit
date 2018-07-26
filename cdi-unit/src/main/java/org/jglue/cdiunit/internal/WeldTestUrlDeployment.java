@@ -84,7 +84,7 @@ import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
+import io.github.lukehutch.fastclasspathscanner.ScanResult;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
@@ -184,8 +184,10 @@ public class WeldTestUrlDeployment implements Deployment {
 							.toArray();
 					ScanResult scan = new FastClasspathScanner()
 							.overrideClasspath(urls)
+							.ignoreClassVisibility()
+							.enableClassInfo()
 							.scan();
-					List<Class<?>> classes = scan.getNamesOfAllClasses()
+					List<Class<?>> classes = scan.getAllClasses().getNames()
 							.stream()
 							.map(this::loadClass)
 							.collect(Collectors.toList());
@@ -201,12 +203,14 @@ public class WeldTestUrlDeployment implements Deployment {
 						// It might be more efficient to scan all packageNames at once, but we
 						// might pick up classes from a different package's classpath entry, which
 						// would be a change in behaviour (but perhaps less surprising?).
-						ScanResult scan = new FastClasspathScanner(packageName)
-								.disableRecursiveScanning()
+						ScanResult scan = new FastClasspathScanner()
+								.whitelistPackagesNonRecursive(packageName)
 								.overrideClasspath(url)
+								.ignoreClassVisibility()
+								.enableClassInfo()
 								.scan();
 
-						List<Class<?>> classes = scan.getNamesOfAllClasses()
+						List<Class<?>> classes = scan.getAllClasses().getNames()
 								.stream()
 								.map(this::loadClass)
 								.collect(Collectors.toList());
@@ -389,7 +393,7 @@ public class WeldTestUrlDeployment implements Deployment {
 
 	private void populateCdiClasspathSet() throws IOException {
 		List<URL> entryList = new FastClasspathScanner().scan()
-				.getUniqueClasspathElementURLs();
+				.getClasspathURLs();
 		// cdiClasspathEntries doesn't preserve order, so HashSet is fine
 		Set<URL> entrySet = new HashSet<>(entryList);
 
