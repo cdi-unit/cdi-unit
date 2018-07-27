@@ -23,8 +23,8 @@ package org.jglue.cdiunit.internal;
 import java.net.URL;
 import java.util.List;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.ScanResult;
+import io.github.fastclasspathscanner.FastClasspathScanner;
+import io.github.fastclasspathscanner.ScanResult;
 
 /**
  * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
@@ -35,12 +35,10 @@ public class FCS4ClasspathScanner implements ClasspathScanner {
     public List<URL> getClasspathURLs() {
         return new FastClasspathScanner().scan()
                 .getClasspathURLs();
-//        return null;
     }
 
     @Override
     public List<String> getClassNamesForClasspath(URL[] urls) {
-//        return null;
         ScanResult scan = new FastClasspathScanner()
                 .overrideClasspath(urls)
                 .ignoreClassVisibility()
@@ -51,7 +49,6 @@ public class FCS4ClasspathScanner implements ClasspathScanner {
 
     @Override
     public List<String> getClassNamesForPackage(String packageName, URL url) {
-//        return null;
         ScanResult scan = new FastClasspathScanner()
                 .whitelistPackagesNonRecursive(packageName)
                 .overrideClasspath(url)

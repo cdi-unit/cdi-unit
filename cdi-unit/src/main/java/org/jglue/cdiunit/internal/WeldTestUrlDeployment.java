@@ -83,27 +83,16 @@ import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtNewMethod;
-import javassist.NotFoundException;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
-	private ClasspathScanner scanner;
+	private ClasspathScanner scanner = new FCS4ClasspathScanner();
 	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
-
-		try {
-			this.scanner = new FCS4ClasspathScanner();
-		} catch (NoClassDefFoundError e) {
-			this.scanner = makeFCS3ClasspathScanner();
-		}
 
 		populateCdiClasspathSet();
 		BeansXml beansXml = createBeansXml();
@@ -291,47 +280,6 @@ public class WeldTestUrlDeployment implements Deployment {
 			}
 		}
 
-	}
-
-	private Class<?> loadContextClass(String name) throws ClassNotFoundException {
-		return Thread.currentThread().getContextClassLoader().loadClass(name);
-	}
-
-	private ClasspathScanner makeFCS3ClasspathScanner() {
-		try {
-			ClassPool pool = ClassPool.getDefault();
-			String className = "org.jglue.cdiunit.internal.FCS3ClasspathScanner$$";
-			CtClass cc = pool.getOrNull(className);
-			if (cc != null) {
-				return (ClasspathScanner) loadContextClass(cc.getName()).newInstance();
-			}
-			cc = pool.makeClass(className);
-			cc.addInterface(pool.getCtClass(ClasspathScanner.class.getName()));
-			cc.addMethod(CtNewMethod.make(
-					"public java.util.List/*<java.net.URL>*/ getClasspathURLs() {\n" +
-						"    return new io.github.lukehutch.fastclasspathscanner.FastClasspathScanner(new String[0])\n" +
-						"            .scan()\n" +
-						"            .getUniqueClasspathElementURLs();\n" +
-						"}", cc));
-			cc.addMethod(CtNewMethod.make(
-					"public java.util.List/*<String>*/ getClassNamesForClasspath(java.net.URL[] urls) {\n" +
-						"    return new io.github.lukehutch.fastclasspathscanner.FastClasspathScanner(new String[0])\n" +
-						"            .overrideClasspath(urls)\n" +
-						"            .scan()\n" +
-						"            .getNamesOfAllClasses();\n" +
-						"}", cc));
-			cc.addMethod(CtNewMethod.make(
-					"public java.util.List/*<String>*/ getClassNamesForPackage(String packageName, java.net.URL url) {\n" +
-						"    return new io.github.lukehutch.fastclasspathscanner.FastClasspathScanner(new String[]{packageName})\n" +
-						"            .disableRecursiveScanning()\n" +
-						"            .overrideClasspath(new Object[]{url})\n" +
-						"            .scan()\n" +
-						"            .getNamesOfAllClasses();\n" +
-						"}", cc));
-			return (ClasspathScanner) cc.toClass().newInstance();
-		} catch (ReflectiveOperationException | CannotCompileException | NotFoundException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private Class<?> loadClass(String name) {

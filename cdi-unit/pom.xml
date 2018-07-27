@@ -38,7 +38,7 @@
 			<version>3.18.1-GA</version>
 		</dependency>
     <dependency>
-      <groupId>io.github.lukehutch</groupId>
+      <groupId>io.github.fast-classpath-scanner</groupId>
       <artifactId>fast-classpath-scanner</artifactId>
     </dependency>
 		<dependency>
