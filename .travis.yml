@@ -56,9 +56,9 @@ matrix:
   # feature release
   - jdk: oraclejdk10
   # upcoming LTS
-#  - jdk: oraclejdk11
+  - jdk: oraclejdk11
   # early access
-  - jdk: oraclejdk-ea
+#  - jdk: oraclejdk-ea
 
 script:
 - |
