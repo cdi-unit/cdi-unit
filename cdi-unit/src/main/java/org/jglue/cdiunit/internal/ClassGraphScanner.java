@@ -29,7 +29,7 @@ import io.github.classgraph.ScanResult;
 /**
  * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
  */
-public class FCS4ClasspathScanner implements ClasspathScanner {
+public class ClassGraphScanner implements ClasspathScanner {
 
     @Override
     public List<URL> getClasspathURLs() {

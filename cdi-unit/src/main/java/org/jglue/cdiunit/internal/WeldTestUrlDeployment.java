@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
-	private ClasspathScanner scanner = new FCS4ClasspathScanner();
+	private ClasspathScanner scanner = new ClassGraphScanner();
 	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<>();
