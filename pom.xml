@@ -159,9 +159,9 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.github.fast-classpath-scanner</groupId>
-				<artifactId>fast-classpath-scanner</artifactId>
-				<version>4.0.0-beta-8</version>
+				<groupId>io.github.classgraph</groupId>
+				<artifactId>classgraph</artifactId>
+				<version>4.0.0-beta-12</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jglue.cdi-unit</groupId>

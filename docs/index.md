@@ -467,14 +467,14 @@ public static class ExampleWebService {
 
 ### Support for Java 9 and later
 
-CDI-Unit has not been tested with Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit 4.1.0 (or later) uses FastClasspathScanner to obtain information about classloaders and classpath entries.
+CDI-Unit has not been tested with Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit 4.1.0 (or later) uses ClassGraph to obtain information about classloaders and classpath entries.
 
 ### Changelog
 
 #### 4.1
 CDI-Unit no longer depends on Reflections or Guava, so if you need
 these dependencies you should add them to your project directly. It
-now requires FastClasspathScanner 3.x. The JVM argument
+now requires ClassGraph 4.x. The JVM argument
 `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is no longer
 required.
 

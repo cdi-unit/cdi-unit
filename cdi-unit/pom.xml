@@ -37,10 +37,10 @@
 			<artifactId>javassist</artifactId>
 			<version>3.18.1-GA</version>
 		</dependency>
-    <dependency>
-      <groupId>io.github.fast-classpath-scanner</groupId>
-      <artifactId>fast-classpath-scanner</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
