@@ -31,5 +31,5 @@ dependencies {
     testCompile files('../cdi-unit/target/cdi-unit-' + projectVersionProp + '.jar')
     testCompile group: 'org.jboss.weld.se', name: 'weld-se-core', version: weldVersionProp
     testCompile group: 'org.apache.deltaspike.core', name: 'deltaspike-core-impl', version: '0.6'
-    testCompile 'io.github.classgraph:classgraph:4.0.0-beta-12'
+    testCompile 'io.github.classgraph:classgraph:4.0.0'
 }
