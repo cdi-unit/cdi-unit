@@ -83,11 +83,10 @@ import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
+	private ClasspathScanner scanner = new ClassGraphScanner();
 	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<>();
@@ -179,13 +178,10 @@ public class WeldTestUrlDeployment implements Deployment {
 
 				AdditionalClasspaths additionalClasspaths = c.getAnnotation(AdditionalClasspaths.class);
 				if (additionalClasspaths != null) {
-					Object[] urls = Arrays.stream(additionalClasspaths.value())
+					URL[] urls = Arrays.stream(additionalClasspaths.value())
 							.map(this::getClasspathURL)
-							.toArray();
-					ScanResult scan = new FastClasspathScanner()
-							.overrideClasspath(urls)
-							.scan();
-					List<Class<?>> classes = scan.getNamesOfAllClasses()
+							.toArray(URL[]::new);
+					List<Class<?>> classes = scanner.getClassNamesForClasspath(urls)
 							.stream()
 							.map(this::loadClass)
 							.collect(Collectors.toList());
@@ -201,12 +197,7 @@ public class WeldTestUrlDeployment implements Deployment {
 						// It might be more efficient to scan all packageNames at once, but we
 						// might pick up classes from a different package's classpath entry, which
 						// would be a change in behaviour (but perhaps less surprising?).
-						ScanResult scan = new FastClasspathScanner(packageName)
-								.disableRecursiveScanning()
-								.overrideClasspath(url)
-								.scan();
-
-						List<Class<?>> classes = scan.getNamesOfAllClasses()
+						List<Class<?>> classes = scanner.getClassNamesForPackage(packageName, url)
 								.stream()
 								.map(this::loadClass)
 								.collect(Collectors.toList());
@@ -388,8 +379,7 @@ public class WeldTestUrlDeployment implements Deployment {
 	}
 
 	private void populateCdiClasspathSet() throws IOException {
-		List<URL> entryList = new FastClasspathScanner().scan()
-				.getUniqueClasspathElementURLs();
+		List<URL> entryList = scanner.getClasspathURLs();
 		// cdiClasspathEntries doesn't preserve order, so HashSet is fine
 		Set<URL> entrySet = new HashSet<>(entryList);
 
