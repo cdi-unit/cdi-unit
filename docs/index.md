@@ -327,33 +327,6 @@ ContextController has methods to control Request and Session scopes.
 
 Note that if you close a session while a request is active then it will not be closed until the request is also closed.
 
-### Using a specific version of Weld
-
-CDI-Unit will automatically use the version of Weld that was available when it was released. However in your project you may want to use a specific version. To achieve this simply exclude the weld dependency that from CDI-Unit and include the version you want in your pom. For example:
-
-```xml
-<dependencies>
-  <dependency>
-    <groupId>org.jglue.cdi-unit</groupId>
-    <artifactId>cdi-unit</artifactId>
-    <version>4.0.1</version>
-    <exclusions>
-      <exclusion>
-        <groupId>org.jboss.weld.se</groupId>
-        <artifactId>weld-se-core</artifactId>
-      </exclusion>
-    </exclusions>
-    <scope>test</scope>
-  </dependency>
-  <dependency>
-    <groupId>org.jboss.weld.se</groupId>
-    <artifactId>weld-se-core</artifactId>
-    <version><!--Your weld version--></version>
-    <scope>test</scope>
-  </dependency>
-</dependencies>
-```
-
 ### TestNg support
 
 A base class NgCdiRunner can be used to add CDI-Unit to your TestNG tests. For example:
