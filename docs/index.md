@@ -38,6 +38,26 @@ Make sure you've added the cdi-unit dependency to your build file
 </dependency>
 ```
 
+And your preferred version of [Weld SE](https://search.maven.org/search?q=g:org.jboss.weld.se%20AND%20a:weld-se-core&core=gav) (1.x, 2.x or 3.x):
+
+    <dependency>
+        <groupId>org.jboss.weld.se</groupId>
+        <!-- or weld-se -->
+        <artifactId>weld-se-core</artifactId>
+        <!-- Your preferred Weld version: -->
+        <version>${weld.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+For Weld 3.x, you will probably also need [Weld Web](https://search.maven.org/search?q=g:org.jboss.weld.module%20AND%20a:weld-web&core=gav):
+
+    <dependency>
+        <groupId>org.jboss.weld.module</groupId>
+        <artifactId>weld-web</artifactId>
+        <version>${weld.version}</version>
+        <scope>test</scope>
+    </dependency>
+
 ### CDI-Unit Annotations
 
 CDI Unit provides the discovery annotations that affect the classes available to the unit test:
@@ -482,3 +502,5 @@ required.
 CDI-Unit requires Java 8 or higher. The JVM argument
 `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is required on
 Java 9 or higher (but only in version 4.0).
+
+CDI-Unit now supports Weld 3, but Weld 1 and 2 are still supported. You now need to add your preferred version of Weld SE/Web to your dependencies explicitly.
