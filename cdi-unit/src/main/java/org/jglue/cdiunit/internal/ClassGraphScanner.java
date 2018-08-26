@@ -13,7 +13,9 @@ public class ClassGraphScanner implements ClasspathScanner {
 
     @Override
     public List<URL> getClasspathURLs() {
-        try (ScanResult scan = new ClassGraph().scan()) {
+        try (ScanResult scan = new ClassGraph()
+                .disableNestedJarScanning()
+                .scan()) {
             return scan.getClasspathURLs();
         }
     }
@@ -21,9 +23,10 @@ public class ClassGraphScanner implements ClasspathScanner {
     @Override
     public List<String> getClassNamesForClasspath(URL[] urls) {
         try (ScanResult scan = new ClassGraph()
-                .overrideClasspath(urls)
-                .ignoreClassVisibility()
+                .disableNestedJarScanning()
                 .enableClassInfo()
+                .ignoreClassVisibility()
+                .overrideClasspath(urls)
                 .scan()) {
             return scan.getAllClasses().getNames();
         }
@@ -32,10 +35,11 @@ public class ClassGraphScanner implements ClasspathScanner {
     @Override
     public List<String> getClassNamesForPackage(String packageName, URL url) {
         try (ScanResult scan = new ClassGraph()
-                .whitelistPackagesNonRecursive(packageName)
-                .overrideClasspath(url)
-                .ignoreClassVisibility()
+                .disableNestedJarScanning()
                 .enableClassInfo()
+                .ignoreClassVisibility()
+                .overrideClasspath(url)
+                .whitelistPackagesNonRecursive(packageName)
                 .scan()) {
             return scan.getAllClasses().getNames();
         }
