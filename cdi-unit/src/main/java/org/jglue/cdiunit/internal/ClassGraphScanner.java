@@ -13,29 +13,31 @@ public class ClassGraphScanner implements ClasspathScanner {
 
     @Override
     public List<URL> getClasspathURLs() {
-        return new ClassGraph().scan()
-                .getClasspathURLs();
+        try (ScanResult scan = new ClassGraph().scan()) {
+            return scan.getClasspathURLs();
+        }
     }
 
     @Override
     public List<String> getClassNamesForClasspath(URL[] urls) {
-        ScanResult scan = new ClassGraph()
+        try (ScanResult scan = new ClassGraph()
                 .overrideClasspath(urls)
                 .ignoreClassVisibility()
                 .enableClassInfo()
-                .scan();
-        return scan.getAllClasses().getNames();
+                .scan()) {
+            return scan.getAllClasses().getNames();
+        }
     }
 
     @Override
     public List<String> getClassNamesForPackage(String packageName, URL url) {
-        ScanResult scan = new ClassGraph()
+        try (ScanResult scan = new ClassGraph()
                 .whitelistPackagesNonRecursive(packageName)
                 .overrideClasspath(url)
                 .ignoreClassVisibility()
                 .enableClassInfo()
-                .scan();
-
-        return scan.getAllClasses().getNames();
+                .scan()) {
+            return scan.getAllClasses().getNames();
+        }
     }
 }
