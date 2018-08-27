@@ -11,7 +11,7 @@ Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>4.0.1</version>
+  <version>4.0.2</version>
   <scope>test</scope>
 </dependency>
 ```

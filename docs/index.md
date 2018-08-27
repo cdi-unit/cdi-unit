@@ -33,7 +33,7 @@ Make sure you've added the cdi-unit dependency to your build file
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>4.0.1</version>
+  <version>4.0.2</version>
   <scope>test</scope>
 </dependency>
 ```
