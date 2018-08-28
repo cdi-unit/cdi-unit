@@ -183,7 +183,8 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 			public void evaluate() throws Throwable {
 
 				if (startupException != null) {
-					if (frameworkMethod.getAnnotation(Test.class).expected() == startupException.getClass()) {
+					if (frameworkMethod.getAnnotation(Test.class).expected()
+							.isAssignableFrom(startupException.getClass())) {
 						return;
 					}
 					throw startupException;
