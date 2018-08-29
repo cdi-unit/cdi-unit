@@ -1,9 +1,9 @@
 package org.jglue.cdiunit;
 
-import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
