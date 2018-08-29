@@ -23,6 +23,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<junit-jupiter-version>5.3.0-RC1</junit-jupiter-version>
+
 		<!-- Note that Weld 1/2 tests also require -Dweld.test.1or2 to disable the weld.test.3plus profile -->
 		<!--<weld.test.version>1.1.14.Final</weld.test.version>-->
 		<!--<weld.test.version>2.1.0.Final</weld.test.version>-->
@@ -164,9 +166,36 @@
 				<version>4.1.2</version>
 			</dependency>
 			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.jglue.cdi-unit</groupId>
 				<artifactId>cdi-unit</artifactId>
 				<version>${project.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- this is all you need to write tests with JUnit Jupiter -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-jupiter-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- this dependency is needed to create parameterized tests -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-params</artifactId>
+				<version>${junit-jupiter-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- contains the engine that actually runs the Jupiter-tests -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>${junit-jupiter-version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -174,12 +203,6 @@
 				<artifactId>mockito-core</artifactId>
 				<version>2.19.0</version>
 				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

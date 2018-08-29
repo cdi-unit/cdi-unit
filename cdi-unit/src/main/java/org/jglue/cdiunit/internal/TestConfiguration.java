@@ -11,6 +11,13 @@ import java.util.Collections;
  */
 public class TestConfiguration {
 
+    /**
+     * @param testClass The test class
+     * @param testMethod The test method. If null, ProducerConfigExtension can't be used.
+     * @param additionalClasses A list of additional classes to add to the deployment
+     *        (intended for custom runners)
+     */
+    @SuppressWarnings("WeakerAccess")
     public TestConfiguration(Class<?> testClass, Method testMethod, Collection<Class<?>> additionalClasses) {
         this.testClass = testClass;
         this.testMethod = testMethod;
@@ -20,6 +27,10 @@ public class TestConfiguration {
         this.additionalClasses = additionalClasses;
     }
 
+    /**
+     * @param testClass The test class
+     * @param testMethod The test method. If null, ProducerConfigExtension can't be used.
+     */
     public TestConfiguration(Class<?> testClass, Method testMethod) {
         this(testClass, testMethod, Collections.emptySet());
     }

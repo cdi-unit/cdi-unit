@@ -54,6 +54,25 @@
 			<version>3.0.0.Final</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- this is all you need to write tests with JUnit Jupiter -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit-jupiter-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- this dependency is needed to create parameterized tests -->
+		<!--<dependency>-->
+			<!--<groupId>org.junit.jupiter</groupId>-->
+			<!--<artifactId>junit-jupiter-params</artifactId>-->
+			<!--<version>${junit-jupiter-version}</version>-->
+		<!--</dependency>-->
+		<!-- contains the engine that actually runs the Jupiter-tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
