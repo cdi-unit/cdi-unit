@@ -22,14 +22,10 @@ import javax.interceptor.InvocationContext;
 
 import org.jglue.cdiunit.ContextController;
 import org.jglue.cdiunit.InRequestScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Interceptor
 @InRequestScope
 public class InRequestInterceptor {
-	private static final Logger log = LoggerFactory
-			.getLogger(InRequestInterceptor.class);
 
 	@Inject
 	private ContextController contextController;
@@ -37,14 +33,7 @@ public class InRequestInterceptor {
 	@AroundInvoke
 	public Object around(InvocationContext ctx) throws Exception {
 		try {
-			try {
-				contextController.openRequest();
-
-			} catch (Exception e) {
-				log.error("Failed to open request context", e);
-				throw e;
-
-			}
+			contextController.openRequest();
 			return ctx.proceed();
 		} finally {
 			contextController.closeRequest();
