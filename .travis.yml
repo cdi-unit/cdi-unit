@@ -15,7 +15,7 @@ jdk:
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/
 cache:
   directories:
-#  - $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar
+  - $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar
   - $HOME/.m2/repository
   - $HOME/.m2/wrapper
 before_cache:
