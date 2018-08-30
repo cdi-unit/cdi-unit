@@ -29,11 +29,14 @@ class MyTest {
 }
 ```
 Make sure you've added the cdi-unit dependency to your build file
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit)
+
 ```xml
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>4.0.2</version>
+  <version>${cdi-unit-version}</version>
   <scope>test</scope>
 </dependency>
 ```
