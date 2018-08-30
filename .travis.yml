@@ -2,7 +2,8 @@ branches:
   only:
   - master
 
-sudo: false
+# https://github.com/travis-ci/travis-ci/issues/10055
+sudo: true
 language: java
 #notifications:
 #  email:
