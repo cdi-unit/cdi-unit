@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>4.1.0</version>
+		<version>4.1.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit</name>
