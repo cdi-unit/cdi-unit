@@ -72,28 +72,6 @@
 							<!--<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>-->
 						</systemProperties>
 					</configuration>
-					<executions>
-						<execution>
-							<phase>test</phase>
-							<goals>
-								<goal>test</goal>
-							</goals>
-							<configuration>
-								<testNGArtifactName>none:none</testNGArtifactName>
-							</configuration>
-						</execution>
-						<execution>
-							<id>testng</id>
-							<phase>test</phase>
-							<goals>
-								<goal>test</goal>
-							</goals>
-							<configuration>
-								<junitArtifactName>none:none</junitArtifactName>
-								<junitPlatformArtifactName>none:none</junitPlatformArtifactName>
-							</configuration>
-						</execution>
-					</executions>
 				</plugin>
 
 			</plugins>

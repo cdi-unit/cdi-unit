@@ -191,7 +191,29 @@
 					<systemProperties>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
 					</systemProperties>
+					<!-- Prevent default execution from using TestNG -->
+					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
+				<executions>
+					<execution>
+						<id>testng</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<!-- Prevent TestNG execution from executing JUnit tests -->
+								<include>**/TestNg*.java</include>
+							</includes>
+							<!-- Prevent TestNG execution from choosing JUnit providers -->
+							<junitArtifactName>none:none</junitArtifactName>
+							<junitPlatformArtifactName>none:none</junitPlatformArtifactName>
+							<reportsDirectory>${project.build.directory}/surefire-reports/testng</reportsDirectory>
+							<testNGArtifactName>org.testng:testng</testNGArtifactName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 
