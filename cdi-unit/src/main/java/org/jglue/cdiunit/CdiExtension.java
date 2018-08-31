@@ -18,15 +18,20 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.internal.TestConfiguration;
 import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstanceFactory;
 import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
 import org.junit.jupiter.api.extension.TestInstantiationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
-        BeforeEachCallback {
+public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
+        AfterEachCallback, AfterAllCallback {
+    private static final Logger log = LoggerFactory.getLogger(CdiExtension.class);
+
     private Weld weld;
     private WeldContainer container;
     private CreationalContext creationalContext;
@@ -36,6 +41,17 @@ public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
     public Object createTestInstance(TestInstanceFactoryContext factoryContext,
             ExtensionContext extensionContext)
             throws TestInstantiationException {
+        // Delete any outstanding containers (eg for Disabled tests which don't fire afterEach)
+        // Ref: https://stackoverflow.com/q/52108869/14379
+        destroyWeld();
+
+        if (log.isDebugEnabled()) {
+            log.debug("createTestInstance getTestClass {}",
+                    factoryContext.getTestClass());
+            log.debug("getDisplayName {}", extensionContext.getDisplayName());
+            log.debug("getUniqueId {}", extensionContext.getUniqueId());
+            log.debug("getElement {}", extensionContext.getElement());
+        }
 
         Class<?> testClass = factoryContext.getTestClass();
 
@@ -76,7 +92,15 @@ public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
 
         };
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("weld.getContainerId() - {}", weld.getContainerId());
+            }
             this.container = weld.initialize();
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "weld.initialized - containerId: {} for {}",
+                        container.getId(), testClass);
+            }
             //noinspection deprecation
             this.globalInstance = this.container.instance();
         } catch (Throwable e) {
@@ -94,6 +118,10 @@ public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("beforeEach getRequiredTestMethod {}",
+                    context.getRequiredTestMethod());
+        }
         Class<?> testClass = context.getRequiredTestClass();
         if (isInnerClass(testClass)) {
             injectInstance(context.getRequiredTestInstance());
@@ -105,16 +133,37 @@ public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("afterEach getRequiredTestMethod {}",
+                    context.getRequiredTestMethod());
+        }
+        destroyWeld();
+    }
+
+    private void destroyWeld() {
         if (creationalContext != null) {
             creationalContext.release();
             creationalContext = null;
         }
         globalInstance = null;
-        // container.shutdown() doesn't remove container from weld's list,
-        // so weld.shutdown() fails if you call container.shutdown() first
-        container = null;
-        weld.shutdown();
+
+        if (container != null) {
+            String containerId = container.getId();
+
+            // container.shutdown() doesn't remove container from weld's list,
+            // so weld.shutdown() fails if you call container.shutdown() first
+            container = null;
+            weld.shutdown();
+            if (log.isDebugEnabled()) {
+                log.debug("weld shutdown -  containerId: {}", containerId);
+            }
+        }
         weld = null;
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        destroyWeld();
     }
 
     @SuppressWarnings("unchecked")
@@ -135,5 +184,4 @@ public class CdiExtension implements TestInstanceFactory, AfterEachCallback,
     private static boolean isInnerClass(Class<?> clazz) {
         return clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers());
     }
-
 }

@@ -41,6 +41,16 @@ class CdiExtensionTest {
         assertNotNull(context);
     }
 
+    @Test
+    @DisplayName("can intercept test methods of the outer test instance again")
+    @InRequestScope
+    void canInterceptOuterAgain() {
+        Context context =
+                outerBeanManager.getContext(RequestScoped.class);
+        // if we get here, the InRequestInterceptor worked
+        assertNotNull(context);
+    }
+
     // IntelliJ says it's not possible, but we're testing it anyway
     @SuppressWarnings("CdiManagedBeanInconsistencyInspection")
     @Nested
@@ -74,11 +84,12 @@ class CdiExtensionTest {
     }
 
     // TODO still to implement/test:
-    // PER_CLASS or PER_METHOD test instances
-    // parameters/ProducerConfig
+    // PER_CLASS test instances
+    // ProducerConfig - requires https://github.com/junit-team/junit5/issues/1568
     // AdditionalClasses,Classpath,Packages
     // ActivatedAlternatives, ProducesAlternative
     // Mockito/EasyMock @Mock annotations
+    // JNDI
     // JAX-RS
     // EJB
     // DeltaSpike Core/Data/Jpa/PartialBean
