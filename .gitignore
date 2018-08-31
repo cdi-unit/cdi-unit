@@ -1,9 +1,7 @@
-target
-build
-.*
-!/.gitignore
-!/.travis.yml
+target/
+build/
 # IntelliJ
+.idea/
 *.iml
 # Eclipse
 .classpath
