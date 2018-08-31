@@ -16,12 +16,12 @@
   </servers>
   <mirrors/>
   <proxies>
-<!--
     <proxy>
       <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>
+<!--
       <useProxy>false</useProxy>
-    </proxy>
  -->
+    </proxy>
   </proxies>
   <profiles/>
   <activeProfiles/>
