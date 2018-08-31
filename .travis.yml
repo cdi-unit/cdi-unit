@@ -16,11 +16,13 @@ jdk:
 cache:
   directories:
   - $HOME/.m2/repository
-  # $HOME/.m2/wrapper may include maven-wrapper.jar, because we copy it there in before_cache.
-  # We can't cache $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar without potentially overwriting source tree
+  # $HOME/.m2/wrapper may include maven-wrapper.jar, because we copy it there in 'before_cache'.
+  # We can't cache $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar directly
+  # without potentially overwriting part of the source tree (eg if the jar is
+  # added to git in future)
   - $HOME/.m2/wrapper
 before_cache:
-  - cp $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar $HOME/.m2/wrapper/
+  - cp -a $TRAVIS_BUILD_DIR/.mvn/wrapper/maven-wrapper.jar $HOME/.m2/wrapper/
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
 env:
@@ -71,7 +73,7 @@ script:
 - |
   set -e
   # copy wrapper jar from cache, if it exists, but don't overwrite one in the source tree, if it exists:
-  false | cp -i $HOME/.m2/wrapper/maven-wrapper.jar $TRAVIS_BUILD_DIR/.mvn/wrapper/ 2>/dev/null || true
+  false | cp -ai $HOME/.m2/wrapper/maven-wrapper.jar $TRAVIS_BUILD_DIR/.mvn/wrapper/ 2>/dev/null || true
   if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]
     then TEST_OPTS=-Dweld.test.1or2
     else TEST_OPTS=
