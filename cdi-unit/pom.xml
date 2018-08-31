@@ -44,14 +44,14 @@
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
-			<version>3.0.0.Final</version>
+			<version>3.0.4.Final</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
 		<dependency>
 			<groupId>org.jboss.weld.module</groupId>
 			<artifactId>weld-web</artifactId>
-			<version>3.0.0.Final</version>
+			<version>3.0.4.Final</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- this is all you need to write tests with JUnit Jupiter -->
