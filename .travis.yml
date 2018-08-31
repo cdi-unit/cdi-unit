@@ -3,7 +3,7 @@ branches:
   - master
 
 # https://github.com/travis-ci/travis-ci/issues/10055
-sudo: true
+sudo: false
 language: java
 #notifications:
 #  email:
@@ -65,6 +65,14 @@ matrix:
   # early access
 #  - jdk: oraclejdk-ea
 
+# http://docs.travis-ci.com/user/languages/java/#Dependency-Management
+# http://docs.travis-ci.com/user/build-timeouts/#Build-times-out-because-no-output-was-received
+# Installing the dependencies here saves many log lines (Travis limit is 10000)
+install:
+- |
+  cp .travis.settings.xml $HOME/.m2/settings.xml
+  travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+
 script:
 - |
   set -e
@@ -72,4 +80,4 @@ script:
     then TEST_OPTS=-Dweld.test.1or2
     else TEST_OPTS=
   fi
-  mvn clean install -Dweld.test.version=${WELD_VERSION} ${TEST_OPTS}
+  ./mvnw clean install --batch-mode -Dweld.test.version=${WELD_VERSION} ${TEST_OPTS}
