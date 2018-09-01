@@ -112,6 +112,21 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
 		<!--<dependency>-->
 			<!--<groupId>org.slf4j</groupId>-->
 			<!--<artifactId>slf4j-simple</artifactId>-->
@@ -188,9 +203,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<systemProperties>
+					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
-					</systemProperties>
+					</systemPropertyVariables>
 					<!-- Prevent default execution from using TestNG -->
 					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
