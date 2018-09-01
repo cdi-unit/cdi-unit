@@ -2,6 +2,7 @@ package org.jglue.cdiunit;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.Optional;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Instance;
@@ -18,6 +19,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.internal.TestConfiguration;
 import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -27,6 +29,8 @@ import org.junit.jupiter.api.extension.TestInstanceFactoryContext;
 import org.junit.jupiter.api.extension.TestInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.platform.commons.util.ReflectionUtils.newInstance;
 
 public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
         AfterEachCallback, AfterAllCallback {
@@ -41,6 +45,14 @@ public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
     public Object createTestInstance(TestInstanceFactoryContext factoryContext,
             ExtensionContext extensionContext)
             throws TestInstantiationException {
+        Class<?> testClass = factoryContext.getTestClass();
+        Optional<Object> outerInstance = factoryContext.getOuterInstance();
+        if (outerInstance.isPresent()) {
+            // this will start happening with https://github.com/junit-team/junit5/issues/1567
+            // but we just skip Weld when creating inner instances
+            return newInstance(testClass, outerInstance.get());
+        }
+
         // Delete any outstanding containers (eg for Disabled tests which don't fire afterEach)
         // Ref: https://stackoverflow.com/q/52108869/14379
         destroyWeld();
@@ -52,8 +64,6 @@ public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
             log.debug("getUniqueId {}", extensionContext.getUniqueId());
             log.debug("getElement {}", extensionContext.getElement());
         }
-
-        Class<?> testClass = factoryContext.getTestClass();
 
         // WARNING: a lot of this is stolen from CdiRunner without refactoring!
         // TODO share code with CdiRunner
@@ -137,6 +147,24 @@ public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
             log.debug("afterEach getRequiredTestMethod {}",
                     context.getRequiredTestMethod());
         }
+        TestInstance.Lifecycle lifecycle =
+                context.getTestInstanceLifecycle()
+                        .orElseThrow(IllegalArgumentException::new);
+        log.debug("afterEach Lifecycle {}", lifecycle);
+
+        if (lifecycle == TestInstance.Lifecycle.PER_METHOD) {
+            destroyWeld();
+        }
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        // NB TestInstance may NOT be present (inner class with PER_CLASS?)
+        if (log.isDebugEnabled()) {
+            // NB if Weld has shut down, we can't call toString on the test instance
+            log.debug("afterAll getTestInstance {}",
+                    context.getTestInstance().map(Object::getClass));
+        }
         destroyWeld();
     }
 
@@ -159,11 +187,6 @@ public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
             }
         }
         weld = null;
-    }
-
-    @Override
-    public void afterAll(ExtensionContext context) throws Exception {
-        destroyWeld();
     }
 
     @SuppressWarnings("unchecked")

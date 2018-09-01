@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(CdiExtension.class)
-@DisplayName("CdiExtension (PER_METHOD)")
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
-class CdiExtensionTest {
+@DisplayName("CdiExtension (PER_CLASS)")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class CdiExtensionPerClassTest {
     @Inject
     private BeanManager outerBeanManager;
 
@@ -57,6 +57,9 @@ class CdiExtensionTest {
     @SuppressWarnings("CdiManagedBeanInconsistencyInspection")
     @Nested
     @DisplayName("the inner instance")
+    // have to repeat PER_CLASS because of https://github.com/junit-team/junit5/issues/1575
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//    @ExtendWith(CdiExtension.class)
     class Inner {
         @Inject
         private BeanManager innerBeanManager;
