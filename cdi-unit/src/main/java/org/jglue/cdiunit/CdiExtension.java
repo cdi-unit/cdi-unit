@@ -52,6 +52,7 @@ import javassist.util.proxy.ProxyFactory;
 
 import static org.junit.platform.commons.util.ReflectionUtils.newInstance;
 
+// TODO split out the code so that it can be shared between CdiRunner, Cdi*Extension
 public class CdiExtension implements TestInstanceFactory, BeforeEachCallback,
         AfterEachCallback, AfterAllCallback {
     private static final Logger log =
