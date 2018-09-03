@@ -1,11 +1,13 @@
 package org.jglue.cdiunit;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,6 +59,7 @@ class CdiExtensionTest {
     @SuppressWarnings("CdiManagedBeanInconsistencyInspection")
     @Nested
     @DisplayName("the inner instance")
+    @ExtendWith(CdiExtension.class)
     class Inner {
         @Inject
         private BeanManager innerBeanManager;
@@ -73,16 +76,27 @@ class CdiExtensionTest {
             assertNotNull(innerBeanManager);
         }
 
-//        @Test
+        @Test
 //        @Disabled("inner classes: TestInstanceFactory ignores them; Weld can't create them anyway")
-//        @DisplayName("can intercept test methods")
-//        @InRequestScope
-//        void canIntercept() {
-//            Context context =
-//                    innerBeanManager.getContext(RequestScoped.class);
-//            // if we get here, the InRequestInterceptor worked
-//            assertNotNull(context);
-//        }
+        @DisplayName("can intercept test methods")
+        @InRequestScope
+        void canIntercept() {
+            Context context =
+                    innerBeanManager.getContext(RequestScoped.class);
+            // if we get here, the InRequestInterceptor worked
+            assertNotNull(context);
+        }
+
+        @Test
+//        @Disabled("inner classes: TestInstanceFactory ignores them; Weld can't create them anyway")
+        @DisplayName("can intercept test methods again")
+        @InRequestScope
+        void canInterceptAgain() {
+            Context context =
+                    innerBeanManager.getContext(RequestScoped.class);
+            // if we get here, the InRequestInterceptor worked
+            assertNotNull(context);
+        }
     }
 
     // TODO still to implement/test:
@@ -96,3 +110,4 @@ class CdiExtensionTest {
     // EJB
     // DeltaSpike Core/Data/Jpa/PartialBean
 }
+

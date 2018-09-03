@@ -23,7 +23,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<junit-jupiter-version>5.3.0-RC1</junit-jupiter-version>
+		<!--<junit-jupiter-version>5.3.0-RC1</junit-jupiter-version>-->
+		<junit-jupiter-version>5.3.0-SNAPSHOT</junit-jupiter-version>
 
 		<!-- Note that Weld 1/2 tests also require -Dweld.test.1or2 to disable the weld.test.3plus profile -->
 		<!--<weld.test.version>1.1.14.Final</weld.test.version>-->
