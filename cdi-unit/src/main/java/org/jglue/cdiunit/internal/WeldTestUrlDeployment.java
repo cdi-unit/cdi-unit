@@ -71,6 +71,7 @@ import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.AdditionalClasspaths;
 import org.jglue.cdiunit.AdditionalPackages;
 import org.jglue.cdiunit.CdiRunner;
+import org.jglue.cdiunit.IgnoredClasses;
 import org.jglue.cdiunit.ProducesAlternative;
 import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
 import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
@@ -204,12 +205,19 @@ public class WeldTestUrlDeployment implements Deployment {
 						classesToProcess.addAll(classes);
 					}
 				}
+				
+				IgnoredClasses ignoredClasses = c.getAnnotation(IgnoredClasses.class);
+				if (ignoredClasses != null) {
+					Collections.addAll(classesToIgnore, ignoredClasses.value());
+					for (String lateBound : ignoredClasses.late()) {
+						classesToIgnore.add(loadClass(lateBound));
+					}
+				}
 
 				ActivatedAlternatives alternativeClasses = c.getAnnotation(ActivatedAlternatives.class);
 				if (alternativeClasses != null) {
 					for (Class<?> alternativeClass : alternativeClasses.value()) {
 						classesToProcess.add(alternativeClass);
-
 						if (!isAlternativeStereotype(alternativeClass)) {
 							alternatives.add(alternativeClass.getName());
 						}
@@ -228,6 +236,9 @@ public class WeldTestUrlDeployment implements Deployment {
 				}
 
 				for (Field field : c.getDeclaredFields()) {
+					if (field.isAnnotationPresent(IgnoredClasses.class)) {
+						addClassesToProcess(classesToIgnore, field.getGenericType());
+					}
 					if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
 						addClassesToProcess(classesToProcess, field.getGenericType());
 					}
@@ -236,6 +247,9 @@ public class WeldTestUrlDeployment implements Deployment {
 					}
 				}
 				for (Method method : c.getDeclaredMethods()) {
+					if (method.isAnnotationPresent(IgnoredClasses.class)) {
+						addClassesToProcess(classesToIgnore, method.getGenericReturnType());
+					}
 					if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
 						for (Type param : method.getGenericParameterTypes()) {
 							addClassesToProcess(classesToProcess, param);
