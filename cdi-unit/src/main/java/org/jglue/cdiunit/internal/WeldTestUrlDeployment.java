@@ -15,21 +15,34 @@
  */
 package org.jglue.cdiunit.internal;
 
-import org.jboss.weld.bootstrap.api.Bootstrap;
-import org.jboss.weld.bootstrap.api.ServiceRegistry;
-import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
-import org.jboss.weld.bootstrap.spi.*;
-import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
-import org.jboss.weld.metadata.BeansXmlImpl;
-import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jglue.cdiunit.*;
-import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
-import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
-import org.jglue.cdiunit.internal.mockito.MockitoExtension;
-import org.jglue.cdiunit.internal.servlet.*;
-import org.mockito.Mock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 import javax.decorator.Decorator;
 import javax.enterprise.inject.Alternative;
@@ -40,21 +53,35 @@ import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.CodeSource;
-import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
-import java.util.stream.Collectors;
+
+import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.ServiceRegistry;
+import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
+import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
+import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
+import org.jboss.weld.bootstrap.spi.BeansXml;
+import org.jboss.weld.bootstrap.spi.Deployment;
+import org.jboss.weld.bootstrap.spi.Metadata;
+import org.jboss.weld.bootstrap.spi.Scanning;
+import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
+import org.jboss.weld.metadata.BeansXmlImpl;
+import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jglue.cdiunit.ActivatedAlternatives;
+import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.AdditionalClasspaths;
+import org.jglue.cdiunit.AdditionalPackages;
+import org.jglue.cdiunit.ProducesAlternative;
+import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
+import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
+import org.jglue.cdiunit.internal.mockito.MockitoExtension;
+import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
+import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
+import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
+import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
+import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
+import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
@@ -391,8 +418,8 @@ public class WeldTestUrlDeployment implements Deployment {
 			final Class<?> clazz = Class.forName(className);
 			return getClasspathURL(clazz);
 		} catch (ClassNotFoundException | NoClassDefFoundError clnfe) {
-			// NoClassDefFoundError  may bau caught as CdiRunner is available on the classpath but
-			// BlockJUnit4ClassRunner is not
+			// NoClassDefFoundError may be thrown as CdiRunner is available on the classpath but
+			// BlockJUnit4ClassRunner is not (when using TestNG instead of JUnit 4)
 			return null;
 		}
 	}
