@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>4.1.1-SNAPSHOT</version>
+		<version>4.1.1-HL</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-Mockito</name>
