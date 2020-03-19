@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
-	private ClasspathScanner scanner = new ClassGraphScanner();
+	private ClasspathScanner scanner = ClassGraphScanner.getInstance();
 	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<>();
@@ -471,10 +471,12 @@ public class WeldTestUrlDeployment implements Deployment {
 		return extensions;
 	}
 
+	@Override
 	public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
 		return Collections.singletonList(beanDeploymentArchive);
 	}
 
+	@Override
 	public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
 		return beanDeploymentArchive;
 	}
