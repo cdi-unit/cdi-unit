@@ -15,34 +15,21 @@
  */
 package org.jglue.cdiunit.internal;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.jar.Attributes;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
-import java.util.stream.Collectors;
+import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.ServiceRegistry;
+import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
+import org.jboss.weld.bootstrap.spi.*;
+import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
+import org.jboss.weld.metadata.BeansXmlImpl;
+import org.jboss.weld.resources.spi.ResourceLoader;
+import org.jglue.cdiunit.*;
+import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
+import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
+import org.jglue.cdiunit.internal.mockito.MockitoExtension;
+import org.jglue.cdiunit.internal.servlet.*;
+import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.decorator.Decorator;
 import javax.enterprise.inject.Alternative;
@@ -53,49 +40,25 @@ import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.interceptor.Interceptor;
-
-import org.jboss.weld.bootstrap.api.Bootstrap;
-import org.jboss.weld.bootstrap.api.ServiceRegistry;
-import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
-import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
-import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
-import org.jboss.weld.bootstrap.spi.BeansXml;
-import org.jboss.weld.bootstrap.spi.Deployment;
-import org.jboss.weld.bootstrap.spi.Metadata;
-import org.jboss.weld.bootstrap.spi.Scanning;
-import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
-import org.jboss.weld.metadata.BeansXmlImpl;
-import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jglue.cdiunit.ActivatedAlternatives;
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.AdditionalClasspaths;
-import org.jglue.cdiunit.AdditionalPackages;
-import org.jglue.cdiunit.CdiRunner;
-import org.jglue.cdiunit.IgnoredClasses;
-import org.jglue.cdiunit.ProducesAlternative;
-import org.jglue.cdiunit.internal.easymock.EasyMockExtension;
-import org.jglue.cdiunit.internal.jsf.ViewScopeExtension;
-import org.jglue.cdiunit.internal.mockito.MockitoExtension;
-import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
-import org.jglue.cdiunit.internal.servlet.MockHttpServletResponseImpl;
-import org.jglue.cdiunit.internal.servlet.MockHttpSessionImpl;
-import org.jglue.cdiunit.internal.servlet.MockServletContextImpl;
-import org.jglue.cdiunit.internal.servlet.ServletObjectsProducer;
-import org.mockito.Mock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WeldTestUrlDeployment implements Deployment {
 	private final BeanDeploymentArchive beanDeploymentArchive;
-	private ClasspathScanner scanner = new CachingClassGraphScanner();
+	private ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
 	private Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
 	private Set<URL> cdiClasspathEntries = new HashSet<>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
-
-		populateCdiClasspathSet();
+		cdiClasspathEntries.addAll(scanner.getBeanArchives());
 		BeansXml beansXml = createBeansXml();
 
 		Set<String> discoveredClasses = new LinkedHashSet<>();
@@ -395,83 +358,10 @@ public class WeldTestUrlDeployment implements Deployment {
 		return mockedClasses;
 	}
 
-	private void populateCdiClasspathSet() throws IOException {
-		List<URL> entryList = scanner.getClasspathURLs();
-		// cdiClasspathEntries doesn't preserve order, so HashSet is fine
-		Set<URL> entrySet = new HashSet<>(entryList);
-
-		for (URL url : entryList) {
-			entrySet.addAll(getEntriesFromManifestClasspath(url));
-		}
-
-		for (URL url : entrySet) {
-			try (URLClassLoader classLoader = new URLClassLoader(new URL[]{ url },
-					null)) {
-				// TODO this seems pretty Maven-specific, and fragile
-				if (url.getFile().endsWith("/classes/")) {
-					URL webInfBeans = new URL(url,
-							"../../src/main/webapp/WEB-INF/beans.xml");
-					try (InputStream ignore = webInfBeans.openStream()) {
-						cdiClasspathEntries.add(url);
-					} catch (IOException ignore) {
-						// no such file
-					}
-				}
-				// TODO beans.xml is no longer required by CDI (1.1+)
-				URL beansXml = classLoader.getResource("META-INF/beans.xml");
-				boolean isCdiUnit = url.equals(getClasspathURL(CdiRunner.class));
-				if (isCdiUnit || beansXml != null || isDirectory(url)) {
-					cdiClasspathEntries.add(url);
-				}
-			}
-		}
-		log.debug("CDI classpath entries discovered:");
-		for (URL url : cdiClasspathEntries) {
-			log.debug("{}", url);
-		}
-	}
-
 	private URL getClasspathURL(Class<?> clazz) {
 		CodeSource codeSource = clazz.getProtectionDomain()
 				.getCodeSource();
 		return codeSource != null ? codeSource.getLocation() : null;
-	}
-
-	private static Set<URL> getEntriesFromManifestClasspath(URL url)
-			throws IOException {
-		Set<URL> manifestURLs = new HashSet<>();
-		// If this is a surefire manifest-only jar we need to get the original classpath.
-		// When testing cdi-unit-tests through Maven, this finds extra entries compared to FCS:
-		// eg ".../cdi-unit/cdi-unit-tests/target/classes"
-		try (InputStream in = url.openStream();
-				JarInputStream jar = new JarInputStream(in)) {
-			Manifest manifest = jar.getManifest();
-			if (manifest != null) {
-				String classpath = (String) manifest.getMainAttributes()
-						.get(Attributes.Name.CLASS_PATH);
-				if (classpath != null) {
-					String[] manifestEntries = classpath.split(" ?file:");
-					for (String entry : manifestEntries) {
-						if (entry.length() > 0) {
-							// entries is a Set, so this won't add duplicates
-							manifestURLs.add(new URL("file:" + entry));
-						}
-					}
-				}
-			}
-		}
-		return manifestURLs;
-	}
-
-	private boolean isDirectory(URL classpathEntry) {
-		try {
-			return new File(classpathEntry.toURI()).isDirectory();
-		} catch (IllegalArgumentException ignore) {
-			// Ignore, thrown by File constructor for unsupported URIs
-		} catch (URISyntaxException ignore) {
-			// Ignore, does not denote an URI that points to a directory
-		}
-		return false;
 	}
 
 	private boolean isCdiClass(Class<?> c) {
