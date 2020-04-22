@@ -3,7 +3,7 @@ cdi-unit
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
-See website for full details http://bryncooke.github.io/cdi-unit
+See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
