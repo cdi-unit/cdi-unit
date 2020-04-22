@@ -60,6 +60,9 @@ matrix:
   - jdk: openjdk11
   # early access
   - jdk: openjdk-ea
+  # LTS
+  - jdk: oraclejdk8
+    dist: trusty
   # already EOL
 #  - jdk: oraclejdk9
   # feature release
