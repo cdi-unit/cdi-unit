@@ -45,7 +45,7 @@ class TestStarship {
 ```
 
 ### Acknowledgements
-This project uses code from shamelessly copied from:
+This project uses code shamelessly copied from:
 
 [Mockrunner](https://github.com/mockrunner/mockrunner) under Apache license.
 [Resteasy](http://resteasy.jboss.org/) under Apache license.
