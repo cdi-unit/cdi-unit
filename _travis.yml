@@ -6,35 +6,16 @@ branches:
   - master
   - /travis/
 
+# https://github.com/travis-ci/travis-ci/issues/10055
+sudo: true
 language: java
-
-# precise
-#   Oracle JDK 7 (oraclejdk7)
-#   OpenJDK 7 (openjdk7)
-#   OpenJDK 6 (openjdk6)
-#   Oracle JDK 8 (oraclejdk8)
-
-# trusty
-#   Open JDK 7 (openjdk7)
-#   Open JDK 8 (openjdk8)
-#   Oracle JDK 8 (oraclejdk8). Default.
-#   Oracle JDK 9 (oraclejdk9)
-#   Oracle JDK 7 is not provided because it reached End of Life in April 2015.
-#   Oracle JDK 10 is not provided because it reached End of Life in October 2018.
-#   Oracle JDK 11 (oraclejdk11)
-
-# xenial
-#   openjdk8, openjdk10, and openjdk11
-
-# bionic
-#   openjdk8, openjdk10, and openjdk11
-
+#notifications:
+#  email:
+#    - bryncooke@gmail.com
 jdk:
   # current LTS versions
   - openjdk8
   - oraclejdk8
-  - openjdk11
-  - oraclejdk11
 
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/
 cache:
@@ -55,8 +36,6 @@ env:
   - WELD_VERSION=2.4.2.Final
   - WELD_VERSION=2.4.0.Final
   - WELD_VERSION=2.3.5.Final
-  # firing of @Initialized(ApplicationScoped.class) was different in 2.3.2
-  - WELD_VERSION=2.3.2.Final
   - WELD_VERSION=2.3.0.Final
   - WELD_VERSION=2.2.13.Final
   #  2.2.7, 2.2.8 not supported, but 2.2.9 is
@@ -68,6 +47,30 @@ env:
   - WELD_VERSION=2.0.1.Final
   - WELD_VERSION=1.1.16.Final
   - WELD_VERSION=1.1.14.Final
+
+matrix:
+  # we also test JDK 9+ on the latest version of Weld
+  # note that the first WELD_VERSION above will be used by default
+  include:
+  # already EOL
+  - jdk: openjdk9
+  # feature release
+  - jdk: openjdk10
+  # upcoming LTS
+  - jdk: openjdk11
+  # early access
+  - jdk: openjdk-ea
+  # LTS
+  - jdk: oraclejdk8
+    dist: trusty
+  # already EOL
+#  - jdk: oraclejdk9
+  # feature release
+  - jdk: oraclejdk10
+  # upcoming LTS
+  - jdk: oraclejdk11
+  # early access
+#  - jdk: oraclejdk-ea
 
 script:
 - |
