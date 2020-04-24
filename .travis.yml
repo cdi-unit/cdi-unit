@@ -60,4 +60,4 @@ env:
   - VERSION_SOURCE=weld-v3.1.sh
 
 script:
-- ./build-ci-weld.sh ${VERSION_SOURCE}
+- ./travisci/build.sh ${VERSION_SOURCE}

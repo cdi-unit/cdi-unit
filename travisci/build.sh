@@ -2,8 +2,10 @@
 
 set -ex
 
+BASE_DIR=$(dirname "$0")
+
 if [[ $# -gt 0 ]]; then
-  source "$1"
+  source "$BASE_DIR/$1"
 else
   echo "Please provide the file to source the list of Weld versions to build"
   exit 1
@@ -15,5 +17,5 @@ for WELD_VERSION in ${WELD_VERSIONS[*]}; do
   else
     TEST_OPTS=
   fi
-  ./hide-logs.sh mvn clean install -Dweld.test.version=$WELD_VERSION ${TEST_OPTS}
+  "$BASE_DIR/hide-logs.sh" mvn clean install -Dweld.test.version=$WELD_VERSION ${TEST_OPTS}
 done
