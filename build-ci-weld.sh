@@ -10,7 +10,6 @@ else
 fi
 
 for WELD_VERSION in ${WELD_VERSIONS[*]}; do
-  [[ "$WELD_VERSION" =~ ^# ]] && continue
   if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]; then
     TEST_OPTS=-Dweld.test.1or2
   else

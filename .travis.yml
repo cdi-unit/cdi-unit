@@ -31,10 +31,12 @@ language: java
 
 jdk:
 #  current LTS versions
-  - openjdk8
-#  - oraclejdk8 - missing from current TravisCI workers
+#  - openjdk14 - build is failing #163
+#  - oraclejdk14 - build is failing #163
   - openjdk11
   - oraclejdk11
+  - openjdk8
+#  - oraclejdk8 - missing from current TravisCI workers
 
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/
 cache:
