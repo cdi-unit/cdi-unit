@@ -30,9 +30,9 @@ language: java
 #   openjdk8, openjdk10, and openjdk11
 
 jdk:
-  # current LTS versions
+#  current LTS versions
   - openjdk8
-  - oraclejdk8
+#  - oraclejdk8 - missing from current TravisCI workers
   - openjdk11
   - oraclejdk11
 
@@ -45,35 +45,17 @@ before_cache:
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
 env:
-# We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
-# Current strategy is, for each supported minor version of Weld, to test one early point release plus
-# the most recent point release, plus some point releases which caused problems.
-  - WELD_VERSION=3.0.4.Final
-  - WELD_VERSION=3.0.0.Final
-  - WELD_VERSION=2.4.4.Final
-  # BeansXmlImpl was changed in 2.4.2
-  - WELD_VERSION=2.4.2.Final
-  - WELD_VERSION=2.4.0.Final
-  - WELD_VERSION=2.3.5.Final
-  # firing of @Initialized(ApplicationScoped.class) was different in 2.3.2
-  - WELD_VERSION=2.3.2.Final
-  - WELD_VERSION=2.3.0.Final
-  - WELD_VERSION=2.2.13.Final
-  #  2.2.7, 2.2.8 not supported, but 2.2.9 is
-  - WELD_VERSION=2.2.9.Final
-  - WELD_VERSION=2.2.0.Final
-  - WELD_VERSION=2.1.2.Final
-  - WELD_VERSION=2.1.0.Final
-  - WELD_VERSION=2.0.4.Final
-  - WELD_VERSION=2.0.1.Final
-  - WELD_VERSION=1.1.16.Final
-  - WELD_VERSION=1.1.14.Final
+  # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
+  # Current strategy is, for each supported minor version of Weld, to test one early point release plus
+  # the most recent point release, plus some point releases which caused problems.
+  - VERSION_SOURCE=weld-v1.1.sh
+  - VERSION_SOURCE=weld-v2.0.sh
+  - VERSION_SOURCE=weld-v2.1.sh
+  - VERSION_SOURCE=weld-v2.2.sh
+  - VERSION_SOURCE=weld-v2.3.sh
+  - VERSION_SOURCE=weld-v2.4.sh
+  - VERSION_SOURCE=weld-v3.0.sh
+  - VERSION_SOURCE=weld-v3.1.sh
 
 script:
-- |
-  set -e
-  if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]
-    then TEST_OPTS=-Dweld.test.1or2
-    else TEST_OPTS=
-  fi
-  mvn clean install -Dweld.test.version=${WELD_VERSION} ${TEST_OPTS}
+- ./build-ci-weld.sh ${VERSION_SOURCE}
