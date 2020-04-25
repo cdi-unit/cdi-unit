@@ -25,6 +25,12 @@
 			<email>ikysil@ikysil.name</email>
 		</developer>
 	</developers>
+	<mailingLists>
+		<mailingList>
+			<name>cdi-unit</name>
+			<archive>https://groups.google.com/forum/#!forum/cdi-unit</archive>
+		</mailingList>
+	</mailingLists>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
