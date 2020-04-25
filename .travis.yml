@@ -6,9 +6,6 @@ branches:
   - master
   - /travis/
 
-# https://github.com/travis-ci/travis-ci/issues/10055
-sudo: false
-
 language: java
 
 # precise
@@ -66,7 +63,7 @@ env:
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
 - |
-  cp .travis.settings.xml $HOME/.m2/settings.xml
+  cp ./travisci/settings.xml $HOME/.m2/settings.xml
   travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:
