@@ -53,19 +53,19 @@ env:
   # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
   # Current strategy is, for each supported minor version of Weld, to test one early point release plus
   # the most recent point release, plus some point releases which caused problems.
-  - VERSION_SOURCE=weld-v1.1.sh
-  - VERSION_SOURCE=weld-v2.0.sh
-  - VERSION_SOURCE=weld-v2.1.sh
-  - VERSION_SOURCE=weld-v2.2.sh
-  - VERSION_SOURCE=weld-v2.3.sh
-  - VERSION_SOURCE=weld-v2.4.sh
-  - VERSION_SOURCE=weld-v3.0.sh
+#  - VERSION_SOURCE=weld-v1.1.sh
+#  - VERSION_SOURCE=weld-v2.0.sh
+#  - VERSION_SOURCE=weld-v2.1.sh
+#  - VERSION_SOURCE=weld-v2.2.sh
+#  - VERSION_SOURCE=weld-v2.3.sh
+#  - VERSION_SOURCE=weld-v2.4.sh
+#  - VERSION_SOURCE=weld-v3.0.sh
   - VERSION_SOURCE=weld-v3.1.sh
 
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
 - |
-  #cp .travis.settings.xml $HOME/.m2/settings.xml
+  cp .travis.settings.xml $HOME/.m2/settings.xml
   travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:

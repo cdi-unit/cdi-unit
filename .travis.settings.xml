@@ -7,23 +7,15 @@
   <usePluginRegistry/>
   <offline/>
   <pluginGroups/>
-  <servers>
-    <server>
-      <id>sonatype-nexus-snapshots</id>
-      <username>${env.CI_DEPLOY_USERNAME}</username>
-      <password>${env.CI_DEPLOY_PASSWORD}</password>
-    </server>
-  </servers>
-  <mirrors/>
-<!--  <proxies>-->
-<!--    <proxy>-->
-<!--      <host></host>-->
-<!--      <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>-->
-<!--&lt;!&ndash;-->
-<!--      <useProxy>false</useProxy>-->
-<!-- &ndash;&gt;-->
-<!--    </proxy>-->
-<!--  </proxies>-->
+  <mirrors>
+    <mirror>
+      <id>google-maven-central</id>
+      <name>GCS Maven Central mirror</name>
+      <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+  <proxies/>
   <profiles/>
   <activeProfiles/>
 </settings>
