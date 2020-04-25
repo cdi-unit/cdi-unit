@@ -20,6 +20,10 @@
 		<developer>
 			<name>Sean Flanigan</name>
 		</developer>
+		<developer>
+			<name>Illya Kysil</name>
+			<email>ikysil@ikysil.name</email>
+		</developer>
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
