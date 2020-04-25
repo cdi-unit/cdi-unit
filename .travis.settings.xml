@@ -9,9 +9,10 @@
   <pluginGroups/>
   <mirrors>
     <mirror>
+      <!-- https://maven-central.storage.googleapis.com/index.html -->
       <id>google-maven-central</id>
-      <name>GCS Maven Central mirror</name>
-      <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
+      <name>GCS Maven Central mirror EU</name>
+      <url>https://maven-central-eu.storage-download.googleapis.com/maven2/</url>
       <mirrorOf>central</mirrorOf>
     </mirror>
   </mirrors>
