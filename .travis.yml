@@ -62,13 +62,12 @@ env:
   - VERSION_SOURCE=weld-v3.0.sh
   - VERSION_SOURCE=weld-v3.1.sh
 
-# http://docs.travis-ci.com/user/languages/java/#Dependency-Management
-# http://docs.travis-ci.com/user/build-timeouts/#Build-times-out-because-no-output-was-received
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
 - |
   cp .travis.settings.xml $HOME/.m2/settings.xml
-  travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+  # travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+  travis_wait ./mvnw dependency:go-offline
 
 script:
 - ./travisci/build.sh ${VERSION_SOURCE}

@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                       https://maven.apache.org/xsd/settings-1.0.0.xsd">
   <localRepository/>
-  <interactiveMode/>
+  <interactiveMode>false</interactiveMode>
   <usePluginRegistry/>
   <offline/>
   <pluginGroups/>
@@ -15,14 +15,15 @@
     </server>
   </servers>
   <mirrors/>
-  <proxies>
-    <proxy>
-      <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>
-<!--
-      <useProxy>false</useProxy>
- -->
-    </proxy>
-  </proxies>
+<!--  <proxies>-->
+<!--    <proxy>-->
+<!--      <host></host>-->
+<!--      <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>-->
+<!--&lt;!&ndash;-->
+<!--      <useProxy>false</useProxy>-->
+<!-- &ndash;&gt;-->
+<!--    </proxy>-->
+<!--  </proxies>-->
   <profiles/>
   <activeProfiles/>
 </settings>
