@@ -17,5 +17,5 @@ for WELD_VERSION in ${WELD_VERSIONS[*]}; do
   else
     TEST_OPTS=
   fi
-  "$BASE_DIR/hide-logs.sh" mvn clean install -Dweld.test.version=$WELD_VERSION ${TEST_OPTS}
+  "$BASE_DIR/hide-logs.sh" ./mvnw -V clean install -Dweld.test.version=$WELD_VERSION ${TEST_OPTS}
 done
