@@ -65,7 +65,7 @@ env:
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
 - |
-  cp .travis.settings.xml $HOME/.m2/settings.xml
+  #cp .travis.settings.xml $HOME/.m2/settings.xml
   travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:
