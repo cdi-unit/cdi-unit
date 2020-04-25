@@ -1,17 +1,45 @@
+os: linux
+dist: bionic
+
 branches:
   only:
   - master
+  - /travis/
 
 # https://github.com/travis-ci/travis-ci/issues/10055
 sudo: false
+
 language: java
-#notifications:
-#  email:
-#    - bryncooke@gmail.com
+
+# precise
+#   Oracle JDK 7 (oraclejdk7)
+#   OpenJDK 7 (openjdk7)
+#   OpenJDK 6 (openjdk6)
+#   Oracle JDK 8 (oraclejdk8)
+
+# trusty
+#   Open JDK 7 (openjdk7)
+#   Open JDK 8 (openjdk8)
+#   Oracle JDK 8 (oraclejdk8). Default.
+#   Oracle JDK 9 (oraclejdk9)
+#   Oracle JDK 7 is not provided because it reached End of Life in April 2015.
+#   Oracle JDK 10 is not provided because it reached End of Life in October 2018.
+#   Oracle JDK 11 (oraclejdk11)
+
+# xenial
+#   openjdk8, openjdk10, and openjdk11
+
+# bionic
+#   openjdk8, openjdk10, and openjdk11
+
 jdk:
-  # current LTS versions
+#  current LTS versions
+#  - openjdk14 - build is failing #163
+#  - oraclejdk14 - build is failing #163
+  - openjdk11
+  - oraclejdk11
   - openjdk8
-  - oraclejdk8
+#  - oraclejdk8 - missing from current TravisCI workers
 
 # cache local Maven repo: https://docs.travis-ci.com/user/caching/
 cache:
@@ -22,48 +50,17 @@ before_cache:
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
 env:
-# We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
-# Current strategy is, for each supported minor version of Weld, to test one early point release plus
-# the most recent point release, plus some point releases which caused problems.
-  - WELD_VERSION=3.0.4.Final
-  - WELD_VERSION=3.0.0.Final
-  - WELD_VERSION=2.4.4.Final
-  # BeansXmlImpl was changed in 2.4.2
-  - WELD_VERSION=2.4.2.Final
-  - WELD_VERSION=2.4.0.Final
-  - WELD_VERSION=2.3.5.Final
-  - WELD_VERSION=2.3.0.Final
-  - WELD_VERSION=2.2.13.Final
-  #  2.2.7, 2.2.8 not supported, but 2.2.9 is
-  - WELD_VERSION=2.2.9.Final
-  - WELD_VERSION=2.2.0.Final
-  - WELD_VERSION=2.1.2.Final
-  - WELD_VERSION=2.1.0.Final
-  - WELD_VERSION=2.0.4.Final
-  - WELD_VERSION=2.0.1.Final
-  - WELD_VERSION=1.1.16.Final
-  - WELD_VERSION=1.1.14.Final
-
-matrix:
-  # we also test JDK 9+ on the latest version of Weld
-  # note that the first WELD_VERSION above will be used by default
-  include:
-  # already EOL
-  - jdk: openjdk9
-  # feature release
-  - jdk: openjdk10
-  # upcoming LTS
-  - jdk: openjdk11
-  # early access
-  - jdk: openjdk-ea
-  # already EOL
-#  - jdk: oraclejdk9
-  # feature release
-  - jdk: oraclejdk10
-  # upcoming LTS
-  - jdk: oraclejdk11
-  # early access
-#  - jdk: oraclejdk-ea
+  # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
+  # Current strategy is, for each supported minor version of Weld, to test one early point release plus
+  # the most recent point release, plus some point releases which caused problems.
+  - VERSION_SOURCE=weld-v1.1.sh
+  - VERSION_SOURCE=weld-v2.0.sh
+  - VERSION_SOURCE=weld-v2.1.sh
+  - VERSION_SOURCE=weld-v2.2.sh
+  - VERSION_SOURCE=weld-v2.3.sh
+  - VERSION_SOURCE=weld-v2.4.sh
+  - VERSION_SOURCE=weld-v3.0.sh
+  - VERSION_SOURCE=weld-v3.1.sh
 
 # http://docs.travis-ci.com/user/languages/java/#Dependency-Management
 # http://docs.travis-ci.com/user/build-timeouts/#Build-times-out-because-no-output-was-received
@@ -74,10 +71,4 @@ install:
   travis_wait ./mvnw clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:
-- |
-  set -e
-  if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]
-    then TEST_OPTS=-Dweld.test.1or2
-    else TEST_OPTS=
-  fi
-  ./mvnw clean install --batch-mode -Dweld.test.version=${WELD_VERSION} ${TEST_OPTS}
+- ./travisci/build.sh ${VERSION_SOURCE}
