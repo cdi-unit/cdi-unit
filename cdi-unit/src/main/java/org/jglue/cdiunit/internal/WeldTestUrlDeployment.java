@@ -106,9 +106,12 @@ public class WeldTestUrlDeployment implements Deployment {
 		Set<Class<?>> classesToIgnore = findMockedClassesOfTest(testConfiguration.getTestClass());
 
 		classesToProcess.add(testConfiguration.getTestClass());
-		extensions.add(createMetadata(new TestScopeExtension(testConfiguration.getTestClass()), TestScopeExtension.class.getName()));
-		if (testConfiguration.getTestMethod() != null) {
-			extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration.getTestMethod()), ProducerConfigExtension.class.getName()));
+		extensions.add(createMetadata(new TestScopeExtension(testConfiguration), TestScopeExtension.class.getName()));
+
+		try {
+			Class.forName("javax.enterprise.inject.spi.ProducerFactory");
+			extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration), ProducerConfigExtension.class.getName()));
+		} catch (ClassNotFoundException ignore) {
 		}
 
 		try {
@@ -205,7 +208,7 @@ public class WeldTestUrlDeployment implements Deployment {
 						classesToProcess.addAll(classes);
 					}
 				}
-				
+
 				IgnoredClasses ignoredClasses = c.getAnnotation(IgnoredClasses.class);
 				if (ignoredClasses != null) {
 					Collections.addAll(classesToIgnore, ignoredClasses.value());

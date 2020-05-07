@@ -1,5 +1,8 @@
 package org.jglue.cdiunit.internal;
 
+import org.jglue.cdiunit.Isolation;
+import org.jglue.cdiunit.IsolationLevel;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,7 @@ public class TestConfiguration {
             throw new NullPointerException("Expected AdditionalClasses not null.");
         }
         this.additionalClasses = additionalClasses;
+        this.isolationLevel = getIsolationLevel(testClass);
     }
 
     public TestConfiguration(Class<?> testClass, Method testMethod) {
@@ -25,8 +29,9 @@ public class TestConfiguration {
     }
 
     private final Class<?> testClass;
-    private final Method testMethod;
+    private Method testMethod;
     private final Collection<Class<?>> additionalClasses;
+    private final IsolationLevel isolationLevel;
 
     /**
      * The class containing the tests
@@ -45,6 +50,10 @@ public class TestConfiguration {
         return testMethod;
     }
 
+    public void setTestMethod(Method testMethod) {
+        this.testMethod = testMethod;
+    }
+
     /**
      * Can be used by special runners to change the initialization of Weld.
      *
@@ -53,6 +62,20 @@ public class TestConfiguration {
      */
     public Collection<Class<?>> getAdditionalClasses() {
         return additionalClasses;
+    }
+
+    /**
+     * Returns the isolation level of the tests.
+     *
+     * @return the isolation level of the tests.
+     */
+    public IsolationLevel getIsolationLevel() {
+        return isolationLevel;
+    }
+
+    private static IsolationLevel getIsolationLevel(Class<?> testClass) {
+        Isolation isolation = testClass.getAnnotation(Isolation.class);
+        return isolation == null ? IsolationLevel.PER_METHOD : isolation.value();
     }
 
 }
