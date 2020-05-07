@@ -21,27 +21,30 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.apache.deltaspike.core.api.literal.ApplicationScopedLiteral;
+import org.apache.deltaspike.core.api.literal.DependentScopeLiteral;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import org.jglue.cdiunit.IsolationLevel;
 
 public class TestScopeExtension implements Extension {
 
 	private static final ApplicationScopedLiteral APPLICATIONSCOPED = new ApplicationScopedLiteral();
-	
-	private Class<?> testClass;
+	private static final DependentScopeLiteral DEPENDENT = new DependentScopeLiteral();
+
+	private final TestConfiguration testConfiguration;
 
 	public TestScopeExtension() {
+		this.testConfiguration = null;
 	}
 
-	public TestScopeExtension(Class<?> testClass) {
-		this.testClass = testClass;
+	public TestScopeExtension(TestConfiguration testConfiguration) {
+		this.testConfiguration = testConfiguration;
 	}
-	
-	
 
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		if (annotatedType.getJavaClass().equals(testClass)) {
-			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType).addToClass(APPLICATIONSCOPED);
+		if (annotatedType.getJavaClass().equals(testConfiguration.getTestClass())) {
+			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType)
+					.addToClass(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
 			pat.setAnnotatedType(builder.create());
 		}
 	}

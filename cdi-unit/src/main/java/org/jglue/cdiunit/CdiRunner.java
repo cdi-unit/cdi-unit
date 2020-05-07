@@ -34,6 +34,7 @@ import org.jglue.cdiunit.internal.TestConfiguration;
 import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.junit.Test;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -64,6 +65,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	private WeldContainer container;
 	private Throwable startupException;
 	private FrameworkMethod frameworkMethod;
+	private TestConfiguration testConfiguration;
 	private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
 	private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
@@ -90,14 +92,22 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	protected TestConfiguration createTestConfiguration() {
-		return new TestConfiguration(clazz, frameworkMethod.getMethod());
+		return new TestConfiguration(clazz, null);
 	}
 
 	@Override
-	protected Object createTest() throws Exception {
+	protected Object createTest() {
+		testConfiguration.setTestMethod(frameworkMethod.getMethod());
+		initWeld(testConfiguration);
+		return createTest(clazz);
+	}
+
+	private void initWeld(final TestConfiguration testConfig) {
+		if (weld != null)
+			return;
+
 		try {
 			checkSupportedVersion();
-			final TestConfiguration testConfig = createTestConfiguration();
 
 			weld = new Weld() {
 
@@ -142,8 +152,6 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 		} catch (Throwable e) {
 			startupException = new Exception("Unable to start weld", e);
 		}
-
-		return createTest(clazz);
 	}
 
 	private void checkSupportedVersion() {
@@ -174,6 +182,28 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
+	protected Statement classBlock(RunNotifier notifier) {
+		final Statement defaultStatement = super.classBlock(notifier);
+		return new Statement() {
+
+			@Override
+			public void evaluate() throws Throwable {
+				testConfiguration = createTestConfiguration();
+				if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+					initWeld(testConfiguration);
+					defaultStatement.evaluate();
+					weld.shutdown();
+					weld = null;
+				}
+				else {
+					defaultStatement.evaluate();
+				}
+			}
+
+		};
+	}
+
+	@Override
 	protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
 		this.frameworkMethod = frameworkMethod;
 		final Statement defaultStatement = super.methodBlock(frameworkMethod);
@@ -201,7 +231,10 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
 				} finally {
 					initialContext.close();
-					weld.shutdown();
+					if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+						weld.shutdown();
+						weld = null;
+					}
 					if (oldFactory != null) {
 						System.setProperty(JNDI_FACTORY_PROPERTY, oldFactory);
 					} else {
