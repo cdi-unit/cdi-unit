@@ -107,7 +107,12 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		classesToProcess.add(testConfiguration.getTestClass());
 		extensions.add(createMetadata(new TestScopeExtension(testConfiguration), TestScopeExtension.class.getName()));
-		extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration), ProducerConfigExtension.class.getName()));
+
+		try {
+			Class.forName("javax.enterprise.inject.spi.ProducerFactory");
+			extensions.add(createMetadata(new ProducerConfigExtension(testConfiguration), ProducerConfigExtension.class.getName()));
+		} catch (ClassNotFoundException ignore) {
+		}
 
 		try {
 			Class.forName("javax.faces.view.ViewScoped");
@@ -203,7 +208,7 @@ public class WeldTestUrlDeployment implements Deployment {
 						classesToProcess.addAll(classes);
 					}
 				}
-				
+
 				IgnoredClasses ignoredClasses = c.getAnnotation(IgnoredClasses.class);
 				if (ignoredClasses != null) {
 					Collections.addAll(classesToIgnore, ignoredClasses.value());
