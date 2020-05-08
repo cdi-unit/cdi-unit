@@ -68,6 +68,7 @@
 		<module>cdi-unit-tests-easymock</module>
 		<!--<module>cdi-unit-tests-gradle</module>  Disabled because of mojo error-->
 		<module>cdi-unit-tests-jandex</module>
+		<module>cdi-unit-tests-testng</module>
 	</modules>
 	<build>
 		<pluginManagement>
