@@ -46,6 +46,13 @@
 			<version>3.0.5.Final</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
+		<dependency>
+			<groupId>org.jboss.weld.module</groupId>
+			<artifactId>weld-web</artifactId>
+			<version>3.0.5.Final</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
