@@ -27,13 +27,13 @@ public class CachingClassGraphScanner implements ClasspathScanner {
 	 * modern laptop with SSD, while scanning a large classpath.
 	 */
 	static final int DEFAULT_NUM_WORKER_THREADS = Math.max(
-		// Always scan with at least 2 threads
-		2, //
-		(int) Math.ceil(
-			// Num IO threads (top out at 4, since most I/O devices won't scale better than this)
-			Math.min(4.0f, Runtime.getRuntime().availableProcessors() * 0.75f) +
-				// Num scanning threads (higher than available processors, because some threads can be blocked)
-				Runtime.getRuntime().availableProcessors() * 1.25f) //
+			// Always scan with at least 2 threads
+			2, //
+			(int) Math.ceil(
+					// Num IO threads (top out at 4, since most I/O devices won't scale better than this)
+					Math.min(4.0f, Runtime.getRuntime().availableProcessors() * 0.75f) +
+							// Num scanning threads (higher than available processors, because some threads can be blocked)
+							Runtime.getRuntime().availableProcessors() * 1.25f) //
 	);
 
 	static final ExecutorService scanExecutor = Executors.newWorkStealingPool(DEFAULT_NUM_WORKER_THREADS);
@@ -72,8 +72,8 @@ public class CachingClassGraphScanner implements ClasspathScanner {
 
 	private List<URL> computeClasspathUrls() {
 		try (ScanResult scan = new ClassGraph()
-			.disableNestedJarScanning()
-			.scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
+				.disableNestedJarScanning()
+				.scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
 			return scan.getClasspathURLs();
 		}
 	}
@@ -85,8 +85,8 @@ public class CachingClassGraphScanner implements ClasspathScanner {
 
 	private Object computeKey(final Stream<URL> urls) {
 		return urls
-			.map(URL::toString)
-			.collect(Collectors.joining(File.pathSeparator));
+				.map(URL::toString)
+				.collect(Collectors.joining(File.pathSeparator));
 	}
 
 	private List<String> computeClassNamesForClasspath(URL[] urls) {

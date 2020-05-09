@@ -52,9 +52,8 @@ import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
- * 
- * @author Various
  *
+ * @author Various
  */
 @ApplicationScoped
 @CdiUnitServlet
@@ -155,7 +154,7 @@ public class MockServletContextImpl implements ServletContext {
 	/**
 	 * Returns the map of <code>RequestDispatcher</code> objects. The specified
 	 * path maps to the corresponding <code>RequestDispatcher</code> object.
-	 * 
+	 *
 	 * @return the map of <code>RequestDispatcher</code> objects
 	 */
 	public synchronized Map getRequestDispatcherMap() {
@@ -175,14 +174,12 @@ public class MockServletContextImpl implements ServletContext {
 	 * specified path or name. If no <code>RequestDispatcher</code> is set for
 	 * the specified path, {@link #getRequestDispatcher} and
 	 * {@link #getNamedDispatcher} automatically create a new one.
-	 * 
-	 * @param path
-	 *            the path for the <code>RequestDispatcher</code>
-	 * @param dispatcher
-	 *            the <code>RequestDispatcher</code> object
+	 *
+	 * @param path       the path for the <code>RequestDispatcher</code>
+	 * @param dispatcher the <code>RequestDispatcher</code> object
 	 */
 	public synchronized void setRequestDispatcher(String path,
-			RequestDispatcher dispatcher) {
+												  RequestDispatcher dispatcher) {
 		if (dispatcher instanceof MockRequestDispatcher) {
 			((MockRequestDispatcher) dispatcher).setPath(path);
 		}
@@ -196,11 +193,9 @@ public class MockServletContextImpl implements ServletContext {
 	/**
 	 * Sets a <code>ServletContext</code> that will be returned when calling
 	 * {@link #getContext}
-	 * 
-	 * @param url
-	 *            the URL
-	 * @param context
-	 *            the <code>ServletContext</code>
+	 *
+	 * @param url     the URL
+	 * @param context the <code>ServletContext</code>
 	 */
 	public synchronized void setContext(String url, ServletContext context) {
 		contexts.put(url, context);
@@ -220,17 +215,16 @@ public class MockServletContextImpl implements ServletContext {
 	/**
 	 * Sets an init parameter. This method does not overwrite existing init
 	 * parameters.
-	 * 
-	 * @param name
-	 *            the name
-	 * @param value
-	 *            the value
+	 *
+	 * @param name  the name
+	 * @param value the value
 	 * @return <code>false</code> if the parameter was not set <code>true</code>
-	 *         otherwise
+	 * otherwise
 	 */
 	public synchronized boolean setInitParameter(String name, String value) {
-		if (initParameters.containsKey(name))
+		if (initParameters.containsKey(name)) {
 			return false;
+		}
 		initParameters.put(name, value);
 		return true;
 	}
@@ -238,9 +232,8 @@ public class MockServletContextImpl implements ServletContext {
 	/**
 	 * Sets several init parameters. This method does overwrite existing init
 	 * parameters.
-	 * 
-	 * @param parameters
-	 *            the parameter map
+	 *
+	 * @param parameters the parameter map
 	 */
 	public synchronized void setInitParameters(Map parameters) {
 		initParameters.putAll(parameters);
@@ -253,7 +246,7 @@ public class MockServletContextImpl implements ServletContext {
 	/*
 	 * public synchronized JspConfigDescriptor getJspConfigDescriptor() { return
 	 * jspConfigDescriptor; }
-	 * 
+	 *
 	 * public synchronized void setJspConfigDescriptor(JspConfigDescriptor
 	 * jspConfigDescriptor) { this.jspConfigDescriptor = jspConfigDescriptor; }
 	 */
@@ -317,13 +310,14 @@ public class MockServletContextImpl implements ServletContext {
 
 	public synchronized InputStream getResourceAsStream(String path) {
 		byte[] data = (byte[]) resourceStreams.get(path);
-		if (null == data)
+		if (null == data) {
 			return null;
+		}
 		return new ByteArrayInputStream(data);
 	}
 
 	public synchronized void setResourceAsStream(String path,
-			InputStream inputStream) {
+												 InputStream inputStream) {
 		try {
 			setResourceAsStream(path, toByteArray(inputStream));
 		} catch (IOException e) {
@@ -349,8 +343,9 @@ public class MockServletContextImpl implements ServletContext {
 
 	public synchronized Set getResourcePaths(String path) {
 		Set set = (Set) resourcePaths.get(path);
-		if (null == set)
+		if (null == set) {
 			return null;
+		}
 		return Collections.unmodifiableSet(set);
 	}
 
@@ -414,7 +409,7 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	private synchronized void handleAttributeListenerCalls(String key,
-			Object value, Object oldValue) {
+														   Object value, Object oldValue) {
 		if (null != oldValue) {
 			if (value != null) {
 				callAttributeListenersReplacedMethod(key, oldValue);
@@ -430,7 +425,7 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	private synchronized void callAttributeListenersAddedMethod(String key,
-			Object value) {
+																Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			ServletContextAttributeEvent event = new ServletContextAttributeEvent(
 					this, key, value);
@@ -440,7 +435,7 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	private synchronized void callAttributeListenersReplacedMethod(String key,
-			Object value) {
+																   Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			ServletContextAttributeEvent event = new ServletContextAttributeEvent(
 					this, key, value);
@@ -450,7 +445,7 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	private synchronized void callAttributeListenersRemovedMethod(String key,
-			Object value) {
+																  Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			ServletContextAttributeEvent event = new ServletContextAttributeEvent(
 					this, key, value);
@@ -472,7 +467,7 @@ public class MockServletContextImpl implements ServletContext {
 
 	@Override
 	public Dynamic addServlet(String servletName,
-			Class<? extends Servlet> servletClass) {
+							  Class<? extends Servlet> servletClass) {
 		throw new UnsupportedOperationException();
 	}
 

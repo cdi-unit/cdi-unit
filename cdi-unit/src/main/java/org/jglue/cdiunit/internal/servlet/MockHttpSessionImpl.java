@@ -33,9 +33,8 @@ import javax.servlet.http.HttpSessionContext;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
- * 
+ *
  * @author Various
- * 
  */
 @CdiUnitServlet
 public class MockHttpSessionImpl implements HttpSession {
@@ -44,7 +43,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	private boolean isNew;
 	private boolean isValid;
 	private long creationTime;
-	
+
 	@Inject
 	@CdiUnitServlet
 	private ServletContext servletContext;
@@ -74,9 +73,8 @@ public class MockHttpSessionImpl implements HttpSession {
 
 	/**
 	 * Set the <code>ServletContext</code>.
-	 * 
-	 * @param servletContext
-	 *            the <code>ServletContext</code>
+	 *
+	 * @param servletContext the <code>ServletContext</code>
 	 */
 	public synchronized void setupServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -103,8 +101,9 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	public synchronized void invalidate() {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		isValid = false;
 		Map clone = new HashMap(attributes);
 		Iterator keys = clone.keySet().iterator();
@@ -118,27 +117,31 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	public synchronized Object getValue(String key) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		return getAttribute(key);
 	}
 
 	public synchronized String[] getValueNames() {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		Vector attKeys = new Vector(attributes.keySet());
 		return (String[]) attKeys.toArray();
 	}
 
 	public synchronized void putValue(String key, Object value) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		setAttribute(key, value);
 	}
 
 	public synchronized void removeValue(String key) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		removeAttribute(key);
 	}
 
@@ -147,21 +150,24 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	public synchronized Object getAttribute(String key) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		return attributes.get(key);
 	}
 
 	public synchronized Enumeration getAttributeNames() {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		Vector attKeys = new Vector(attributes.keySet());
 		return attKeys.elements();
 	}
 
 	public synchronized void removeAttribute(String key) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		doRemoveAttribute(key);
 	}
 
@@ -175,8 +181,9 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	public synchronized void setAttribute(String key, Object value) {
-		if (!isValid)
+		if (!isValid) {
 			throw new IllegalStateException("session invalid");
+		}
 		Object oldValue = attributes.get(key);
 		if (null == value) {
 			attributes.remove(key);
@@ -188,7 +195,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	private synchronized void handleBindingListenerCalls(String key,
-			Object value, Object oldValue) {
+														 Object value, Object oldValue) {
 		if (oldValue != null) {
 			callValueUnboundMethod(key, oldValue);
 		}
@@ -198,7 +205,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	private synchronized void handleAttributeListenerCalls(String key,
-			Object value, Object oldValue) {
+														   Object value, Object oldValue) {
 		if (null != oldValue) {
 			if (value != null) {
 				callAttributeListenersReplacedMethod(key, oldValue);
@@ -230,7 +237,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	private synchronized void callAttributeListenersAddedMethod(String key,
-			Object value) {
+																Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			HttpSessionBindingEvent event = new HttpSessionBindingEvent(this,
 					key, value);
@@ -240,7 +247,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	private synchronized void callAttributeListenersReplacedMethod(String key,
-			Object value) {
+																   Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			HttpSessionBindingEvent event = new HttpSessionBindingEvent(this,
 					key, value);
@@ -250,7 +257,7 @@ public class MockHttpSessionImpl implements HttpSession {
 	}
 
 	private synchronized void callAttributeListenersRemovedMethod(String key,
-			Object value) {
+																  Object value) {
 		for (int ii = 0; ii < attributeListener.size(); ii++) {
 			HttpSessionBindingEvent event = new HttpSessionBindingEvent(this,
 					key, value);

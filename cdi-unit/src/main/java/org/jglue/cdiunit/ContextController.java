@@ -42,30 +42,30 @@ import javax.servlet.http.HttpSessionEvent;
  * explicitly control activation and deactivation of scopes. Use
  * ContextController to do this.
  * </p>
- * 
+ *
  * <pre>
- * 
+ *
  * &#064;RunWith(CdiRunner.class)
  * &#064;AdditionalClasses(RequestScopedWarpDrive.class)
  * class TestStarship {
- * 
+ *
  * 	&#064;Inject
  * 	ContextController contextController; // Obtain an instance of the context
  * 											// controller.
- * 
+ *
  * 	&#064;Inject
  * 	Starship starship;
- * 
+ *
  * 	&#064;Test
  * 	void testStart() {
  * 		contextController.openRequest(); // Start a new request.
  *
  * 		starship.start();
  * 		contextController.closeRequest(); // Close the current request.
- * 	}
+ *    }
  * }
  * </pre>
- * 
+ *
  * @author Bryn Cooke
  * @author Lars-Fredrik Smedberg
  */
@@ -114,6 +114,7 @@ public class ContextController {
 
 	/**
 	 * Start a request.
+	 *
 	 * @return The request opened.
 	 */
 	public HttpServletRequest openRequest() {
@@ -141,7 +142,7 @@ public class ContextController {
 
 		return currentRequest;
 	}
-	
+
 	/**
 	 * @return Returns the current in progress request or throws an exception if the request was not active
 	 */

@@ -35,9 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
- * 
+ *
  * @author Various
- * 
  */
 @CdiUnitServlet
 public class MockHttpServletResponseImpl implements HttpServletResponse {
@@ -244,8 +243,9 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 
 	public Collection getHeaders(String name) {
 		List headerList = (List) headers.get(name);
-		if (null == headerList)
+		if (null == headerList) {
 			return null;
+		}
 		return headerList;
 	}
 
@@ -255,8 +255,9 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 
 	public String getHeader(String key) {
 		List list = getHeaderList(key);
-		if (null == list || 0 == list.size())
+		if (null == list || 0 == list.size()) {
 			return null;
+		}
 		return (String) list.get(0);
 	}
 
@@ -291,7 +292,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 		return dateFormat.format(dateValue);
 	}
 
-	
+
 	public void setContentLengthLong(long len) {
 		contentLength = len;
 	}
