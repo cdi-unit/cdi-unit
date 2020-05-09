@@ -1,9 +1,12 @@
 package org.jglue.cdiunit;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
@@ -47,7 +50,7 @@ public class NgCdiRunner {
 
 			// override for Weld 2.0, 3.0
 			protected Deployment createDeployment(
-					ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
+				ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 				try {
 					return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
 				} catch (IOException e) {
@@ -74,13 +77,55 @@ public class NgCdiRunner {
 		injectionTarget.inject(this, creationalContext);
 
 		System.setProperty("java.naming.factory.initial",
-				"org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
+			"org.jglue.cdiunit.internal.naming.CdiUnitContextFactory");
 		try {
 			initialContext = new InitialContext();
 			initialContext.bind("java:comp/BeanManager", beanManager);
 		} catch (NamingException e) {
 			throw new RuntimeException(e);
 		}
+		initContexts(method);
+	}
+
+	private void initContexts(final Method method) {
+		// FIXME - this code effectively duplicates code from interceptors bound to the corresponding annotation.
+		if (isAnnotatedBy(method, InRequestScope.class)) {
+			getInstance(ContextController.class).openRequest();
+		}
+		if (isAnnotatedBy(method, InConversationScope.class)) {
+			getInstance(Conversation.class).begin();
+		}
+	}
+
+	private void shutdownContexts(final Method method) {
+		// FIXME - this code effectively duplicates code from interceptors bound to the corresponding annotation.
+		if (isAnnotatedBy(method, InConversationScope.class)) {
+			getInstance(Conversation.class).end();
+		}
+		if (isAnnotatedBy(method, InSessionScope.class)) {
+			getInstance(ContextController.class).closeSession();
+		}
+		if (isAnnotatedBy(method, InRequestScope.class)) {
+			getInstance(ContextController.class).closeRequest();
+		}
+	}
+
+	private boolean isAnnotatedBy(final Method method, Class<? extends Annotation> annotation) {
+		if (method.getAnnotationsByType(annotation).length > 0) {
+			return true;
+		}
+		final Class<?> cls = method.getDeclaringClass();
+		return cls.getAnnotationsByType(annotation).length > 0;
+	}
+
+	private <T> T getInstance(final Class<T> type) {
+		final Instance<T> instance = container.getBeanManager()
+			.createInstance()
+			.select(type);
+		if (instance.isUnsatisfied()) {
+			throw new IllegalStateException(String.format("Can not obtain instance of %s from bean manager", type));
+		}
+		return instance.get();
 	}
 
 	/**
@@ -88,7 +133,8 @@ public class NgCdiRunner {
 	 * PUBLIC: Should be used only in DataProvider methods which require injection.
 	 */
 	@AfterMethod(alwaysRun = true)
-	public void shutdownCdi() {
+	public void shutdownCdi(final Method method) {
+		shutdownContexts(method);
 		if (weld != null) {
 			weld.shutdown();
 		}
