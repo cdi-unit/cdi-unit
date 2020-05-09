@@ -1,17 +1,19 @@
 package org.jglue.cdiunit.tests.testng;
 
-import org.jglue.cdiunit.InRequestScope;
-import org.jglue.cdiunit.NgCdiRunner;
-import org.jglue.cdiunit.jaxrs.SupportJaxRs;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.Providers;
+
+import org.jglue.cdiunit.InRequestScope;
+import org.jglue.cdiunit.InSessionScope;
+import org.jglue.cdiunit.NgCdiRunner;
+import org.jglue.cdiunit.jaxrs.SupportJaxRs;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 @SupportJaxRs
 public class TestJaxRs extends NgCdiRunner {
@@ -29,6 +31,7 @@ public class TestJaxRs extends NgCdiRunner {
 		Assert.assertNotNull(webService.securityContext);
 		Assert.assertNotNull(webService.providers);
 		Assert.assertNotNull(webService.headers);
+		Assert.assertNotNull(webService.session);
 	}
 
 	@Test
@@ -43,6 +46,9 @@ public class TestJaxRs extends NgCdiRunner {
 
 		@Context
 		HttpServletResponse response;
+
+		@Context
+		HttpSession session;
 
 		@Context
 		ServletContext context;
