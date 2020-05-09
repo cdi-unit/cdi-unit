@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.CodeSource;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,9 +21,6 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 
 	@Override
 	public Collection<URL> findBeanArchives(final Collection<URL> classPathEntries) throws IOException {
-		// Use string instead of class reference as CdiRunner.class forces JUnit 4 dependency to be present.
-		final URL cdiUnitClasspathURL = getClasspathURL("org.jglue.cdiunit.CdiRunner");
-
 		final Set<URL> result = new HashSet<>();
 		// cdiClasspathEntries doesn't preserve order, so HashSet is fine
 		final Set<URL> entrySet = new HashSet<>(classPathEntries);
@@ -48,8 +44,9 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 				}
 				// TODO beans.xml is no longer required by CDI (1.1+)
 				URL beansXml = classLoader.getResource("META-INF/beans.xml");
-				boolean isCdiUnit = url.equals(cdiUnitClasspathURL);
-				if (isCdiUnit || beansXml != null || isDirectory(url)) {
+				// marker file for CDI Unit archive - for CDI Unit INTERNAL use only!
+				URL cdiUnitArchive = classLoader.getResource("META-INF/org.jglue.cdiunit-archive");
+				if (cdiUnitArchive != null || beansXml != null || isDirectory(url)) {
 					result.add(url);
 				}
 			}
@@ -59,23 +56,6 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 			log.debug("{}", url);
 		}
 		return result;
-	}
-
-	private URL getClasspathURL(Class<?> clazz) {
-		CodeSource codeSource = clazz.getProtectionDomain()
-			.getCodeSource();
-		return codeSource != null ? codeSource.getLocation() : null;
-	}
-
-	private URL getClasspathURL(String className) {
-		try {
-			final Class<?> clazz = Class.forName(className);
-			return getClasspathURL(clazz);
-		} catch (ClassNotFoundException | NoClassDefFoundError clnfe) {
-			// NoClassDefFoundError may be thrown as CdiRunner is available on the classpath but
-			// BlockJUnit4ClassRunner is not (when using TestNG instead of JUnit 4)
-			return null;
-		}
 	}
 
 	private boolean isDirectory(URL classpathEntry) {
