@@ -17,6 +17,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.internal.TestConfiguration;
+import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -44,15 +45,18 @@ public class NgCdiRunner {
 		final TestConfiguration testConfig = createTestConfiguration(method);
 		weld = new Weld() {
 
+			// override for Weld 2.0, 3.0
 			protected Deployment createDeployment(
 					ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
 				try {
-					return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
+					return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
 
+			// override for Weld 1.x
+			@SuppressWarnings("unused")
 			protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
 				try {
 					return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
