@@ -74,33 +74,33 @@ public class TestCdiUnitRunner extends BaseTest {
 
 	@Inject
 	private BRequestScoped request;
-	
+
 	@Inject
 	private Conversation conversation;
 
 	@Produces
 	private ProducedViaField produced;
-	
+
 	@Inject
 	Instance<List<?>> generics;
 
-	
+
 	@Produces
-	
+
 	List<Object> producedList = new ArrayList<Object>();
-	
-	
+
+
 	@Produces
 	public ProducedViaMethod getProducedViaMethod() {
 		return new ProducedViaMethod(2);
 	}
 
-	
+
 	@Test
 	public void testGenerics() {
 		Assert.assertEquals(producedList, generics.get());
 	}
-	
+
 	@Test
 	@InRequestScope
 	public void testRequestScope() {
@@ -215,65 +215,62 @@ public class TestCdiUnitRunner extends BaseTest {
 		contextController.closeRequest();
 		Mockito.verify(disposeListener).run();
 	}
-	
+
 	@Inject
 	private HttpServletRequest requestProvider;
-	
-	
+
+
 	@Test
 	public void testContextControllerRequestScoped() {
 		HttpServletRequest r1 = contextController.openRequest();
 		r1.setAttribute("test", "test");
 
 		HttpServletRequest r2 = requestProvider;
-		
-		
-		
+
+
 		BRequestScoped b1 = requestScoped.get();
 		b1.setFoo("Bar");
 		BRequestScoped b2 = requestScoped.get();
 		Assert.assertEquals("test", r2.getAttribute("test"));
-		
+
 		Assert.assertSame(b1.getFoo(), b2.getFoo());
 		contextController.closeRequest();
 		HttpServletRequest r3 = contextController.openRequest();
 		r3.setAttribute("test", "test2");
 		HttpServletRequest r4 = requestProvider;
-		
+
 		Assert.assertEquals("test2", r4.getAttribute("test"));
 		BRequestScoped b3 = requestScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 	}
-	
-	
-	
+
+
 	@Test
 	public void testContextControllerSessionScoped() {
 		contextController.openRequest();
-		
-		
-		
+
+
 		CSessionScoped b1 = sessionScoped.get();
 		b1.setFoo("Bar");
 		CSessionScoped b2 = sessionScoped.get();
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
 		contextController.closeRequest();
 		contextController.closeSession();
-		
-		
+
+
 		contextController.openRequest();
 		CSessionScoped b3 = sessionScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
-		
+
 	}
-	
+
 	@Test
 	public void testContextControllerSessionScopedWithRequest() {
 		contextController.openRequest();
 
-		
+
 		CSessionScoped b1 = sessionScoped.get();
-		b1.setFoo("Bar");	
+		b1.setFoo("Bar");
 
 		BRequestScoped r1 = requestScoped.get();
 		b1.setFoo("Bar");
@@ -283,12 +280,12 @@ public class TestCdiUnitRunner extends BaseTest {
 		contextController.openRequest();
 		BRequestScoped r3 = requestScoped.get();
 		Assert.assertEquals(null, r3.getFoo());
-		
-		
+
+
 		CSessionScoped b2 = sessionScoped.get();
 		Assert.assertEquals(b1.getFoo(), b2.getFoo());
 		Assert.assertNotNull(b2.getFoo());
-		
+
 	}
 
 	@Test
@@ -307,7 +304,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		DConversationScoped b3 = conversationScoped.get();
 		Assert.assertEquals(null, b3.getFoo());
 	}
-	
+
 
 	@Test
 	public void testProducedViaField() {
@@ -315,7 +312,7 @@ public class TestCdiUnitRunner extends BaseTest {
 		ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
 		Assert.assertEquals(produced, produced);
 	}
-	
+
 	@Test
 	public void testProducedViaMethod() {
 		ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);

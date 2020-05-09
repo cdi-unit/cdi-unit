@@ -6,26 +6,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-
 /**
- * 
  * <code>&#064;AdditionalPackages</code> adds all the classes in a particular package entry to the CDI environment that are not discovered automatically.
- *  
+ *
  * <pre>
  * &#064;RunWith(CdiRunner.class)
  * &#064;AdditionalPackages(Enterprise.class) //WarpDrive is in the package that contains Enterprise.
  * class TestStarship {
- * 
+ *
  * 	&#064;Inject
  * 	Starship starship; //Starship has an engine in the same package as Enterprise.
- * 
+ *
  * 	&#064;Test
  * 	void testStart() {
  * 		starship.start(); // Going to warp!
- * 	}
+ *    }
  * }
  * </pre>
- * 
+ *
  * @author Bryn Cooke
  */
 @Retention(RetentionPolicy.RUNTIME)
