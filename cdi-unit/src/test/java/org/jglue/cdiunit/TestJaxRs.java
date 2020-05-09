@@ -36,7 +36,7 @@ public class TestJaxRs {
 	}
 
 	@Test
-	//@InRequestScope
+	@InRequestScope
 	public void testRequestAttributeAccess() {
 		Assert.assertNull(webService.request.getAttribute("test"));
 	}
