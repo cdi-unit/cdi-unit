@@ -30,7 +30,7 @@ public class TestDeltaspikeTransactions {
 	}
 
 	@Produces
-	@RequestScoped
+	//@RequestScoped
 	protected EntityManager createEntityManager() {
 		return emf.createEntityManager();
 	}
