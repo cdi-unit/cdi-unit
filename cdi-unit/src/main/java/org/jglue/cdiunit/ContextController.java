@@ -17,7 +17,7 @@ package org.jglue.cdiunit;
 
 import org.jboss.weld.context.ConversationContext;
 import org.jboss.weld.context.http.Http;
-import org.jglue.cdiunit.internal.CdiUnitInitialListener;
+import org.jglue.cdiunit.internal.servlet.CdiUnitInitialListener;
 import org.jglue.cdiunit.internal.servlet.CdiUnitServlet;
 import org.jglue.cdiunit.internal.servlet.LifecycleAwareRequest;
 import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
