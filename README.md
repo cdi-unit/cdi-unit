@@ -3,7 +3,7 @@ cdi-unit
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
-See website for full details http://bryncooke.github.io/cdi-unit
+See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
@@ -45,7 +45,7 @@ class TestStarship {
 ```
 
 ### Acknowledgements
-This project uses code from shamelessly copied from:
+This project uses code shamelessly copied from:
 
 [Mockrunner](https://github.com/mockrunner/mockrunner) under Apache license.
 [Resteasy](http://resteasy.jboss.org/) under Apache license.

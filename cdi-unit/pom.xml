@@ -20,6 +20,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<deltaspike.version>1.1.0</deltaspike.version>
 	</properties>
 
 	<licenses>
@@ -35,7 +36,7 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.18.1-GA</version>
+			<version>3.24.0-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
@@ -44,26 +45,25 @@
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
-			<version>3.0.0.Final</version>
+			<version>3.0.5.Final</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
 		<dependency>
 			<groupId>org.jboss.weld.module</groupId>
 			<artifactId>weld-web</artifactId>
-			<version>3.0.0.Final</version>
+			<version>3.0.5.Final</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.11</version>
+			<version>6.14.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -73,18 +73,18 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>3.2</version>
+			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
+			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.9</version>
+			<version>1.2.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -96,30 +96,30 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-impl</artifactId>
-			<version>1.0.1</version>
+			<version>${deltaspike.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>2.2.1</version>
+			<version>2.2.18</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.ejb</groupId>
 			<artifactId>javax.ejb-api</artifactId>
-			<version>3.2</version>
+			<version>3.2.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0.1</version>
+			<version>2.1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-jpa-module-impl</artifactId>
-			<version>1.0.1</version>
+			<version>${deltaspike.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -131,19 +131,19 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-data-module-impl</artifactId>
-			<version>1.0.1</version>
+			<version>${deltaspike.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.180</version>
+			<version>1.4.197</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.0.14.Final</version>
+			<version>3.6.2.Final</version>
 		</dependency>
 	</dependencies>
 	<build>

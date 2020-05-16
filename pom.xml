@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jglue.cdi-unit</groupId>
 	<artifactId>cdi-unit-parent</artifactId>
@@ -19,7 +20,17 @@
 		<developer>
 			<name>Sean Flanigan</name>
 		</developer>
+		<developer>
+			<name>Illya Kysil</name>
+			<email>ikysil@ikysil.name</email>
+		</developer>
 	</developers>
+	<mailingLists>
+		<mailingList>
+			<name>cdi-unit</name>
+			<archive>https://groups.google.com/forum/#!forum/cdi-unit</archive>
+		</mailingList>
+	</mailingLists>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -57,6 +68,7 @@
 		<module>cdi-unit-tests-easymock</module>
 		<!--<module>cdi-unit-tests-gradle</module>  Disabled because of mojo error-->
 		<module>cdi-unit-tests-jandex</module>
+		<module>cdi-unit-tests-testng</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -69,7 +81,7 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -93,7 +105,7 @@
 								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
 								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 							</configuration>
-							<!-- simpler configuration without reportSets available for usual 
+							<!-- simpler configuration without reportSets available for usual
 								cases -->
 							<reports>
 								<report>dependencies</report>
@@ -174,7 +186,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.1.2</version>
+				<version>4.8.75</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jglue.cdi-unit</groupId>
@@ -185,13 +197,13 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.19.0</version>
+				<version>2.28.2</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<version>4.13</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
