@@ -5,12 +5,16 @@ import org.jglue.cdiunit.internal.DiscoveryExtension;
 
 public class ServletDiscoveryExtension implements DiscoveryExtension {
 
+	private final boolean usesServlet = ClassLookup.INSTANCE.isPresent("javax.servlet.http.HttpServletRequest");
+
+	private final boolean requiresServletObjectsProducers = !ClassLookup.INSTANCE.isPresent("org.jboss.weld.bean.AbstractSyntheticBean");
+
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		if (ClassLookup.INSTANCE.isPresent("javax.servlet.http.HttpServletRequest")) {
+		if (usesServlet) {
 			bdc.discoverExtension(this::discoverCdiExtension);
-			if (!ClassLookup.INSTANCE.isPresent("org.jboss.weld.bean.AbstractSyntheticBean")) {
-				// If this is an old version of weld then add the producers
+			if (requiresServletObjectsProducers) {
+				// If this is an old version of Weld then add the producers
 				bdc.discoverExtension(this::discoverServletObjectsProducers);
 			}
 		}

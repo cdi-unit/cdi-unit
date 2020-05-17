@@ -5,9 +5,11 @@ import org.jglue.cdiunit.internal.DiscoveryExtension;
 
 public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
 
+	private final boolean usesJsf = ClassLookup.INSTANCE.isPresent("javax.faces.view.ViewScoped");
+
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		if (ClassLookup.INSTANCE.isPresent("javax.faces.view.ViewScoped")) {
+		if (usesJsf) {
 			bdc.discoverExtension(this::discoverCdiExtension);
 		}
 	}

@@ -8,12 +8,15 @@ import java.lang.reflect.Field;
 
 public class MockitoDiscoveryExtension implements DiscoveryExtension {
 
-	private Class<? extends Annotation> fieldAnnotation = null;
+	/**
+	 * The non-null value here means that we have Mockito in the classpath.
+	 */
+	@SuppressWarnings("unchecked")
+	private final Class<? extends Annotation> fieldAnnotation = (Class<? extends Annotation>)
+		ClassLookup.INSTANCE.lookup("org.mockito.Mock");
 
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		//noinspection unchecked
-		fieldAnnotation = (Class<? extends Annotation>) ClassLookup.INSTANCE.lookup("org.mockito.Mock");
 		if (fieldAnnotation == null) {
 			return;
 		}
