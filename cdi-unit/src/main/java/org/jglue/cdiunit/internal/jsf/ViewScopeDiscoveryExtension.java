@@ -1,20 +1,19 @@
 package org.jglue.cdiunit.internal.jsf;
 
+import org.jglue.cdiunit.internal.ClassLookup;
 import org.jglue.cdiunit.internal.DiscoveryExtension;
 
 public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
 
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		bdc.discoverExtension(this::discoverCdiExtension);
+		if (ClassLookup.INSTANCE.isPresent("javax.faces.view.ViewScoped")) {
+			bdc.discoverExtension(this::discoverCdiExtension);
+		}
 	}
 
 	private void discoverCdiExtension(Context context) {
-		try {
-			Class.forName("javax.faces.view.ViewScoped");
-			context.extension(new ViewScopeExtension(), ViewScopeDiscoveryExtension.class.getName());
-		} catch (ClassNotFoundException ignore) {
-		}
+		context.extension(new ViewScopeExtension(), ViewScopeDiscoveryExtension.class.getName());
 	}
 
 }

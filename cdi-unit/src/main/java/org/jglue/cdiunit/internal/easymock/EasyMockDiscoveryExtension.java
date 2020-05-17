@@ -1,5 +1,6 @@
 package org.jglue.cdiunit.internal.easymock;
 
+import org.jglue.cdiunit.internal.ClassLookup;
 import org.jglue.cdiunit.internal.DiscoveryExtension;
 
 import java.lang.annotation.Annotation;
@@ -11,13 +12,13 @@ public class EasyMockDiscoveryExtension implements DiscoveryExtension {
 
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		try {
-			fieldAnnotation = org.easymock.Mock.class;
-			bdc.discoverExtension(this::discoverCdiExtension);
-			bdc.discoverField(this::discoverField);
-		} catch (NoClassDefFoundError ignore) {
-			// no EasyMock
+		//noinspection unchecked
+		fieldAnnotation = (Class<? extends Annotation>) ClassLookup.INSTANCE.lookup("org.easymock.Mock");
+		if (fieldAnnotation == null) {
+			return;
 		}
+		bdc.discoverExtension(this::discoverCdiExtension);
+		bdc.discoverField(this::discoverField);
 	}
 
 	private void discoverCdiExtension(Context context) {

@@ -125,7 +125,7 @@ public class WeldTestUrlDeployment implements Deployment {
 			try {
 				// If Weld < 2.4, the new package isn't there, so we try the old package.
 				//noinspection unchecked
-				Class<Metadata<T>> oldClass = (Class<Metadata<T>>) Class.forName("org.jboss.weld.metadata.MetadataImpl");
+				Class<Metadata<T>> oldClass = (Class<Metadata<T>>) ClassLookup.INSTANCE.lookup("org.jboss.weld.metadata.MetadataImpl");
 				Constructor<Metadata<T>> ctor = oldClass.getConstructor(Object.class, String.class);
 				return ctor.newInstance(value, location);
 			} catch (ReflectiveOperationException e1) {
@@ -252,10 +252,7 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		@Override
 		public void processBean(String className) {
-			try {
-				processBean(Class.forName(className));
-			} catch (ClassNotFoundException ignore) {
-			}
+			processBean(ClassLookup.INSTANCE.lookup(className));
 		}
 
 		@Override
@@ -265,10 +262,7 @@ public class WeldTestUrlDeployment implements Deployment {
 
 		@Override
 		public void ignoreBean(String className) {
-			try {
-				ignoreBean(Class.forName(className));
-			} catch (ClassNotFoundException ignore) {
-			}
+			ignoreBean(ClassLookup.INSTANCE.lookup(className));
 		}
 
 		@Override
