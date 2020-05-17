@@ -45,6 +45,9 @@
 		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
 		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
 
+		<!-- The version of the DeltaSpike to compile against -->
+		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
+
 		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
 		<pushChanges>false</pushChanges>
 		<localCheckout>true</localCheckout>
@@ -69,6 +72,7 @@
 		<!--<module>cdi-unit-tests-gradle</module>  Disabled because of mojo error-->
 		<module>cdi-unit-tests-jandex</module>
 		<module>cdi-unit-tests-testng</module>
+		<module>cdi-unit-tests-deltaspike</module>
 	</modules>
 	<build>
 		<pluginManagement>

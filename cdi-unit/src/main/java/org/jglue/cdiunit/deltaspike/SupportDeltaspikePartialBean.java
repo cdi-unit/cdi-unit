@@ -26,7 +26,7 @@ import org.jglue.cdiunit.AdditionalClasspaths;
  * @author bryn
  *
  */
-@AdditionalClasspaths({PartialBeanBindingExtension.class })
+@AdditionalClasspaths({PartialBeanBindingExtension.class})
 @SupportDeltaspikeCore
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SupportDeltaspikePartialBean {

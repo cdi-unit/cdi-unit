@@ -20,7 +20,6 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<deltaspike.version>1.9.3</deltaspike.version>
 	</properties>
 
 	<licenses>
@@ -95,8 +94,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-api</artifactId>
+			<version>${deltaspike.version.baseline}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-impl</artifactId>
-			<version>${deltaspike.version}</version>
+			<version>${deltaspike.version.baseline}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
@@ -119,8 +124,14 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-jpa-module-impl</artifactId>
-			<version>${deltaspike.version}</version>
-			<scope>provided</scope>
+			<version>${deltaspike.version.baseline}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.modules</groupId>
+			<artifactId>deltaspike-partial-bean-module-impl</artifactId>
+			<version>${deltaspike.version.baseline}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -131,8 +142,8 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-data-module-impl</artifactId>
-			<version>${deltaspike.version}</version>
-			<scope>provided</scope>
+			<version>${deltaspike.version.baseline}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
