@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.CodeSource;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -43,12 +42,9 @@ public class WeldTestUrlDeployment implements Deployment {
 	private final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
 	private final Collection<Metadata<Extension>> extensions = new ArrayList<>();
 	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
-	private final Set<URL> cdiClasspathEntries = new HashSet<>();
 	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
 	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
-		cdiClasspathEntries.addAll(scanner.getBeanArchives());
-
 		final DefaultBootstrapDiscoveryContext bdc = new DefaultBootstrapDiscoveryContext();
 
 		final ServiceLoader<DiscoveryExtension> discoveryExtensions = ServiceLoader.load(DiscoveryExtension.class);
@@ -74,8 +70,12 @@ public class WeldTestUrlDeployment implements Deployment {
 		while (discoveryContext.hasClassesToProcess()) {
 			final Class<?> cls = discoveryContext.nextClassToProcess();
 
-			if ((isCdiClass(cls) || Extension.class.isAssignableFrom(cls)) && !classesProcessed.contains(cls) && !cls.isPrimitive()
-				&& !discoveryContext.isIgnored(cls)) {
+			final boolean candidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
+			final boolean processed = classesProcessed.contains(cls);
+			final boolean primitive = cls.isPrimitive();
+			final boolean ignored = discoveryContext.isIgnored(cls);
+
+			if (candidate && !processed && !primitive && !ignored) {
 				classesProcessed.add(cls);
 				if (!cls.isAnnotation()) {
 					discoveredClasses.add(cls.getName());
@@ -161,17 +161,6 @@ public class WeldTestUrlDeployment implements Deployment {
 		} catch (MalformedURLException | ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private static URL getClasspathURL(Class<?> clazz) {
-		CodeSource codeSource = clazz.getProtectionDomain()
-			.getCodeSource();
-		return codeSource != null ? codeSource.getLocation() : null;
-	}
-
-	private boolean isCdiClass(Class<?> c) {
-		URL location = getClasspathURL(c);
-		return location != null && cdiClasspathEntries.contains(location);
 	}
 
 	@Override
@@ -331,7 +320,7 @@ public class WeldTestUrlDeployment implements Deployment {
 			final Collection<Class<?>> result = new LinkedHashSet<>();
 			for (Class<?> baseClass : baseClasses) {
 				final String packageName = baseClass.getPackage().getName();
-				final URL url = getClasspathURL(baseClass);
+				final URL url = scanner.getClasspathURL(baseClass);
 
 				// It might be more efficient to scan all packageNames at once, but we
 				// might pick up classes from a different package's classpath entry, which
@@ -347,7 +336,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		@Override
 		public Collection<Class<?>> scanBeanArchives(Collection<Class<?>> baseClasses) {
 			URL[] urls = baseClasses.stream()
-				.map(WeldTestUrlDeployment::getClasspathURL)
+				.map(scanner::getClasspathURL)
 				.toArray(URL[]::new);
 			return scanner.getClassNamesForClasspath(urls)
 				.stream()
