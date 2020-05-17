@@ -23,7 +23,6 @@ import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.metadata.BeansXmlImpl;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jglue.cdiunit.ProducesAlternative;
-import org.jglue.cdiunit.internal.DiscoveryExtension.BootstrapDiscoveryContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,42 +361,6 @@ public class WeldTestUrlDeployment implements Deployment {
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
-		}
-
-	}
-
-	private static class DefaultBootstrapDiscoveryContext implements BootstrapDiscoveryContext {
-
-		Consumer<DiscoveryExtension.Context> discoverExtension = context -> {
-		};
-
-		BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = (context, cls) -> {
-		};
-
-		BiConsumer<DiscoveryExtension.Context, Field> discoverField = (context, field) -> {
-		};
-
-		BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = (context, method) -> {
-		};
-
-		@Override
-		public void discoverExtension(Consumer<DiscoveryExtension.Context> callback) {
-			discoverExtension = discoverExtension.andThen(callback);
-		}
-
-		@Override
-		public void discoverClass(BiConsumer<DiscoveryExtension.Context, Class<?>> callback) {
-			discoverClass = discoverClass.andThen(callback);
-		}
-
-		@Override
-		public void discoverField(BiConsumer<DiscoveryExtension.Context, Field> callback) {
-			discoverField = discoverField.andThen(callback);
-		}
-
-		@Override
-		public void discoverMethod(BiConsumer<DiscoveryExtension.Context, Method> callback) {
-			discoverMethod = discoverMethod.andThen(callback);
 		}
 
 	}

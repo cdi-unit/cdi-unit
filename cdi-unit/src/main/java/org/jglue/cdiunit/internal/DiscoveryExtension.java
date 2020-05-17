@@ -17,7 +17,7 @@ public interface DiscoveryExtension {
 	 * Invoked once per discovery cycle. Discovery extension may register discovery callbacks.
 	 * All modifications to the discovery callbacks performed outside of this method are ignored.
 	 *
-	 * @param bdc boosttrap discovery context to register discovery callbacks
+	 * @param bdc bootstrap discovery context to register discovery callbacks
 	 */
 	void bootstrap(BootstrapDiscoveryContext bdc);
 
