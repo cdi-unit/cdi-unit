@@ -70,12 +70,12 @@ script:
 - |
   ./travisci/build.sh
   ./travisci/test.sh ${VERSION_SOURCE}
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.9
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.8
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.7
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.6
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.5
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.4
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.3
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.2
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.1
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.9 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.8 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.7 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.6 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.5 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.4 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.3 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.2 -pl cdi-unit-tests-deltaspike/
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.1 -pl cdi-unit-tests-deltaspike/
