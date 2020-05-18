@@ -67,4 +67,15 @@ install:
   travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:
-- ./travisci/build.sh ${VERSION_SOURCE}
+- |
+  ./travisci/build.sh
+  ./travisci/test.sh ${VERSION_SOURCE}
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.9
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.8
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.7
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.6
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.5
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.4
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.3
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.2
+  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.1
