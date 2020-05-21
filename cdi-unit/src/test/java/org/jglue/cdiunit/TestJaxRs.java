@@ -35,6 +35,12 @@ public class TestJaxRs {
 		Assert.assertNotNull(webService.headers);
 	}
 
+	@Test
+	@InRequestScope
+	public void testRequestAttributeAccess() {
+		Assert.assertNull(webService.request.getAttribute("test"));
+	}
+
 	public static class WebService {
 		@Context
 		HttpServletRequest request;
@@ -44,22 +50,22 @@ public class TestJaxRs {
 
 		@Context
 		ServletContext context;
-		
+
 		@Context
 		UriInfo uriInfo;
-		
+
 		@Context
 		Request jaxRsRequest;
-		
+
 		@Context
 		SecurityContext securityContext;
-		
+
 		@Context
 		Providers providers;
-		
-		
+
+
 		@Context
 		HttpHeaders headers;
-		
+
 	}
 }

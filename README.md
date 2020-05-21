@@ -3,15 +3,17 @@ cdi-unit
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
-See website for full details http://bryncooke.github.io/cdi-unit
+See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit)
 
 ```xml
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>4.0.2</version>
+  <version>${cdi-unit-version}</version>
   <scope>test</scope>
 </dependency>
 ```
@@ -43,7 +45,7 @@ class TestStarship {
 ```
 
 ### Acknowledgements
-This project uses code from shamelessly copied from:
+This project uses code shamelessly copied from:
 
 [Mockrunner](https://github.com/mockrunner/mockrunner) under Apache license.
 [Resteasy](http://resteasy.jboss.org/) under Apache license.

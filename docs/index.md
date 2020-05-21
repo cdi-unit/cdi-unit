@@ -29,11 +29,14 @@ class MyTest {
 }
 ```
 Make sure you've added the cdi-unit dependency to your build file
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit)
+
 ```xml
 <dependency>
   <groupId>org.jglue.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
-  <version>4.0.2</version>
+  <version>${cdi-unit-version}</version>
   <scope>test</scope>
 </dependency>
 ```
@@ -73,6 +76,8 @@ In addition [scoping annotations](#scopes) can be used to simulate scopes for me
 *   @InRequestScope – Starts a request for the method call. 
 *   @InSessonScope – Starts a session for the method call.
 *   @InConversationScope – Starts conversation for the method call.
+
+Classes, fields and methods can also be annotated with [@IgnoredClasses](#controllingEnvironment) to prevent them from being discovered automatically.
 
 ### Example unit test
 
@@ -159,9 +164,10 @@ CDI will automatically search for an implementation of Engine when trying to cre
 
 #### Discovery annotations
 
-*   @AdditionalClasses – Explicitly add class(s) to the deployment
+*   @AdditionalClasses – Explicitly add class(es) to the deployment
 *   @AdditionalPackages – Classes in the same package will all be added to the deployment
 *   @AdditionalClasspath – Classes in the same classpath entry location will be added to the deployment
+*   @IgnoredClasses - Explicitly remove class(es) from the deployment
 
 To make it easy to figure out what is in the CDI environment CDI-Unit prints all of the classes added to the environment at DEBUG log level during startup.
 
