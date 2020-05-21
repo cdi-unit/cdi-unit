@@ -8,7 +8,7 @@ if [[ $# -gt 0 ]]; then
   source "$BASE_DIR/$1"
   shift
 else
-  echo "Please provide the file to source the list of Weld versions to build"
+  echo "Please provide the file to source the list of Weld versions to test"
   exit 1
 fi
 

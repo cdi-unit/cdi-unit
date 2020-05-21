@@ -46,20 +46,6 @@ cache:
 before_cache:
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
-env:
-  # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
-  # Current strategy is, for each supported minor version of Weld, to test one early point release plus
-  # the most recent point release, plus some point releases which caused problems.
-  # There is one version source per minor release of Weld, newer releases on top.
-  - VERSION_SOURCE=weld-v3.1.sh
-  - VERSION_SOURCE=weld-v3.0.sh
-  - VERSION_SOURCE=weld-v2.4.sh
-  - VERSION_SOURCE=weld-v2.3.sh
-  - VERSION_SOURCE=weld-v2.2.sh
-  - VERSION_SOURCE=weld-v2.1.sh
-  - VERSION_SOURCE=weld-v2.0.sh
-  - VERSION_SOURCE=weld-v1.1.sh
-
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
 - |
@@ -67,15 +53,13 @@ install:
   travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
 script:
-- |
-  ./travisci/build.sh
-  ./travisci/test.sh ${VERSION_SOURCE}
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.9 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.8 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.7 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.6 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.5 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.4 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.3 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.2 -pl cdi-unit-tests-deltaspike/
-  ./travisci/test.sh ${VERSION_SOURCE} -P deltaspike-1.1 -pl cdi-unit-tests-deltaspike/
+  - ./travisci/build.sh
+  - ./travisci/test-weld.sh weld-v3.1.sh
+  - ./travisci/test-weld.sh weld-v3.0.sh
+  - ./travisci/test-weld.sh weld-v2.4.sh
+  - ./travisci/test-weld.sh weld-v2.3.sh
+  - ./travisci/test-weld.sh weld-v2.2.sh
+  - ./travisci/test-weld.sh weld-v2.1.sh
+  - ./travisci/test-weld.sh weld-v2.0.sh
+  - ./travisci/test-weld.sh weld-v1.1.sh
+  - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
