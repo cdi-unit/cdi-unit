@@ -1,6 +1,7 @@
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.producerconfig;
 
 import org.jglue.cdiunit.ProducerConfig;
+import org.jglue.cdiunit.internal.TestConfiguration;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;

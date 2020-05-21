@@ -3,7 +3,7 @@
  * <p>
  * Please see the included license file for details.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.servlet;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequestEvent;

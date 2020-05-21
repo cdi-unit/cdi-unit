@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jglue.cdiunit.internal;
+package org.jglue.cdiunit.internal.testscope;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -24,6 +24,7 @@ import org.apache.deltaspike.core.api.literal.ApplicationScopedLiteral;
 import org.apache.deltaspike.core.api.literal.DependentScopeLiteral;
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 import org.jglue.cdiunit.IsolationLevel;
+import org.jglue.cdiunit.internal.TestConfiguration;
 
 public class TestScopeExtension implements Extension {
 
@@ -48,5 +49,5 @@ public class TestScopeExtension implements Extension {
 			pat.setAnnotatedType(builder.create());
 		}
 	}
-	
+
 }

@@ -15,11 +15,6 @@
  */
 package org.jglue.cdiunit.internal.servlet;
 
-import org.jglue.cdiunit.internal.CdiUnitInitialListener;
-
-import javax.inject.Inject;
-import javax.servlet.*;
-import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -28,6 +23,10 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 @CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
@@ -315,10 +314,10 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 
 	@Override
 	public boolean isAsyncStarted() {
-	
+
 		return false;
 	}
-	
+
 
 
 
