@@ -2,16 +2,19 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-            </Pattern>
-        </layout>
+        <encoder>
+            <pattern>
+                <!--%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n-->
+                %d{HH:mm:ss} %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
     </appender>
 
-    <logger name="org.jglue.cdiunit" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+    <logger name="org.jglue.cdiunit.CdiExtension" level="debug" />
+
+    <!--<logger name="org.jglue.cdiunit" level="debug" additivity="false">-->
+        <!--<appender-ref ref="STDOUT" />-->
+    <!--</logger>-->
 
     <root level="error">
         <appender-ref ref="STDOUT" />

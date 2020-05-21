@@ -331,7 +331,7 @@ public class WeldTestUrlDeployment implements Deployment {
 		}
 	}
 
-	private Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
+	public static Set<Class<?>> findMockedClassesOfTest(Class<?> testClass) {
 		Set<Class<?>> mockedClasses = new HashSet<>();
 
 		try {

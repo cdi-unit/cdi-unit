@@ -14,19 +14,30 @@ import java.util.Collections;
  */
 public class TestConfiguration {
 
-	public TestConfiguration(Class<?> testClass, Method testMethod, Collection<Class<?>> additionalClasses) {
-		this.testClass = testClass;
-		this.testMethod = testMethod;
-		if (additionalClasses == null) {
-			throw new NullPointerException("Expected AdditionalClasses not null.");
-		}
-		this.additionalClasses = additionalClasses;
+    /**
+     * @param testClass The test class
+     * @param testMethod The test method. If null, ProducerConfigExtension can't be used.
+     * @param additionalClasses A list of additional classes to add to the deployment
+     *        (intended for custom runners)
+     */
+    @SuppressWarnings("WeakerAccess")
+    public TestConfiguration(Class<?> testClass, Method testMethod, Collection<Class<?>> additionalClasses) {
+        this.testClass = testClass;
+        this.testMethod = testMethod;
+        if (additionalClasses == null) {
+            throw new NullPointerException("Expected AdditionalClasses not null.");
+        }
+        this.additionalClasses = additionalClasses;
 		this.isolationLevel = getIsolationLevel(testClass);
-	}
+    }
 
-	public TestConfiguration(Class<?> testClass, Method testMethod) {
-		this(testClass, testMethod, Collections.emptySet());
-	}
+    /**
+     * @param testClass The test class
+     * @param testMethod The test method. If null, ProducerConfigExtension can't be used.
+     */
+    public TestConfiguration(Class<?> testClass, Method testMethod) {
+        this(testClass, testMethod, Collections.emptySet());
+    }
 
 	private final Class<?> testClass;
 	private Method testMethod;

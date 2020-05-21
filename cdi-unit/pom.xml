@@ -55,6 +55,37 @@
 			<version>3.0.5.Final</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- this is all you need to write tests with JUnit Jupiter -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit-jupiter-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- this dependency is needed to create parameterized tests -->
+		<!--<dependency>-->
+			<!--<groupId>org.junit.jupiter</groupId>-->
+			<!--<artifactId>junit-jupiter-params</artifactId>-->
+			<!--<version>${junit-jupiter-version}</version>-->
+		<!--</dependency>-->
+		<!-- contains the engine that actually runs the Jupiter-tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter-version}</version>
+		</dependency>
+
+		<!-- JUnit 5 Runner for JUnit 4 tests -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+		</dependency>
+		<!-- a JUnit 4 Runner for JUnit 5 tests -->
+		<!--<dependency>-->
+			<!--<groupId>org.junit.platform</groupId>-->
+			<!--<artifactId>junit-platform-runner</artifactId>-->
+		<!--</dependency>-->
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -81,6 +112,26 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.25</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.slf4j</groupId>-->
+			<!--<artifactId>slf4j-simple</artifactId>-->
+			<!--<version>1.7.5</version>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -151,30 +202,30 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
 				<configuration>
-					<systemProperties>
+					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
-					</systemProperties>
+					</systemPropertyVariables>
+					<!-- Prevent default execution from using TestNG -->
+					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
 				<executions>
 					<execution>
+						<id>testng</id>
 						<phase>test</phase>
 						<goals>
 							<goal>test</goal>
 						</goals>
 						<configuration>
-							<testNGArtifactName>none:none</testNGArtifactName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-testng</id>
-						<phase>test</phase>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<configuration>
+							<includes>
+								<!-- Prevent TestNG execution from executing JUnit tests -->
+								<include>**/TestNg*.java</include>
+							</includes>
+							<!-- Prevent TestNG execution from choosing JUnit providers -->
 							<junitArtifactName>none:none</junitArtifactName>
+							<junitPlatformArtifactName>none:none</junitPlatformArtifactName>
+							<reportsDirectory>${project.build.directory}/surefire-reports/testng</reportsDirectory>
+							<testNGArtifactName>org.testng:testng</testNGArtifactName>
 						</configuration>
 					</execution>
 				</executions>
