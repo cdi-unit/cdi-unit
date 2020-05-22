@@ -6,8 +6,9 @@
 
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-tests-parent</artifactId>
 		<version>4.1.1-SNAPSHOT</version>
+		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 
 	<artifactId>cdi-unit-tests-deltaspike</artifactId>
@@ -15,64 +16,6 @@
 	<name>CDI-Unit-Tests-DeltaSpike</name>
 	<url>http://jglue.org/cdi-unit</url>
 	<description>CDI-Unit test suite.</description>
-
-	<properties>
-		<deltaspike.test.version>${deltaspike.version.baseline}</deltaspike.test.version>
-	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.24.0-GA</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.logging</groupId>
-				<artifactId>jboss-logging</artifactId>
-				<version>3.3.1.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.deltaspike.core</groupId>
-				<artifactId>deltaspike-core-api</artifactId>
-				<version>${deltaspike.test.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.deltaspike.core</groupId>
-				<artifactId>deltaspike-core-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.deltaspike.modules</groupId>
-				<artifactId>deltaspike-data-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.deltaspike.modules</groupId>
-				<artifactId>deltaspike-jpa-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.25</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.spec.javax.annotation</groupId>
-				<artifactId>jboss-annotations-api_1.2_spec</artifactId>
-				<version>1.0.0.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.cal10n</groupId>
-				<artifactId>cal10n-api</artifactId>
-				<version>0.8.1</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -151,13 +94,6 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<version>3.0.0-M3</version>
 				<executions>
@@ -201,24 +137,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>weld.test.3plus</id>
-			<activation>
-				<property>
-					<name>!weld.test.1or2</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.weld.module</groupId>
-					<artifactId>weld-web</artifactId>
-					<version>${weld.test.version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 </project>

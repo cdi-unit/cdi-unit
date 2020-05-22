@@ -6,8 +6,9 @@
 
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-tests-parent</artifactId>
 		<version>4.1.1-SNAPSHOT</version>
+		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 
 	<artifactId>cdi-unit-tests-testng</artifactId>
@@ -29,12 +30,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>2.0.SP1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
@@ -43,14 +38,7 @@
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
-			<version>3.0.5.Final</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
-		<dependency>
-			<groupId>org.jboss.weld.module</groupId>
-			<artifactId>weld-web</artifactId>
-			<version>3.0.5.Final</version>
+			<version>${weld.test.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -68,13 +56,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

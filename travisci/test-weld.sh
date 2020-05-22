@@ -18,5 +18,8 @@ for WELD_VERSION in ${WELD_VERSIONS[*]}; do
   else
     TEST_OPTS=
   fi
-  "$BASE_DIR/hide-logs.sh" ./mvnw -V test -Dweld.test.version=$WELD_VERSION ${TEST_OPTS} "$@"
+  "$BASE_DIR/hide-logs.sh" ./mvnw -V test \
+    --projects cdi-unit-tests-parent,cdi-unit-tests-external-dependency \
+    --also-make-dependents \
+    -Dweld.test.version="$WELD_VERSION" $TEST_OPTS "$@"
 done
