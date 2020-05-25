@@ -48,18 +48,29 @@ before_cache:
 
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
-- |
-  cp ./travisci/settings.xml $HOME/.m2/settings.xml
-  travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
-
-script:
+  - cp ./travisci/settings.xml $HOME/.m2/settings.xml
+  - travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
   - ./travisci/build.sh
-  - ./travisci/test-weld.sh weld-v3.1.sh
-  - ./travisci/test-weld.sh weld-v3.0.sh
-  - ./travisci/test-weld.sh weld-v2.4.sh
-  - ./travisci/test-weld.sh weld-v2.3.sh
-  - ./travisci/test-weld.sh weld-v2.2.sh
-  - ./travisci/test-weld.sh weld-v2.1.sh
-  - ./travisci/test-weld.sh weld-v2.0.sh
-  - ./travisci/test-weld.sh weld-v1.1.sh
-  - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
+
+matrix:
+  include:
+    - name: Test Weld 3.x integration
+      script:
+        - ./travisci/test-weld.sh weld-v3.1.sh
+        - ./travisci/test-weld.sh weld-v3.0.sh
+
+    - name: Test Weld 2.x integration
+      script:
+        - ./travisci/test-weld.sh weld-v2.4.sh
+        - ./travisci/test-weld.sh weld-v2.3.sh
+        - ./travisci/test-weld.sh weld-v2.2.sh
+        - ./travisci/test-weld.sh weld-v2.1.sh
+        - ./travisci/test-weld.sh weld-v2.0.sh
+
+    - name: Test Weld 1.x integration
+      script:
+        - ./travisci/test-weld.sh weld-v1.1.sh
+
+    - name: Test DeltaSpike 1.x integration
+      script:
+        - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
