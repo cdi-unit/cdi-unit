@@ -8,3 +8,4 @@ org.jglue.cdiunit.internal.easymock.EasyMockDiscoveryExtension
 org.jglue.cdiunit.internal.IgnoredClassesDiscoveryExtension
 org.jglue.cdiunit.internal.CdiDiscoveryExtension
 org.jglue.cdiunit.internal.CdiUnitDiscoveryExtension
+org.jglue.cdiunit.internal.junit.InvalidRuleFieldUsageDiscoveryExtension
