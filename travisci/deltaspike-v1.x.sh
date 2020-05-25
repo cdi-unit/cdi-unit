@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# Current strategy is, for each supported minor version of DeltaSpike, to test one early point release plus
-# the most recent point release, plus some point releases which caused problems.
+# For each supported minor version of DeltaSpike, we test the most recent point release.
 DELTASPIKE_VERSIONS=(
   "1.9.3"
   "1.8.2"
