@@ -52,25 +52,61 @@ install:
   - travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
   - ./travisci/build.sh
 
+_weld_3_integration: &weld_3_integration
+  name: Test Weld 3.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v3.1.sh
+    - ./travisci/test-weld.sh weld-v3.0.sh
+
+_weld_2_integration: &weld_2_integration
+  name: Test Weld 2.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v2.4.sh
+    - ./travisci/test-weld.sh weld-v2.3.sh
+    - ./travisci/test-weld.sh weld-v2.2.sh
+    - ./travisci/test-weld.sh weld-v2.1.sh
+    - ./travisci/test-weld.sh weld-v2.0.sh
+
+_weld_1_integration: &weld_1_integration
+  name: Test Weld 1.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v1.1.sh
+
+_deltaspike_1_integration: &deltaspike_1_integration
+  name: Test DeltaSpike 1.x integration
+  script:
+    - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
+
 matrix:
   include:
     - name: Test Weld 3.x integration
-      script:
-        - ./travisci/test-weld.sh weld-v3.1.sh
-        - ./travisci/test-weld.sh weld-v3.0.sh
+      jdk: openjdk11
+      <<: *weld_3_integration
+    - jdk: oraclejdk11
+      <<: *weld_3_integration
+    - jdk: openjdk8
+      <<: *weld_3_integration
 
     - name: Test Weld 2.x integration
-      script:
-        - ./travisci/test-weld.sh weld-v2.4.sh
-        - ./travisci/test-weld.sh weld-v2.3.sh
-        - ./travisci/test-weld.sh weld-v2.2.sh
-        - ./travisci/test-weld.sh weld-v2.1.sh
-        - ./travisci/test-weld.sh weld-v2.0.sh
+      jdk: openjdk11
+      <<: *weld_2_integration
+    - jdk: oraclejdk11
+      <<: *weld_2_integration
+    - jdk: openjdk8
+      <<: *weld_2_integration
 
     - name: Test Weld 1.x integration
-      script:
-        - ./travisci/test-weld.sh weld-v1.1.sh
+      jdk: openjdk11
+      <<: *weld_1_integration
+    - jdk: oraclejdk11
+      <<: *weld_1_integration
+    - jdk: openjdk8
+      <<: *weld_1_integration
 
     - name: Test DeltaSpike 1.x integration
-      script:
-        - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
+      jdk: openjdk11
+      <<: *deltaspike_1_integration
+    - jdk: oraclejdk11
+      <<: *deltaspike_1_integration
+    - jdk: openjdk8
+      <<: *deltaspike_1_integration
