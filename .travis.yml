@@ -46,25 +46,67 @@ cache:
 before_cache:
   - rm -rf $HOME/.m2/repository/org/jglue/cdi-unit/
 
-env:
-  # We don't want to overtax travis (or get throttled), so we try to limit the number of combinations.
-  # Current strategy is, for each supported minor version of Weld, to test one early point release plus
-  # the most recent point release, plus some point releases which caused problems.
-  # There is one version source per minor release of Weld, newer releases on top.
-  - VERSION_SOURCE=weld-v3.1.sh
-  - VERSION_SOURCE=weld-v3.0.sh
-  - VERSION_SOURCE=weld-v2.4.sh
-  - VERSION_SOURCE=weld-v2.3.sh
-  - VERSION_SOURCE=weld-v2.2.sh
-  - VERSION_SOURCE=weld-v2.1.sh
-  - VERSION_SOURCE=weld-v2.0.sh
-  - VERSION_SOURCE=weld-v1.1.sh
-
 # Installing the dependencies here saves many log lines (Travis limit is 10000)
 install:
-- |
-  cp ./travisci/settings.xml $HOME/.m2/settings.xml
-  travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+  - cp ./travisci/settings.xml $HOME/.m2/settings.xml
+  - travis_wait ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+  - ./travisci/build.sh
 
-script:
-- ./travisci/build.sh ${VERSION_SOURCE}
+_weld_3_integration: &weld_3_integration
+  name: Test Weld 3.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v3.1.sh
+    - ./travisci/test-weld.sh weld-v3.0.sh
+
+_weld_2_integration: &weld_2_integration
+  name: Test Weld 2.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v2.4.sh
+    - ./travisci/test-weld.sh weld-v2.3.sh
+    - ./travisci/test-weld.sh weld-v2.2.sh
+    - ./travisci/test-weld.sh weld-v2.1.sh
+    - ./travisci/test-weld.sh weld-v2.0.sh
+
+_weld_1_integration: &weld_1_integration
+  name: Test Weld 1.x integration
+  script:
+    - ./travisci/test-weld.sh weld-v1.1.sh
+
+_deltaspike_1_integration: &deltaspike_1_integration
+  name: Test DeltaSpike 1.x integration
+  script:
+    - ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
+
+matrix:
+  include:
+    - name: Test Weld 3.x integration
+      jdk: openjdk11
+      <<: *weld_3_integration
+    - jdk: oraclejdk11
+      <<: *weld_3_integration
+    - jdk: openjdk8
+      <<: *weld_3_integration
+
+    - name: Test Weld 2.x integration
+      jdk: openjdk11
+      <<: *weld_2_integration
+    - jdk: oraclejdk11
+      <<: *weld_2_integration
+    - jdk: openjdk8
+      <<: *weld_2_integration
+
+    - name: Test Weld 1.x integration
+      jdk: openjdk11
+      <<: *weld_1_integration
+    - jdk: oraclejdk11
+      <<: *weld_1_integration
+    - jdk: openjdk8
+      <<: *weld_1_integration
+
+    - name: Test DeltaSpike 1.x integration
+      jdk: openjdk11
+      <<: *deltaspike_1_integration
+    - jdk: oraclejdk11
+      <<: *deltaspike_1_integration
+    - jdk: openjdk8
+      <<: *deltaspike_1_integration

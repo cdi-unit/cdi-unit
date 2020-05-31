@@ -1,18 +1,19 @@
-package org.jglue.cdiunit.deltaspike;
+package org.jglue.cdiunit.tests.deltaspike;
+
+import org.apache.deltaspike.jpa.api.transaction.Transactional;
+import org.jglue.cdiunit.CdiRunner;
+import org.jglue.cdiunit.InRequestScope;
+import org.jglue.cdiunit.deltaspike.SupportDeltaspikeData;
+import org.jglue.cdiunit.deltaspike.SupportDeltaspikeJpa;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
-import org.jglue.cdiunit.CdiRunner;
-import org.jglue.cdiunit.InRequestScope;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 @SupportDeltaspikeJpa
 @SupportDeltaspikeData

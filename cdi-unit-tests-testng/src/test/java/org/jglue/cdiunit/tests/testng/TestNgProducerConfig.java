@@ -1,22 +1,24 @@
 package org.jglue.cdiunit.tests.testng;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.NgCdiRunner;
+import org.jglue.cdiunit.ProducerConfig;
+import org.testng.Assert;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.NgCdiRunner;
-import org.jglue.cdiunit.ProducerConfig;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Test
+@Listeners({ RequiresProducerConfig.class })
 @AdditionalClasses(TestNgProducerConfig.Producers.class)
 public class TestNgProducerConfig extends NgCdiRunner {
 

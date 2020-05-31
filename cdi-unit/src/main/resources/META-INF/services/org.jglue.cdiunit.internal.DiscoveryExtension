@@ -5,6 +5,7 @@ org.jglue.cdiunit.internal.jsf.ViewScopeDiscoveryExtension
 org.jglue.cdiunit.internal.servlet.ServletDiscoveryExtension
 org.jglue.cdiunit.internal.mockito.MockitoDiscoveryExtension
 org.jglue.cdiunit.internal.easymock.EasyMockDiscoveryExtension
+org.jglue.cdiunit.internal.deltaspike.DeltaspikeProxyDiscoveryExtension
 org.jglue.cdiunit.internal.IgnoredClassesDiscoveryExtension
 org.jglue.cdiunit.internal.CdiDiscoveryExtension
 org.jglue.cdiunit.internal.CdiUnitDiscoveryExtension

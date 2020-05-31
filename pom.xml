@@ -34,16 +34,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- Note that Weld 1/2 tests also require -Dweld.test.1or2 to disable the weld.test.3plus profile -->
-		<!--<weld.test.version>1.1.14.Final</weld.test.version>-->
-		<!--<weld.test.version>2.1.0.Final</weld.test.version>-->
-		<!--<weld.test.version>2.2.0.Final</weld.test.version>-->
-		<!--<weld.test.version>2.4.2.SP1</weld.test.version>-->
-		<!--<weld.test.version>3.0.0.Final</weld.test.version>-->
-		<weld.test.version>3.0.4.Final</weld.test.version>
-
-		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
-		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
+		<!-- The version of the DeltaSpike to compile against -->
+		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
 
 		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
 		<pushChanges>false</pushChanges>
@@ -62,6 +54,7 @@
 	<modules>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests-external-dependency</module>
+		<module>cdi-unit-tests-parent</module>
 		<module>cdi-unit-tests</module>
 		<module>cdi-unit-tests-bare</module>
 		<module>cdi-unit-tests-mockito</module>
@@ -69,6 +62,7 @@
 		<!--<module>cdi-unit-tests-gradle</module>  Disabled because of mojo error-->
 		<module>cdi-unit-tests-jandex</module>
 		<module>cdi-unit-tests-testng</module>
+		<module>cdi-unit-tests-deltaspike</module>
 	</modules>
 	<build>
 		<pluginManagement>
@@ -137,17 +131,6 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>weld.test.3plus</id>
-			<activation>
-				<property>
-					<name>!weld.test.1or2</name>
-				</property>
-			</activation>
-			<properties>
-				<weld-se-shaded.artifact>weld-se-shaded</weld-se-shaded.artifact>
-			</properties>
-		</profile>
-		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
@@ -187,12 +170,6 @@
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
 				<version>4.8.75</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jglue.cdi-unit</groupId>
-				<artifactId>cdi-unit</artifactId>
-				<version>${project.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

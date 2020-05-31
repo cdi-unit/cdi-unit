@@ -1,18 +1,5 @@
 package org.jglue.cdiunit;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
@@ -24,6 +11,20 @@ import org.jglue.cdiunit.internal.Weld11TestUrlDeployment;
 import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionTarget;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
 public class NgCdiRunner {
@@ -119,13 +120,15 @@ public class NgCdiRunner {
 	}
 
 	private <T> T getInstance(final Class<T> type) {
-		final Instance<T> instance = container.getBeanManager()
-			.createInstance()
-			.select(type);
-		if (instance.isUnsatisfied()) {
+		final BeanManager beanManager = container.getBeanManager();
+		final Iterator<Bean<?>> beanIterator = beanManager.getBeans(type).iterator();
+		if (!beanIterator.hasNext()) {
 			throw new IllegalStateException(String.format("Can not obtain instance of %s from bean manager", type));
 		}
-		return instance.get();
+		final Bean<?> bean = beanIterator.next();
+		final CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
+		final Object reference = beanManager.getReference(bean, type, creationalContext);
+		return type.cast(reference);
 	}
 
 	/**

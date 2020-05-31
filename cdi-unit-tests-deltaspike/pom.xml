@@ -11,9 +11,9 @@
 		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-tests-testng</artifactId>
+	<artifactId>cdi-unit-tests-deltaspike</artifactId>
 
-	<name>CDI-Unit-Tests-TestNG</name>
+	<name>CDI-Unit-Tests-DeltaSpike</name>
 	<url>http://jglue.org/cdi-unit</url>
 	<description>CDI-Unit test suite.</description>
 
@@ -24,9 +24,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.14.3</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -52,10 +61,56 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.modules</groupId>
+			<artifactId>deltaspike-data-module-impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.modules</groupId>
+			<artifactId>deltaspike-jpa-module-impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.3.6.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.197</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<configuration>
+							<rules>
+								<dependencyConvergence/>
+								<requireUpperBoundDeps/>
+							</rules>
+						</configuration>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -64,22 +119,18 @@
 					<properties>
 						<property>
 							<name>junit</name>
-							<value>false</value>
-						</property>
-						<property>
-							<name>surefire.testng.verbose</name>
-							<value>10</value>
+							<value>true</value>
 						</property>
 					</properties>
 					<systemProperties>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
 					</systemProperties>
-					<junitArtifactName>none:none</junitArtifactName>
+					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
-						<artifactId>surefire-testng</artifactId>
+						<artifactId>surefire-junit47</artifactId>
 						<version>3.0.0-M4</version>
 					</dependency>
 				</dependencies>

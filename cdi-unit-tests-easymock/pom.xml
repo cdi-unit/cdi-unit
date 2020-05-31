@@ -4,9 +4,9 @@
 	<packaging>jar</packaging>
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-tests-parent</artifactId>
 		<version>4.1.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-EasyMock</name>
 	<url>http://jglue.org/cdi-unit</url>
@@ -28,10 +28,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.jglue.cdi-unit</groupId>
-			<artifactId>cdi-unit</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>${weld-se-shaded.artifact}</artifactId>
 			<version>${weld.test.version}</version>
@@ -50,15 +46,5 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+
 </project>
