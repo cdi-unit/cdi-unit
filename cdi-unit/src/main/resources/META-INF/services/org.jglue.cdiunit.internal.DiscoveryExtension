@@ -9,3 +9,4 @@ org.jglue.cdiunit.internal.deltaspike.DeltaspikeProxyDiscoveryExtension
 org.jglue.cdiunit.internal.IgnoredClassesDiscoveryExtension
 org.jglue.cdiunit.internal.CdiDiscoveryExtension
 org.jglue.cdiunit.internal.CdiUnitDiscoveryExtension
+org.jglue.cdiunit.internal.junit.InvalidRuleFieldUsageDiscoveryExtension
