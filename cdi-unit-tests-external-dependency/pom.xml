@@ -11,11 +11,6 @@
 	<name>CDI-Unit-Tests-ExternalDependency</name>
 	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
-	<developers>
-		<developer>
-			<name>Bryn Cooke</name>
-		</developer>
-	</developers>
 
 	<licenses>
 		<license>

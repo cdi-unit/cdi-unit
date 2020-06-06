@@ -13,11 +13,6 @@
 	<name>CDI-Unit</name>
 	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>JUnit runner for testing CDI based projects.</description>
-	<developers>
-		<developer>
-			<name>Bryn Cooke</name>
-		</developer>
-	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
