@@ -159,9 +159,9 @@
 		</profile>
 	</profiles>
 	<scm>
-		<connection>scm:git:ssh://git@github.com/BrynCooke/cdi-unit.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/BrynCooke/cdi-unit.git</developerConnection>
-		<url>https://github.com/BrynCooke/cdi-unit</url>
+		<connection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</developerConnection>
+		<url>https://github.com/cdi-unit/cdi-unit</url>
 	</scm>
 
 	<dependencyManagement>
