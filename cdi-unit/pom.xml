@@ -11,7 +11,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit</name>
-	<url>http://jglue.org/cdi-unit</url>
+	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>JUnit runner for testing CDI based projects.</description>
 	<developers>
 		<developer>
