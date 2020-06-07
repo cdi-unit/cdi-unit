@@ -9,22 +9,8 @@
 		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-Bare</name>
-	<url>http://jglue.org/cdi-unit</url>
+	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
-	<developers>
-		<developer>
-			<name>Bryn Cooke</name>
-		</developer>
-	</developers>
-
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
 
 	<dependencies>
 

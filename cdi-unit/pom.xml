@@ -11,25 +11,8 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit</name>
-	<url>http://jglue.org/cdi-unit</url>
+	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>JUnit runner for testing CDI based projects.</description>
-	<developers>
-		<developer>
-			<name>Bryn Cooke</name>
-		</developer>
-	</developers>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
 
 	<dependencies>
 		<dependency>

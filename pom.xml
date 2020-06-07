@@ -11,7 +11,7 @@
 		<version>7</version>
 	</parent>
 	<name>CDI-Unit-Parent</name>
-	<url>http://jglue.org/cdi-unit</url>
+	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>JUnit runner for testing CDI based projects.</description>
 	<developers>
 		<developer>
@@ -70,52 +70,48 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.2</version>
+					<version>3.0.0-M1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>3.0.0-M1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
 
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<reportPlugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-project-info-reports-plugin</artifactId>
-							<version>2.4</version>
-							<configuration>
-								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-							</configuration>
-							<!-- simpler configuration without reportSets available for usual
-								cases -->
-							<reports>
-								<report>dependencies</report>
-								<report>scm</report>
-							</reports>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.8</version>
-							<configuration>
-								<show>public</show>
-								<excludePackageNames>*.internal.*</excludePackageNames>
-							</configuration>
-						</plugin>
-					</reportPlugins>
 				</configuration>
 			</plugin>
 
@@ -129,6 +125,28 @@
 
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<configuration>
+					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<show>public</show>
+					<excludePackageNames>*.internal.*</excludePackageNames>
+					<doclint>all,-html</doclint>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<profiles>
 		<profile>
 			<id>release-sign-artifacts</id>
@@ -143,7 +161,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -159,9 +176,9 @@
 		</profile>
 	</profiles>
 	<scm>
-		<connection>scm:git:ssh://git@github.com/BrynCooke/cdi-unit.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/BrynCooke/cdi-unit.git</developerConnection>
-		<url>https://github.com/BrynCooke/cdi-unit</url>
+		<connection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</developerConnection>
+		<url>https://github.com/cdi-unit/cdi-unit</url>
 	</scm>
 
 	<dependencyManagement>
