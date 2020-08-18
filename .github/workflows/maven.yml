@@ -20,9 +20,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Download Dependencies
+        run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
       - name: Build with Maven
-        run:
-          - ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
-          - ./travisci/build.sh
+        run: ./travisci/build.sh
       - name: Test Weld 3.x
         run: ./travisci/test-weld.sh weld-v3.1.sh
