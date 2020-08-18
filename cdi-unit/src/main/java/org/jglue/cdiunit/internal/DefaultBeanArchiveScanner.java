@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -71,6 +72,9 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 
 	private static Set<URL> getEntriesFromManifestClasspath(URL url)
 		throws IOException {
+		if (!"file".equals(url.getProtocol())) {
+			return Collections.emptySet();
+		}
 		Set<URL> manifestURLs = new HashSet<>();
 		// If this is a surefire manifest-only jar we need to get the original classpath.
 		// When testing cdi-unit-tests through Maven, this finds extra entries compared to FCS:
