@@ -1,5 +1,8 @@
 package org.jglue.cdiunit.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,14 +10,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 
@@ -72,9 +72,6 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 
 	private static Set<URL> getEntriesFromManifestClasspath(URL url)
 		throws IOException {
-		if (!"file".equals(url.getProtocol())) {
-			return Collections.emptySet();
-		}
 		Set<URL> manifestURLs = new HashSet<>();
 		// If this is a surefire manifest-only jar we need to get the original classpath.
 		// When testing cdi-unit-tests through Maven, this finds extra entries compared to FCS:

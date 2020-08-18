@@ -73,6 +73,7 @@ public class CachingClassGraphScanner implements ClasspathScanner {
 	private List<URL> computeClasspathUrls() {
 		try (ScanResult scan = new ClassGraph()
 				.disableNestedJarScanning()
+				.disableModuleScanning()
 				.scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
 			return scan.getClasspathURLs();
 		}
