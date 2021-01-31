@@ -1,4 +1,4 @@
-name: Build and Test with Zulu JDK
+name: Build and Test with Adopt Open JDK
 
 on:
   push:
