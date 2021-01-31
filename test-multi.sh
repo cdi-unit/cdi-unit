@@ -1,7 +1,5 @@
 #!/bin/bash -ex
 
-# Refer to .travis.yml for good combinations to test
-
 mvn clean install -Dweld.test.version=3.0.0.Final
 mvn verify -pl \!cdi-unit -Dweld.test.version=2.4.2.Final -Dweld.test.1or2
 mvn verify -pl \!cdi-unit -Dweld.test.version=2.4.0.Final -Dweld.test.1or2
