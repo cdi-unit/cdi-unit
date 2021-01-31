@@ -17,21 +17,22 @@ jobs:
         with:
           java-version: 8
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/org/jglue/cdi-unit/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Download Dependencies
         run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
       - name: Build with Maven
         run: ./travisci/build.sh
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
 
   test:
     needs: build
@@ -57,6 +58,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
 
       - name: Test Weld ${{ matrix.weld }}
         run: ./travisci/test-weld.sh weld-${{ matrix.weld }}.sh
