@@ -1,0 +1,104 @@
+name: Build and Test with Zulu JDK
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: 8
+
+      - name: Download Dependencies
+        run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+
+      - name: Build with Maven
+        run: ./travisci/build.sh
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+
+  test-weld:
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: [8, 11]
+        weld:
+          - v1.1
+          - v2.0
+          - v2.1
+          - v2.2
+          - v2.3
+          - v2.4
+          - v3.0
+          - v3.1
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+
+      - name: Test Weld ${{ matrix.weld }}
+        run: ./travisci/test-weld.sh weld-${{ matrix.weld }}.sh
+
+  test-deltaspike:
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: [8, 11]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+
+      - name: Test DeltaSpike
+        run: ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
