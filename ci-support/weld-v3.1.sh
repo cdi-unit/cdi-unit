@@ -3,6 +3,8 @@
 # Current strategy is, for each supported minor version of Weld, to test one early point release plus
 # the most recent point release, plus some point releases which caused problems.
 WELD_VERSIONS=(
-  "1.1.16.Final"
-  "1.1.14.Final"
+  "3.1.6.Final"
+  "3.1.5.Final"
+  "3.1.4.Final"
+  "3.1.0.Final"
 )

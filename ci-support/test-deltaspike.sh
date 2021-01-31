@@ -13,7 +13,7 @@ else
 fi
 
 for DELTASPIKE_VERSION in ${DELTASPIKE_VERSIONS[*]}; do
-  "$BASE_DIR/hide-logs.sh" ./mvnw -V test \
+  "$BASE_DIR/hide-logs.sh" ./mvnw -V -B test \
     --projects cdi-unit-tests-parent,cdi-unit-tests-external-dependency \
     --also-make-dependents \
     -Ddeltaspike.test.version="$DELTASPIKE_VERSION" "$@"
