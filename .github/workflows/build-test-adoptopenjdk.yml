@@ -17,6 +17,15 @@ jobs:
         with:
           java-version: 8
 
+      - uses: s4u/maven-settings-action@v2.3.0
+        with:
+          mirrors: '[{
+            "id": "google-maven-central",
+            "name": "GCS Maven Central mirror EU",
+            "mirrorOf": "central",
+            "url": "https://maven-central-eu.storage-download.googleapis.com/maven2/"
+          }]'
+
       - name: Download Dependencies
         run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
@@ -70,6 +79,15 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
 
+      - uses: s4u/maven-settings-action@v2.3.0
+        with:
+          mirrors: '[{
+            "id": "google-maven-central",
+            "name": "GCS Maven Central mirror EU",
+            "mirrorOf": "central",
+            "url": "https://maven-central-eu.storage-download.googleapis.com/maven2/"
+          }]'
+
       - name: Test Weld ${{ matrix.weld }}
         run: ./travisci/test-weld.sh weld-${{ matrix.weld }}.sh
 
@@ -99,6 +117,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
+
+      - uses: s4u/maven-settings-action@v2.3.0
+        with:
+          mirrors: '[{
+            "id": "google-maven-central",
+            "name": "GCS Maven Central mirror EU",
+            "mirrorOf": "central",
+            "url": "https://maven-central-eu.storage-download.googleapis.com/maven2/"
+          }]'
 
       - name: Test DeltaSpike
         run: ./travisci/test-deltaspike.sh deltaspike-v1.x.sh
