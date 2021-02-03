@@ -17,16 +17,20 @@ import java.lang.reflect.Type;
 
 /**
  * Discover standard CDI features:
+ * <ul>
  * <li>extensions</li>
  * <li>interceptors</li>
  * <li>decorators</li>
  * <li>alternative stereotypes</li>
+ * </ul>
  * <p>
  * Also discoverField types related to the members annotated with:
+ * <ul>
  * <li>Inject</li>
  * <li>Produces</li>
  * <li>Provider</li>
  * <li>Instance</li>
+ * </ul>
  */
 public class CdiDiscoveryExtension implements DiscoveryExtension {
 
