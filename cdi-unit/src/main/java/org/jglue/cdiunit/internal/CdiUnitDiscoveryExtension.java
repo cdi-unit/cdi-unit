@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
 
 /**
  * Discover CDI Unit features:
+ * <ul>
  * <li>{@link AdditionalClasspaths}</li>
  * <li>{@link AdditionalPackages}</li>
  * <li>{@link AdditionalClasses}</li>
  * <li>{@link ActivatedAlternatives}</li>
  * <li>meta annotations</li>
+ * </ul>
  */
 public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
 

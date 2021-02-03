@@ -141,7 +141,7 @@
 				<configuration>
 					<show>public</show>
 					<excludePackageNames>*.internal.*</excludePackageNames>
-					<doclint>all,-html</doclint>
+					<doclint>all</doclint>
 				</configuration>
 			</plugin>
 		</plugins>
