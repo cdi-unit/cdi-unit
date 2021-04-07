@@ -23,19 +23,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<version>1.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.deltaspike.core</groupId>
-			<artifactId>deltaspike-core-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
-		</dependency>
-	</dependencies>
 
 </project>
