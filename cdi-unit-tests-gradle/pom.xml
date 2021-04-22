@@ -32,7 +32,7 @@
 			<plugin>
 				<groupId>org.fortasoft</groupId>
 				<artifactId>gradle-maven-plugin</artifactId>
-				<version>1.0.5</version>
+				<version>1.0.8</version>
 				<configuration>
 					<gradleVersion>1.11</gradleVersion>
 					<tasks>
