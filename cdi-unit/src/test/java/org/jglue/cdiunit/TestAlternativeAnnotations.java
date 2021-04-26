@@ -15,7 +15,7 @@
  */
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import junit.framework.Assert;
 
@@ -29,17 +29,17 @@ public class TestAlternativeAnnotations {
 
 	@Inject
 	private AImplementation1 impl1;
-	
+
 	@Inject
 	private AImplementation2 impl2;
-	
+
 	@Inject
 	private AInterface impl;
-	
+
 	@Test
 	public void testAlternativeSelected() {
 
 		Assert.assertTrue("Should have been impl2", impl instanceof AImplementation2);
 	}
-	
+
 }

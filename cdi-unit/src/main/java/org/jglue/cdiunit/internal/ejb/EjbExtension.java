@@ -16,20 +16,20 @@
 package org.jglue.cdiunit.internal.ejb;
 
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedMethod;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.AnnotatedField;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Inject;
 
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 import org.jglue.cdiunit.internal.ejb.EJbName.EJbNameLiteral;
@@ -41,8 +41,8 @@ public class EjbExtension implements Extension {
 
 		boolean modified = false;
 		AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType);
-		
+		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(new javax2.enterprise.inject.spi.AnnotatedType.Impl<>(annotatedType));
+
 
 		Stateless stateless = annotatedType.getAnnotation(Stateless.class);
 
@@ -52,7 +52,7 @@ public class EjbExtension implements Extension {
 		}
 
 		Stateful stateful = annotatedType.getAnnotation(Stateful.class);
-		
+
 		if (stateful != null) {
 			processClass(builder, stateful.name());
 			modified = true;
@@ -67,7 +67,8 @@ public class EjbExtension implements Extension {
 			// EJB 3.0
 		}
 
-		for (AnnotatedMethod<? super T> method : annotatedType.getMethods()) {
+		for (AnnotatedMethod<? super T> m : annotatedType.getMethods()) {
+			javax2.enterprise.inject.spi.AnnotatedMethod<? super T> method = new javax2.enterprise.inject.spi.AnnotatedMethod.Impl<>(m);
 			EJB ejb = method.getAnnotation(EJB.class);
 			if (ejb != null) {
 				builder.addToMethod(method, EJbQualifierLiteral.INSTANCE);
@@ -82,21 +83,22 @@ public class EjbExtension implements Extension {
 		}
 
 		for (AnnotatedField<? super T> field : annotatedType.getFields()) {
+			javax2.enterprise.inject.spi.AnnotatedField.Impl<? super T> javaxField = new javax2.enterprise.inject.spi.AnnotatedField.Impl<>(field);
 			EJB ejb = field.getAnnotation(EJB.class);
 			if (ejb != null) {
 				modified = true;
 				Produces produces = field.getAnnotation(Produces.class);
 				if (produces == null) {
-					builder.addToField(field, new AnnotationLiteral<Inject>(){private static final long serialVersionUID = 1L;});
+					builder.addToField(javaxField, new AnnotationLiteral<Inject>(){private static final long serialVersionUID = 1L;});
 				}
-				
-				builder.removeFromField(field, EJB.class);
-				builder.addToField(field, EJbQualifierLiteral.INSTANCE);
+
+				builder.removeFromField(javaxField, EJB.class);
+				builder.addToField(javaxField, EJbQualifierLiteral.INSTANCE);
 				if (!ejb.beanName().isEmpty()) {
-					builder.addToField(field,new EJbNameLiteral(ejb.beanName()));
+					builder.addToField(javaxField,new EJbNameLiteral(ejb.beanName()));
 				} else {
-					builder.addToField(field, DefaultLiteral.INSTANCE);
-				}	
+					builder.addToField(javaxField, DefaultLiteral.INSTANCE);
+				}
 			}
 		}
 		if (modified) {
@@ -104,7 +106,7 @@ public class EjbExtension implements Extension {
 		}
 	}
 
-	
+
 	private static <T> void processClass(AnnotatedTypeBuilder<T> builder, String name ) {
 		builder.addToClass(new AnnotationLiteral<ApplicationScoped>(){private static final long serialVersionUID = 1L;});
 		builder.addToClass(EJbQualifierLiteral.INSTANCE);

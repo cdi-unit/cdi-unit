@@ -24,9 +24,9 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.inject.Inject;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 @CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
@@ -78,6 +78,11 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 
 	public int getContentLength() {
 		return delegate.getContentLength();
+	}
+
+	@Override
+	public long getContentLengthLong() {
+		return delegate.getContentLengthLong();
 	}
 
 	public String getContentType() {
@@ -246,6 +251,11 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 		return getSession(true);
 	}
 
+	@Override
+	public String changeSessionId() {
+		return delegate.changeSessionId();
+	}
+
 	public int getLocalPort() {
 		return delegate.getLocalPort();
 	}
@@ -298,6 +308,11 @@ public class LifecycleAwareRequest implements HttpServletRequest {
 
 	public Part getPart(String name) throws IOException, ServletException {
 		return delegate.getPart(name);
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+		return delegate.upgrade(handlerClass);
 	}
 
 	public boolean isAsyncSupported() {

@@ -5,9 +5,9 @@
  */
 package org.jglue.cdiunit.internal.servlet;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.http.HttpSessionEvent;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletRequestEvent;
+import jakarta.servlet.http.HttpSessionEvent;
 
 /**
  * Enables us to inject initial listener. This interface has all the same methods as

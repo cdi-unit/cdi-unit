@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.cdiunit.NonTestClass;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 

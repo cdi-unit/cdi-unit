@@ -18,7 +18,9 @@ package org.jglue.cdiunit.internal.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletInputStream;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 /**
  * Mock implementation of <code>ServletInputStream</code>.
@@ -26,14 +28,29 @@ import javax.servlet.ServletInputStream;
 public class MockServletInputStream extends ServletInputStream
 {
     private ByteArrayInputStream stream;
-    
+
     public MockServletInputStream(byte[] data)
     {
         stream = new ByteArrayInputStream(data);
     }
-        
+
     public int read() throws IOException
     {
         return stream.read();
     }
+
+	@Override
+	public boolean isFinished() {
+		return true;
+	}
+
+	@Override
+	public boolean isReady() {
+		return true;
+	}
+
+	@Override
+	public void setReadListener(ReadListener readListener) {
+		throw new UnsupportedOperationException();
+	}
 }

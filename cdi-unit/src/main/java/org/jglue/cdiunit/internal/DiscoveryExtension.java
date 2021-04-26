@@ -1,6 +1,6 @@
 package org.jglue.cdiunit.internal;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

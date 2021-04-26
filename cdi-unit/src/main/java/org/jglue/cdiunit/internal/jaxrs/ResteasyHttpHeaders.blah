@@ -1,0 +1,291 @@
+package org.jglue.cdiunit.internal.jaxrs;
+
+import java.io.Serializable;
+import java.util.*;
+
+import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import org.jboss.resteasy.resteasy_jaxrs.i18n.Messages;
+import org.jboss.resteasy.spi.LoggableFailure;
+import org.jboss.resteasy.util.DateUtil;
+import org.jboss.resteasy.util.MediaTypeHelper;
+import org.jboss.resteasy.util.WeightedLanguage;
+
+/**
+ *
+ */
+public class ResteasyHttpHeaders implements HttpHeaders {
+
+	private final MultivaluedMap<String, String> requestHeaders;
+	private final Map<String, Cookie> cookies;
+	private String cachedMediaTypeString;
+	private MediaType cachedMediaType;
+
+	public ResteasyHttpHeaders(MultivaluedMap<String, String> requestHeaders, Map<String, Cookie> cookies) {
+		this.requestHeaders = requestHeaders;
+		this.cookies = cookies;
+	}
+
+	@Override
+	public List<String> getRequestHeader(String s) {
+		return requestHeaders.get(s);
+	}
+
+	@Override
+	public String getHeaderString(String s) {
+		return requestHeaders.getFirst(s);
+	}
+
+	@Override
+	public MultivaluedMap<String, String> getRequestHeaders() {
+		return requestHeaders;
+	}
+
+	@Override
+	public List<MediaType> getAcceptableMediaTypes() {
+		String accepts = this.getHeaderString("Accept");
+		List<MediaType> list = new ArrayList<>();
+		if (accepts == null) {
+			list.add(MediaType.WILDCARD_TYPE);
+		} else {
+			StringTokenizer tokenizer = new StringTokenizer(accepts, ",");
+
+			while(tokenizer.hasMoreElements()) {
+				String item = tokenizer.nextToken().trim();
+				list.add(MediaType.valueOf(item));
+			}
+
+			Collections.sort(list, new SortByWeightComparator());
+		}
+
+		return Collections.unmodifiableList(list);
+	}
+
+	@Override
+	public List<Locale> getAcceptableLanguages() {
+		String accepts = this.getHeaderString("Accept-Language");
+		if (accepts == null) {
+			return Collections.emptyList();
+		} else {
+			List<Locale> list = new ArrayList();
+			List<WeightedLanguage> languages = new ArrayList();
+			StringTokenizer tokenizer = new StringTokenizer(accepts, ",");
+
+			while(tokenizer.hasMoreElements()) {
+				String item = tokenizer.nextToken().trim();
+				languages.add(WeightedLanguage.parse(item));
+			}
+
+			Collections.sort(languages);
+			Iterator var7 = languages.iterator();
+
+			while(var7.hasNext()) {
+				WeightedLanguage language = (WeightedLanguage)var7.next();
+				list.add(language.getLocale());
+			}
+
+			return Collections.unmodifiableList(list);
+		}
+	}
+
+	@Override
+	public MediaType getMediaType() {
+		String obj = this.requestHeaders.getFirst("Content-Type");
+		if (obj == null) {
+			return null;
+		} else if (obj == this.cachedMediaTypeString) {
+			return this.cachedMediaType;
+		} else {
+			this.cachedMediaTypeString = obj;
+			this.cachedMediaType = MediaType.valueOf(obj);
+			return this.cachedMediaType;
+		}
+	}
+
+	@Override
+	public Locale getLanguage() {
+		String obj = this.requestHeaders.getFirst("Content-Language");
+		return obj == null ? null : new Locale(obj);
+	}
+
+	@Override
+	public Map<String, Cookie> getCookies() {
+		this.mergeCookies();
+		return Collections.unmodifiableMap(this.cookies);
+	}
+
+	private void mergeCookies() {
+		List<String> cookieHeader = (List)this.requestHeaders.get("Cookie");
+		if (cookieHeader != null && !cookieHeader.isEmpty()) {
+			Iterator var2 = cookieHeader.iterator();
+
+			while(var2.hasNext()) {
+				String s = (String)var2.next();
+				List<Cookie> list = parseCookies(s);
+				Iterator<Cookie> itor = list.iterator();
+
+				while(itor.hasNext()) {
+					Cookie cookie = itor.next();
+					this.cookies.put(cookie.getName(), cookie);
+				}
+			}
+		}
+	}
+
+	private List<Cookie> parseCookies(String cookieHeader) {
+		if (cookieHeader == null) {
+			throw new IllegalArgumentException(Messages.MESSAGES.cookieHeaderValueNull());
+		} else {
+			try {
+				List<Cookie> cookies = new ArrayList<>();
+				int version = 0;
+				String domain = null;
+				String path = null;
+				String cookieName = null;
+				String cookieValue = null;
+				String[] parts = cookieHeader.split("[;,]");
+				String[] var8 = parts;
+				int var9 = parts.length;
+
+				for(int var10 = 0; var10 < var9; ++var10) {
+					String part = var8[var10];
+					String[] nv = part.split("=", 2);
+					String name = nv.length > 0 ? nv[0].trim() : "";
+					String value = nv.length > 1 ? nv[1].trim() : "";
+					if (value.startsWith("\"") && value.endsWith("\"") && value.length() > 1) {
+						value = value.substring(1, value.length() - 1);
+					}
+
+					if (!name.startsWith("$")) {
+						if (cookieName != null) {
+							cookies.add(new Cookie(cookieName, cookieValue, path, domain, version));
+							domain = null;
+							path = null;
+						}
+
+						cookieName = name;
+						cookieValue = value;
+					} else if (name.equalsIgnoreCase("$Version")) {
+						version = Integer.parseInt(value);
+					} else if (name.equalsIgnoreCase("$Path")) {
+						path = value;
+					} else if (name.equalsIgnoreCase("$Domain")) {
+						domain = value;
+					}
+				}
+
+				if (cookieName != null) {
+					cookies.add(new Cookie(cookieName, cookieValue, path, domain, version));
+				}
+
+				return cookies;
+			} catch (Exception var15) {
+				throw new IllegalArgumentException(Messages.MESSAGES.failedToParseCookie(cookieHeader), var15);
+			}
+		}
+	}
+
+	@Override
+	public Date getDate() {
+		String date = this.requestHeaders.getFirst("Date");
+		return date == null ? null : DateUtil.parseDate(date);
+	}
+
+	@Override
+	public int getLength() {
+		String obj = this.requestHeaders.getFirst("Content-Length");
+		return obj == null ? -1 : Integer.parseInt(obj);
+	}
+
+	private static class SortByWeightComparator implements Comparator<MediaType>, Serializable {
+		private static final long serialVersionUID = -5828700121582498092L;
+
+		private SortByWeightComparator() {
+		}
+
+		public int compare(MediaType mediaType2, MediaType mediaType) {
+			float q = getQWithParamInfo(mediaType);
+			boolean wasQ = q != 2.0F;
+			if (q == 2.0F) {
+				q = 1.0F;
+			}
+
+			float q2 = getQWithParamInfo(mediaType2);
+			boolean wasQ2 = q2 != 2.0F;
+			if (q2 == 2.0F) {
+				q2 = 1.0F;
+			}
+
+			if (q < q2) {
+				return -1;
+			} else if (q > q2) {
+				return 1;
+			} else if (mediaType.isWildcardType() && !mediaType2.isWildcardType()) {
+				return -1;
+			} else if (!mediaType.isWildcardType() && mediaType2.isWildcardType()) {
+				return 1;
+			} else if (mediaType.isWildcardSubtype() && !mediaType2.isWildcardSubtype()) {
+				return -1;
+			} else if (!mediaType.isWildcardSubtype() && mediaType2.isWildcardSubtype()) {
+				return 1;
+			} else if (MediaTypeHelper.isComposite(mediaType.getSubtype()) && !MediaTypeHelper.isComposite(mediaType2.getSubtype())) {
+				return -1;
+			} else if (!MediaTypeHelper.isComposite(mediaType.getSubtype()) && MediaTypeHelper.isComposite(mediaType2.getSubtype())) {
+				return 1;
+			} else if (MediaTypeHelper.isCompositeWildcardSubtype(mediaType.getSubtype()) && !MediaTypeHelper.isCompositeWildcardSubtype(mediaType2.getSubtype())) {
+				return -1;
+			} else if (!MediaTypeHelper.isCompositeWildcardSubtype(mediaType.getSubtype()) && MediaTypeHelper.isCompositeWildcardSubtype(mediaType2.getSubtype())) {
+				return 1;
+			} else if (MediaTypeHelper.isWildcardCompositeSubtype(mediaType.getSubtype()) && !MediaTypeHelper.isWildcardCompositeSubtype(mediaType2.getSubtype())) {
+				return -1;
+			} else if (!MediaTypeHelper.isWildcardCompositeSubtype(mediaType.getSubtype()) && MediaTypeHelper.isWildcardCompositeSubtype(mediaType2.getSubtype())) {
+				return 1;
+			} else {
+				int numNonQ = 0;
+				if (mediaType.getParameters() != null) {
+					numNonQ = mediaType.getParameters().size();
+					if (wasQ) {
+						--numNonQ;
+					}
+				}
+
+				int numNonQ2 = 0;
+				if (mediaType2.getParameters() != null) {
+					numNonQ2 = mediaType2.getParameters().size();
+					if (wasQ2) {
+						--numNonQ2;
+					}
+				}
+
+				if (numNonQ < numNonQ2) {
+					return -1;
+				} else {
+					return numNonQ > numNonQ2 ? 1 : 0;
+				}
+			}
+		}
+
+		public static float getQWithParamInfo(MediaType type) {
+			if (type.getParameters() != null) {
+				String val = type.getParameters().get("q");
+
+				try {
+					if (val != null) {
+						float rtn = Float.valueOf(val);
+						if (rtn > 1.0F) {
+							throw new LoggableFailure(Messages.MESSAGES.mediaTypeQGreaterThan1(type.toString()), 400);
+						}
+
+						return rtn;
+					}
+				} catch (NumberFormatException var3) {
+					throw new RuntimeException(String.format("MediaType q parameter must be a float: %s", type), var3);
+				}
+			}
+
+			return 2.0F;
+		}
+	}
+}

@@ -1,6 +1,6 @@
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class TestCdiRunner {
 
 	@Inject
 	private NonTestClass nonTestClass;
-	
+
     @Inject
     AInterface a;
 

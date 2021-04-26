@@ -15,12 +15,12 @@
  */
 package org.jglue.cdiunit.internal.servlet;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.AsyncListener;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.AsyncListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 public class AsyncContextImpl implements AsyncContext {
 
@@ -50,44 +50,44 @@ public class AsyncContextImpl implements AsyncContext {
 	@Override
 	public void dispatch() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispatch(String path) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispatch(ServletContext context, String path) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void complete() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void start(Runnable run) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addListener(AsyncListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addListener(AsyncListener listener,
 			ServletRequest servletRequest, ServletResponse servletResponse) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class AsyncContextImpl implements AsyncContext {
 	@Override
 	public void setTimeout(long timeout) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

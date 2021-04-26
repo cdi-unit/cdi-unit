@@ -35,20 +35,25 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- The version of the DeltaSpike to compile against -->
-		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
+		<deltaspike.version.baseline>1.9.5</deltaspike.version.baseline>
 
 		<classgraph.version>4.8.104</classgraph.version>
 		<byte-buddy.version>1.11.0</byte-buddy.version>
 		<easymock.version>4.3</easymock.version>
+		<ejb-api.version>4.0.0</ejb-api.version>
 		<javassist.version>3.27.0-GA</javassist.version>
 		<junit4.version>4.13.2</junit4.version>
+		<faces-api.version>3.0.0</faces-api.version>
 		<h2.version>1.4.200</h2.version>
 		<hibernate-entitymanager.version>5.4.30.Final</hibernate-entitymanager.version>
 		<logback.version>1.2.3</logback.version>
 		<mockito-core.version>3.9.0</mockito-core.version>
-		<servlet-api.version>3.0.1</servlet-api.version>
+		<resteasy.version>4.6.0.Final</resteasy.version>
+		<servlet-api.version>5.0.0</servlet-api.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<testng.version>7.4.0</testng.version>
+		<weld.version>4.0.1.SP1</weld.version>
+		<ws.rs-api.version>3.0.0</ws.rs-api.version>
 
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 
@@ -220,6 +225,41 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.jboss.weld.se</groupId>
+				<artifactId>weld-se-core</artifactId>
+				<version>${weld.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.weld.module</groupId>
+				<artifactId>weld-web</artifactId>
+				<version>${weld.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.faces</groupId>
+				<artifactId>jakarta.faces-api</artifactId>
+				<version>${faces-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.ejb</groupId>
+				<artifactId>jakarta.ejb-api</artifactId>
+				<version>${ejb-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.ws.rs</groupId>
+				<artifactId>jakarta.ws.rs-api</artifactId>
+				<version>${ws.rs-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-core</artifactId>
+				<version>${resteasy.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
@@ -242,8 +282,8 @@
 				<version>${byte-buddy.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
+				<groupId>jakarta.servlet</groupId>
+				<artifactId>jakarta.servlet-api</artifactId>
 				<version>${servlet-api.version}</version>
 				<scope>provided</scope>
 			</dependency>

@@ -16,10 +16,10 @@
 
 package org.jglue.cdiunit.internal.jsf;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.BeanManager;;
+import jakarta.enterprise.inject.spi.Extension;
 
 /**
  *
@@ -27,7 +27,7 @@ import javax.enterprise.inject.spi.Extension;
  */
 public class ViewScopeExtension implements Extension{
     public ViewScopeExtension(){
-        
+
     }
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager){
         event.addContext(new ViewContext());

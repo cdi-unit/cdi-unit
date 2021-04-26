@@ -1,6 +1,6 @@
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import junit.framework.Assert;
 
@@ -13,18 +13,18 @@ import org.junit.runner.RunWith;
 public class TestAlternativeStereotype {
     @Inject
     private AImplementation1 impl1;
-    
+
     @Inject
     private AImplementation3 impl3;
-    
+
     @Inject
     private AInterface impl;
-    
+
     @Test
     public void testAlternativeSelected() {
 
         Assert.assertTrue("Should have been impl3", impl instanceof AImplementation3);
     }
 
-   
+
 }

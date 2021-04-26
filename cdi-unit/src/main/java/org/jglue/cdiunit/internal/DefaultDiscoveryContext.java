@@ -3,7 +3,7 @@ package org.jglue.cdiunit.internal;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

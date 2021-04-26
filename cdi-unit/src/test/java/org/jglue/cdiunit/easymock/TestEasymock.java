@@ -15,9 +15,9 @@
  */
 package org.jglue.cdiunit.easymock;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 import junit.framework.Assert;
 
@@ -33,10 +33,10 @@ public class TestEasymock {
 	@Mock
 	@Produces
 	private AInterface mockA;
-	
+
 	@Inject
 	private Provider<AInterface> a;
-	
+
 	@Test
 	public void testEasyMock() {
 		AInterface a1 = a.get();

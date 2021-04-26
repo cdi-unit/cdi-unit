@@ -2,8 +2,8 @@ package org.jglue.cdiunit.mockito;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 import org.jglue.cdiunit.CdiRunner;
 import org.jglue.cdiunit.ProducesAlternative;

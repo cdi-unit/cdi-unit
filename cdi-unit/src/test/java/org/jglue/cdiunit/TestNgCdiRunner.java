@@ -1,6 +1,6 @@
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

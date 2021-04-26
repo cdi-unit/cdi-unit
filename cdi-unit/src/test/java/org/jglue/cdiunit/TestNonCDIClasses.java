@@ -1,6 +1,6 @@
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;
@@ -12,14 +12,14 @@ import ch.qos.logback.core.filter.Filter;
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ThresholdFilter.class)
 public class TestNonCDIClasses {
-    
-    @Inject 
+
+    @Inject
     private Filter foo;
-    
+
     private ThresholdFilter bar;
-    
+
     @Test(expected=DeploymentException.class)
     public void testNonCDIClassDiscovery() {
-        
+
     }
 }

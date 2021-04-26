@@ -15,13 +15,13 @@
  */
 package org.jglue.cdiunit.internal.jaxrs;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AnnotatedField;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Inject;
 import javax.ws.rs.core.Context;
 
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
@@ -32,16 +32,17 @@ public class JaxRsExtension implements Extension {
 
 		boolean modified = false;
 		AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType);
+		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(new javax2.enterprise.inject.spi.AnnotatedType.Impl<>(annotatedType));
 
-		
+
 		for (AnnotatedField field : annotatedType.getFields()) {
+			javax2.enterprise.inject.spi.AnnotatedField.Impl javaxField = new javax2.enterprise.inject.spi.AnnotatedField.Impl<>(field);
 			Context context = field.getAnnotation(Context.class);
 			if (context != null) {
-				builder.addToField(field, new AnnotationLiteral<Inject>() {
+				builder.addToField(javaxField, new AnnotationLiteral<Inject>() {
 				});
-				
-				builder.addToField(field, new AnnotationLiteral<JaxRsQualifier>() {
+
+				builder.addToField(javaxField, new AnnotationLiteral<JaxRsQualifier>() {
 				});
 				modified = true;
 			}

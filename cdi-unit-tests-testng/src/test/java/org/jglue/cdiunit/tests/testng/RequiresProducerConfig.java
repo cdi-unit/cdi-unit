@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  */
 public class RequiresProducerConfig implements IInvokedMethodListener {
 
-	private final boolean supportsProducerFactory = ClassLookup.INSTANCE.isPresent("javax.enterprise.inject.spi.ProducerFactory");
+	private final boolean supportsProducerFactory = ClassLookup.INSTANCE.isPresent("jakarta.enterprise.inject.spi.ProducerFactory");
 
 	@Override
 	public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
