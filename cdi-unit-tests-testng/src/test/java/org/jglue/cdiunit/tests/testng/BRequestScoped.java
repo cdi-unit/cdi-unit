@@ -1,6 +1,6 @@
 package org.jglue.cdiunit.tests.testng;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 @RequestScoped
 public class BRequestScoped {

@@ -15,10 +15,10 @@
  */
 package org.jglue.cdiunit;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Produces;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.inject.Produces;
 
 import org.jglue.cdiunit.TestEjb.EJBSingleton;
 import org.jglue.cdiunit.TestEjb.EJBSingletonNamed;
@@ -48,13 +48,13 @@ public class TestEjb {
 
 	@EJB(beanName = "statelessNamed")
 	private EJBI injectStatelessNamed;
-	
+
 	@EJB(beanName = "TestEjb.EJBStateful")
 	private EJBI injectStateful;
 
 	@EJB(beanName = "statefulNamed")
 	private EJBI injectStatefulNamed;
-	
+
 	@EJB(beanName = "TestEjb.EJBSingleton")
 	private EJBI injectSingleton;
 

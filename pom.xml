@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jglue.cdi-unit</groupId>
 	<artifactId>cdi-unit-parent</artifactId>
-	<version>4.1.1-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -35,7 +35,27 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- The version of the DeltaSpike to compile against -->
-		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
+		<deltaspike.version.baseline>1.9.5</deltaspike.version.baseline>
+
+		<classgraph.version>4.8.104</classgraph.version>
+		<byte-buddy.version>1.11.0</byte-buddy.version>
+		<easymock.version>4.3</easymock.version>
+		<ejb-api.version>4.0.0</ejb-api.version>
+		<javassist.version>3.27.0-GA</javassist.version>
+		<junit4.version>4.13.2</junit4.version>
+		<faces-api.version>3.0.0</faces-api.version>
+		<h2.version>1.4.200</h2.version>
+		<hibernate-entitymanager.version>5.4.30.Final</hibernate-entitymanager.version>
+		<logback.version>1.2.3</logback.version>
+		<mockito-core.version>3.9.0</mockito-core.version>
+		<resteasy.version>4.6.0.Final</resteasy.version>
+		<servlet-api.version>5.0.0</servlet-api.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<testng.version>7.4.0</testng.version>
+		<weld.version>4.0.1.SP1</weld.version>
+		<ws.rs-api.version>3.0.0</ws.rs-api.version>
+
+		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 
 		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
 		<pushChanges>false</pushChanges>
@@ -101,6 +121,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -186,18 +211,104 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.75</version>
+				<version>${classgraph.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate-entitymanager.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.weld.se</groupId>
+				<artifactId>weld-se-core</artifactId>
+				<version>${weld.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.weld.module</groupId>
+				<artifactId>weld-web</artifactId>
+				<version>${weld.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.faces</groupId>
+				<artifactId>jakarta.faces-api</artifactId>
+				<version>${faces-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.ejb</groupId>
+				<artifactId>jakarta.ejb-api</artifactId>
+				<version>${ejb-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.ws.rs</groupId>
+				<artifactId>jakarta.ws.rs-api</artifactId>
+				<version>${ws.rs-api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-core</artifactId>
+				<version>${resteasy.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>${easymock.version}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.28.2</version>
+				<version>${mockito-core.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy</artifactId>
+				<version>${byte-buddy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.servlet</groupId>
+				<artifactId>jakarta.servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.13.1</version>
+				<version>${junit4.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>${testng.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

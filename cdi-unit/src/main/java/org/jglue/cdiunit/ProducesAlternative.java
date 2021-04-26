@@ -20,14 +20,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Stereotype;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Stereotype;
 
 /**
  * <code>&#064;ProducesAlternative</code> causes a produced variable or
  * method to act as an enabled alternative overriding any other suitable
  * injections.
- * 
+ *
  * <pre>
  * &#064;Produces
  * &#064;ProducesAlternative
@@ -35,7 +35,7 @@ import javax.enterprise.inject.Stereotype;
  * &#064;Mock
  * Engine engine;
  * </pre>
- * 
+ *
  * @author Bryn Cooke
  */
 @Stereotype

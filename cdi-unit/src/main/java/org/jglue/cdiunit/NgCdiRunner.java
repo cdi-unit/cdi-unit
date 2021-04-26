@@ -12,12 +12,12 @@ import org.jglue.cdiunit.internal.WeldTestUrlDeployment;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.context.Conversation;
+import jakarta.enterprise.context.spi.CreationalContext;
+import javax2.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanManager;;
+import jakarta.enterprise.inject.spi.InjectionTarget;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 

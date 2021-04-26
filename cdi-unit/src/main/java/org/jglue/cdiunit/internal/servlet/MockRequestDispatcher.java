@@ -17,10 +17,10 @@ package org.jglue.cdiunit.internal.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 public class MockRequestDispatcher implements RequestDispatcher {
 	private ServletRequest forwardedRequest;

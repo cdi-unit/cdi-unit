@@ -1,7 +1,7 @@
 package org.jglue.cdiunit;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;

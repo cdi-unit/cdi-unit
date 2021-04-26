@@ -7,7 +7,8 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>4.1.1-SNAPSHOT</version>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>cdi-unit-tests-parent</artifactId>
@@ -42,18 +43,11 @@
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.24.0-GA</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
 				<version>3.4.1.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>1.2.3</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
@@ -78,11 +72,6 @@
 				<artifactId>deltaspike-jpa-module-impl</artifactId>
 				<version>${deltaspike.test.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.25</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.spec.javax.annotation</groupId>
@@ -117,7 +106,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

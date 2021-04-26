@@ -34,22 +34,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.inject.Inject;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestAttributeEvent;
-import javax.servlet.ServletRequestAttributeListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
+import jakarta.inject.Inject;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletRequestAttributeEvent;
+import jakarta.servlet.ServletRequestAttributeListener;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.*;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 
@@ -226,9 +222,15 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		handleAttributeListenerCalls(key, value, oldValue);
 	}
 
+	@Override
+	public String changeSessionId() {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
 	public HttpSession getSession() {
 		return getSession(true);
 	}
+
 
 	public HttpSession getSession(boolean create) {
 		if (!create && !sessionCreated) {
@@ -533,6 +535,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		return (int) contentLength;
 	}
 
+	@Override
+	public long getContentLengthLong() {
+		return 0;
+	}
+
 	public void setContentLength(int contentLength) {
 		this.contentLength = contentLength;
 	}
@@ -765,6 +772,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	@Override
 	public Part getPart(String name) throws IOException, ServletException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
+		throw new java.lang.UnsupportedOperationException();
 	}
 
 

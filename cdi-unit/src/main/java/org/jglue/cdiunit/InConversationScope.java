@@ -21,11 +21,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.interceptor.InterceptorBinding;
+import jakarta.interceptor.InterceptorBinding;
 
 /**
  * Starts a conversation around the annotated method.
- * 
+ *
  * <pre>
  * &#064;Test
  * &#064;InConversationScope
@@ -39,14 +39,14 @@ import javax.interceptor.InterceptorBinding;
  * "http://download.oracle.com/javaee/1.3/api/javax/servlet/http/HttpServletRequest.html"
  * >HttpServletRequest</a> to your test e.g.
  * </p>
- * 
+ *
  * <pre>
  * &#064;Produces
  * HttpServletRequest getRequest() {
  * 	return new DummyHttpRequest();
  * }
  * </pre>
- * 
+ *
  * @author Bryn Cooke
  */
 @InterceptorBinding

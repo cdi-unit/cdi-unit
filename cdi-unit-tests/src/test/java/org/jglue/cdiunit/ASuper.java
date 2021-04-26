@@ -1,7 +1,7 @@
 package org.jglue.cdiunit;
 
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.spi.BeanManager;;
+import jakarta.inject.Inject;
 
 public class ASuper {
 	@Inject

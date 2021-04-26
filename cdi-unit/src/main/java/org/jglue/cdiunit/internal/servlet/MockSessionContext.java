@@ -18,8 +18,8 @@ package org.jglue.cdiunit.internal.servlet;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionContext;
 
 /**
  * Mock implementation of <code>HttpSessionContext</code>.
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSessionContext;
 public class MockSessionContext implements HttpSessionContext
 {
     public Enumeration getIds()
-    { 
+    {
         return new Vector().elements();
     }
 

@@ -1,7 +1,7 @@
 package org.jglue.cdiunit.internal.servlet;
 
 
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 import javassist.util.proxy.ProxyFactory;
 

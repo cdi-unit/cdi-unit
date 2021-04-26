@@ -1,7 +1,7 @@
 package org.jglue.cdiunit;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @ApplicationScoped
@@ -22,5 +22,5 @@ public class FApplicationScoped {
 	public int getCounter() {
 		return counter.incrementAndGet();
 	}
-	
+
 }

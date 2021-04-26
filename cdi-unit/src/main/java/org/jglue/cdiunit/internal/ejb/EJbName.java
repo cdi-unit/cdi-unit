@@ -20,8 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Qualifier;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Qualifier;
 
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,7 +33,7 @@ public @interface EJbName {
 
 		private static final long serialVersionUID = 6325669711688098239L;
 		private final String name;
-				
+
 		public EJbNameLiteral(String name) {
 			this.name = name;
 		}
@@ -47,6 +47,6 @@ public @interface EJbName {
 		public String toString() {
 			return "EJbQualifierLiteral [name=" + name + "]";
 		}
-		
+
 	}
 }

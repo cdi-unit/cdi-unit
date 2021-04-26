@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.jglue.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>4.1.1-SNAPSHOT</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit</name>
@@ -18,7 +18,6 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.24.0-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
@@ -27,15 +26,11 @@
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
-			<version>3.0.5.Final</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
 		<dependency>
 			<groupId>org.jboss.weld.module</groupId>
 			<artifactId>weld-web</artifactId>
-			<version>3.0.5.Final</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -45,7 +40,6 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.14.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -55,25 +49,18 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>4.0.1</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
@@ -87,22 +74,16 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.2.18</version>
-			<scope>provided</scope>
+			<groupId>jakarta.faces</groupId>
+			<artifactId>jakarta.faces-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.ejb</groupId>
-			<artifactId>javax.ejb-api</artifactId>
-			<version>3.2.2</version>
-			<scope>provided</scope>
+			<groupId>jakarta.ejb</groupId>
+			<artifactId>jakarta.ejb-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.1.1</version>
-			<scope>provided</scope>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
@@ -119,8 +100,6 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.3.6.Final</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
@@ -131,13 +110,10 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.197</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.6.2.Final</version>
+			<artifactId>resteasy-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -145,7 +121,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
 				<configuration>
 					<systemProperties>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>

@@ -24,16 +24,16 @@ import org.jglue.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.BeanManager;;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletRequestEvent;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
