@@ -59,7 +59,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M4</version>
+				<version>3.2.5</version>
 				<configuration>
 					<properties>
 						<property>
@@ -71,16 +71,21 @@
 							<value>10</value>
 						</property>
 					</properties>
-					<systemProperties>
+					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
-					</systemProperties>
+					</systemPropertyVariables>
 					<junitArtifactName>none:none</junitArtifactName>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-api</artifactId>
+						<version>3.2.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-testng</artifactId>
-						<version>3.0.0-M4</version>
+						<version>3.2.5</version>
 					</dependency>
 				</dependencies>
 			</plugin>
