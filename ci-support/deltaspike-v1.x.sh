@@ -2,8 +2,8 @@
 
 # For each supported minor version of DeltaSpike, we test the most recent point release.
 DELTASPIKE_VERSIONS=(
-  "1.9.4"
-  "1.9.3"
+  "1.9.6"
+  "1.9.5"
   "1.8.2"
   "1.7.2"
   "1.6.1"
