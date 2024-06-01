@@ -120,9 +120,9 @@
 							<value>true</value>
 						</property>
 					</properties>
-					<systemProperties>
+					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
-					</systemProperties>
+					</systemPropertyVariables>
 					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
 				<dependencies>

@@ -145,9 +145,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<systemProperties>
+					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
-					</systemProperties>
+					</systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>
