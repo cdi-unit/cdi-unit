@@ -282,9 +282,11 @@
 		</profile>
 	</profiles>
 
-	<scm>
-		<connection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/cdi-unit/cdi-unit.git</developerConnection>
+	<scm child.scm.connection.inherit.append.path="false"
+			 child.scm.developerConnection.inherit.append.path="false"
+			 child.scm.url.inherit.append.path="false">
+		<connection>scm:git:git@github.com/cdi-unit/cdi-unit.git</connection>
+		<developerConnection>scm:git:git@github.com/cdi-unit/cdi-unit.git</developerConnection>
 		<url>https://github.com/cdi-unit/cdi-unit</url>
 	</scm>
 
