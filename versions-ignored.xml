@@ -4,7 +4,7 @@
 				 xsi:schemaLocation="https://www.mojohaus.org/VERSIONS/RULE/2.1.0 http://www.mojohaus.org/versions/versions-model/xsd/rule-2.1.0.xsd">
 	<ignoreVersions>
 		<ignoreVersion type="regex">(?i).*Alpha(?:-?\d+)?</ignoreVersion>
-		<ignoreVersion type="regex">(?i).*a(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*alpha(?:-?\d+)?</ignoreVersion>
 		<ignoreVersion type="regex">(?i).*Beta(?:-?\d+)?</ignoreVersion>
 		<ignoreVersion type="regex">(?i).*-B(?:-?\d+)?</ignoreVersion>
 		<ignoreVersion type="regex">(?i).*RC(?:-?\d+)?</ignoreVersion>

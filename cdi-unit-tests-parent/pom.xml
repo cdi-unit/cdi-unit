@@ -39,11 +39,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.24.0-GA</version>
-			</dependency>
-			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
 				<version>3.4.3.Final</version>
