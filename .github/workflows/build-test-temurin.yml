@@ -37,10 +37,10 @@ jobs:
       - name: Cache build artifacts
         uses: actions/cache@v2
         env:
-          cache-name: cache-maven-repository
+          cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
 
   test-weld:
     needs: build
@@ -72,13 +72,13 @@ jobs:
       - name: Restore build artifacts
         uses: actions/cache@v2
         env:
-          cache-name: cache-maven-repository
+          cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
+            ${{ env.cache-name }}-${{ github.workflow_sha }}-
+            ${{ env.cache-name }}-
 
       - uses: s4u/maven-settings-action@v3.0.0
         with:
@@ -113,13 +113,13 @@ jobs:
       - name: Restore build artifacts
         uses: actions/cache@v2
         env:
-          cache-name: cache-maven-repository
+          cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
+            ${{ env.cache-name }}-${{ github.workflow_sha }}-
+            ${{ env.cache-name }}-
 
       - uses: s4u/maven-settings-action@v3.0.0
         with:
