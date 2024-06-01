@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset comparisonMethod="maven"
+				 xmlns="https://www.mojohaus.org/VERSIONS/RULE/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="https://www.mojohaus.org/VERSIONS/RULE/2.1.0 http://www.mojohaus.org/versions/versions-model/xsd/rule-2.1.0.xsd">
+	<ignoreVersions>
+		<ignoreVersion type="regex">(?i).*Alpha(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*a(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*Beta(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*-B(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*RC(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*CR(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*M(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*SNAP(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*EDR(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">(?i).*PFD(?:-?\d+)?</ignoreVersion>
+		<ignoreVersion type="regex">.*[-_\.](alpha|Alpha|ALPHA|beta|Beta|BETA|EDR|PFD|rc|RC)[-_\.]?.*</ignoreVersion>
+	</ignoreVersions>
+	<rules>
+		<rule groupId="ch.qos.logback" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">1.4.*</ignoreVersion>
+				<ignoreVersion type="regex">1.5.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="javax.servlet" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">3.1.*</ignoreVersion>
+				<ignoreVersion type="regex">4.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.apache.deltaspike.*" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">2.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.jboss.logging" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">3.5.*</ignoreVersion>
+				<ignoreVersion type="regex">3.6.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.jboss.weld.*" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">4.*</ignoreVersion>
+				<ignoreVersion type="regex">5.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.mockito" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">5.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.testng" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">7.6.*</ignoreVersion>
+				<ignoreVersion type="regex">7.7.*</ignoreVersion>
+				<ignoreVersion type="regex">7.8.*</ignoreVersion>
+				<ignoreVersion type="regex">7.9.*</ignoreVersion>
+				<ignoreVersion type="regex">7.10.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+	</rules>
+</ruleset>
