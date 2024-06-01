@@ -40,7 +40,7 @@ jobs:
           cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   test-weld:
     needs: build
@@ -75,10 +75,10 @@ jobs:
           cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.workflow_sha }}-
-            ${{ env.cache-name }}-
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-
+            ${{ env.cache-name }}-${{ github.sha }}-
 
       - uses: s4u/maven-settings-action@v3.0.0
         with:
@@ -116,10 +116,10 @@ jobs:
           cache-name: build-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.workflow_sha }}-${{ github.sha }}
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.workflow_sha }}-
-            ${{ env.cache-name }}-
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-
+            ${{ env.cache-name }}-${{ github.sha }}-
 
       - uses: s4u/maven-settings-action@v3.0.0
         with:
