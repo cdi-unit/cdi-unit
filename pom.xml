@@ -120,10 +120,55 @@
 					<artifactId>maven-gpg-plugin</artifactId>
 					<version>3.2.4</version>
 				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.4.1</version>
+					<configuration>
+						<archive>
+							<index>true</index>
+							<manifest>
+								<addDefaultSpecificationEntries>
+									true
+								</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>
+									true
+								</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries combine.children="append">
+								<Implementation-URL>${project.url}</Implementation-URL>
+								<Scm-Url>${project.scm.url}</Scm-Url>
+								<Scm-Connection>${project.scm.connection}</Scm-Connection>
+								<Bundle-License>Apache License 2.0</Bundle-License>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>3.3.1</version>
+					<configuration>
+						<archive>
+							<index>true</index>
+							<manifest>
+								<addDefaultSpecificationEntries>
+									true
+								</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>
+									true
+								</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries combine.children="append">
+								<Implementation-URL>${project.url}</Implementation-URL>
+								<Scm-Url>${project.scm.url}</Scm-Url>
+								<Scm-Connection>${project.scm.connection}</Scm-Connection>
+								<Bundle-License>Apache License 2.0</Bundle-License>
+							</manifestEntries>
+						</archive>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -241,6 +286,21 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<archive>
+								<manifestEntries combine.children="append">
+									<Java-Version>${java.version}</Java-Version>
+									<Java-Vendor>${java.vendor}</Java-Vendor>
+									<Os-Name>${os.name}</Os-Name>
+									<Os-Arch>${os.arch}</Os-Arch>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
@@ -250,6 +310,16 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<archive>
+								<manifestEntries combine.children="append">
+									<Java-Version>${java.version}</Java-Version>
+									<Java-Vendor>${java.vendor}</Java-Vendor>
+									<Os-Name>${os.name}</Os-Name>
+									<Os-Arch>${os.arch}</Os-Arch>
+								</manifestEntries>
+							</archive>
+						</configuration>
 					</plugin>
 
 					<plugin>
