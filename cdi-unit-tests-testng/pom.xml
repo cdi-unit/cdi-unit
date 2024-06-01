@@ -14,7 +14,6 @@
 	<artifactId>cdi-unit-tests-testng</artifactId>
 
 	<name>CDI-Unit-Tests-TestNG</name>
-	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>

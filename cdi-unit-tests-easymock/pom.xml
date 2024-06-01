@@ -9,7 +9,6 @@
 		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-EasyMock</name>
-	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>
