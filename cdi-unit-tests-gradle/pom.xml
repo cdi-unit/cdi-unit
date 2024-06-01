@@ -9,7 +9,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>CDI-Unit-Tests-Gradle</name>
-	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>

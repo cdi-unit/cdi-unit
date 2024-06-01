@@ -14,7 +14,6 @@
 	<artifactId>cdi-unit-tests-deltaspike</artifactId>
 
 	<name>CDI-Unit-Tests-DeltaSpike</name>
-	<url>http://cdi-unit.github.io/cdi-unit/</url>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>

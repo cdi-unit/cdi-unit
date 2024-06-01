@@ -13,7 +13,6 @@
 	<artifactId>cdi-unit-tests-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>CDI-Unit-Tests-Parent</name>
-	<url>http://cdi-unit.github.io/cdi-unit/</url>
 
 	<properties>
 		<!-- Note that Weld 1/2 tests also require -Dweld.test.1or2 to disable the weld.test.3plus profile -->
