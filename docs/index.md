@@ -472,6 +472,10 @@ CDI-Unit has not been tested with Java 9 modules or the module path, but it can 
 
 ### Changelog
 
+#### 4.2
+
+CDI-Unit reuses results of class path scans between tests executions when possible. It may reduce execution time significantly - 10x speedups were observed.
+
 #### 4.1
 CDI-Unit no longer depends on Reflections or Guava, so if you need
 these dependencies you should add them to your project directly. It
