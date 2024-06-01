@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - uses: s4u/maven-settings-action@v2.3.0
+      - uses: s4u/maven-settings-action@v3.0.0
         with:
           mirrors: '[{
             "id": "google-maven-central",
@@ -83,7 +83,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
 
-      - uses: s4u/maven-settings-action@v2.3.0
+      - uses: s4u/maven-settings-action@v3.0.0
         with:
           mirrors: '[{
             "id": "google-maven-central",
@@ -124,7 +124,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
 
-      - uses: s4u/maven-settings-action@v2.3.0
+      - uses: s4u/maven-settings-action@v3.0.0
         with:
           mirrors: '[{
             "id": "google-maven-central",
