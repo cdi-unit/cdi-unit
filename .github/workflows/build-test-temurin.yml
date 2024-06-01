@@ -28,12 +28,6 @@ jobs:
             "url": "https://maven-central-eu.storage-download.googleapis.com/maven2/"
           }]'
 
-      - name: Download Dependencies
-        run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
-
-      - name: Build with Maven
-        run: ./ci-support/build.sh
-
       - name: Cache build artifacts
         uses: actions/cache@v2
         env:
@@ -41,6 +35,12 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Download Dependencies
+        run: ./mvnw -V clean verify -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+
+      - name: Build with Maven
+        run: ./ci-support/build.sh
 
   test-weld:
     needs: build
