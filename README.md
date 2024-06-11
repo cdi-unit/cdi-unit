@@ -1,4 +1,4 @@
-cdi-unit 
+cdi-unit
 ========
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
@@ -11,7 +11,7 @@ Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
 ```xml
 <dependency>
-  <groupId>org.jglue.cdi-unit</groupId>
+  <groupId>io.github.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
   <version>${cdi-unit-version}</version>
   <scope>test</scope>
