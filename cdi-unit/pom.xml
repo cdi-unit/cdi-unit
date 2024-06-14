@@ -196,6 +196,12 @@
 							</execution>
 						</executions>
 					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<extensions>true</extensions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
