@@ -7,7 +7,7 @@ See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit)
 
 ```xml
 <dependency>

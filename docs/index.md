@@ -30,7 +30,7 @@ class MyTest {
 ```
 Make sure you've added the cdi-unit dependency to your build file
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jglue.cdi-unit/cdi-unit)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit)
 
 ```xml
 <dependency>
