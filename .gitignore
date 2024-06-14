@@ -1,5 +1,6 @@
 target/
 build/
+.flattened-pom.xml
 # IntelliJ
 .idea/
 *.iml
