@@ -56,7 +56,6 @@
 		<module>cdi-unit-tests-bare</module>
 		<module>cdi-unit-tests-mockito</module>
 		<module>cdi-unit-tests-easymock</module>
-		<!--<module>cdi-unit-tests-gradle</module>  Disabled because of mojo error-->
 		<module>cdi-unit-tests-jandex</module>
 		<module>cdi-unit-tests-testng</module>
 		<module>cdi-unit-tests-deltaspike</module>
