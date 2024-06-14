@@ -9,7 +9,7 @@
         </layout>
     </appender>
 
-    <logger name="org.jglue.cdiunit" level="debug" additivity="false">
+    <logger name="io.github.cdiunit" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
