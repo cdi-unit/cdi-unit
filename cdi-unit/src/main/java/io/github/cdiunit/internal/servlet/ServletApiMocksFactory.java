@@ -1,6 +1,7 @@
 package io.github.cdiunit.internal.servlet;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ public class ServletApiMocksFactory {
 	}
 
 	@Produces
+	@RequestScoped
 	@CdiUnitServlet
 	public HttpServletResponse httpServletResponse() {
 		return new MockHttpServletResponseImpl();
