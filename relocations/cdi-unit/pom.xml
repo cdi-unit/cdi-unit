@@ -5,7 +5,7 @@
 	<groupId>org.jglue.cdi-unit</groupId>
 	<artifactId>cdi-unit</artifactId>
 	<version>4.3.0</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>CDI-Unit</name>
 	<description>JUnit runner for testing CDI based projects.</description>
