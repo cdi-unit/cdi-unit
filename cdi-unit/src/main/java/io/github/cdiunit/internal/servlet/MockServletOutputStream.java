@@ -58,7 +58,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw new NestedApplicationException(exc);
+            throw ExceptionUtils.sneaky(exc);
         }
     }
 
@@ -71,7 +71,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw new NestedApplicationException(exc);
+            throw ExceptionUtils.sneaky(exc);
         }
     }
 
