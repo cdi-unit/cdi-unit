@@ -472,6 +472,13 @@ CDI-Unit has not been tested with Java 9 modules or the module path, but it can 
 
 ### Changelog
 
+#### 4.3
+
+- CDI-Unit artifacts moved to the new group ID `io.github.cdi-unit`.
+- All packages were renamed from `org.jglue.cdiunit` prefix to `io.github.cdiunit`.
+- Maven Central publishing moved from legacy OSSRH to the Central Portal using `central-publishing-maven-plugin`.
+  See https://central.sonatype.org/register/central-portal/ for details.
+
 #### 4.2
 
 CDI-Unit reuses results of class path scans between tests executions when possible. It may reduce execution time significantly - 10x speedups were observed.
