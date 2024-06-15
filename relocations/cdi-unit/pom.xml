@@ -7,8 +7,37 @@
 	<version>4.3.0</version>
 	<packaging>pom</packaging>
 
-	<name>CDI-Unit</name>
+	<name>CDI-Unit-Parent</name>
+	<url>https://cdi-unit.github.io/cdi-unit/</url>
 	<description>JUnit runner for testing CDI based projects.</description>
+
+	<developers>
+		<developer>
+			<name>Bryn Cooke</name>
+		</developer>
+		<developer>
+			<name>Sean Flanigan</name>
+		</developer>
+		<developer>
+			<name>Illya Kysil</name>
+			<email>ikysil@ikysil.name</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git@github.com/cdi-unit/cdi-unit.git</connection>
+		<developerConnection>scm:git:git@github.com/cdi-unit/cdi-unit.git</developerConnection>
+		<url>https://github.com/cdi-unit/cdi-unit</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<distributionManagement>
 		<relocation>
@@ -18,5 +47,24 @@
 			<message>Update the groupId in your project build file.</message>
 		</relocation>
 	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
