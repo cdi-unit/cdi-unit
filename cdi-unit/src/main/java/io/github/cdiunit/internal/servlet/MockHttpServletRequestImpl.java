@@ -581,7 +581,7 @@ class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware
 		try {
 			setBodyContent(bodyContent.getBytes(encoding));
 		} catch (UnsupportedEncodingException exc) {
-			throw ExceptionUtils.sneaky(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 

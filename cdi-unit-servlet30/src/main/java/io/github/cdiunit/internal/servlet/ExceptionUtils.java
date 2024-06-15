@@ -6,8 +6,8 @@ public final class ExceptionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Throwable> E sneaky(Throwable t) throws E {
-		return (E) t;
+	public static <T extends RuntimeException> T asRuntimeException(final Throwable t) throws T {
+		return (T) t;
 	}
 
 }

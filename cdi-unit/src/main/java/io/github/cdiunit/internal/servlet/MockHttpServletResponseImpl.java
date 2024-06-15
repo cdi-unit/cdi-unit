@@ -66,7 +66,7 @@ class MockHttpServletResponseImpl implements HttpServletResponse {
 			writer = new PrintWriter(new OutputStreamWriter(outputStream,
 					characterEncoding), true);
 		} catch (UnsupportedEncodingException exc) {
-			throw ExceptionUtils.sneaky(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 
@@ -182,7 +182,7 @@ class MockHttpServletResponseImpl implements HttpServletResponse {
 			writer = new PrintWriter(new OutputStreamWriter(outputStream,
 					characterEncoding), true);
 		} catch (UnsupportedEncodingException exc) {
-			throw ExceptionUtils.sneaky(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 

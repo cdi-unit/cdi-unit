@@ -58,7 +58,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw ExceptionUtils.sneaky(exc);
+            throw ExceptionUtils.asRuntimeException(exc);
         }
     }
 
@@ -71,7 +71,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw ExceptionUtils.sneaky(exc);
+            throw ExceptionUtils.asRuntimeException(exc);
         }
     }
 
