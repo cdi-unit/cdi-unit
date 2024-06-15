@@ -15,6 +15,9 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -24,21 +27,13 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-@CdiUnitServlet
 public class LifecycleAwareRequest implements HttpServletRequest {
 
-	@Inject
-	private CdiUnitInitialListener listener;
+	private final CdiUnitInitialListener listener;
 
-	private HttpServletRequest delegate;
+	private final HttpServletRequest delegate;
 
-	public LifecycleAwareRequest(
-			CdiUnitInitialListener listener,
-			HttpServletRequest delegate) {
+	public LifecycleAwareRequest(CdiUnitInitialListener listener, HttpServletRequest delegate) {
 		this.listener = listener;
 		this.delegate = delegate;
 	}
