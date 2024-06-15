@@ -15,8 +15,6 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import javax.servlet.*;
 import javax.servlet.ServletRegistration.Dynamic;
 import javax.servlet.descriptor.JspConfigDescriptor;
