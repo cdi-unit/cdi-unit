@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet30;
+
+import io.github.cdiunit.internal.servlet.MockRequestDispatcher;
 
 import javax.servlet.*;
 import javax.servlet.ServletRegistration.Dynamic;
@@ -32,7 +34,7 @@ import java.util.*;
  *
  * @author Various
  */
-class MockServletContextImpl implements ServletContext {
+public class MockServletContextImpl implements ServletContext {
 	private Map attributes;
 	private Map requestDispatchers;
 	private Map contexts;

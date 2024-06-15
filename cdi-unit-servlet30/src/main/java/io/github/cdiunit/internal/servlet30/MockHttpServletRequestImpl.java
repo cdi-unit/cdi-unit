@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet30;
+
+import io.github.cdiunit.internal.servlet.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -26,13 +28,17 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
  *
  * @author Various
  */
-class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
+public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
+
+	private final Function<byte[], ServletInputStream> inputStreamSupplier;
+
 	private Map attributes;
 	private Map parameters;
 	private Vector locales;
@@ -59,10 +65,10 @@ class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware
 	private String remoteAddr;
 	private Map roles;
 	private String characterEncoding;
-	private long contentLength;
+	protected long contentLength;
 	private String contentType;
 	private List cookies;
-	private MockServletInputStream bodyContent;
+	private ServletInputStream bodyContent;
 	private String localAddr;
 	private String localName;
 	private int localPort;
@@ -77,9 +83,10 @@ class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware
 
 	private AsyncContextImpl asyncContext;
 
-	MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession) {
+	public MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession, Function<byte[], ServletInputStream> inputStreamSupplier) {
 		this.servletContext = servletContext;
 		this.session = httpSession;
+		this.inputStreamSupplier = inputStreamSupplier;
 		resetAll();
 	}
 
@@ -109,7 +116,7 @@ class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware
 		remotePort = 5000;
 		sessionCreated = false;
 		attributeListener = new ArrayList();
-		bodyContent = new MockServletInputStream(new byte[0]);
+		setBodyContent(new byte[0]);
 		isAsyncSupported = false;
 	}
 
@@ -573,7 +580,7 @@ class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware
 	}
 
 	public void setBodyContent(byte[] data) {
-		bodyContent = new MockServletInputStream(data);
+		bodyContent = inputStreamSupplier.apply(data);
 	}
 
 	public void setBodyContent(String bodyContent) {

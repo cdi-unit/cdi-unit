@@ -1,4 +1,8 @@
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet31;
+
+import io.github.cdiunit.internal.servlet.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
+import io.github.cdiunit.internal.servlet.MockHttpSessionImpl;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
@@ -8,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class ServletApiMocksFactory {
+public class ServletAPI31Mocks {
 
 	@Produces
 	@ApplicationScoped
@@ -26,14 +30,14 @@ public class ServletApiMocksFactory {
 	@Produces
 	@CdiUnitServlet
 	public HttpServletRequest httpServletRequest(@CdiUnitServlet HttpSession httpSession) {
-		return new MockHttpServletRequestImpl(httpSession.getServletContext(), httpSession);
+		return new MockHttpServletRequestImpl(httpSession.getServletContext(), httpSession, MockServletInputStream::new);
 	}
 
 	@Produces
 	@RequestScoped
 	@CdiUnitServlet
 	public HttpServletResponse httpServletResponse() {
-		return new MockHttpServletResponseImpl();
+		return new MockHttpServletResponseImpl(MockServletOutputStream::new);
 	}
 
 }

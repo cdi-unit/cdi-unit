@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet30;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import io.github.cdiunit.internal.servlet.ExceptionUtils;
 
 import javax.servlet.ServletOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Mock implementation of <code>ServletOutputStream</code>.

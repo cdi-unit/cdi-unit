@@ -25,7 +25,8 @@ import java.util.*;
  *
  * @author Various
  */
-class MockHttpSessionImpl implements HttpSession {
+@CdiUnitServlet
+public class MockHttpSessionImpl implements HttpSession {
 	private HashMap attributes;
 	private String sessionId;
 	private boolean isNew;
@@ -36,7 +37,7 @@ class MockHttpSessionImpl implements HttpSession {
 	private int maxInactiveInterval;
 	private List attributeListener;
 
-	MockHttpSessionImpl(ServletContext servletContext) {
+	public MockHttpSessionImpl(ServletContext servletContext) {
 		this.servletContext = servletContext;
 		resetAll();
 	}
