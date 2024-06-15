@@ -25,10 +25,7 @@ public class ServletDiscoveryExtension implements DiscoveryExtension {
 		context.processBean(InSessionInterceptor.class);
 		context.processBean(InConversationInterceptor.class);
 		context.processBean(CdiUnitInitialListenerProducer.class);
-		context.processBean(MockServletContextImpl.class);
-		context.processBean(MockHttpSessionImpl.class);
-		context.processBean(MockHttpServletRequestImpl.class);
-		context.processBean(MockHttpServletResponseImpl.class);
+		context.processBean(ServletApiMocksFactory.class);
 	}
 
 	private void discoverServletObjectsProducers(final Context context) {

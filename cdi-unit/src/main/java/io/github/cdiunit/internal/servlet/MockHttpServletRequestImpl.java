@@ -15,6 +15,11 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import org.jboss.weld.exceptions.UnsupportedOperationException;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,44 +27,14 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.inject.Inject;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestAttributeEvent;
-import javax.servlet.ServletRequestAttributeListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
-import org.jboss.weld.exceptions.UnsupportedOperationException;
+import java.util.*;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpServletRequestImpl implements HttpServletRequest {
+class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
 	private Map attributes;
 	private Map parameters;
 	private Vector locales;
@@ -98,18 +73,15 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	private List attributeListener;
 	private boolean isAsyncSupported;
 
-	@Inject
-	@CdiUnitServlet
 	private ServletContext servletContext;
 
-
-	@Inject
-	@CdiUnitServlet
 	private HttpSession session;
 
 	private AsyncContextImpl asyncContext;
 
-	public MockHttpServletRequestImpl() {
+	MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession) {
+		this.servletContext = servletContext;
+		this.session = httpSession;
 		resetAll();
 	}
 
@@ -250,6 +222,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	 *
 	 * @param session the <code>HttpSession</code>
 	 */
+	@Override
 	public void setSession(HttpSession session) {
 		this.session = session;
 	}

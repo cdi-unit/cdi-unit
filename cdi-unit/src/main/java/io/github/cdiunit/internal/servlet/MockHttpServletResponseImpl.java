@@ -15,31 +15,23 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpServletResponseImpl implements HttpServletResponse {
+class MockHttpServletResponseImpl implements HttpServletResponse {
 	private PrintWriter writer;
 	private MockServletOutputStream outputStream;
 	private Map headers;
@@ -53,7 +45,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 	private List cookies;
 	private long contentLength;
 
-	public MockHttpServletResponseImpl() {
+	MockHttpServletResponseImpl() {
 		resetAll();
 	}
 
