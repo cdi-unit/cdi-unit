@@ -205,6 +205,51 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<profile>
+			<id>servlet-3.0</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>cdi-unit-servlet30</artifactId>
+					<version>${project.version}</version>
+					<scope>provided</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-servlet30-support</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeGroupIds>${project.groupId}</includeGroupIds>
+									<includeArtifactIds>cdi-unit-servlet30</includeArtifactIds>
+									<excludeTransitive>true</excludeTransitive>
+									<includes>**/*.class</includes>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 </project>

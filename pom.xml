@@ -49,6 +49,7 @@
 	</licenses>
 
 	<modules>
+		<module>cdi-unit-servlet30</module>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests-parent</module>
