@@ -208,9 +208,12 @@
 		</profile>
 
 		<profile>
-			<id>servlet-3.0</id>
+			<id>servlet-3.0-support</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>!skip-servlet-3.0</name>
+				</property>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -218,12 +221,6 @@
 					<artifactId>cdi-unit-servlet30</artifactId>
 					<version>${project.version}</version>
 					<scope>provided</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>${project.artifactId}</artifactId>
-						</exclusion>
-					</exclusions>
 				</dependency>
 			</dependencies>
 			<build>
