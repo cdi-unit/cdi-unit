@@ -17,8 +17,8 @@ package io.github.cdiunit;
 
 import io.github.cdiunit.internal.servlet.CdiUnitInitialListener;
 import io.github.cdiunit.internal.servlet.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.HttpSessionAware;
 import io.github.cdiunit.internal.servlet.LifecycleAwareRequest;
-import io.github.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 import org.jboss.weld.context.ConversationContext;
 import org.jboss.weld.context.http.Http;
 
@@ -84,10 +84,6 @@ public class ContextController {
 	private ServletContext context;
 
 	@Inject
-	@CdiUnitServlet
-	private HttpSession session;
-
-	@Inject
 	private CdiUnitInitialListener listener;
 
 	@PostConstruct
@@ -106,7 +102,7 @@ public class ContextController {
 
 	@Inject
 	@CdiUnitServlet
-	private Provider<MockHttpServletRequestImpl> requestProvider;
+	private Provider<HttpServletRequest> requestProvider;
 
 	@Inject
 	@Http
@@ -124,11 +120,12 @@ public class ContextController {
 			throw new RuntimeException("A request is already open");
 		}
 
-		MockHttpServletRequestImpl request = requestProvider.get();
+		HttpServletRequest request = requestProvider.get();
 
 		if (currentSession != null) {
-
-			request.setSession(currentSession);
+			if (request instanceof HttpSessionAware) {
+				((HttpSessionAware) request).setSession(currentSession);
+			}
 			request.getSession();
 		}
 

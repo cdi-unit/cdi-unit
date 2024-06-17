@@ -34,6 +34,8 @@
 		<!-- The version of the DeltaSpike to compile against -->
 		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
 
+		<javax.servlet-api.version.baseline>3.1.0</javax.servlet-api.version.baseline>
+
 		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
 		<pushChanges>false</pushChanges>
 		<localCheckout>true</localCheckout>
@@ -49,6 +51,7 @@
 	</licenses>
 
 	<modules>
+		<module>cdi-unit-servlet30</module>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests-parent</module>

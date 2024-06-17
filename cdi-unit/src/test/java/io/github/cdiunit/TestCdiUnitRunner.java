@@ -15,9 +15,12 @@
  */
 package io.github.cdiunit;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ContextNotActiveException;
@@ -31,12 +34,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
@@ -270,16 +270,16 @@ public class TestCdiUnitRunner extends BaseTest {
 
 
 		CSessionScoped b1 = sessionScoped.get();
-		b1.setFoo("Bar");
+		b1.setFoo("Session Bar");
 
 		BRequestScoped r1 = requestScoped.get();
-		b1.setFoo("Bar");
+		r1.setFoo("Request Bar");
 		BRequestScoped r2 = requestScoped.get();
 		Assert.assertSame(r1.getFoo(), r2.getFoo());
 		contextController.closeRequest();
 		contextController.openRequest();
 		BRequestScoped r3 = requestScoped.get();
-		Assert.assertEquals(null, r3.getFoo());
+		Assert.assertNull(r3.getFoo());
 
 
 		CSessionScoped b2 = sessionScoped.get();

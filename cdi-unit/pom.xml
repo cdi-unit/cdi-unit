@@ -70,8 +70,9 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
+			<version>${javax.servlet-api.version.baseline}</version>
 			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
@@ -198,9 +199,70 @@
 					</plugin>
 
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<dependencySourceIncludes>
+										<dependencySourceInclude>${project.groupId}:cdi-unit-servlet30</dependencySourceInclude>
+									</dependencySourceIncludes>
+									<includeDependencySources>true</includeDependencySources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
 						<extensions>true</extensions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>servlet-3.0-support</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>!skip-servlet-3.0</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>cdi-unit-servlet30</artifactId>
+					<version>${project.version}</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-servlet30-support</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeGroupIds>${project.groupId}</includeGroupIds>
+									<includeArtifactIds>cdi-unit-servlet30</includeArtifactIds>
+									<excludeTransitive>true</excludeTransitive>
+									<includes>**/*.class</includes>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

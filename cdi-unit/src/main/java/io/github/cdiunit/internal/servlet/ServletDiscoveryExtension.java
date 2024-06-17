@@ -6,6 +6,8 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 public class ServletDiscoveryExtension implements DiscoveryExtension {
 
 	private final boolean usesServlet = ClassLookup.INSTANCE.isPresent("javax.servlet.http.HttpServletRequest");
+	// new types were introduced in Servlet API 3.1
+	private final boolean servletApi31 = ClassLookup.INSTANCE.isPresent("javax.servlet.ReadListener");
 
 	private final boolean requiresServletObjectsProducers = !ClassLookup.INSTANCE.isPresent("org.jboss.weld.bean.AbstractSyntheticBean");
 
@@ -25,10 +27,11 @@ public class ServletDiscoveryExtension implements DiscoveryExtension {
 		context.processBean(InSessionInterceptor.class);
 		context.processBean(InConversationInterceptor.class);
 		context.processBean(CdiUnitInitialListenerProducer.class);
-		context.processBean(MockServletContextImpl.class);
-		context.processBean(MockHttpSessionImpl.class);
-		context.processBean(MockHttpServletRequestImpl.class);
-		context.processBean(MockHttpServletResponseImpl.class);
+		if (servletApi31) {
+			context.processBean("io.github.cdiunit.internal.servlet31.ServletAPI31Mocks");
+		} else {
+			context.processBean("io.github.cdiunit.internal.servlet30.ServletAPI30Mocks");
+		}
 	}
 
 	private void discoverServletObjectsProducers(final Context context) {

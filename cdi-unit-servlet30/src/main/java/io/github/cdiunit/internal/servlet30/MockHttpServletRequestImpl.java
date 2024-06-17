@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet30;
+
+import io.github.cdiunit.internal.servlet.*;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,44 +27,18 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.inject.Inject;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestAttributeEvent;
-import javax.servlet.ServletRequestAttributeListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
-import org.jboss.weld.exceptions.UnsupportedOperationException;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpServletRequestImpl implements HttpServletRequest {
+public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
+
+	private final Function<byte[], ServletInputStream> inputStreamSupplier;
+
 	private Map attributes;
 	private Map parameters;
 	private Vector locales;
@@ -86,10 +65,10 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	private String remoteAddr;
 	private Map roles;
 	private String characterEncoding;
-	private long contentLength;
+	protected long contentLength;
 	private String contentType;
 	private List cookies;
-	private MockServletInputStream bodyContent;
+	private ServletInputStream bodyContent;
 	private String localAddr;
 	private String localName;
 	private int localPort;
@@ -98,18 +77,16 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	private List attributeListener;
 	private boolean isAsyncSupported;
 
-	@Inject
-	@CdiUnitServlet
 	private ServletContext servletContext;
 
-
-	@Inject
-	@CdiUnitServlet
 	private HttpSession session;
 
 	private AsyncContextImpl asyncContext;
 
-	public MockHttpServletRequestImpl() {
+	public MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession, Function<byte[], ServletInputStream> inputStreamSupplier) {
+		this.servletContext = servletContext;
+		this.session = httpSession;
+		this.inputStreamSupplier = inputStreamSupplier;
 		resetAll();
 	}
 
@@ -139,7 +116,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		remotePort = 5000;
 		sessionCreated = false;
 		attributeListener = new ArrayList();
-		bodyContent = new MockServletInputStream(new byte[0]);
+		setBodyContent(new byte[0]);
 		isAsyncSupported = false;
 	}
 
@@ -250,6 +227,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	 *
 	 * @param session the <code>HttpSession</code>
 	 */
+	@Override
 	public void setSession(HttpSession session) {
 		this.session = session;
 	}
@@ -602,7 +580,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 	}
 
 	public void setBodyContent(byte[] data) {
-		bodyContent = new MockServletInputStream(data);
+		bodyContent = inputStreamSupplier.apply(data);
 	}
 
 	public void setBodyContent(String bodyContent) {
@@ -610,7 +588,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		try {
 			setBodyContent(bodyContent.getBytes(encoding));
 		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 

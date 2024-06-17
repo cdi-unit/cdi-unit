@@ -15,25 +15,24 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
 
-import javax.servlet.ServletInputStream;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
- * Mock implementation of <code>ServletInputStream</code>.
+ * Mock implementation of <code>HttpSessionContext</code>.
  */
-public class MockServletInputStream extends ServletInputStream
+class MockSessionContext implements HttpSessionContext
 {
-    private ByteArrayInputStream stream;
-
-    public MockServletInputStream(byte[] data)
+    public Enumeration getIds()
     {
-        stream = new ByteArrayInputStream(data);
+        return new Vector().elements();
     }
 
-    public int read() throws IOException
+    public HttpSession getSession(String arg0)
     {
-        return stream.read();
+        return null;
     }
 }

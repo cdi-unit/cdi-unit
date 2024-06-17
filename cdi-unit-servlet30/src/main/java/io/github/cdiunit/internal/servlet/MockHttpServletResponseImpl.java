@@ -15,33 +15,24 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
  *
  * @author Various
  */
-@CdiUnitServlet
 public class MockHttpServletResponseImpl implements HttpServletResponse {
+	private final Supplier<ServletOutputStream> outputStreamSupplier;
 	private PrintWriter writer;
-	private MockServletOutputStream outputStream;
+	private ServletOutputStream outputStream;
 	private Map headers;
 	private Locale locale;
 	private String characterEncoding;
@@ -53,7 +44,8 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 	private List cookies;
 	private long contentLength;
 
-	public MockHttpServletResponseImpl() {
+	public MockHttpServletResponseImpl(Supplier<ServletOutputStream> outputStreamSupplier) {
+		this.outputStreamSupplier = outputStreamSupplier;
 		resetAll();
 	}
 
@@ -69,13 +61,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 		errorCode = SC_OK;
 		statusCode = SC_OK;
 		cookies = new ArrayList();
-		outputStream = new MockServletOutputStream(characterEncoding);
-		try {
-			writer = new PrintWriter(new OutputStreamWriter(outputStream,
-					characterEncoding), true);
-		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
-		}
+		resetBuffer();
 	}
 
 	public String encodeURL(String url) {
@@ -100,10 +86,6 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 
 	public ServletOutputStream getOutputStream() throws IOException {
 		return outputStream;
-	}
-
-	public String getOutputStreamContent() {
-		return outputStream.getContent();
 	}
 
 	public void addCookie(Cookie cookie) {
@@ -158,7 +140,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 	}
 
 	public void setIntHeader(String key, int value) {
-		String stringValue = new Integer(value).toString();
+		String stringValue = Integer.toString(value);
 		setHeader(key, stringValue);
 	}
 
@@ -185,12 +167,11 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 
 	public void setCharacterEncoding(String encoding) {
 		characterEncoding = encoding;
-		outputStream.setEncoding(encoding);
 		try {
 			writer = new PrintWriter(new OutputStreamWriter(outputStream,
 					characterEncoding), true);
 		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 
@@ -214,7 +195,13 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 	}
 
 	public void resetBuffer() {
-		outputStream.clearContent();
+		outputStream = outputStreamSupplier.get();
+		try {
+			writer = new PrintWriter(new OutputStreamWriter(outputStream,
+				characterEncoding), true);
+		} catch (UnsupportedEncodingException exc) {
+			throw ExceptionUtils.asRuntimeException(exc);
+		}
 	}
 
 	public void clearHeaders() {
@@ -292,7 +279,16 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 		return dateFormat.format(dateValue);
 	}
 
-
+	/**
+	 * Sets the length of the content body in the response
+	 * In HTTP servlets, this method sets the HTTP Content-Length header.
+	 *
+	 * @param len a long specifying the length of the
+	 * content being returned to the client; sets the Content-Length header
+	 *
+	 * @since Servlet 3.1
+	 */
+	// @Override is implied
 	public void setContentLengthLong(long len) {
 		contentLength = len;
 	}

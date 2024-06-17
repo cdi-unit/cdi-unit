@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet30;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import javax.servlet.ServletInputStream;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
- * Mock implementation of <code>HttpSessionContext</code>.
+ * Mock implementation of <code>ServletInputStream</code>.
  */
-public class MockSessionContext implements HttpSessionContext
+public class MockServletInputStream extends ServletInputStream
 {
-    public Enumeration getIds()
+    private ByteArrayInputStream stream;
+
+    public MockServletInputStream(byte[] data)
     {
-        return new Vector().elements();
+        stream = new ByteArrayInputStream(data);
     }
 
-    public HttpSession getSession(String arg0)
+    public int read() throws IOException
     {
-        return null;
+        return stream.read();
     }
 }
