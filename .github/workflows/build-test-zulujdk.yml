@@ -128,4 +128,4 @@ jobs:
           }]'
 
       - name: Test DeltaSpike
-        run: ./ci-support/test-deltaspike.sh deltaspike-v1.x.sh
+        run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
