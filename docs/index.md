@@ -32,6 +32,7 @@ Make sure you've added the cdi-unit dependency to your build file
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg)](https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/)
 
+
 ```xml
 <dependency>
   <groupId>io.github.cdi-unit</groupId>
@@ -63,6 +64,19 @@ For Weld 3.x, you will probably also need [Weld Web](https://search.maven.org/se
   <scope>test</scope>
 </dependency>
 ```
+
+### Getting the latest release
+
+[CDI-Unit 5](https://github.com/cdi-unit/cdi-unit/TBD)
+- Supports CDI 3.x+ (`jakarta.` packages)
+- Requires Java 11
+
+[CDI-Unit 4](https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.3.0)
+- Supports CDI 1.x or 2.x (`javax.` packages)
+- Supports Java 8 and Java 11
+
+Only one major version is supported at a time, and changes are not backported to older versions.
+
 ### CDI-Unit Annotations
 
 CDI Unit provides the discovery annotations that affect the classes available to the unit test:
