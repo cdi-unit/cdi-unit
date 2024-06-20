@@ -30,6 +30,9 @@
 	</mailingLists>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
 
 		<!-- The version of the DeltaSpike to compile against -->
 		<deltaspike.version.baseline>2.0.0</deltaspike.version.baseline>
