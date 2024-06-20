@@ -74,7 +74,7 @@ public class NgCdiRunner {
 		BeanManager beanManager = container.getBeanManager();
 		CreationalContext creationalContext = beanManager.createCreationalContext(null);
 		AnnotatedType annotatedType = beanManager.createAnnotatedType(clazz);
-		InjectionTarget injectionTarget = beanManager.createInjectionTarget(annotatedType);
+		InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType).createInjectionTarget(null);
 		injectionTarget.inject(this, creationalContext);
 
 		System.setProperty("java.naming.factory.initial",
