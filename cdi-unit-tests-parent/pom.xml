@@ -26,8 +26,6 @@
 
 		<!-- Use the same version for the tests as for the build by default -->
 		<deltaspike.test.version>${deltaspike.version.baseline}</deltaspike.test.version>
-
-		<javax.servlet-api.version.test>${javax.servlet-api.version.baseline}</javax.servlet-api.version.test>
 	</properties>
 
 	<dependencyManagement>
@@ -88,12 +86,6 @@
 				<artifactId>cal10n-api</artifactId>
 				<version>0.8.1</version>
 			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${javax.servlet-api.version.test}</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -117,11 +109,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

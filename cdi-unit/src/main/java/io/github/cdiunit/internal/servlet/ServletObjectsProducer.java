@@ -15,8 +15,6 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.ContextController;
-
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -25,13 +23,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import io.github.cdiunit.ContextController;
+
 
 
 public class ServletObjectsProducer {
 
 	@Inject
 	@CdiUnitServlet
-	ServletContext servletContext;
+	MockServletContextImpl servletContext;
 
 	@Produces
 	public ServletContext getServletContext() {

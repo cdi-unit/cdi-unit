@@ -15,10 +15,21 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
-import java.util.*;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSessionContext;
 
 /**
  * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
@@ -33,12 +44,13 @@ public class MockHttpSessionImpl implements HttpSession {
 	private boolean isValid;
 	private long creationTime;
 
+	@Inject
+	@CdiUnitServlet
 	private ServletContext servletContext;
 	private int maxInactiveInterval;
 	private List attributeListener;
 
-	public MockHttpSessionImpl(ServletContext servletContext) {
-		this.servletContext = servletContext;
+	public MockHttpSessionImpl() {
 		resetAll();
 	}
 

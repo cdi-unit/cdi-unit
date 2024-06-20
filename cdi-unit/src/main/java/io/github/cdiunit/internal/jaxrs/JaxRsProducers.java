@@ -15,11 +15,6 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
-import io.github.cdiunit.ContextController;
-import io.github.cdiunit.internal.servlet.CdiUnitServlet;
-import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
-import org.mockito.Mockito;
-
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -34,14 +29,17 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
+import io.github.cdiunit.internal.servlet.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
+import io.github.cdiunit.internal.servlet.MockServletContextImpl;
+import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
+import io.github.cdiunit.ContextController;
+import org.mockito.Mockito;
+
 public class JaxRsProducers {
 	@Inject
 	@CdiUnitServlet
-	ServletContext servletContext;
-
-	@Inject
-	@CdiUnitServlet
-	HttpServletResponse servletResponse;
+    MockServletContextImpl servletContext;
 
 	@Produces
 	@JaxRsQualifier
@@ -63,7 +61,7 @@ public class JaxRsProducers {
 	@RequestScoped
 	@JaxRsQualifier
 	public HttpServletResponse getHttpServletResponse() {
-		return servletResponse;
+		return new MockHttpServletResponseImpl();
 	}
 
 

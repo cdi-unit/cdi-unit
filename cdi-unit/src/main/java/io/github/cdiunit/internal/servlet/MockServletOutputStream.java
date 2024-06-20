@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet30;
+package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.internal.servlet.ExceptionUtils;
-
-import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import javax.servlet.ServletOutputStream;
 
 /**
  * Mock implementation of <code>ServletOutputStream</code>.
@@ -59,7 +58,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw ExceptionUtils.asRuntimeException(exc);
+            throw new NestedApplicationException(exc);
         }
     }
 
@@ -72,7 +71,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw ExceptionUtils.asRuntimeException(exc);
+            throw new NestedApplicationException(exc);
         }
     }
 
