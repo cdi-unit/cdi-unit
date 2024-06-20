@@ -51,14 +51,9 @@ jobs:
         # LTS versions
         java: [11, 17, 21]
         weld:
-          - v1.1
-          - v2.0
-          - v2.1
-          - v2.2
-          - v2.3
-          - v2.4
-          - v3.0
-          - v3.1
+          - v4.0
+          - v5.0
+          - v5.1
 
     steps:
       - uses: actions/checkout@v4
