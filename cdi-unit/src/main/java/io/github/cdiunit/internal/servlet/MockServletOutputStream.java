@@ -15,6 +15,8 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import io.github.cdiunit.internal.ExceptionUtils;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 
@@ -59,7 +61,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw new NestedApplicationException(exc);
+            throw ExceptionUtils.asRuntimeException(exc);
         }
     }
 
@@ -72,7 +74,7 @@ public class MockServletOutputStream extends ServletOutputStream
         }
         catch(IOException exc)
         {
-            throw new NestedApplicationException(exc);
+            throw ExceptionUtils.asRuntimeException(exc);
         }
     }
 
@@ -82,13 +84,15 @@ public class MockServletOutputStream extends ServletOutputStream
     }
 
 	@Override
-	public boolean isReady() {
+	public boolean isReady()
+	{
 		return true;
 	}
 
 	@Override
-	public void setWriteListener(WriteListener writeListener) {
-		throw new UnsupportedOperationException("setWriteListener not supported");
+	public void setWriteListener(WriteListener writeListener)
+	{
+		throw new UnsupportedOperationException();
 	}
 
 }

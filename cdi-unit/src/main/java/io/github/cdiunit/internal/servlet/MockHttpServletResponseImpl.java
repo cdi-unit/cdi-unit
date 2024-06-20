@@ -15,6 +15,8 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import io.github.cdiunit.internal.ExceptionUtils;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
+ * Shamlessly ripped from mockrunner.
  *
  * @author Various
  */
@@ -63,11 +65,12 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 		statusCode = SC_OK;
 		cookies = new ArrayList();
 		outputStream = new MockServletOutputStream(characterEncoding);
+		contentLength = -1;
 		try {
 			writer = new PrintWriter(new OutputStreamWriter(outputStream,
 					characterEncoding), true);
 		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 
@@ -183,7 +186,7 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
 			writer = new PrintWriter(new OutputStreamWriter(outputStream,
 					characterEncoding), true);
 		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 

@@ -15,6 +15,8 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import io.github.cdiunit.internal.ExceptionUtils;
+
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -595,7 +597,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		try {
 			setBodyContent(bodyContent.getBytes(encoding));
 		} catch (UnsupportedEncodingException exc) {
-			throw new NestedApplicationException(exc);
+			throw ExceptionUtils.asRuntimeException(exc);
 		}
 	}
 
