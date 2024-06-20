@@ -29,7 +29,7 @@ jobs:
           }]'
 
       - name: Cache build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: build-maven-repository
         with:
@@ -70,7 +70,7 @@ jobs:
           cache: 'maven'
 
       - name: Restore build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: build-maven-repository
         with:
@@ -111,7 +111,7 @@ jobs:
           cache: 'maven'
 
       - name: Restore build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: build-maven-repository
         with:
@@ -152,7 +152,7 @@ jobs:
           cache: 'maven'
 
       - name: Restore build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: build-maven-repository
         with:
