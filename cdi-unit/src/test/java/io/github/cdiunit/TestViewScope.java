@@ -1,13 +1,15 @@
 package io.github.cdiunit;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Provider;
+
+import java.io.Serializable;
 
 @RunWith(CdiRunner.class)
 public class TestViewScope {
@@ -40,7 +42,7 @@ public class TestViewScope {
 
 	@ViewScoped
 	@Named
-	static class ViewScopedClass {
+	static class ViewScopedClass implements Serializable {
 		private static int timesConstructed;
 		public ViewScopedClass() {
 			timesConstructed++;
@@ -56,7 +58,8 @@ public class TestViewScope {
 	 */
 	@ViewScoped
 	@Named
-	static class G2ViewScoped {
+	static class G2ViewScoped implements Serializable {
+
 		@Inject
 		private ViewScopedClass g1ViewScoped;
 		private static int timesConstructed;

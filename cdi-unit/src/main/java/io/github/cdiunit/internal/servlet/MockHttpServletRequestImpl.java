@@ -15,6 +15,10 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import jakarta.inject.Inject;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,39 +26,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.inject.Inject;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestAttributeEvent;
-import javax.servlet.ServletRequestAttributeListener;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
-import org.jboss.weld.exceptions.UnsupportedOperationException;
+import java.util.*;
 
 /**
- * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
+ * Shamelessly ripped from mockrunner.
  *
  * @author Various
  */
@@ -228,6 +203,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 
 	public HttpSession getSession() {
 		return getSession(true);
+	}
+
+	@Override
+	public String changeSessionId() {
+		throw new UnsupportedOperationException();
 	}
 
 	public HttpSession getSession(boolean create) {
@@ -533,7 +513,12 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 		return (int) contentLength;
 	}
 
-	public void setContentLength(int contentLength) {
+	@Override
+	public long getContentLengthLong() {
+		return contentLength;
+	}
+
+	public void setContentLength(long contentLength) {
 		this.contentLength = contentLength;
 	}
 
@@ -764,6 +749,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
 
 	@Override
 	public Part getPart(String name) throws IOException, ServletException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
 		throw new UnsupportedOperationException();
 	}
 

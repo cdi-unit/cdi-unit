@@ -1,17 +1,17 @@
 package io.github.cdiunit.deltaspike;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.InRequestScope;
+import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 @SupportDeltaspikeJpa
 @SupportDeltaspikeData

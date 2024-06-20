@@ -1,6 +1,6 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.github.cdiunit.packagetest.PackageImpl;
 import io.github.cdiunit.packagetest.PackageInterface;

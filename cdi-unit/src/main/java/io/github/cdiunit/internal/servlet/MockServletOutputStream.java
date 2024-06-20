@@ -15,10 +15,11 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.servlet.ServletOutputStream;
 
 /**
  * Mock implementation of <code>ServletOutputStream</code>.
@@ -33,7 +34,7 @@ public class MockServletOutputStream extends ServletOutputStream
         this("ISO-8859-1");
     }
 
-    public MockServletOutputStream(String encoding)
+	public MockServletOutputStream(String encoding)
     {
         buffer = new ByteArrayOutputStream();
         this.encoding = encoding;
@@ -79,4 +80,15 @@ public class MockServletOutputStream extends ServletOutputStream
     {
         buffer = new ByteArrayOutputStream();
     }
+
+	@Override
+	public boolean isReady() {
+		return true;
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
+		throw new UnsupportedOperationException("setWriteListener not supported");
+	}
+
 }

@@ -3,11 +3,11 @@ package io.github.cdiunit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

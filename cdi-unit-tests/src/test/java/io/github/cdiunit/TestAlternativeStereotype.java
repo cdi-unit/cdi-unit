@@ -1,8 +1,8 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import io.github.cdiunit.AImplementation3.StereotypeAlternative;
 import org.junit.Test;

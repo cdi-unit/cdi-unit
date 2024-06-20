@@ -5,7 +5,7 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ServletDiscoveryExtension implements DiscoveryExtension {
 
-	private final boolean usesServlet = ClassLookup.INSTANCE.isPresent("javax.servlet.http.HttpServletRequest");
+	private final boolean usesServlet = ClassLookup.INSTANCE.isPresent("jakarta.servlet.http.HttpServletRequest");
 
 	private final boolean requiresServletObjectsProducers = !ClassLookup.INSTANCE.isPresent("org.jboss.weld.bean.AbstractSyntheticBean");
 

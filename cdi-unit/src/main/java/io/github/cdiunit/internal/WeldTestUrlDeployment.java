@@ -15,6 +15,7 @@
  */
 package io.github.cdiunit.internal;
 
+import io.github.cdiunit.ProducesAlternative;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -24,11 +25,10 @@ import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import io.github.cdiunit.ProducesAlternative;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.Extension;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

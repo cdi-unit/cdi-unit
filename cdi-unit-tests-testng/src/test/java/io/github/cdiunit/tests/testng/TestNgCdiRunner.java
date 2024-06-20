@@ -1,8 +1,8 @@
 package io.github.cdiunit.tests.testng;
 
-import javax.enterprise.context.ContextNotActiveException;
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 import io.github.cdiunit.*;
 import org.testng.Assert;

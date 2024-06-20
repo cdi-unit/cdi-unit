@@ -1,11 +1,11 @@
 package io.github.cdiunit;
 
-import javax.enterprise.inject.spi.DeploymentException;
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.enterprise.inject.spi.DeploymentException;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 @RunWith(CdiRunner.class)
 public class TestCircularInject {

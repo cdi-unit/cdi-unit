@@ -15,11 +15,11 @@
  */
 package io.github.cdiunit.internal.servlet;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionContext;
+
 import java.util.Enumeration;
 import java.util.Vector;
-
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 
 /**
  * Mock implementation of <code>HttpSessionContext</code>.

@@ -1,28 +1,20 @@
 package io.github.cdiunit.internal.jaxrs;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Variant;
-
 import org.jboss.resteasy.core.request.ServerDrivenNegotiation;
 import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.jboss.resteasy.util.DateUtil;
 import org.jboss.resteasy.util.Encode;
 import org.jboss.resteasy.util.HttpHeaderNames;
-import org.jboss.resteasy.util.HttpResponseCodes;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Treaked from resteasy RequestImpl
@@ -127,7 +119,7 @@ public class RequestImpl implements Request {
 		}
 		if (match)
 			return null;
-		return Response.status(HttpResponseCodes.SC_PRECONDITION_FAILED).tag(eTag);
+		return Response.status(Response.Status.PRECONDITION_FAILED).tag(eTag);
 
 	}
 
@@ -144,7 +136,7 @@ public class RequestImpl implements Request {
 				return Response.notModified(eTag);
 			}
 
-			return Response.status(HttpResponseCodes.SC_PRECONDITION_FAILED).tag(eTag);
+			return Response.status(Response.Status.PRECONDITION_FAILED).tag(eTag);
 		}
 		return null;
 	}
@@ -187,7 +179,7 @@ public class RequestImpl implements Request {
 		if (date.getTime() >= lastModified.getTime()) {
 			return null;
 		}
-		return Response.status(HttpResponseCodes.SC_PRECONDITION_FAILED).lastModified(lastModified);
+		return Response.status(Response.Status.PRECONDITION_FAILED).lastModified(lastModified);
 
 	}
 
@@ -241,7 +233,7 @@ public class RequestImpl implements Request {
 			return null;
 		}
 
-		return Response.status(HttpResponseCodes.SC_PRECONDITION_FAILED);
+		return Response.status(Response.Status.PRECONDITION_FAILED);
 	}
 
 }

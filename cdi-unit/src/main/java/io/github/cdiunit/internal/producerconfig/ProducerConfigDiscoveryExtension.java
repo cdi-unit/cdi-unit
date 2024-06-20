@@ -5,7 +5,7 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ProducerConfigDiscoveryExtension implements DiscoveryExtension {
 
-	private final boolean supportsProducerFactory = ClassLookup.INSTANCE.isPresent("javax.enterprise.inject.spi.ProducerFactory");
+	private final boolean supportsProducerFactory = ClassLookup.INSTANCE.isPresent("jakarta.enterprise.inject.spi.ProducerFactory");
 
 	@Override
 	public void bootstrap(BootstrapDiscoveryContext bdc) {

@@ -1,14 +1,14 @@
 package io.github.cdiunit.internal;
 
-import javax.decorator.Decorator;
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Stereotype;
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.interceptor.Interceptor;
+import jakarta.decorator.Decorator;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.interceptor.Interceptor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

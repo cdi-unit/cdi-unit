@@ -5,8 +5,8 @@ import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.AdditionalClasspaths;
 import io.github.cdiunit.AdditionalPackages;
 
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Stereotype;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Stereotype;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

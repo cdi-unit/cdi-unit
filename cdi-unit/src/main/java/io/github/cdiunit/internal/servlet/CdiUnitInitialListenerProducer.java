@@ -1,9 +1,9 @@
 package io.github.cdiunit.internal.servlet;
 
 
-import javax.enterprise.inject.Produces;
-
 import javassist.util.proxy.ProxyFactory;
+
+import jakarta.enterprise.inject.Produces;
 
 /**
  * Decides which version of CdiUnitInitialListener to use, based on the Weld version.

@@ -15,26 +15,26 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
-
+import io.github.cdiunit.ContextController;
 import io.github.cdiunit.internal.servlet.CdiUnitServlet;
 import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
 import io.github.cdiunit.internal.servlet.MockServletContextImpl;
 import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
-import io.github.cdiunit.ContextController;
 import org.mockito.Mockito;
+
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ext.Providers;
 
 public class JaxRsProducers {
 	@Inject
