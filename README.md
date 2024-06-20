@@ -7,7 +7,7 @@ See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.cdi-unit/cdi-unit)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg)](https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/)
 [![javadoc](https://javadoc.io/badge2/io.github.cdi-unit/cdi-unit/javadoc.svg)](https://javadoc.io/doc/io.github.cdi-unit/cdi-unit)
 
 ```xml
