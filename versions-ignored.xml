@@ -18,45 +18,44 @@
 	<rules>
 		<rule groupId="ch.qos.logback" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">1.4.*</ignoreVersion>
-				<ignoreVersion type="regex">1.5.*</ignoreVersion>
+				<ignoreVersion type="regex">2.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
-		<rule groupId="javax.servlet" comparisonMethod="numeric">
+		<rule groupId="jakarta.platform" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">3.1.*</ignoreVersion>
-				<ignoreVersion type="regex">4.*</ignoreVersion>
+				<ignoreVersion type="regex">9.1.*</ignoreVersion>
+				<ignoreVersion type="regex">10.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 		<rule groupId="org.apache.deltaspike.*" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">2.*</ignoreVersion>
+				<ignoreVersion type="regex">3.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="org.hibernate.orm" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">6.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 		<rule groupId="org.jboss.logging" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">3.5.*</ignoreVersion>
-				<ignoreVersion type="regex">3.6.*</ignoreVersion>
+				<ignoreVersion type="regex">4.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 		<rule groupId="org.jboss.weld.*" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">4.*</ignoreVersion>
 				<ignoreVersion type="regex">5.*</ignoreVersion>
+				<ignoreVersion type="regex">6.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 		<rule groupId="org.mockito" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">5.*</ignoreVersion>
+				<ignoreVersion type="regex">6.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 		<rule groupId="org.testng" comparisonMethod="numeric">
 			<ignoreVersions>
-				<ignoreVersion type="regex">7.6.*</ignoreVersion>
-				<ignoreVersion type="regex">7.7.*</ignoreVersion>
-				<ignoreVersion type="regex">7.8.*</ignoreVersion>
-				<ignoreVersion type="regex">7.9.*</ignoreVersion>
-				<ignoreVersion type="regex">7.10.*</ignoreVersion>
+				<ignoreVersion type="regex">8.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
 	</rules>
