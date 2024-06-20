@@ -13,13 +13,10 @@
 	<name>CDI-Unit-Tests-Parent</name>
 
 	<properties>
-		<weld.test.version>4.0.3.Final</weld.test.version>
-
-		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
-		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
+		<version.weld.test>${version.weld.baseline}</version.weld.test>
 
 		<!-- Use the same version for the tests as for the build by default -->
-		<deltaspike.test.version>${deltaspike.version.baseline}</deltaspike.test.version>
+		<version.deltaspike.test>${version.deltaspike.baseline}</version.deltaspike.test>
 	</properties>
 
 	<dependencyManagement>
@@ -50,25 +47,25 @@
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-api</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.modules</groupId>
 				<artifactId>deltaspike-data-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.modules</groupId>
 				<artifactId>deltaspike-jpa-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -96,9 +93,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.weld.module</groupId>
+			<artifactId>weld-web</artifactId>
+			<version>${version.weld.test}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>${weld-se-shaded.artifact}</artifactId>
-			<version>${weld.test.version}</version>
+			<artifactId>weld-se-shaded</artifactId>
+			<version>${version.weld.test}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -112,27 +115,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>weld.test.3plus</id>
-			<activation>
-				<property>
-					<name>!weld.test.1or2</name>
-				</property>
-			</activation>
-			<properties>
-				<weld-se-shaded.artifact>weld-se-shaded</weld-se-shaded.artifact>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.weld.module</groupId>
-					<artifactId>weld-web</artifactId>
-					<version>${weld.test.version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 </project>

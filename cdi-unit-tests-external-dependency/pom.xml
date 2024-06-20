@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 		</dependency>
 	</dependencies>
 
