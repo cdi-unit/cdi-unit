@@ -37,7 +37,7 @@ jobs:
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Download Dependencies
-        run: ./mvnw -V clean verify -Dformat-skip -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+        run: ./mvnw -V clean verify -Dformat.skip -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
       - name: Build with Maven
         run: ./ci-support/build.sh
