@@ -13,13 +13,13 @@ import java.lang.annotation.Target;
  * &#064;IgnoredClasses(Starship.class) //Starship is discoverable from the unit test but should not (it could be produced elsewhere).
  * class TestStarship {
  *
- * 	&#064;Inject
- * 	Starship starship; //Starship has an engine.
+ *     &#064;Inject
+ *     Starship starship; //Starship has an engine.
  *
- * 	&#064;Test
- * 	void testStart() {
- * 		starship.start(); // Going to warp!
- *    }
+ *     &#064;Test
+ *     void testStart() {
+ *         starship.start(); // Going to warp!
+ *     }
  * }
  * </pre>
  *
@@ -29,13 +29,14 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
 public @interface IgnoredClasses {
 
-	/**
-	 * @return Array of classes to make undiscoverable during testing.
-	 */
-	public Class<?>[] value() default {};
+    /**
+     * @return Array of classes to make undiscoverable during testing.
+     */
+    public Class<?>[] value() default {};
 
-	/**
-	 * @return Array of class names to make undiscoverable during testing (late binding allows specifying classes that are package visible).
-	 */
-	public String[] late() default {};
+    /**
+     * @return Array of class names to make undiscoverable during testing (late binding allows specifying classes that are
+     *         package visible).
+     */
+    public String[] late() default {};
 }

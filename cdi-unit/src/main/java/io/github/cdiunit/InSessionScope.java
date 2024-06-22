@@ -15,9 +15,9 @@
  */
 package io.github.cdiunit;
 
-import jakarta.interceptor.InterceptorBinding;
-
 import java.lang.annotation.*;
+
+import jakarta.interceptor.InterceptorBinding;
 
 /**
  * Starts a session around the annotated method.
@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * &#064;InSessionScope
  * // This test will be run within the context of a session
  * void testStart() {
- * 	starship.start();
+ *     starship.start();
  * }
  * </pre>
  *
@@ -40,7 +40,7 @@ import java.lang.annotation.*;
  * <pre>
  * &#064;Produces
  * HttpServletRequest getRequest() {
- * 	return new DummyHttpRequest();
+ *     return new DummyHttpRequest();
  * }
  * </pre>
  *

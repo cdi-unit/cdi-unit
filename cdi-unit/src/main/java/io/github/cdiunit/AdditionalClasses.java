@@ -28,13 +28,13 @@ import java.lang.annotation.Target;
  * &#064;AdditionalClasses(WarpDrive.class) //WarpDrive is not discoverable from the unit test so explicitly make it available.
  * class TestStarship {
  *
- * 	&#064;Inject
- * 	Starship starship; //Starship has an engine.
+ *     &#064;Inject
+ *     Starship starship; //Starship has an engine.
  *
- * 	&#064;Test
- * 	void testStart() {
- * 		starship.start(); // Going to warp!
- *    }
+ *     &#064;Test
+ *     void testStart() {
+ *         starship.start(); // Going to warp!
+ *     }
  * }
  * </pre>
  *
@@ -44,13 +44,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AdditionalClasses {
 
-	/**
-	 * @return Array of classes to make discoverable during testing.
-	 */
-	public Class<?>[] value();
+    /**
+     * @return Array of classes to make discoverable during testing.
+     */
+    public Class<?>[] value();
 
-	/**
-	 * @return Array of class names to make discoverable during testing (late binding allows specifying classes that are package visible).
-	 */
-	public String[] late() default {};
+    /**
+     * @return Array of class names to make discoverable during testing (late binding allows specifying classes that are package
+     *         visible).
+     */
+    public String[] late() default {};
 }

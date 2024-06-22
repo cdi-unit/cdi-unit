@@ -1,8 +1,5 @@
 package io.github.cdiunit.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,46 +9,49 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
  */
 public interface ClasspathScanner {
 
-	Logger log = LoggerFactory.getLogger(ClasspathScanner.class);
+    Logger log = LoggerFactory.getLogger(ClasspathScanner.class);
 
-	Collection<URL> getBeanArchives();
+    Collection<URL> getBeanArchives();
 
-	List<String> getClassNamesForClasspath(URL[] urls);
+    List<String> getClassNamesForClasspath(URL[] urls);
 
-	List<String> getClassNamesForPackage(String packageName, URL url);
+    List<String> getClassNamesForPackage(String packageName, URL url);
 
-	default URL getClasspathURL(Class<?> cls) {
-		return Optional.ofNullable(cls)
-			.map(Class::getProtectionDomain)
-			.map(ProtectionDomain::getCodeSource)
-			.map(CodeSource::getLocation)
-			.map(this::getRealURL)
-			.orElse(null);
-	}
+    default URL getClasspathURL(Class<?> cls) {
+        return Optional.ofNullable(cls)
+                .map(Class::getProtectionDomain)
+                .map(ProtectionDomain::getCodeSource)
+                .map(CodeSource::getLocation)
+                .map(this::getRealURL)
+                .orElse(null);
+    }
 
-	default URL getRealURL(URL urlWithPotentialSymLink) {
-		try {
-			Path realPath = Paths.get(urlWithPotentialSymLink.toURI()).toRealPath();
-			URL realURL = realPath.toUri().toURL();
-			if (log.isDebugEnabled() && !realURL.equals(urlWithPotentialSymLink)) {
-				log.debug("Adapting URL:" + urlWithPotentialSymLink + " to URL:" + realURL);
-			}
-			return realURL;
-		} catch (Exception e) {
-			log.warn("Could not try to find real path (without symlink, ...) for URL:" + urlWithPotentialSymLink.toString(), e);
-		}
+    default URL getRealURL(URL urlWithPotentialSymLink) {
+        try {
+            Path realPath = Paths.get(urlWithPotentialSymLink.toURI()).toRealPath();
+            URL realURL = realPath.toUri().toURL();
+            if (log.isDebugEnabled() && !realURL.equals(urlWithPotentialSymLink)) {
+                log.debug("Adapting URL:" + urlWithPotentialSymLink + " to URL:" + realURL);
+            }
+            return realURL;
+        } catch (Exception e) {
+            log.warn("Could not try to find real path (without symlink, ...) for URL:" + urlWithPotentialSymLink.toString(), e);
+        }
 
-		return urlWithPotentialSymLink;
-	}
+        return urlWithPotentialSymLink;
+    }
 
-	default boolean isContainedInBeanArchive(Class<?> cls) {
-		final URL location = getClasspathURL(cls);
-		return location != null && getBeanArchives().contains(location);
-	}
+    default boolean isContainedInBeanArchive(Class<?> cls) {
+        final URL location = getClasspathURL(cls);
+        return location != null && getBeanArchives().contains(location);
+    }
 
 }

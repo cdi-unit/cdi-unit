@@ -15,38 +15,38 @@
  */
 package io.github.cdiunit.internal.ejb;
 
-import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.inject.Qualifier;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Qualifier;
+
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 public @interface EJbName {
-	String name() default "";
+    String name() default "";
 
-	public static class EJbNameLiteral extends AnnotationLiteral<EJbName> implements EJbName {
+    public static class EJbNameLiteral extends AnnotationLiteral<EJbName> implements EJbName {
 
-		private static final long serialVersionUID = 6325669711688098239L;
-		private final String name;
+        private static final long serialVersionUID = 6325669711688098239L;
+        private final String name;
 
-		public EJbNameLiteral(String name) {
-			this.name = name;
-		}
+        public EJbNameLiteral(String name) {
+            this.name = name;
+        }
 
-		@Override
-		public String name() {
-			return name;
-		}
+        @Override
+        public String name() {
+            return name;
+        }
 
-		@Override
-		public String toString() {
-			return "EJbQualifierLiteral [name=" + name + "]";
-		}
+        @Override
+        public String toString() {
+            return "EJbQualifierLiteral [name=" + name + "]";
+        }
 
-	}
+    }
 }

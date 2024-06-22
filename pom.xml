@@ -46,8 +46,8 @@
 
 		<!-- Formatting versions and config -->
 		<format.skip>false</format.skip>
-		<formatter.version>2.23.0</formatter.version>
-		<impsort.version>1.9.0</impsort.version>
+		<version.formatter-maven-plugin>2.23.0</version.formatter-maven-plugin>
+		<version.impsort-maven-plugin>1.9.0</version.impsort-maven-plugin>
 	</properties>
 
 	<licenses>
@@ -88,6 +88,12 @@
 
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.4.0</version>
+				</plugin>
+
 				<plugin>
 					<groupId>org.sonatype.central</groupId>
 					<artifactId>central-publishing-maven-plugin</artifactId>
@@ -210,7 +216,7 @@
 				<plugin>
 					<groupId>net.revelc.code.formatter</groupId>
 					<artifactId>formatter-maven-plugin</artifactId>
-					<version>${formatter.version}</version>
+					<version>${version.formatter-maven-plugin}</version>
 					<dependencies>
 						<dependency>
 							<groupId>${project.groupId}</groupId>
@@ -220,7 +226,7 @@
 					</dependencies>
 					<configuration>
 						<!-- store outside of target to speed up formatting when mvn clean is used -->
-						<cachedir>.cache/formatter-maven-plugin-${formatter-maven-plugin.version}</cachedir>
+						<cachedir>.cache/formatter-maven-plugin-${version.formatter-maven-plugin}</cachedir>
 						<configFile>cdi-unit-format.xml</configFile>
 						<lineEnding>LF</lineEnding>
 						<skip>${format.skip}</skip>
@@ -230,12 +236,13 @@
 				<plugin>
 					<groupId>net.revelc.code</groupId>
 					<artifactId>impsort-maven-plugin</artifactId>
-					<version>${impsort.version}</version>
+					<version>${version.impsort-maven-plugin}</version>
 					<configuration>
 						<!-- store outside of target to speed up formatting when mvn clean is used -->
-						<cachedir>.cache/impsort-maven-plugin-${impsort-maven-plugin.version}</cachedir>
+						<cachedir>.cache/impsort-maven-plugin-${version.impsort-maven-plugin}</cachedir>
 						<groups>java.,javax.,jakarta.,org.,com.</groups>
 						<staticGroups>*</staticGroups>
+						<staticAfter>true</staticAfter>
 						<skip>${format.skip}</skip>
 						<removeUnused>true</removeUnused>
 					</configuration>
@@ -453,7 +460,7 @@
 					<name>!no-format</name>
 				</property>
 				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
 				<file>
 					<exists>src/main/java</exists>
 				</file>
@@ -496,7 +503,7 @@
 					<name>no-format</name>
 				</property>
 				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
 				<file>
 					<exists>src/main/java</exists>
 				</file>
@@ -524,6 +531,41 @@
 								<goals>
 									<goal>check</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>clean-cache</id>
+			<activation>
+				<property>
+					<name>clean-cache</name>
+					<value>!false</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>clean-cache-dirs</id>
+								<phase>pre-clean</phase>
+								<inherited>true</inherited>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<filesets>
+										<fileset>
+											<directory>.cache</directory>
+										</fileset>
+									</filesets>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

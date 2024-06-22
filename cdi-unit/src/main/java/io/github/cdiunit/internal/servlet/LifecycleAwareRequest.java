@@ -22,30 +22,30 @@ import jakarta.servlet.http.HttpSessionEvent;
 
 public class LifecycleAwareRequest extends HttpServletRequestWrapper {
 
-	private final CdiUnitInitialListener listener;
+    private final CdiUnitInitialListener listener;
 
-	public LifecycleAwareRequest(CdiUnitInitialListener listener, HttpServletRequest request) {
-		super(request);
-		this.listener = listener;
-	}
+    public LifecycleAwareRequest(CdiUnitInitialListener listener, HttpServletRequest request) {
+        super(request);
+        this.listener = listener;
+    }
 
-	private HttpSession getSessionAndNotify(boolean create) {
-		HttpSession previousSession = super.getSession(false);
-		HttpSession session = super.getSession(create);
-		if (previousSession == null && session != null) {
-			listener.sessionCreated(new HttpSessionEvent(session));
-		}
-		return session;
-	}
+    private HttpSession getSessionAndNotify(boolean create) {
+        HttpSession previousSession = super.getSession(false);
+        HttpSession session = super.getSession(create);
+        if (previousSession == null && session != null) {
+            listener.sessionCreated(new HttpSessionEvent(session));
+        }
+        return session;
+    }
 
-	@Override
-	public HttpSession getSession() {
-		return getSessionAndNotify(true);
-	}
+    @Override
+    public HttpSession getSession() {
+        return getSessionAndNotify(true);
+    }
 
-	@Override
-	public HttpSession getSession(boolean create) {
-		return getSessionAndNotify(create);
-	}
+    @Override
+    public HttpSession getSession(boolean create) {
+        return getSessionAndNotify(create);
+    }
 
 }

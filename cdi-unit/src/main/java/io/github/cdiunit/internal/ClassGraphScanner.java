@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.deltaspike.core.util.ExceptionUtils;
+
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import org.apache.deltaspike.core.util.ExceptionUtils;
 
 /**
  * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>

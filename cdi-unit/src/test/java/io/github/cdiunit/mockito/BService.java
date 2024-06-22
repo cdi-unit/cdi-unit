@@ -4,10 +4,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 @Named
-public class BService
-{
+public class BService {
 
-	@Inject
-	private CService	unknownService;
+    @Inject
+    private CService unknownService;
 
 }

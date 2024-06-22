@@ -5,11 +5,11 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FApplicationScoped {
-	@Inject
-	private AInterface a;
+    @Inject
+    private AInterface a;
 
-	public AInterface getA() {
-		return a;
-	}
+    public AInterface getA() {
+        return a;
+    }
 
 }

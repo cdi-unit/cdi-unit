@@ -4,15 +4,13 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 @Named
-public class AService
-{
+public class AService {
 
-	@Inject
-	private BService	service;
+    @Inject
+    private BService service;
 
-	public boolean hasService()
-	{
-		return service != null;
-	}
+    public boolean hasService() {
+        return service != null;
+    }
 
 }

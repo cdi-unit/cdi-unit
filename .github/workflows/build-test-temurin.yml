@@ -37,7 +37,7 @@ jobs:
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Download Dependencies
-        run: ./mvnw -V clean verify -Dformat-skip -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
+        run: ./mvnw -V clean verify -Dformat.skip -Dmaven.main.skip -Dmaven.test.skip --quiet --batch-mode
 
       - name: Build with Maven
         run: ./ci-support/build.sh
@@ -47,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         # LTS versions
         java: [11, 17, 21]
@@ -93,6 +94,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         # LTS versions
         java: [11, 17, 21]

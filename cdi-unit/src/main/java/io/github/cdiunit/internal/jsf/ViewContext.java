@@ -16,21 +16,22 @@
 
 package io.github.cdiunit.internal.jsf;
 
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.enterprise.context.spi.Context;
 import jakarta.enterprise.context.spi.Contextual;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.faces.view.ViewScoped;
 
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
 /**
  *
  * @author russell
  */
 // TODO bean.getName() is null for unnamed beans (may return wrong bean). Should try bean.getTypes()
-public class ViewContext implements Context{
+public class ViewContext implements Context {
 
     private final Map<String, Object> viewMap = new HashMap<>();
 
@@ -42,9 +43,9 @@ public class ViewContext implements Context{
     @Override
     public <T> T get(Contextual<T> cntxtl, CreationalContext<T> cc) {
         Bean<T> bean = (Bean<T>) cntxtl;
-        if (viewMap.containsKey(bean.getName())){
+        if (viewMap.containsKey(bean.getName())) {
             return (T) viewMap.get(bean.getName());
-        }else{
+        } else {
             T t = bean.create(cc);
             viewMap.put(bean.getName(), t);
             return t;
@@ -54,9 +55,9 @@ public class ViewContext implements Context{
     @Override
     public <T> T get(Contextual<T> cntxtl) {
         Bean<T> bean = (Bean<T>) cntxtl;
-        if (viewMap.containsKey(bean.getName())){
+        if (viewMap.containsKey(bean.getName())) {
             return (T) viewMap.get(bean.getName());
-        }else{
+        } else {
             return null;
         }
     }

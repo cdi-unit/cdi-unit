@@ -1,12 +1,13 @@
 package io.github.cdiunit;
 
-import ch.qos.logback.classic.filter.ThresholdFilter;
-import ch.qos.logback.core.filter.Filter;
+import jakarta.inject.Inject;
+
 import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import jakarta.inject.Inject;
+import ch.qos.logback.classic.filter.ThresholdFilter;
+import ch.qos.logback.core.filter.Filter;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ThresholdFilter.class)
@@ -17,7 +18,7 @@ public class TestNonCDIClasses {
 
     private ThresholdFilter bar;
 
-    @Test(expected=DeploymentException.class)
+    @Test(expected = DeploymentException.class)
     public void testNonCDIClassDiscovery() {
 
     }

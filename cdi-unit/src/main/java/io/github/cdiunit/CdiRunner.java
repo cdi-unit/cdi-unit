@@ -22,9 +22,6 @@ import java.net.URL;
 
 import javax.naming.InitialContext;
 
-import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.Weld11TestUrlDeployment;
-import io.github.cdiunit.internal.WeldTestUrlDeployment;
 import org.jboss.weld.bootstrap.WeldBootstrap;
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
@@ -39,6 +36,10 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.Weld11TestUrlDeployment;
+import io.github.cdiunit.internal.WeldTestUrlDeployment;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -60,191 +61,189 @@ import org.junit.runners.model.Statement;
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
-	private Class<?> clazz;
-	private Weld weld;
-	private WeldContainer container;
-	private Throwable startupException;
-	private FrameworkMethod frameworkMethod;
-	private TestConfiguration testConfiguration;
-	private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
-	private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
+    private Class<?> clazz;
+    private Weld weld;
+    private WeldContainer container;
+    private Throwable startupException;
+    private FrameworkMethod frameworkMethod;
+    private TestConfiguration testConfiguration;
+    private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
+    private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
-	public CdiRunner(Class<?> clazz) throws InitializationError {
-		super(checkClass(clazz));
-		this.clazz = clazz;
-	}
+    public CdiRunner(Class<?> clazz) throws InitializationError {
+        super(checkClass(clazz));
+        this.clazz = clazz;
+    }
 
-	private static Class<?> checkClass(Class<?> clazz) {
-		try {
-			for(Method m : clazz.getMethods()) {
-				m.getReturnType();
-				m.getParameterTypes();
-				m.getParameterAnnotations();
-			}
-			for(Field f : clazz.getFields()) {
-				f.getType();
-			}
-		}
-		catch(ClassFormatError e) {
-			throw parseClassFormatError(e);
-		}
-		return clazz;
-	}
+    private static Class<?> checkClass(Class<?> clazz) {
+        try {
+            for (Method m : clazz.getMethods()) {
+                m.getReturnType();
+                m.getParameterTypes();
+                m.getParameterAnnotations();
+            }
+            for (Field f : clazz.getFields()) {
+                f.getType();
+            }
+        } catch (ClassFormatError e) {
+            throw parseClassFormatError(e);
+        }
+        return clazz;
+    }
 
-	protected TestConfiguration createTestConfiguration() {
-		return new TestConfiguration(clazz, null);
-	}
+    protected TestConfiguration createTestConfiguration() {
+        return new TestConfiguration(clazz, null);
+    }
 
-	@Override
-	protected Object createTest() {
-		testConfiguration.setTestMethod(frameworkMethod.getMethod());
-		initWeld(testConfiguration);
-		return createTest(clazz);
-	}
+    @Override
+    protected Object createTest() {
+        testConfiguration.setTestMethod(frameworkMethod.getMethod());
+        initWeld(testConfiguration);
+        return createTest(clazz);
+    }
 
-	private void initWeld(final TestConfiguration testConfig) {
-		if (weld != null)
-			return;
+    private void initWeld(final TestConfiguration testConfig) {
+        if (weld != null)
+            return;
 
-		try {
-			checkSupportedVersion();
+        try {
+            checkSupportedVersion();
 
-			weld = new Weld() {
+            weld = new Weld() {
 
-				// override for Weld 2.0, 3.0
-				protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
-					try {
-						return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
-					} catch (IOException e) {
-						startupException = e;
-						throw new RuntimeException(e);
-					}
-				}
+                // override for Weld 2.0, 3.0
+                protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
+                    try {
+                        return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
+                    } catch (IOException e) {
+                        startupException = e;
+                        throw new RuntimeException(e);
+                    }
+                }
 
-				// override for Weld 1.x
-				@SuppressWarnings("unused")
-				protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
-					try {
-						return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
-					} catch (IOException e) {
-						startupException = e;
-						throw new RuntimeException(e);
-					}
-				}
+                // override for Weld 1.x
+                @SuppressWarnings("unused")
+                protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+                    try {
+                        return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
+                    } catch (IOException e) {
+                        startupException = e;
+                        throw new RuntimeException(e);
+                    }
+                }
 
-			};
+            };
 
-			try {
+            try {
 
-				container = weld.initialize();
-			} catch (Throwable e) {
-				if (startupException == null) {
-					startupException = e;
-				}
-				if (e instanceof ClassFormatError) {
-					throw e;
-				}
-			}
+                container = weld.initialize();
+            } catch (Throwable e) {
+                if (startupException == null) {
+                    startupException = e;
+                }
+                if (e instanceof ClassFormatError) {
+                    throw e;
+                }
+            }
 
-		} catch (ClassFormatError e) {
+        } catch (ClassFormatError e) {
 
-			startupException = parseClassFormatError(e);
-		} catch (Throwable e) {
-			startupException = new Exception("Unable to start weld", e);
-		}
-	}
+            startupException = parseClassFormatError(e);
+        } catch (Throwable e) {
+            startupException = new Exception("Unable to start weld", e);
+        }
+    }
 
-	private void checkSupportedVersion() {
-		String version = Formats.version(WeldBootstrap.class.getPackage());
-		if("2.2.8 (Final)".equals(version) || "2.2.7 (Final)".equals(version)) {
-     		 startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");
-    	}
-	}
+    private void checkSupportedVersion() {
+        String version = Formats.version(WeldBootstrap.class.getPackage());
+        if ("2.2.8 (Final)".equals(version) || "2.2.7 (Final)".equals(version)) {
+            startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");
+        }
+    }
 
-	private static ClassFormatError parseClassFormatError(ClassFormatError e) {
-		if (e.getMessage().startsWith(ABSENT_CODE_PREFIX)) {
-			String offendingClass = e.getMessage().substring(ABSENT_CODE_PREFIX.length());
-			URL url = CdiRunner.class.getClassLoader().getResource(offendingClass + ".class");
+    private static ClassFormatError parseClassFormatError(ClassFormatError e) {
+        if (e.getMessage().startsWith(ABSENT_CODE_PREFIX)) {
+            String offendingClass = e.getMessage().substring(ABSENT_CODE_PREFIX.length());
+            URL url = CdiRunner.class.getClassLoader().getResource(offendingClass + ".class");
 
-			return new ClassFormatError("'" + offendingClass.replace('/', '.')
-					+ "' is an API only class. You need to remove '"
-					+ url.toString().substring(9, url.toString().indexOf("!")) + "' from your classpath");
-		} else {
-			return e;
-		}
-	}
+            return new ClassFormatError("'" + offendingClass.replace('/', '.')
+                    + "' is an API only class. You need to remove '"
+                    + url.toString().substring(9, url.toString().indexOf("!")) + "' from your classpath");
+        } else {
+            return e;
+        }
+    }
 
-	private <T> T createTest(Class<T> testClass) {
+    private <T> T createTest(Class<T> testClass) {
 
-		T t = container.instance().select(testClass).get();
+        T t = container.instance().select(testClass).get();
 
-		return t;
-	}
+        return t;
+    }
 
-	@Override
-	protected Statement classBlock(RunNotifier notifier) {
-		final Statement defaultStatement = super.classBlock(notifier);
-		return new Statement() {
+    @Override
+    protected Statement classBlock(RunNotifier notifier) {
+        final Statement defaultStatement = super.classBlock(notifier);
+        return new Statement() {
 
-			@Override
-			public void evaluate() throws Throwable {
-				testConfiguration = createTestConfiguration();
-				if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-					initWeld(testConfiguration);
-					defaultStatement.evaluate();
-					weld.shutdown();
-					weld = null;
-				}
-				else {
-					defaultStatement.evaluate();
-				}
-			}
+            @Override
+            public void evaluate() throws Throwable {
+                testConfiguration = createTestConfiguration();
+                if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+                    initWeld(testConfiguration);
+                    defaultStatement.evaluate();
+                    weld.shutdown();
+                    weld = null;
+                } else {
+                    defaultStatement.evaluate();
+                }
+            }
 
-		};
-	}
+        };
+    }
 
-	@Override
-	protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
-		this.frameworkMethod = frameworkMethod;
-		final Statement defaultStatement = super.methodBlock(frameworkMethod);
-		return new Statement() {
+    @Override
+    protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
+        this.frameworkMethod = frameworkMethod;
+        final Statement defaultStatement = super.methodBlock(frameworkMethod);
+        return new Statement() {
 
-			@Override
-			public void evaluate() throws Throwable {
+            @Override
+            public void evaluate() throws Throwable {
 
-				if (startupException != null) {
-					if (frameworkMethod.getAnnotation(Test.class).expected()
-							.isAssignableFrom(startupException.getClass())) {
-						return;
-					}
-					throw startupException;
-				}
-				String oldFactory = System.getProperty(JNDI_FACTORY_PROPERTY);
-				if (oldFactory == null) {
-					System.setProperty(JNDI_FACTORY_PROPERTY, "io.github.cdiunit.internal.naming.CdiUnitContextFactory");
-				}
-				InitialContext initialContext = new InitialContext();
-				initialContext.bind("java:comp/BeanManager", container.getBeanManager());
+                if (startupException != null) {
+                    if (frameworkMethod.getAnnotation(Test.class).expected()
+                            .isAssignableFrom(startupException.getClass())) {
+                        return;
+                    }
+                    throw startupException;
+                }
+                String oldFactory = System.getProperty(JNDI_FACTORY_PROPERTY);
+                if (oldFactory == null) {
+                    System.setProperty(JNDI_FACTORY_PROPERTY, "io.github.cdiunit.internal.naming.CdiUnitContextFactory");
+                }
+                InitialContext initialContext = new InitialContext();
+                initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 
-				try {
-					defaultStatement.evaluate();
+                try {
+                    defaultStatement.evaluate();
 
-				} finally {
-					initialContext.close();
-					if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-						weld.shutdown();
-						weld = null;
-					}
-					if (oldFactory != null) {
-						System.setProperty(JNDI_FACTORY_PROPERTY, oldFactory);
-					} else {
-						System.clearProperty(JNDI_FACTORY_PROPERTY);
-					}
-				}
+                } finally {
+                    initialContext.close();
+                    if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                        weld.shutdown();
+                        weld = null;
+                    }
+                    if (oldFactory != null) {
+                        System.setProperty(JNDI_FACTORY_PROPERTY, oldFactory);
+                    } else {
+                        System.clearProperty(JNDI_FACTORY_PROPERTY);
+                    }
+                }
 
-			}
-		};
+            }
+        };
 
-	}
+    }
 
 }

@@ -3,10 +3,10 @@ package io.github.cdiunit;
 import jakarta.inject.Inject;
 
 import org.junit.Assert;
-
-import io.github.cdiunit.AImplementation3.StereotypeAlternative;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import io.github.cdiunit.AImplementation3.StereotypeAlternative;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(StereotypeAlternative.class)
@@ -25,6 +25,5 @@ public class TestAlternativeStereotype {
 
         Assert.assertTrue("Should have been impl3", impl instanceof AImplementation3);
     }
-
 
 }

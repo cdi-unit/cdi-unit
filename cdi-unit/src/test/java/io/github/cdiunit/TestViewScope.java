@@ -1,74 +1,76 @@
 package io.github.cdiunit;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.io.Serializable;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Provider;
 
-import java.io.Serializable;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(CdiRunner.class)
 public class TestViewScope {
-	@Inject
-	private Provider<ViewScopedClass> viewScoped;
+    @Inject
+    private Provider<ViewScopedClass> viewScoped;
 
-	@Inject
-	private G2ViewScoped g2ViewScoped;
+    @Inject
+    private G2ViewScoped g2ViewScoped;
 
+    @Test
+    public void testSameBeanEachTime() {
+        Assert.assertEquals(viewScoped.get().getRuntimeId(), viewScoped.get().getRuntimeId());
+    }
 
-	@Test
-	public void testSameBeanEachTime() {
-		Assert.assertEquals(viewScoped.get().getRuntimeId(), viewScoped.get().getRuntimeId());
-	}
+    @Test
+    public void testTransitiveViewScoped1() {
+        // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
+        // (ignoring return value)
+        g2ViewScoped.getRuntimeId();
+    }
 
-	@Test
-	public void testTransitiveViewScoped1() {
-		// check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
-		// (ignoring return value)
-		g2ViewScoped.getRuntimeId();
-	}
+    @Test
+    public void testTransitiveViewScoped2() {
+        // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
+        // (ignoring return value)
+        g2ViewScoped.getRuntimeId();
+    }
 
-	@Test
-	public void testTransitiveViewScoped2() {
-		// check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
-		// (ignoring return value)
-		g2ViewScoped.getRuntimeId();
-	}
+    @ViewScoped
+    @Named
+    static class ViewScopedClass implements Serializable {
+        private static int timesConstructed;
 
+        public ViewScopedClass() {
+            timesConstructed++;
+        }
 
-	@ViewScoped
-	@Named
-	static class ViewScopedClass implements Serializable {
-		private static int timesConstructed;
-		public ViewScopedClass() {
-			timesConstructed++;
-		}
-		int getRuntimeId() {
-			return timesConstructed;
-		}
-	}
+        int getRuntimeId() {
+            return timesConstructed;
+        }
+    }
 
-	/**
-	 * Simple view-scoped bean that depends on another view-scoped bean implements a runtime id through the
-	 * combination of a naive static variable and the runtime id of its dependency..
-	 */
-	@ViewScoped
-	@Named
-	static class G2ViewScoped implements Serializable {
+    /**
+     * Simple view-scoped bean that depends on another view-scoped bean implements a runtime id through the
+     * combination of a naive static variable and the runtime id of its dependency..
+     */
+    @ViewScoped
+    @Named
+    static class G2ViewScoped implements Serializable {
 
-		@Inject
-		private ViewScopedClass g1ViewScoped;
-		private static int timesConstructed;
-		public G2ViewScoped() {
-			timesConstructed++;
-		}
-		int getRuntimeId() {
-			return 1000 * timesConstructed + g1ViewScoped.getRuntimeId();
-		}
-	}
+        @Inject
+        private ViewScopedClass g1ViewScoped;
+        private static int timesConstructed;
+
+        public G2ViewScoped() {
+            timesConstructed++;
+        }
+
+        int getRuntimeId() {
+            return 1000 * timesConstructed + g1ViewScoped.getRuntimeId();
+        }
+    }
 
 }

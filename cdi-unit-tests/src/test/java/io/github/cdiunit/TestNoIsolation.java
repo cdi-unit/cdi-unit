@@ -1,13 +1,14 @@
 package io.github.cdiunit;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(CdiRunner.class)
 @Isolation(IsolationLevel.PER_CLASS)
@@ -15,13 +16,12 @@ public class TestNoIsolation {
 
     private static final AtomicInteger counter = new AtomicInteger();
 
-	@Mock
-	@Produces
-	private AInterface mockA;
+    @Mock
+    @Produces
+    private AInterface mockA;
 
     @Inject
     private FApplicationScoped applicationScoped;
-
 
     @Test
     public void testNoIsolation1() {

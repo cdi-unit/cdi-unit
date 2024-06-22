@@ -15,8 +15,7 @@
  */
 package io.github.cdiunit.internal.testscope;
 
-import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.internal.TestConfiguration;
+import java.lang.annotation.Annotation;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Dependent;
@@ -27,31 +26,32 @@ import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import jakarta.enterprise.util.AnnotationLiteral;
 
-import java.lang.annotation.Annotation;
+import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.internal.TestConfiguration;
 
 public class TestScopeExtension implements Extension {
 
-	private static final Annotation APPLICATIONSCOPED = new AnnotationLiteral<ApplicationScoped>() {
-	};
-	private static final Annotation DEPENDENT = new AnnotationLiteral<Dependent>() {
-	};
+    private static final Annotation APPLICATIONSCOPED = new AnnotationLiteral<ApplicationScoped>() {
+    };
+    private static final Annotation DEPENDENT = new AnnotationLiteral<Dependent>() {
+    };
 
-	private final TestConfiguration testConfiguration;
+    private final TestConfiguration testConfiguration;
 
-	public TestScopeExtension() {
-		this.testConfiguration = null;
-	}
+    public TestScopeExtension() {
+        this.testConfiguration = null;
+    }
 
-	public TestScopeExtension(TestConfiguration testConfiguration) {
-		this.testConfiguration = testConfiguration;
-	}
+    public TestScopeExtension(TestConfiguration testConfiguration) {
+        this.testConfiguration = testConfiguration;
+    }
 
-	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		if (annotatedType.getJavaClass().equals(testConfiguration.getTestClass())) {
-			AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType()
-				.add(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
-		}
-	}
+    <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
+        final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
+        if (annotatedType.getJavaClass().equals(testConfiguration.getTestClass())) {
+            AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType()
+                    .add(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
+        }
+    }
 
 }

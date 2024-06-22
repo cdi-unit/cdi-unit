@@ -15,7 +15,15 @@
  */
 package io.github.cdiunit.internal;
 
-import io.github.cdiunit.ProducesAlternative;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import jakarta.enterprise.inject.spi.Extension;
+
 import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
@@ -28,115 +36,108 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.enterprise.inject.spi.Extension;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import io.github.cdiunit.ProducesAlternative;
 
 public class WeldTestUrlDeployment implements Deployment {
-	private final BeanDeploymentArchive beanDeploymentArchive;
-	private final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
-	private final Collection<Metadata<Extension>> extensions = new ArrayList<>();
-	private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
-	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
+    private final BeanDeploymentArchive beanDeploymentArchive;
+    private final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
+    private final Collection<Metadata<Extension>> extensions = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
+    private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
-	public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
-		final DefaultBootstrapDiscoveryContext bdc = new DefaultBootstrapDiscoveryContext();
+    public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration)
+            throws IOException {
+        final DefaultBootstrapDiscoveryContext bdc = new DefaultBootstrapDiscoveryContext();
 
-		final ServiceLoader<DiscoveryExtension> discoveryExtensions = ServiceLoader.load(DiscoveryExtension.class);
-		discoveryExtensions.forEach(extension -> extension.bootstrap(bdc));
+        final ServiceLoader<DiscoveryExtension> discoveryExtensions = ServiceLoader.load(DiscoveryExtension.class);
+        discoveryExtensions.forEach(extension -> extension.bootstrap(bdc));
 
-		// Capture values to ignore potential updates after the bootstrap
-		final Consumer<DiscoveryExtension.Context> discoverExtension = bdc.discoverExtension;
-		final BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = bdc.discoverClass;
-		final BiConsumer<DiscoveryExtension.Context, Field> discoverField = bdc.discoverField;
-		final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
+        // Capture values to ignore potential updates after the bootstrap
+        final Consumer<DiscoveryExtension.Context> discoverExtension = bdc.discoverExtension;
+        final BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = bdc.discoverClass;
+        final BiConsumer<DiscoveryExtension.Context, Field> discoverField = bdc.discoverField;
+        final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
 
-		final BeansXml beansXml = WeldComponentFactory.createBeansXml();
+        final BeansXml beansXml = WeldComponentFactory.createBeansXml();
 
-		final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, beansXml, testConfiguration);
+        final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, beansXml, testConfiguration);
 
-		final Set<String> discoveredClasses = new LinkedHashSet<>();
-		final Set<Class<?>> classesProcessed = new HashSet<>();
+        final Set<String> discoveredClasses = new LinkedHashSet<>();
+        final Set<Class<?>> classesProcessed = new HashSet<>();
 
-		discoverExtension.accept(discoveryContext);
+        discoverExtension.accept(discoveryContext);
 
-		discoveryContext.processBean(testConfiguration.getTestClass());
+        discoveryContext.processBean(testConfiguration.getTestClass());
 
-		while (discoveryContext.hasClassesToProcess()) {
-			final Class<?> cls = discoveryContext.nextClassToProcess();
+        while (discoveryContext.hasClassesToProcess()) {
+            final Class<?> cls = discoveryContext.nextClassToProcess();
 
-			final boolean candidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
-			final boolean processed = classesProcessed.contains(cls);
-			final boolean primitive = cls.isPrimitive();
-			final boolean ignored = discoveryContext.isIgnored(cls);
+            final boolean candidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
+            final boolean processed = classesProcessed.contains(cls);
+            final boolean primitive = cls.isPrimitive();
+            final boolean ignored = discoveryContext.isIgnored(cls);
 
-			if (candidate && !processed && !primitive && !ignored) {
-				classesProcessed.add(cls);
-				if (!cls.isAnnotation()) {
-					discoveredClasses.add(cls.getName());
-				}
+            if (candidate && !processed && !primitive && !ignored) {
+                classesProcessed.add(cls);
+                if (!cls.isAnnotation()) {
+                    discoveredClasses.add(cls.getName());
+                }
 
-				discoverClass.accept(discoveryContext, cls);
+                discoverClass.accept(discoveryContext, cls);
 
-				for (Field field : cls.getDeclaredFields()) {
-					discoverField.accept(discoveryContext, field);
-				}
-				for (Method method : cls.getDeclaredMethods()) {
-					discoverMethod.accept(discoveryContext, method);
-				}
-			}
+                for (Field field : cls.getDeclaredFields()) {
+                    discoverField.accept(discoveryContext, field);
+                }
+                for (Method method : cls.getDeclaredMethods()) {
+                    discoverMethod.accept(discoveryContext, method);
+                }
+            }
 
-			discoveryContext.processed(cls);
-		}
+            discoveryContext.processed(cls);
+        }
 
-		beansXml.getEnabledAlternativeStereotypes().add(WeldComponentFactory.createMetadata(
-			ProducesAlternative.class.getName(), ProducesAlternative.class.getName()
-		));
+        beansXml.getEnabledAlternativeStereotypes().add(WeldComponentFactory.createMetadata(
+                ProducesAlternative.class.getName(), ProducesAlternative.class.getName()));
 
-		for (String alternative : discoveryContext.getAlternatives()) {
-			beansXml.getEnabledAlternativeClasses().add(WeldComponentFactory.createMetadata(alternative, alternative));
-		}
+        for (String alternative : discoveryContext.getAlternatives()) {
+            beansXml.getEnabledAlternativeClasses().add(WeldComponentFactory.createMetadata(alternative, alternative));
+        }
 
-		extensions.add(WeldComponentFactory.createMetadata(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
+        extensions.add(WeldComponentFactory.createMetadata(new WeldSEBeanRegistrant(), WeldSEBeanRegistrant.class.getName()));
 
-		extensions.addAll(discoveryContext.getExtensions());
+        extensions.addAll(discoveryContext.getExtensions());
 
-		beanDeploymentArchive = new BeanDeploymentArchiveImpl("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
-		beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
-		log.debug("CDI-Unit discovered:");
-		for (String clazz : discoveredClasses) {
-			if (!clazz.startsWith("io.github.cdiunit.internal.")) {
-				log.debug(clazz);
-			}
-		}
+        beanDeploymentArchive = new BeanDeploymentArchiveImpl("cdi-unit" + UUID.randomUUID(), discoveredClasses, beansXml);
+        beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
+        log.debug("CDI-Unit discovered:");
+        for (String clazz : discoveredClasses) {
+            if (!clazz.startsWith("io.github.cdiunit.internal.")) {
+                log.debug(clazz);
+            }
+        }
 
-	}
+    }
 
-	@Override
-	public Iterable<Metadata<Extension>> getExtensions() {
-		return extensions;
-	}
+    @Override
+    public Iterable<Metadata<Extension>> getExtensions() {
+        return extensions;
+    }
 
-	public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
-		return Collections.singletonList(beanDeploymentArchive);
-	}
+    public List<BeanDeploymentArchive> getBeanDeploymentArchives() {
+        return Collections.singletonList(beanDeploymentArchive);
+    }
 
-	public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
-		return beanDeploymentArchive;
-	}
+    public BeanDeploymentArchive loadBeanDeploymentArchive(Class<?> beanClass) {
+        return beanDeploymentArchive;
+    }
 
-	public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
-		return beanDeploymentArchive;
-	}
+    public BeanDeploymentArchive getBeanDeploymentArchive(Class<?> beanClass) {
+        return beanDeploymentArchive;
+    }
 
-	@Override
-	public ServiceRegistry getServices() {
-		return serviceRegistry;
-	}
+    @Override
+    public ServiceRegistry getServices() {
+        return serviceRegistry;
+    }
 
 }

@@ -19,14 +19,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import org.apache.deltaspike.partialbean.impl.PartialBeanBindingExtension;
+
 import io.github.cdiunit.AdditionalClasspaths;
 
 /**
  * Enable support for DeltaSpike jpa partial beans in this test.
+ *
  * @author bryn
  *
  */
-@AdditionalClasspaths({PartialBeanBindingExtension.class})
+@AdditionalClasspaths({ PartialBeanBindingExtension.class })
 @SupportDeltaspikeCore
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SupportDeltaspikePartialBean {

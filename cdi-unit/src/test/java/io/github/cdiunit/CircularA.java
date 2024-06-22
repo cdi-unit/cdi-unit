@@ -4,7 +4,7 @@ import jakarta.inject.Inject;
 
 public class CircularA {
 
-	@Inject
-	private CircularB b;
+    @Inject
+    private CircularB b;
 
 }

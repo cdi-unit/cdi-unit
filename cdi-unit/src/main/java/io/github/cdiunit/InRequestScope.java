@@ -15,9 +15,9 @@
  */
 package io.github.cdiunit;
 
-import jakarta.interceptor.InterceptorBinding;
-
 import java.lang.annotation.*;
+
+import jakarta.interceptor.InterceptorBinding;
 
 /**
  * Starts a request around the annotated method.
@@ -27,18 +27,20 @@ import java.lang.annotation.*;
  * &#064;InRequestScope
  * // This test will be run within the context of a request
  * void testStart() {
- * 	starship.start();
+ *     starship.start();
  * }
  * </pre>
  *
- * <p>Remember to add an implementation of <a href=
+ * <p>
+ * Remember to add an implementation of <a href=
  * "http://download.oracle.com/javaee/1.3/api/javax/servlet/http/HttpServletRequest.html"
- * >HttpServletRequest</a> to your test e.g.</p>
+ * >HttpServletRequest</a> to your test e.g.
+ * </p>
  *
  * <pre>
  * &#064;Produces
  * HttpServletRequest getRequest() {
- * 	return new DummyHttpRequest();
+ *     return new DummyHttpRequest();
  * }
  * </pre>
  *

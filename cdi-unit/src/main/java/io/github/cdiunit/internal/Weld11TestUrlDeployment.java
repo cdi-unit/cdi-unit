@@ -23,9 +23,9 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 
 public class Weld11TestUrlDeployment extends WeldTestUrlDeployment implements CDI11Deployment {
 
-	public Weld11TestUrlDeployment(ResourceLoader resourceLoader,
-			Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
-		super(resourceLoader, bootstrap, testConfiguration);
-	}
+    public Weld11TestUrlDeployment(ResourceLoader resourceLoader,
+            Bootstrap bootstrap, TestConfiguration testConfiguration) throws IOException {
+        super(resourceLoader, bootstrap, testConfiguration);
+    }
 
 }

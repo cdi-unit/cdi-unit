@@ -15,6 +15,8 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
+import java.util.function.Consumer;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
@@ -23,20 +25,18 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 
-import java.util.function.Consumer;
-
 public class JaxRsExtension implements Extension {
 
-	public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-		final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> {
-			field.add(new AnnotationLiteral<Inject>() {
-			});
-			field.add(new AnnotationLiteral<JaxRsQualifier>() {
-			});
-		};
-		pat.configureAnnotatedType()
-			.filterFields(f -> f.isAnnotationPresent(Context.class))
-			.forEach(annotateField);
-	}
+    public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
+        final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> {
+            field.add(new AnnotationLiteral<Inject>() {
+            });
+            field.add(new AnnotationLiteral<JaxRsQualifier>() {
+            });
+        };
+        pat.configureAnnotatedType()
+                .filterFields(f -> f.isAnnotationPresent(Context.class))
+                .forEach(annotateField);
+    }
 
 }

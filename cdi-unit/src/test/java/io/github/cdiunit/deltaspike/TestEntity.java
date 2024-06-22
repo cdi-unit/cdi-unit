@@ -7,9 +7,9 @@ import jakarta.persistence.Id;
 @Entity
 public class TestEntity {
 
-	@Id
-	private int id;
+    @Id
+    private int id;
 
-	@Column
-	private String name;
+    @Column
+    private String name;
 }

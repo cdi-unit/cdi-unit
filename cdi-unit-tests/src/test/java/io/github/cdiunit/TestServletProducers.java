@@ -7,26 +7,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 @RunWith(CdiRunner.class)
 public class TestServletProducers {
-	@Inject
-	private HttpServletRequest request;
+    @Inject
+    private HttpServletRequest request;
 
-	@Inject
-	private HttpSession session;
+    @Inject
+    private HttpSession session;
 
-	@Inject
-	private ServletContext context;
+    @Inject
+    private ServletContext context;
 
-
-	@Test
-	public void testServletException() {
-		Assert.assertNotNull(request);
-		Assert.assertNotNull(session);
-		Assert.assertNotNull(context);
-		ServletException.class.getClass();
-	}
+    @Test
+    public void testServletException() {
+        Assert.assertNotNull(request);
+        Assert.assertNotNull(session);
+        Assert.assertNotNull(context);
+        ServletException.class.getClass();
+    }
 }

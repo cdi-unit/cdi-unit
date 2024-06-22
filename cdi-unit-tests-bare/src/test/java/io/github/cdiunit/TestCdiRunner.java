@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 @AdditionalClasses(AImplementation1.class)
 public class TestCdiRunner {
 
-	@Inject
-	private NonTestClass nonTestClass;
+    @Inject
+    private NonTestClass nonTestClass;
 
     @Inject
     AInterface a;

@@ -1,19 +1,19 @@
 package io.github.cdiunit;
 
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
-
 @RunWith(CdiRunner.class)
 public class TestIsolation {
 
-	@Mock
-	@Produces
-	private AInterface mockA;
+    @Mock
+    @Produces
+    private AInterface mockA;
 
     @Inject
     private FApplicationScoped applicationScoped;

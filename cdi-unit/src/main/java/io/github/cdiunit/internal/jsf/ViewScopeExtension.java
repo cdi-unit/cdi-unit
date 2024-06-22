@@ -25,11 +25,12 @@ import jakarta.enterprise.inject.spi.Extension;
  *
  * @author russell
  */
-public class ViewScopeExtension implements Extension{
-    public ViewScopeExtension(){
+public class ViewScopeExtension implements Extension {
+    public ViewScopeExtension() {
 
     }
-    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager){
+
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
         event.addContext(new ViewContext());
     }
 }

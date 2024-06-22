@@ -1,11 +1,12 @@
 package io.github.cdiunit.decoratortest;
 
-import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.CdiRunner;
+import jakarta.inject.Inject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import jakarta.inject.Inject;
+import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.CdiRunner;
 
 import static org.junit.Assert.assertEquals;
 
