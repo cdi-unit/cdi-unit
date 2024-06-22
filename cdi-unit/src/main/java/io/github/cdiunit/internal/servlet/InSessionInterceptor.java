@@ -15,30 +15,29 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.ContextController;
-import io.github.cdiunit.InSessionScope;
-
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
+import io.github.cdiunit.ContextController;
+import io.github.cdiunit.InSessionScope;
+
 @Interceptor
 @InSessionScope
 public class InSessionInterceptor {
 
+    @Inject
+    private ContextController contextController;
 
-	@Inject
-	private ContextController contextController;
+    @AroundInvoke
+    public Object around(InvocationContext ctx) throws Exception {
 
-	@AroundInvoke
-	public Object around(InvocationContext ctx) throws Exception {
+        try {
+            return ctx.proceed();
+        } finally {
+            contextController.closeSession();
+        }
 
-		try {
-			return ctx.proceed();
-		} finally {
-			contextController.closeSession();
-		}
-
-	}
+    }
 }

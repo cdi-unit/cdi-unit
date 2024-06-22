@@ -9,16 +9,16 @@ import org.junit.runner.RunWith;
 @RunWith(CdiRunner.class)
 public class TestJUnitRule {
 
-	private final TestName testName = new TestName();
+    private final TestName testName = new TestName();
 
-	@Rule
-	public TestName getTestName() {
-		return testName;
-	}
+    @Rule
+    public TestName getTestName() {
+        return testName;
+    }
 
-	@Test
-	public void testName() {
-		Assert.assertNotNull("test name is expected", getTestName().getMethodName());
-	}
+    @Test
+    public void testName() {
+        Assert.assertNotNull("test name is expected", getTestName().getMethodName());
+    }
 
 }

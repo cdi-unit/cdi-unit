@@ -19,14 +19,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import org.apache.deltaspike.data.impl.RepositoryExtension;
+
 import io.github.cdiunit.AdditionalClasspaths;
 
 /**
  * Enable support for DeltaSpike data in this test.
+ *
  * @author bryn
  *
  */
-@AdditionalClasspaths({RepositoryExtension.class})
+@AdditionalClasspaths({ RepositoryExtension.class })
 @SupportDeltaspikeJpa
 @SupportDeltaspikePartialBean
 @Retention(RetentionPolicy.RUNTIME)

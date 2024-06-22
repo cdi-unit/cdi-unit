@@ -18,8 +18,8 @@ package io.github.cdiunit.ejb;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import io.github.cdiunit.internal.ejb.EjbExtension;
 import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.internal.ejb.EjbExtension;
 
 /**
  * Enable support for Ejb
@@ -27,7 +27,7 @@ import io.github.cdiunit.AdditionalClasses;
  * @author bryn
  *
  */
-@AdditionalClasses({EjbExtension.class })
+@AdditionalClasses({ EjbExtension.class })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SupportEjb {
 

@@ -15,39 +15,40 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.ContextController;
-import io.github.cdiunit.InRequestScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.github.cdiunit.ContextController;
+import io.github.cdiunit.InRequestScope;
+
 @Interceptor
 @InRequestScope
 public class InRequestInterceptor {
-	private static final Logger log = LoggerFactory
-			.getLogger(InRequestInterceptor.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(InRequestInterceptor.class);
 
-	@Inject
-	private ContextController contextController;
+    @Inject
+    private ContextController contextController;
 
-	@AroundInvoke
-	public Object around(InvocationContext ctx) throws Exception {
-		try {
-			try {
-				contextController.openRequest();
+    @AroundInvoke
+    public Object around(InvocationContext ctx) throws Exception {
+        try {
+            try {
+                contextController.openRequest();
 
-			} catch (Exception e) {
-				log.error("Failed to open request context", e);
-				throw e;
+            } catch (Exception e) {
+                log.error("Failed to open request context", e);
+                throw e;
 
-			}
-			return ctx.proceed();
-		} finally {
-			contextController.closeRequest();
-		}
-	}
+            }
+            return ctx.proceed();
+        } finally {
+            contextController.closeRequest();
+        }
+    }
 }

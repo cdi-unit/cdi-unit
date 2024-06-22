@@ -18,28 +18,26 @@ package io.github.cdiunit;
 import jakarta.inject.Inject;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 @RunWith(CdiRunner.class)
 @ActivatedAlternatives(AImplementation2.class)
 public class TestAlternativeAnnotations {
 
-	@Inject
-	private AImplementation1 impl1;
+    @Inject
+    private AImplementation1 impl1;
 
-	@Inject
-	private AImplementation2 impl2;
+    @Inject
+    private AImplementation2 impl2;
 
-	@Inject
-	private AInterface impl;
+    @Inject
+    private AInterface impl;
 
-	@Test
-	public void testAlternativeSelected() {
+    @Test
+    public void testAlternativeSelected() {
 
-		Assert.assertTrue("Should have been impl2", impl instanceof AImplementation2);
-	}
+        Assert.assertTrue("Should have been impl2", impl instanceof AImplementation2);
+    }
 
 }

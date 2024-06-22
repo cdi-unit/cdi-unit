@@ -8,17 +8,14 @@ import jakarta.enterprise.inject.Produces;
 @ApplicationScoped
 public class ScopedFactory {
 
-	@Produces
-	@RequestScoped
-	public Scoped getScoped() {
-		return new Scoped();
-	}
+    @Produces
+    @RequestScoped
+    public Scoped getScoped() {
+        return new Scoped();
+    }
 
-
-	public void disposed(@Disposes Scoped scoped) {
-		scoped.dispose();
-	}
-
-
+    public void disposed(@Disposes Scoped scoped) {
+        scoped.dispose();
+    }
 
 }

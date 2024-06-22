@@ -19,29 +19,29 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import org.junit.Assert;
-
 import org.easymock.Mock;
-import io.github.cdiunit.AInterface;
-import io.github.cdiunit.CdiRunner;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import io.github.cdiunit.AInterface;
+import io.github.cdiunit.CdiRunner;
 
 @RunWith(CdiRunner.class)
 public class TestEasymock {
 
-	@Mock
-	@Produces
-	private AInterface mockA;
+    @Mock
+    @Produces
+    private AInterface mockA;
 
-	@Inject
-	private Provider<AInterface> a;
+    @Inject
+    private Provider<AInterface> a;
 
-	@Test
-	public void testEasyMock() {
-		AInterface a1 = a.get();
-		Assert.assertEquals(mockA, a1);
-		Assert.assertNotNull(mockA);
-	}
+    @Test
+    public void testEasyMock() {
+        AInterface a1 = a.get();
+        Assert.assertEquals(mockA, a1);
+        Assert.assertNotNull(mockA);
+    }
 
 }

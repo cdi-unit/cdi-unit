@@ -1,16 +1,15 @@
 package io.github.cdiunit.internal.servlet;
 
+import jakarta.enterprise.inject.Produces;
 
 import javassist.util.proxy.ProxyFactory;
 
-import jakarta.enterprise.inject.Produces;
-
 /**
  * Decides which version of CdiUnitInitialListener to use, based on the Weld version.
+ *
  * @author Sean Flanigan
  */
-public class CdiUnitInitialListenerProducer
-{
+public class CdiUnitInitialListenerProducer {
     private static final Class<?> listenerClass;
 
     static {
@@ -27,7 +26,7 @@ public class CdiUnitInitialListenerProducer
                 Class<?> weldListenerClass = Class.forName("org.jboss.weld.servlet.WeldListener");
                 ProxyFactory factory = new ProxyFactory();
                 factory.setSuperclass(weldListenerClass);
-                factory.setInterfaces(new Class[] { CdiUnitInitialListener.class } );
+                factory.setInterfaces(new Class[] { CdiUnitInitialListener.class });
                 classToUse = factory.createClass();
             } catch (ClassNotFoundException | NoClassDefFoundError e1) {
                 throw new RuntimeException(e1);

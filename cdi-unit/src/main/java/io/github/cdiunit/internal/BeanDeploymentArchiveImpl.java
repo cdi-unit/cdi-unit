@@ -27,50 +27,50 @@ import org.jboss.weld.ejb.spi.EjbDescriptor;
 
 public class BeanDeploymentArchiveImpl implements BeanDeploymentArchive {
 
-	private final Collection<String> beanClasses;
-	private final BeansXml beansXml;
-	private final Collection<BeanDeploymentArchive> beanDeploymentArchives;
-	private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
-	private final String id;
+    private final Collection<String> beanClasses;
+    private final BeansXml beansXml;
+    private final Collection<BeanDeploymentArchive> beanDeploymentArchives;
+    private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
+    private final String id;
 
-	public BeanDeploymentArchiveImpl(String id,
-			Collection<String> beanClasses, BeansXml beansXml,
-			Collection<BeanDeploymentArchive> beanDeploymentArchives) {
-		this.id = id;
-		this.beanClasses = beanClasses;
-		this.beansXml = beansXml;
-		this.beanDeploymentArchives = beanDeploymentArchives;
-	}
+    public BeanDeploymentArchiveImpl(String id,
+            Collection<String> beanClasses, BeansXml beansXml,
+            Collection<BeanDeploymentArchive> beanDeploymentArchives) {
+        this.id = id;
+        this.beanClasses = beanClasses;
+        this.beansXml = beansXml;
+        this.beanDeploymentArchives = beanDeploymentArchives;
+    }
 
-	public BeanDeploymentArchiveImpl(String id,
-			Collection<String> beanClasses, BeansXml beansXml) {
-		this(id, beanClasses, beansXml, new ArrayList<BeanDeploymentArchive>());
-	}
+    public BeanDeploymentArchiveImpl(String id,
+            Collection<String> beanClasses, BeansXml beansXml) {
+        this(id, beanClasses, beansXml, new ArrayList<BeanDeploymentArchive>());
+    }
 
-	public Collection<String> getBeanClasses() {
-		return Collections.unmodifiableCollection(beanClasses);
-	}
+    public Collection<String> getBeanClasses() {
+        return Collections.unmodifiableCollection(beanClasses);
+    }
 
-	public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
-		return Collections.unmodifiableCollection(beanDeploymentArchives);
-	}
+    public Collection<BeanDeploymentArchive> getBeanDeploymentArchives() {
+        return Collections.unmodifiableCollection(beanDeploymentArchives);
+    }
 
-	public BeansXml getBeansXml() {
-		return beansXml;
-	}
+    public BeansXml getBeansXml() {
+        return beansXml;
+    }
 
-	@Override
-	public Collection<EjbDescriptor<?>> getEjbs() {
-		return Collections.emptyList();
-	}
+    @Override
+    public Collection<EjbDescriptor<?>> getEjbs() {
+        return Collections.emptyList();
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public ServiceRegistry getServices() {
-		return serviceRegistry;
-	}
+    @Override
+    public ServiceRegistry getServices() {
+        return serviceRegistry;
+    }
 }

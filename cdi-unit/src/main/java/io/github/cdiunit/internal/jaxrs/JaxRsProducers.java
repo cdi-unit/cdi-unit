@@ -15,13 +15,6 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
-import io.github.cdiunit.ContextController;
-import io.github.cdiunit.internal.servlet.CdiUnitServlet;
-import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
-import io.github.cdiunit.internal.servlet.MockServletContextImpl;
-import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
-import org.mockito.Mockito;
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Produces;
@@ -36,78 +29,82 @@ import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.Providers;
 
+import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
+import org.mockito.Mockito;
+
+import io.github.cdiunit.ContextController;
+import io.github.cdiunit.internal.servlet.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
+import io.github.cdiunit.internal.servlet.MockServletContextImpl;
+
 public class JaxRsProducers {
-	@Inject
-	@CdiUnitServlet
+    @Inject
+    @CdiUnitServlet
     MockServletContextImpl servletContext;
 
-	@Produces
-	@JaxRsQualifier
-	public ServletContext getServletContext() {
-		return servletContext;
-	}
+    @Produces
+    @JaxRsQualifier
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
 
-	@Inject
-	ContextController contextController;
+    @Inject
+    ContextController contextController;
 
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public HttpServletRequest getHttpServletRequest() {
-		return contextController.currentRequest();
-	}
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public HttpServletRequest getHttpServletRequest() {
+        return contextController.currentRequest();
+    }
 
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public HttpServletResponse getHttpServletResponse() {
-		return new MockHttpServletResponseImpl();
-	}
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public HttpServletResponse getHttpServletResponse() {
+        return new MockHttpServletResponseImpl();
+    }
 
+    @Produces
+    @SessionScoped
+    @JaxRsQualifier
+    public HttpSession getHttpSession() {
+        return contextController.currentRequest().getSession();
+    }
 
-	@Produces
-	@SessionScoped
-	@JaxRsQualifier
-	public HttpSession getHttpSession() {
-		return contextController.currentRequest().getSession();
-	}
+    @Produces
+    @JaxRsQualifier
+    public SecurityContext getSecurityContext() {
+        return Mockito.mock(SecurityContext.class);
+    }
 
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public Request getRequest() {
+        return new RequestImpl(getHttpServletRequest(), getHttpServletResponse());
+    }
 
-	@Produces
-	@JaxRsQualifier
-	public SecurityContext getSecurityContext() {
-		return Mockito.mock(SecurityContext.class);
-	}
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public UriInfo getUriInfo() {
+        return ServletUtil.extractUriInfo(getHttpServletRequest(), "");
 
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public Request getRequest() {
-		return new RequestImpl(getHttpServletRequest(), getHttpServletResponse());
-	}
+    }
 
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public HttpHeaders getHttpHeaders() {
+        return ServletUtil.extractHttpHeaders(getHttpServletRequest());
+    }
 
-
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public UriInfo getUriInfo() {
-		return ServletUtil.extractUriInfo(getHttpServletRequest(), "");
-
-	}
-
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public HttpHeaders getHttpHeaders() {
-		return ServletUtil.extractHttpHeaders(getHttpServletRequest());
-	}
-
-	@Produces
-	@RequestScoped
-	@JaxRsQualifier
-	public Providers getProviders() {
-		return Mockito.mock(Providers.class);
-	}
+    @Produces
+    @RequestScoped
+    @JaxRsQualifier
+    public Providers getProviders() {
+        return Mockito.mock(Providers.class);
+    }
 
 }

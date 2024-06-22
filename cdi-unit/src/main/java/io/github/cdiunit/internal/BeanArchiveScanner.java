@@ -9,6 +9,6 @@ import java.util.Collection;
  */
 public interface BeanArchiveScanner {
 
-	Collection<URL> findBeanArchives(Collection<URL> classPathEntries) throws IOException;
+    Collection<URL> findBeanArchives(Collection<URL> classPathEntries) throws IOException;
 
 }

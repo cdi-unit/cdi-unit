@@ -15,105 +15,104 @@
  */
 package io.github.cdiunit;
 
-import io.github.cdiunit.TestEjb.*;
-import io.github.cdiunit.ejb.SupportEjb;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.inject.Produces;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import io.github.cdiunit.TestEjb.*;
+import io.github.cdiunit.ejb.SupportEjb;
+
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ EJBStateless.class, EJBStatelessNamed.class, EJBStateful.class, EJBStatefulNamed.class, EJBSingleton.class,
-		EJBSingletonNamed.class })
+        EJBSingletonNamed.class })
 @SupportEjb
 public class TestEjb {
 
-	@EJB
-	private EJBA inject;
+    @EJB
+    private EJBA inject;
 
-	@EJB(beanName = "named")
-	private EJBI injectNamed;
+    @EJB(beanName = "named")
+    private EJBI injectNamed;
 
-	@EJB(beanName = "TestEjb.EJBStateless")
-	private EJBI injectStateless;
+    @EJB(beanName = "TestEjb.EJBStateless")
+    private EJBI injectStateless;
 
-	@EJB(beanName = "statelessNamed")
-	private EJBI injectStatelessNamed;
+    @EJB(beanName = "statelessNamed")
+    private EJBI injectStatelessNamed;
 
-	@EJB(beanName = "TestEjb.EJBStateful")
-	private EJBI injectStateful;
+    @EJB(beanName = "TestEjb.EJBStateful")
+    private EJBI injectStateful;
 
-	@EJB(beanName = "statefulNamed")
-	private EJBI injectStatefulNamed;
+    @EJB(beanName = "statefulNamed")
+    private EJBI injectStatefulNamed;
 
-	@EJB(beanName = "TestEjb.EJBSingleton")
-	private EJBI injectSingleton;
+    @EJB(beanName = "TestEjb.EJBSingleton")
+    private EJBI injectSingleton;
 
-	@EJB(beanName = "singletonNamed")
-	private EJBI injectSingletonNamed;
+    @EJB(beanName = "singletonNamed")
+    private EJBI injectSingletonNamed;
 
-	private EJBA expectedDefault = new EJBA();
-	private EJBA expectedNamed = new EJBA();
+    private EJBA expectedDefault = new EJBA();
+    private EJBA expectedNamed = new EJBA();
 
+    @EJB(beanName = "named")
+    @Produces
+    public EJBA providesNamed() {
+        return expectedNamed;
+    }
 
+    @Test
+    public void testEjb() {
+        Assert.assertNotEquals(inject, injectNamed);
+        Assert.assertTrue(injectStateless instanceof EJBStateless);
+        Assert.assertTrue(injectStatelessNamed instanceof EJBStatelessNamed);
+        Assert.assertTrue(injectSingleton instanceof EJBSingleton);
+        Assert.assertTrue(injectSingletonNamed instanceof EJBSingletonNamed);
+        Assert.assertTrue(injectStateful instanceof EJBStateful);
+        Assert.assertTrue(injectStatefulNamed instanceof EJBStatefulNamed);
+    }
 
-	@EJB(beanName = "named")
-	@Produces
-	public EJBA providesNamed() {
-		return expectedNamed;
-	}
+    public static interface EJBI {
 
-	@Test
-	public void testEjb() {
-		Assert.assertNotEquals(inject, injectNamed);
-		Assert.assertTrue(injectStateless instanceof EJBStateless);
-		Assert.assertTrue(injectStatelessNamed instanceof EJBStatelessNamed);
-		Assert.assertTrue(injectSingleton instanceof EJBSingleton);
-		Assert.assertTrue(injectSingletonNamed instanceof EJBSingletonNamed);
-		Assert.assertTrue(injectStateful instanceof EJBStateful);
-		Assert.assertTrue(injectStatefulNamed instanceof EJBStatefulNamed);
-	}
+    }
 
-	public static interface EJBI {
+    @Stateless
+    public static class EJBA implements EJBI {
 
-	}
+    }
 
-	@Stateless
-	public static class EJBA implements EJBI {
+    @Stateless(name = "statelessNamed")
+    public static class EJBStatelessNamed implements EJBI {
 
-	}
+    }
 
-	@Stateless(name = "statelessNamed")
-	public static class EJBStatelessNamed implements EJBI {
+    @Stateless(name = "TestEjb.EJBStateless")
+    public static class EJBStateless implements EJBI {
 
-	}
+    }
 
-	@Stateless(name="TestEjb.EJBStateless")
-	public static class EJBStateless implements EJBI {
+    @Stateless(name = "statefulNamed")
+    public static class EJBStatefulNamed implements EJBI {
 
-	}
+    }
 
-	@Stateless(name = "statefulNamed")
-	public static class EJBStatefulNamed implements EJBI {
+    @Stateless(name = "TestEjb.EJBStateful")
+    public static class EJBStateful implements EJBI {
 
-	}
+    }
 
-	@Stateless(name="TestEjb.EJBStateful")
-	public static class EJBStateful implements EJBI {
+    @Singleton(name = "singletonNamed")
+    public static class EJBSingletonNamed implements EJBI {
 
-	}
+    }
 
-	@Singleton(name = "singletonNamed")
-	public static class EJBSingletonNamed implements EJBI {
+    @Singleton(name = "TestEjb.EJBSingleton")
+    public static class EJBSingleton implements EJBI {
 
-	}
-
-	@Singleton(name="TestEjb.EJBSingleton")
-	public static class EJBSingleton implements EJBI {
-
-	}
+    }
 }

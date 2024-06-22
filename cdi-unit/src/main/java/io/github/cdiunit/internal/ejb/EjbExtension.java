@@ -15,8 +15,7 @@
  */
 package io.github.cdiunit.internal.ejb;
 
-
-import io.github.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;
+import java.util.stream.Collectors;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
@@ -34,76 +33,76 @@ import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
-import java.util.stream.Collectors;
+import io.github.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;
 
 public class EjbExtension implements Extension {
 
-	public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
+    public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 
-		AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		final AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType();
+        AnnotatedType<T> annotatedType = pat.getAnnotatedType();
+        final AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType();
 
+        Stateless stateless = annotatedType.getAnnotation(Stateless.class);
 
-		Stateless stateless = annotatedType.getAnnotation(Stateless.class);
+        if (stateless != null) {
+            processClass(builder, stateless.name());
+        }
 
-		if (stateless != null) {
-			processClass(builder, stateless.name());
-		}
+        Stateful stateful = annotatedType.getAnnotation(Stateful.class);
 
-		Stateful stateful = annotatedType.getAnnotation(Stateful.class);
+        if (stateful != null) {
+            processClass(builder, stateful.name());
+        }
+        try {
+            Singleton singleton = annotatedType.getAnnotation(Singleton.class);
+            if (singleton != null) {
+                processClass(builder, singleton.name());
+            }
+        } catch (NoClassDefFoundError e) {
+            // EJB 3.0
+        }
 
-		if (stateful != null) {
-			processClass(builder, stateful.name());
-		}
-		try {
-			Singleton singleton = annotatedType.getAnnotation(Singleton.class);
-			if (singleton != null) {
-				processClass(builder, singleton.name());
-			}
-		} catch (NoClassDefFoundError e) {
-			// EJB 3.0
-		}
+        for (AnnotatedMethodConfigurator<? super T> method : builder.filterMethods(m -> m.isAnnotationPresent(EJB.class))
+                .collect(Collectors.toList())) {
+            EJB ejb = method.getAnnotated().getAnnotation(EJB.class);
+            method.add(EJbQualifierLiteral.INSTANCE);
+            method.remove(a -> a.annotationType().equals(EJB.class));
+            if (!ejb.beanName().isEmpty()) {
+                method.add(new EJbName.EJbNameLiteral(ejb.beanName()));
+            } else {
+                method.add(DefaultLiteral.INSTANCE);
+            }
+        }
 
-		for (AnnotatedMethodConfigurator<? super T> method : builder.filterMethods(m -> m.isAnnotationPresent(EJB.class)).collect(Collectors.toList())) {
-			EJB ejb = method.getAnnotated().getAnnotation(EJB.class);
-			method.add(EJbQualifierLiteral.INSTANCE);
-			method.remove(a -> a.annotationType().equals(EJB.class));
-			if (!ejb.beanName().isEmpty()) {
-				method.add(new EJbName.EJbNameLiteral(ejb.beanName()));
-			} else {
-				method.add(DefaultLiteral.INSTANCE);
-			}
-		}
+        for (AnnotatedFieldConfigurator<? super T> field : builder.filterFields(f -> f.isAnnotationPresent(EJB.class))
+                .collect(Collectors.toList())) {
+            EJB ejb = field.getAnnotated().getAnnotation(EJB.class);
+            boolean producesPresent = field.getAnnotated().isAnnotationPresent(Produces.class);
+            if (!producesPresent) {
+                field.add(new AnnotationLiteral<Inject>() {
+                    private static final long serialVersionUID = 1L;
+                });
+            }
 
-		for (AnnotatedFieldConfigurator<? super T> field : builder.filterFields(f -> f.isAnnotationPresent(EJB.class)).collect(Collectors.toList())) {
-			EJB ejb = field.getAnnotated().getAnnotation(EJB.class);
-			boolean producesPresent = field.getAnnotated().isAnnotationPresent(Produces.class);
-			if (!producesPresent) {
-				field.add(new AnnotationLiteral<Inject>() {
-					private static final long serialVersionUID = 1L;
-				});
-			}
+            field.remove(a -> a.annotationType().equals(EJB.class));
+            field.add(EJbQualifierLiteral.INSTANCE);
+            if (!ejb.beanName().isEmpty()) {
+                field.add(new EJbName.EJbNameLiteral(ejb.beanName()));
+            } else {
+                field.add(DefaultLiteral.INSTANCE);
+            }
+        }
+    }
 
-			field.remove(a -> a.annotationType().equals(EJB.class));
-			field.add(EJbQualifierLiteral.INSTANCE);
-			if (!ejb.beanName().isEmpty()) {
-				field.add(new EJbName.EJbNameLiteral(ejb.beanName()));
-			} else {
-				field.add(DefaultLiteral.INSTANCE);
-			}
-		}
-	}
-
-
-	private static <T> void processClass(AnnotatedTypeConfigurator<T> builder, String name) {
-		builder.add(new AnnotationLiteral<ApplicationScoped>() {
-			private static final long serialVersionUID = 1L;
-		});
-		builder.add(EJbQualifierLiteral.INSTANCE);
-		if(!name.isEmpty() ) {
-			builder.add(new EJbName.EJbNameLiteral(name));
-		} else {
-			builder.add(DefaultLiteral.INSTANCE);
-		}
-	}
+    private static <T> void processClass(AnnotatedTypeConfigurator<T> builder, String name) {
+        builder.add(new AnnotationLiteral<ApplicationScoped>() {
+            private static final long serialVersionUID = 1L;
+        });
+        builder.add(EJbQualifierLiteral.INSTANCE);
+        if (!name.isEmpty()) {
+            builder.add(new EJbName.EJbNameLiteral(name));
+        } else {
+            builder.add(DefaultLiteral.INSTANCE);
+        }
+    }
 }

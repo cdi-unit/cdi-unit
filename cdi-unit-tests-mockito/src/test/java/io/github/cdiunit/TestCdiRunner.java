@@ -11,16 +11,16 @@ import org.mockito.Mock;
 @RunWith(CdiRunner.class)
 public class TestCdiRunner {
 
-	@Inject
-	AInterface a;
+    @Inject
+    AInterface a;
 
-	@Produces
-	@Mock
-	AInterface aMock;
+    @Produces
+    @Mock
+    AInterface aMock;
 
-	@Test
-	public void testStart() {
-		Assert.assertEquals(aMock, a);
-	}
+    @Test
+    public void testStart() {
+        Assert.assertEquals(aMock, a);
+    }
 
 }

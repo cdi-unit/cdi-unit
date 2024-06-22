@@ -15,33 +15,30 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.InConversationScope;
-
 import jakarta.enterprise.context.Conversation;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
+import io.github.cdiunit.InConversationScope;
+
 @InConversationScope
 @Interceptor
 public class InConversationInterceptor {
 
-	@Inject
-	private Conversation conversation;
+    @Inject
+    private Conversation conversation;
 
+    @AroundInvoke
+    public Object around(InvocationContext ctx) throws Exception {
 
+        conversation.begin();
+        try {
+            return ctx.proceed();
+        } finally {
+            conversation.end();
+        }
 
-
-	@AroundInvoke
-	public Object around(InvocationContext ctx) throws Exception {
-
-		conversation.begin();
-		try {
-			return ctx.proceed();
-		} finally {
-			conversation.end();
-		}
-
-	}
+    }
 }

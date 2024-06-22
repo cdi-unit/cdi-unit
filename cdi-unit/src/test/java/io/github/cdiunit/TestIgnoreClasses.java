@@ -1,11 +1,11 @@
 package io.github.cdiunit;
 
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(TestIgnoreClasses.MyProducer.class)

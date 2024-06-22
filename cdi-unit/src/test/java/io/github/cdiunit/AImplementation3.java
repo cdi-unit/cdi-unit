@@ -15,14 +15,15 @@
  */
 package io.github.cdiunit;
 
-import io.github.cdiunit.AImplementation3.StereotypeAlternative;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Stereotype;
+
+import io.github.cdiunit.AImplementation3.StereotypeAlternative;
 
 @StereotypeAlternative
 public class AImplementation3 implements AInterface {

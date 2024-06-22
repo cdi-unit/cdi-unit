@@ -15,7 +15,7 @@
  */
 package io.github.cdiunit.internal.mockito;
 
-import org.mockito.MockitoAnnotations;
+import java.util.Set;
 
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Observes;
@@ -24,38 +24,38 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.enterprise.inject.spi.InjectionTarget;
 import jakarta.enterprise.inject.spi.ProcessInjectionTarget;
 
-import java.util.Set;
+import org.mockito.MockitoAnnotations;
 
 public class MockitoExtension implements Extension {
-	public <T> void process(@Observes ProcessInjectionTarget<T> event) {
-		final InjectionTarget<T> injectionTarget = event.getInjectionTarget();
-		event.setInjectionTarget(new InjectionTarget<T>() {
+    public <T> void process(@Observes ProcessInjectionTarget<T> event) {
+        final InjectionTarget<T> injectionTarget = event.getInjectionTarget();
+        event.setInjectionTarget(new InjectionTarget<T>() {
 
-			public T produce(CreationalContext<T> ctx) {
-				T o = injectionTarget.produce(ctx);
-				MockitoAnnotations.initMocks(o);
-				return o;
-			}
+            public T produce(CreationalContext<T> ctx) {
+                T o = injectionTarget.produce(ctx);
+                MockitoAnnotations.initMocks(o);
+                return o;
+            }
 
-			public void dispose(T instance) {
-				injectionTarget.dispose(instance);
-			}
+            public void dispose(T instance) {
+                injectionTarget.dispose(instance);
+            }
 
-			public Set<InjectionPoint> getInjectionPoints() {
-				return injectionTarget.getInjectionPoints();
-			}
+            public Set<InjectionPoint> getInjectionPoints() {
+                return injectionTarget.getInjectionPoints();
+            }
 
-			public void inject(T instance, CreationalContext<T> ctx) {
-				injectionTarget.inject(instance, ctx);
-			}
+            public void inject(T instance, CreationalContext<T> ctx) {
+                injectionTarget.inject(instance, ctx);
+            }
 
-			public void postConstruct(T instance) {
-				injectionTarget.postConstruct(instance);
-			}
+            public void postConstruct(T instance) {
+                injectionTarget.postConstruct(instance);
+            }
 
-			public void preDestroy(T instance) {
-				injectionTarget.preDestroy(instance);
-			}
-		});
-	}
+            public void preDestroy(T instance) {
+                injectionTarget.preDestroy(instance);
+            }
+        });
+    }
 }

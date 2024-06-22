@@ -18,9 +18,9 @@ package io.github.cdiunit.jaxrs;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.internal.jaxrs.JaxRsExtension;
 import io.github.cdiunit.internal.jaxrs.JaxRsProducers;
-import io.github.cdiunit.AdditionalClasses;
 
 /**
  * Enable support for JaxRs mocking.
@@ -28,7 +28,7 @@ import io.github.cdiunit.AdditionalClasses;
  * @author bryn
  *
  */
-@AdditionalClasses({JaxRsExtension.class, JaxRsProducers.class })
+@AdditionalClasses({ JaxRsExtension.class, JaxRsProducers.class })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SupportJaxRs {
 

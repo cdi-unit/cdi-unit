@@ -15,13 +15,6 @@
  */
 package io.github.cdiunit;
 
-import io.github.cdiunit.internal.servlet.CdiUnitInitialListener;
-import io.github.cdiunit.internal.servlet.CdiUnitServlet;
-import io.github.cdiunit.internal.servlet.LifecycleAwareRequest;
-import io.github.cdiunit.internal.servlet.MockHttpServletRequestImpl;
-import org.jboss.weld.context.ConversationContext;
-import org.jboss.weld.context.http.Http;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,6 +27,14 @@ import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
+
+import org.jboss.weld.context.ConversationContext;
+import org.jboss.weld.context.http.Http;
+
+import io.github.cdiunit.internal.servlet.CdiUnitInitialListener;
+import io.github.cdiunit.internal.servlet.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.LifecycleAwareRequest;
+import io.github.cdiunit.internal.servlet.MockHttpServletRequestImpl;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -49,20 +50,20 @@ import jakarta.servlet.http.HttpSessionEvent;
  * &#064;AdditionalClasses(RequestScopedWarpDrive.class)
  * class TestStarship {
  *
- * 	&#064;Inject
- * 	ContextController contextController; // Obtain an instance of the context
- * 											// controller.
+ *     &#064;Inject
+ *     ContextController contextController; // Obtain an instance of the context
+ *                                          // controller.
  *
- * 	&#064;Inject
- * 	Starship starship;
+ *     &#064;Inject
+ *     Starship starship;
  *
- * 	&#064;Test
- * 	void testStart() {
- * 		contextController.openRequest(); // Start a new request.
+ *     &#064;Test
+ *     void testStart() {
+ *         contextController.openRequest(); // Start a new request.
  *
- * 		starship.start();
- * 		contextController.closeRequest(); // Close the current request.
- *    }
+ *         starship.start();
+ *         contextController.closeRequest(); // Close the current request.
+ *     }
  * }
  * </pre>
  *
@@ -72,123 +73,123 @@ import jakarta.servlet.http.HttpSessionEvent;
 @ApplicationScoped
 public class ContextController {
 
-	private ThreadLocal<HttpServletRequest> requests;
+    private ThreadLocal<HttpServletRequest> requests;
 
-	@Inject
-	private BeanManager beanManager;
+    @Inject
+    private BeanManager beanManager;
 
-	private HttpSession currentSession;
+    private HttpSession currentSession;
 
-	@Inject
-	@CdiUnitServlet
-	private ServletContext context;
+    @Inject
+    @CdiUnitServlet
+    private ServletContext context;
 
-	@Inject
-	@CdiUnitServlet
-	private HttpSession session;
+    @Inject
+    @CdiUnitServlet
+    private HttpSession session;
 
-	@Inject
-	private CdiUnitInitialListener listener;
+    @Inject
+    private CdiUnitInitialListener listener;
 
-	@PostConstruct
-	void initContext() {
+    @PostConstruct
+    void initContext() {
 
-		requests = new ThreadLocal<HttpServletRequest>();
-		listener.contextInitialized(new ServletContextEvent(context));
-	}
+        requests = new ThreadLocal<HttpServletRequest>();
+        listener.contextInitialized(new ServletContextEvent(context));
+    }
 
-	@PreDestroy
-	void destroyContext() {
+    @PreDestroy
+    void destroyContext() {
 
-		listener.contextDestroyed(new ServletContextEvent(context));
-		requests = null;
-	}
+        listener.contextDestroyed(new ServletContextEvent(context));
+        requests = null;
+    }
 
-	@Inject
-	@CdiUnitServlet
-	private Provider<MockHttpServletRequestImpl> requestProvider;
+    @Inject
+    @CdiUnitServlet
+    private Provider<MockHttpServletRequestImpl> requestProvider;
 
-	@Inject
-	@Http
-	private ConversationContext conversationContext;
+    @Inject
+    @Http
+    private ConversationContext conversationContext;
 
-	/**
-	 * Start a request.
-	 *
-	 * @return The request opened.
-	 */
-	public HttpServletRequest openRequest() {
+    /**
+     * Start a request.
+     *
+     * @return The request opened.
+     */
+    public HttpServletRequest openRequest() {
 
-		HttpServletRequest currentRequest = requests.get();
-		if (currentRequest != null) {
-			throw new RuntimeException("A request is already open");
-		}
+        HttpServletRequest currentRequest = requests.get();
+        if (currentRequest != null) {
+            throw new RuntimeException("A request is already open");
+        }
 
-		MockHttpServletRequestImpl request = requestProvider.get();
+        MockHttpServletRequestImpl request = requestProvider.get();
 
-		if (currentSession != null) {
+        if (currentSession != null) {
 
-			request.setSession(currentSession);
-			request.getSession();
-		}
+            request.setSession(currentSession);
+            request.getSession();
+        }
 
-		currentRequest = new LifecycleAwareRequest(listener, request);
-		requests.set(currentRequest);
+        currentRequest = new LifecycleAwareRequest(listener, request);
+        requests.set(currentRequest);
 
-		listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
-		if (!conversationContext.isActive()) {
-			conversationContext.activate();
-		}
+        listener.requestInitialized(new ServletRequestEvent(context, currentRequest));
+        if (!conversationContext.isActive()) {
+            conversationContext.activate();
+        }
 
-		return currentRequest;
-	}
+        return currentRequest;
+    }
 
-	/**
-	 * @return Returns the current in progress request or throws an exception if the request was not active
-	 */
-	public HttpServletRequest currentRequest() {
+    /**
+     * @return Returns the current in progress request or throws an exception if the request was not active
+     */
+    public HttpServletRequest currentRequest() {
 
-		HttpServletRequest currentRequest = requests.get();
-		if (currentRequest == null) {
-			throw new RuntimeException("A request has not been opened");
-		}
+        HttpServletRequest currentRequest = requests.get();
+        if (currentRequest == null) {
+            throw new RuntimeException("A request has not been opened");
+        }
 
-		return currentRequest;
-	}
+        return currentRequest;
+    }
 
-	/**
-	 * Close the currently active request.
-	 */
-	public void closeRequest() {
+    /**
+     * Close the currently active request.
+     */
+    public void closeRequest() {
 
-		HttpServletRequest currentRequest = requests.get();
-		if (currentRequest != null) {
+        HttpServletRequest currentRequest = requests.get();
+        if (currentRequest != null) {
 
-			listener.requestDestroyed(new ServletRequestEvent(context, currentRequest));
-			currentSession = currentRequest.getSession(false);
-		}
+            listener.requestDestroyed(new ServletRequestEvent(context, currentRequest));
+            currentSession = currentRequest.getSession(false);
+        }
 
-		requests.remove();
-	}
+        requests.remove();
+    }
 
-	/**
-	 * Close the currently active session.
-	 */
-	public void closeSession() {
+    /**
+     * Close the currently active session.
+     */
+    public void closeSession() {
 
-		HttpServletRequest currentRequest = requests.get();
-		if (currentRequest != null) {
-			currentSession = currentRequest.getSession(false);
-		}
+        HttpServletRequest currentRequest = requests.get();
+        if (currentRequest != null) {
+            currentSession = currentRequest.getSession(false);
+        }
 
-		if (currentSession != null) {
+        if (currentSession != null) {
 
-			listener.sessionDestroyed(new HttpSessionEvent(currentSession));
-			currentSession = null;
-		}
-	}
+            listener.sessionDestroyed(new HttpSessionEvent(currentSession));
+            currentSession = null;
+        }
+    }
 
-	public HttpSession getSession() {
-		return currentSession;
-	}
+    public HttpSession getSession() {
+        return currentSession;
+    }
 }

@@ -1,5 +1,10 @@
 package io.github.cdiunit.internal;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+
 import jakarta.decorator.Decorator;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Instance;
@@ -9,11 +14,6 @@ import jakarta.enterprise.inject.spi.Extension;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.interceptor.Interceptor;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 
 /**
  * Discover standard CDI features:
@@ -34,69 +34,69 @@ import java.lang.reflect.Type;
  */
 public class CdiDiscoveryExtension implements DiscoveryExtension {
 
-	@Override
-	public void bootstrap(BootstrapDiscoveryContext bdc) {
-		bdc.discoverClass(this::discoverClass);
-		bdc.discoverField(this::discoverField);
-		bdc.discoverMethod(this::discoverMethod);
-	}
+    @Override
+    public void bootstrap(BootstrapDiscoveryContext bdc) {
+        bdc.discoverClass(this::discoverClass);
+        bdc.discoverField(this::discoverField);
+        bdc.discoverMethod(this::discoverMethod);
+    }
 
-	private void discoverClass(Context context, Class<?> cls) {
-		discoverExtensions(context, cls);
-		discoverInterceptors(context, cls);
-		discoverDecorators(context, cls);
-		discoverAlternativeStereotype(context, cls);
-	}
+    private void discoverClass(Context context, Class<?> cls) {
+        discoverExtensions(context, cls);
+        discoverInterceptors(context, cls);
+        discoverDecorators(context, cls);
+        discoverAlternativeStereotype(context, cls);
+    }
 
-	private void discoverField(Context context, Field field) {
-		if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
-			context.processBean(field.getGenericType());
-		}
-		if (field.getType().equals(Provider.class) || field.getType().equals(Instance.class)) {
-			context.processBean(field.getGenericType());
-		}
-	}
+    private void discoverField(Context context, Field field) {
+        if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
+            context.processBean(field.getGenericType());
+        }
+        if (field.getType().equals(Provider.class) || field.getType().equals(Instance.class)) {
+            context.processBean(field.getGenericType());
+        }
+    }
 
-	private void discoverMethod(Context context, Method method) {
-		if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
-			for (Type param : method.getGenericParameterTypes()) {
-				context.processBean(param);
-			}
-			// TODO PERF we might be adding classes which we already processed
-			context.processBean(method.getGenericReturnType());
-		}
-	}
+    private void discoverMethod(Context context, Method method) {
+        if (method.isAnnotationPresent(Inject.class) || method.isAnnotationPresent(Produces.class)) {
+            for (Type param : method.getGenericParameterTypes()) {
+                context.processBean(param);
+            }
+            // TODO PERF we might be adding classes which we already processed
+            context.processBean(method.getGenericReturnType());
+        }
+    }
 
-	private void discoverExtensions(Context context, Class<?> beanClass) {
-		if (Extension.class.isAssignableFrom(beanClass) && !Modifier.isAbstract(beanClass.getModifiers())) {
-			try {
-				context.extension((Extension) beanClass.getConstructor().newInstance(), beanClass.getName());
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
+    private void discoverExtensions(Context context, Class<?> beanClass) {
+        if (Extension.class.isAssignableFrom(beanClass) && !Modifier.isAbstract(beanClass.getModifiers())) {
+            try {
+                context.extension((Extension) beanClass.getConstructor().newInstance(), beanClass.getName());
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 
-	private void discoverDecorators(Context context, Class<?> beanClass) {
-		if (beanClass.isAnnotationPresent(Interceptor.class)) {
-			context.enableInterceptor(beanClass);
-		}
-	}
+    private void discoverDecorators(Context context, Class<?> beanClass) {
+        if (beanClass.isAnnotationPresent(Interceptor.class)) {
+            context.enableInterceptor(beanClass);
+        }
+    }
 
-	private void discoverInterceptors(Context context, Class<?> beanClass) {
-		if (beanClass.isAnnotationPresent(Decorator.class)) {
-			context.enableDecorator(beanClass);
-		}
-	}
+    private void discoverInterceptors(Context context, Class<?> beanClass) {
+        if (beanClass.isAnnotationPresent(Decorator.class)) {
+            context.enableDecorator(beanClass);
+        }
+    }
 
-	private void discoverAlternativeStereotype(Context context, Class<?> beanClass) {
-		if (isAlternativeStereotype(beanClass)) {
-			context.enableAlternativeStereotype(beanClass);
-		}
-	}
+    private void discoverAlternativeStereotype(Context context, Class<?> beanClass) {
+        if (isAlternativeStereotype(beanClass)) {
+            context.enableAlternativeStereotype(beanClass);
+        }
+    }
 
-	private static boolean isAlternativeStereotype(Class<?> c) {
-		return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
-	}
+    private static boolean isAlternativeStereotype(Class<?> c) {
+        return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
+    }
 
 }

@@ -17,15 +17,15 @@ import jakarta.servlet.http.HttpSessionEvent;
  * @author Sean Flanigan
  */
 public interface CdiUnitInitialListener {
-	void contextInitialized(ServletContextEvent sce);
+    void contextInitialized(ServletContextEvent sce);
 
-	void contextDestroyed(ServletContextEvent sce);
+    void contextDestroyed(ServletContextEvent sce);
 
-	void sessionCreated(HttpSessionEvent event);
+    void sessionCreated(HttpSessionEvent event);
 
-	void sessionDestroyed(HttpSessionEvent event);
+    void sessionDestroyed(HttpSessionEvent event);
 
-	void requestDestroyed(ServletRequestEvent event);
+    void requestDestroyed(ServletRequestEvent event);
 
-	void requestInitialized(ServletRequestEvent event);
+    void requestInitialized(ServletRequestEvent event);
 }

@@ -15,8 +15,6 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.ContextController;
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Produces;
@@ -25,32 +23,32 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-
+import io.github.cdiunit.ContextController;
 
 public class ServletObjectsProducer {
 
-	@Inject
-	@CdiUnitServlet
-	MockServletContextImpl servletContext;
+    @Inject
+    @CdiUnitServlet
+    MockServletContextImpl servletContext;
 
-	@Produces
-	public ServletContext getServletContext() {
-		return servletContext;
-	}
+    @Produces
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
 
-	@Inject
-	ContextController contextController;
+    @Inject
+    ContextController contextController;
 
-	@Produces
-	@RequestScoped
-	public HttpServletRequest getHttpServletRequest() {
-		return contextController.currentRequest();
-	}
+    @Produces
+    @RequestScoped
+    public HttpServletRequest getHttpServletRequest() {
+        return contextController.currentRequest();
+    }
 
-	@Produces
-	@SessionScoped
-	public HttpSession getHttpSession() {
-		return contextController.currentRequest().getSession();
-	}
+    @Produces
+    @SessionScoped
+    public HttpSession getHttpSession() {
+        return contextController.currentRequest().getSession();
+    }
 
 }

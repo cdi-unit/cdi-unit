@@ -19,10 +19,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import org.apache.deltaspike.jpa.impl.transaction.context.TransactionContextExtension;
+
 import io.github.cdiunit.AdditionalClasspaths;
 
 /**
  * Enable support for DeltaSpike jpa in this test.
+ *
  * @author bryn
  *
  */

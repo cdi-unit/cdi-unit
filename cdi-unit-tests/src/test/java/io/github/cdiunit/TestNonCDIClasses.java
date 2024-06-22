@@ -18,7 +18,7 @@ public class TestNonCDIClasses {
 
     private ThresholdFilter bar;
 
-    @Test(expected=DeploymentException.class)
+    @Test(expected = DeploymentException.class)
     public void testNonCDIClassDiscovery() {
 
     }
