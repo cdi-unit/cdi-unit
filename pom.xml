@@ -242,6 +242,7 @@
 						<cachedir>.cache/impsort-maven-plugin-${version.impsort-maven-plugin}</cachedir>
 						<groups>java.,javax.,jakarta.,org.,com.</groups>
 						<staticGroups>*</staticGroups>
+						<staticAfter>true</staticAfter>
 						<skip>${format.skip}</skip>
 						<removeUnused>true</removeUnused>
 					</configuration>
