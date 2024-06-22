@@ -57,6 +57,9 @@
 				<configuration>
 					<flattenMode>ossrh</flattenMode>
 					<updatePomFile>true</updatePomFile>
+					<pomElements>
+						<distributionManagement>expand</distributionManagement>
+					</pomElements>
 				</configuration>
 				<executions>
 					<execution>
