@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet31;
+package io.github.cdiunit.internal.servlet;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 public class MockServletInputStream extends ServletInputStream
 {
-    private final ByteArrayInputStream stream;
+    private ByteArrayInputStream stream;
 
     public MockServletInputStream(byte[] data)
     {
@@ -39,18 +39,21 @@ public class MockServletInputStream extends ServletInputStream
     }
 
 	@Override
-	public boolean isFinished() {
-		return stream.available() > 0;
+	public boolean isFinished()
+	{
+		return stream.available() == 0;
 	}
 
 	@Override
-	public boolean isReady() {
-		return true;
+	public boolean isReady()
+	{
+		return stream.available() >0;
 	}
 
 	@Override
-	public void setReadListener(ReadListener readListener) {
-		throw new UnsupportedOperationException("setReadListener not supported");
+	public void setReadListener(ReadListener readListener)
+	{
+		throw new UnsupportedOperationException();
 	}
 
 }

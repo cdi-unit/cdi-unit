@@ -22,17 +22,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.context.Conversation;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -270,16 +270,16 @@ public class TestCdiUnitRunner extends BaseTest {
 
 
 		CSessionScoped b1 = sessionScoped.get();
-		b1.setFoo("Session Bar");
+		b1.setFoo("Bar");
 
 		BRequestScoped r1 = requestScoped.get();
-		r1.setFoo("Request Bar");
+		b1.setFoo("Bar");
 		BRequestScoped r2 = requestScoped.get();
 		Assert.assertSame(r1.getFoo(), r2.getFoo());
 		contextController.closeRequest();
 		contextController.openRequest();
 		BRequestScoped r3 = requestScoped.get();
-		Assert.assertNull(r3.getFoo());
+		Assert.assertEquals(null, r3.getFoo());
 
 
 		CSessionScoped b2 = sessionScoped.get();

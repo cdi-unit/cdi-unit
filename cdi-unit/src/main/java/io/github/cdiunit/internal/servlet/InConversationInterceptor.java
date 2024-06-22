@@ -15,13 +15,13 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import javax.enterprise.context.Conversation;
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-
 import io.github.cdiunit.InConversationScope;
+
+import jakarta.enterprise.context.Conversation;
+import jakarta.inject.Inject;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 @InConversationScope
 @Interceptor

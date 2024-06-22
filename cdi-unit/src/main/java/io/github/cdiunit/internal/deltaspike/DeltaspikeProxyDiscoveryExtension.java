@@ -10,27 +10,16 @@ import java.util.stream.Stream;
 
 public class DeltaspikeProxyDiscoveryExtension implements DiscoveryExtension {
 
-	private static final String DELTASPIKE_17_18_ANCHOR_CLASS_NAME = "org.apache.deltaspike.proxy.impl.invocation.InterceptorLookup";
-	private static final String DELTASPIKE_19_ANCHOR_CLASS_NAME = "org.apache.deltaspike.proxy.spi.invocation.DeltaSpikeProxyInvocationHandler";
-
 	/**
-	 * The non-null value here means that we have DeltaSpike 1.7.x or 1.8.x in the classpath.
+	 * DeltaSpike 2.0.x proxies support
 	 */
-	private final Class<?> deltaSpike_17x_18x_proxyModuleAnchor =
-		ClassLookup.INSTANCE.lookup(DELTASPIKE_17_18_ANCHOR_CLASS_NAME);
-
-	/**
-	 * The non-null value here means that we have DeltaSpike 1.9.x in the classpath.
-	 */
-	private final Class<?> deltaSpike_19x_proxyModuleAnchor =
-		ClassLookup.INSTANCE.lookup(DELTASPIKE_19_ANCHOR_CLASS_NAME);
+	private static final String DELTASPIKE_20x_ANCHOR_CLASS_NAME = "org.apache.deltaspike.proxy.spi.invocation.DeltaSpikeProxyInvocationHandler";
 
 	private final Class<?> proxyModuleAnchor;
 
 	public DeltaspikeProxyDiscoveryExtension() {
 		proxyModuleAnchor = Stream.of(
-			deltaSpike_19x_proxyModuleAnchor,
-			deltaSpike_17x_18x_proxyModuleAnchor
+			ClassLookup.INSTANCE.lookup(DELTASPIKE_20x_ANCHOR_CLASS_NAME)
 		)
 			.filter(Objects::nonNull)
 			.findFirst()

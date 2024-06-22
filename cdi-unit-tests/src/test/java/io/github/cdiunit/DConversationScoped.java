@@ -2,7 +2,7 @@ package io.github.cdiunit;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.ConversationScoped;
+import jakarta.enterprise.context.ConversationScoped;
 
 @ConversationScoped
 public class DConversationScoped implements Serializable {

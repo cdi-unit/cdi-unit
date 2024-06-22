@@ -1,13 +1,12 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
-
+import ch.qos.logback.classic.filter.ThresholdFilter;
+import ch.qos.logback.core.filter.Filter;
 import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ch.qos.logback.classic.filter.ThresholdFilter;
-import ch.qos.logback.core.filter.Filter;
+import jakarta.inject.Inject;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ThresholdFilter.class)

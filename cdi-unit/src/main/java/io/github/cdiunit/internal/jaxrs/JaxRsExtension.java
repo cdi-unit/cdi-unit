@@ -15,40 +15,28 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.ws.rs.core.Context;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.configurator.AnnotatedFieldConfigurator;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
 
-import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import java.util.function.Consumer;
 
 public class JaxRsExtension implements Extension {
 
 	public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-
-		boolean modified = false;
-		AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-		AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType);
-
-
-		for (AnnotatedField field : annotatedType.getFields()) {
-			Context context = field.getAnnotation(Context.class);
-			if (context != null) {
-				builder.addToField(field, new AnnotationLiteral<Inject>() {
-				});
-
-				builder.addToField(field, new AnnotationLiteral<JaxRsQualifier>() {
-				});
-				modified = true;
-			}
-		}
-		if (modified) {
-			pat.setAnnotatedType(builder.create());
-		}
+		final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> {
+			field.add(new AnnotationLiteral<Inject>() {
+			});
+			field.add(new AnnotationLiteral<JaxRsQualifier>() {
+			});
+		};
+		pat.configureAnnotatedType()
+			.filterFields(f -> f.isAnnotationPresent(Context.class))
+			.forEach(annotateField);
 	}
 
 }

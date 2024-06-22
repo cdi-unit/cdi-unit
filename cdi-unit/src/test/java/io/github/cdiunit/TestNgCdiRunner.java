@@ -1,9 +1,9 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import jakarta.inject.Inject;
 
 
 @AdditionalClasses(AImplementation1.class)

@@ -15,12 +15,7 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.AsyncListener;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.*;
 
 public class AsyncContextImpl implements AsyncContext {
 

@@ -2,8 +2,8 @@ package io.github.cdiunit.mockito;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.ProducesAlternative;

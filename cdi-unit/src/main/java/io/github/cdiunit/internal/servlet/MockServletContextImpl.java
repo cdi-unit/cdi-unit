@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet30;
+package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.internal.servlet.MockRequestDispatcher;
-
-import javax.servlet.*;
-import javax.servlet.ServletRegistration.Dynamic;
-import javax.servlet.descriptor.JspConfigDescriptor;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.servlet.*;
+import jakarta.servlet.ServletRegistration.Dynamic;
+import jakarta.servlet.descriptor.JspConfigDescriptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,10 +29,12 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
+ * Shamlessly ripped from mockrunner.
  *
  * @author Various
  */
+@ApplicationScoped
+@CdiUnitServlet
 public class MockServletContextImpl implements ServletContext {
 	private Map attributes;
 	private Map requestDispatchers;
@@ -52,6 +53,9 @@ public class MockServletContextImpl implements ServletContext {
 	private int minorVersion;
 	private int effectiveMajorVersion;
 	private int effectiveMinorVersion;
+	private int sessionTimeout;
+	private String requestCharacterEncoding;
+	private String responseCharacterEncoding;
 
 	public MockServletContextImpl() {
 		resetAll();
@@ -449,6 +453,11 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	@Override
+	public Dynamic addJspFile(String servletName, String jspFile) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public <T extends Servlet> T createServlet(Class<T> clazz)
 			throws ServletException {
 		throw new UnsupportedOperationException();
@@ -465,19 +474,19 @@ public class MockServletContextImpl implements ServletContext {
 	}
 
 	@Override
-	public javax.servlet.FilterRegistration.Dynamic addFilter(
+	public FilterRegistration.Dynamic addFilter(
 			String filterName, String className) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public javax.servlet.FilterRegistration.Dynamic addFilter(
+	public FilterRegistration.Dynamic addFilter(
 			String filterName, Filter filter) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public javax.servlet.FilterRegistration.Dynamic addFilter(
+	public FilterRegistration.Dynamic addFilter(
 			String filterName, Class<? extends Filter> filterClass) {
 		throw new UnsupportedOperationException();
 	}
@@ -560,5 +569,39 @@ public class MockServletContextImpl implements ServletContext {
 
 	}
 
+	@Override
+	public String getVirtualServerName() {
+		return "cdi-unit-virtual-server";
+	}
+
+	@Override
+	public int getSessionTimeout() {
+		return this.sessionTimeout;
+	}
+
+	@Override
+	public void setSessionTimeout(int sessionTimeout) {
+		this.sessionTimeout = sessionTimeout;
+	}
+
+	@Override
+	public String getRequestCharacterEncoding() {
+		return requestCharacterEncoding;
+	}
+
+	@Override
+	public void setRequestCharacterEncoding(String encoding) {
+		this.requestCharacterEncoding = encoding;
+	}
+
+	@Override
+	public String getResponseCharacterEncoding() {
+		return responseCharacterEncoding;
+	}
+
+	@Override
+	public void setResponseCharacterEncoding(String encoding) {
+		this.responseCharacterEncoding = encoding;
+	}
 
 }

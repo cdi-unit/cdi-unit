@@ -15,21 +15,16 @@
  */
 package io.github.cdiunit;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Produces;
-
-import io.github.cdiunit.TestEjb.EJBSingleton;
-import io.github.cdiunit.TestEjb.EJBSingletonNamed;
-import io.github.cdiunit.TestEjb.EJBStateful;
-import io.github.cdiunit.TestEjb.EJBStatefulNamed;
-import io.github.cdiunit.TestEjb.EJBStateless;
-import io.github.cdiunit.TestEjb.EJBStatelessNamed;
+import io.github.cdiunit.TestEjb.*;
 import io.github.cdiunit.ejb.SupportEjb;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.ejb.EJB;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.inject.Produces;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ EJBStateless.class, EJBStatelessNamed.class, EJBStateful.class, EJBStatefulNamed.class, EJBSingleton.class,

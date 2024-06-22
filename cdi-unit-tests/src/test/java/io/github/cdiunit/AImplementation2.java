@@ -15,7 +15,7 @@
  */
 package io.github.cdiunit;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 
 @Alternative
 public class AImplementation2 implements AInterface {

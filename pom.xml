@@ -30,11 +30,15 @@
 	</mailingLists>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
+
+		<!-- The version of the Weld to compile against -->
+		<version.weld.baseline>4.0.3.Final</version.weld.baseline>
 
 		<!-- The version of the DeltaSpike to compile against -->
-		<deltaspike.version.baseline>1.1.0</deltaspike.version.baseline>
-
-		<javax.servlet-api.version.baseline>3.1.0</javax.servlet-api.version.baseline>
+		<version.deltaspike.baseline>2.0.0</version.deltaspike.baseline>
 
 		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
 		<pushChanges>false</pushChanges>
@@ -51,7 +55,6 @@
 	</licenses>
 
 	<modules>
-		<module>cdi-unit-servlet30</module>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests-parent</module>
@@ -242,6 +245,37 @@
 							</rules>
 						</configuration>
 					</execution>
+					<execution>
+						<id>ban-bad-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<searchTransitive>true</searchTransitive>
+									<excludes>
+										<exclude>javax.activation:activation</exclude>
+										<exclude>javax.activation:javax.activation-api</exclude>
+										<exclude>javax.enterprise:cdi-api</exclude>
+										<exclude>javax.inject:javax.inject</exclude>
+										<exclude>javax.json:javax.json-api</exclude>
+										<exclude>javax.persistence:javax.persistence-api</exclude>
+										<exclude>javax.persistence:persistence-api</exclude>
+										<exclude>javax.security.enterprise:javax.security.enterprise-api</exclude>
+										<exclude>javax.servlet:servlet-api</exclude>
+										<exclude>javax.transaction:jta</exclude>
+										<exclude>javax.validation:validation-api</exclude>
+										<exclude>javax.xml:jaxrpc-api</exclude>
+										<exclude>javax.xml.bind:jaxb-api</exclude>
+										<exclude>javax.xml.soap:saaj-api</exclude>
+										<exclude>javax.xml.stream:stax-api</exclude>
+										<exclude>log4j:log4j</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -382,12 +416,12 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.172</version>
+				<version>4.8.174</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>4.11.0</version>
+				<version>5.12.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>

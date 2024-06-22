@@ -15,8 +15,8 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionContext;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -24,7 +24,7 @@ import java.util.Vector;
 /**
  * Mock implementation of <code>HttpSessionContext</code>.
  */
-class MockSessionContext implements HttpSessionContext
+public class MockSessionContext implements HttpSessionContext
 {
     public Enumeration getIds()
     {

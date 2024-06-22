@@ -1,6 +1,6 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.weld.exceptions.DeploymentException;
 import org.junit.Test;

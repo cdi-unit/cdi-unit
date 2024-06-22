@@ -15,11 +15,11 @@
  */
 package io.github.cdiunit.easymock;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.easymock.Mock;
 import io.github.cdiunit.AInterface;

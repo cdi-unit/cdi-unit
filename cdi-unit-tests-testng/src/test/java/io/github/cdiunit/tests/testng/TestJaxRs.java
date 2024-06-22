@@ -1,12 +1,12 @@
 package io.github.cdiunit.tests.testng;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.*;
-import javax.ws.rs.ext.Providers;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.*;
+import jakarta.ws.rs.ext.Providers;
 
 import io.github.cdiunit.InRequestScope;
 import io.github.cdiunit.NgCdiRunner;

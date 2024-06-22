@@ -13,25 +13,20 @@
 	<name>CDI-Unit-Tests-Parent</name>
 
 	<properties>
-		<!-- Note that Weld 1/2 tests also require -Dweld.test.1or2 to disable the weld.test.3plus profile -->
-		<!--<weld.test.version>1.1.14.Final</weld.test.version>-->
-		<!--<weld.test.version>2.1.0.Final</weld.test.version>-->
-		<!--<weld.test.version>2.2.0.Final</weld.test.version>-->
-		<!--<weld.test.version>2.4.2.SP1</weld.test.version>-->
-		<!--<weld.test.version>3.0.0.Final</weld.test.version>-->
-		<weld.test.version>3.0.4.Final</weld.test.version>
-
-		<!-- This changed to weld-se-shaded in Weld 3.0. See the weld.test.3plus profile. -->
-		<weld-se-shaded.artifact>weld-se</weld-se-shaded.artifact>
+		<version.weld.test>${version.weld.baseline}</version.weld.test>
 
 		<!-- Use the same version for the tests as for the build by default -->
-		<deltaspike.test.version>${deltaspike.version.baseline}</deltaspike.test.version>
-
-		<javax.servlet-api.version.test>${javax.servlet-api.version.baseline}</javax.servlet-api.version.test>
+		<version.deltaspike.test>${version.deltaspike.baseline}</version.deltaspike.test>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>jakarta.platform</groupId>
+				<artifactId>jakarta.jakartaee-web-api</artifactId>
+				<version>9.0.0</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>cdi-unit</artifactId>
@@ -41,36 +36,36 @@
 			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
-				<version>3.4.3.Final</version>
+				<version>3.6.0.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.3.14</version>
+				<version>1.5.6</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-api</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.modules</groupId>
 				<artifactId>deltaspike-data-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.modules</groupId>
 				<artifactId>deltaspike-jpa-module-impl</artifactId>
-				<version>${deltaspike.test.version}</version>
+				<version>${version.deltaspike.test}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -79,34 +74,34 @@
 				<version>2.0.13</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.spec.javax.annotation</groupId>
-				<artifactId>jboss-annotations-api_1.2_spec</artifactId>
-				<version>1.0.2.Final</version>
-			</dependency>
-			<dependency>
 				<groupId>ch.qos.cal10n</groupId>
 				<artifactId>cal10n-api</artifactId>
 				<version>0.8.1</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${javax.servlet-api.version.test}</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-web-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.jboss.weld.module</groupId>
+			<artifactId>weld-web</artifactId>
+			<version>${version.weld.test}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>${weld-se-shaded.artifact}</artifactId>
-			<version>${weld.test.version}</version>
+			<artifactId>weld-se-shaded</artifactId>
+			<version>${version.weld.test}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -119,33 +114,6 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>weld.test.3plus</id>
-			<activation>
-				<property>
-					<name>!weld.test.1or2</name>
-				</property>
-			</activation>
-			<properties>
-				<weld-se-shaded.artifact>weld-se-shaded</weld-se-shaded.artifact>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.weld.module</groupId>
-					<artifactId>weld-web</artifactId>
-					<version>${weld.test.version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 </project>

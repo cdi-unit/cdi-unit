@@ -1,12 +1,11 @@
 package io.github.cdiunit;
 
-import javax.inject.Inject;
-
-import junit.framework.Assert;
-
 import io.github.cdiunit.AImplementation3.StereotypeAlternative;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.inject.Inject;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(StereotypeAlternative.class)

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet30;
+package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.internal.servlet.ExceptionUtils;
+import io.github.cdiunit.internal.ExceptionUtils;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -34,7 +36,7 @@ public class MockServletOutputStream extends ServletOutputStream
         this("ISO-8859-1");
     }
 
-    public MockServletOutputStream(String encoding)
+	public MockServletOutputStream(String encoding)
     {
         buffer = new ByteArrayOutputStream();
         this.encoding = encoding;
@@ -80,4 +82,17 @@ public class MockServletOutputStream extends ServletOutputStream
     {
         buffer = new ByteArrayOutputStream();
     }
+
+	@Override
+	public boolean isReady()
+	{
+		return true;
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener)
+	{
+		throw new UnsupportedOperationException();
+	}
+
 }

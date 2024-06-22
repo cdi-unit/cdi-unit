@@ -15,6 +15,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-web-api</artifactId>
+			<version>9.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
@@ -25,14 +31,13 @@
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
-			<version>3.1.9.Final</version>
+			<version>${version.weld.baseline}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- For Weld 3, we need this artifact to get WeldInitialListener -->
 		<dependency>
 			<groupId>org.jboss.weld.module</groupId>
 			<artifactId>weld-web</artifactId>
-			<version>3.1.9.Final</version>
+			<version>${version.weld.baseline}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -43,7 +48,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>7.5.1</version>
+			<version>7.10.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -53,7 +58,7 @@
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<version>5.2.0</version>
+			<version>5.3.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -64,67 +69,36 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.3.14</version>
+			<version>1.5.6</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet-api.version.baseline}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-api</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.2.20</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.ejb</groupId>
-			<artifactId>javax.ejb-api</artifactId>
-			<version>3.2.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.1.1</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-jpa-module-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-partial-bean-module-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.6.15.Final</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.deltaspike.modules</groupId>
 			<artifactId>deltaspike-data-module-impl</artifactId>
-			<version>${deltaspike.version.baseline}</version>
+			<version>${version.deltaspike.baseline}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -135,8 +109,21 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.15.6.Final</version>
+			<artifactId>resteasy-core</artifactId>
+			<version>6.2.9.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>6.0.2.Final</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>yasson</artifactId>
+			<version>3.0.3</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -209,93 +196,9 @@
 					</plugin>
 
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<dependencySourceIncludes>
-										<dependencySourceInclude>${project.groupId}:cdi-unit-servlet30</dependencySourceInclude>
-									</dependencySourceIncludes>
-									<includeDependencySources>true</includeDependencySources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>
 						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>servlet-3.0-support</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>!skip-servlet-3.0</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>cdi-unit-servlet30</artifactId>
-					<version>${project.version}</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>add-servlet30-support</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>unpack-dependencies</goal>
-								</goals>
-								<configuration>
-									<includeGroupIds>${project.groupId}</includeGroupIds>
-									<includeArtifactIds>cdi-unit-servlet30</includeArtifactIds>
-									<excludeTransitive>true</excludeTransitive>
-									<includes>**/*.class</includes>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.6.0</version>
-						<executions>
-							<execution>
-								<id>add-servlet-3.0-source</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>add-resource</goal>
-								</goals>
-								<configuration>
-									<resources>
-										<resource>
-											<directory>${maven.multiModuleProjectDirectory}/cdi-unit-servlet30/src/main/java</directory>
-											<targetPath>/</targetPath>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>

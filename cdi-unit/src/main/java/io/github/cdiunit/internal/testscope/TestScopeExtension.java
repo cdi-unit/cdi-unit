@@ -15,21 +15,26 @@
  */
 package io.github.cdiunit.internal.testscope;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-
-import org.apache.deltaspike.core.api.literal.ApplicationScopedLiteral;
-import org.apache.deltaspike.core.api.literal.DependentScopeLiteral;
-import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
+import jakarta.enterprise.util.AnnotationLiteral;
+
+import java.lang.annotation.Annotation;
+
 public class TestScopeExtension implements Extension {
 
-	private static final ApplicationScopedLiteral APPLICATIONSCOPED = new ApplicationScopedLiteral();
-	private static final DependentScopeLiteral DEPENDENT = new DependentScopeLiteral();
+	private static final Annotation APPLICATIONSCOPED = new AnnotationLiteral<ApplicationScoped>() {
+	};
+	private static final Annotation DEPENDENT = new AnnotationLiteral<Dependent>() {
+	};
 
 	private final TestConfiguration testConfiguration;
 
@@ -44,9 +49,8 @@ public class TestScopeExtension implements Extension {
 	<T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
 		final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 		if (annotatedType.getJavaClass().equals(testConfiguration.getTestClass())) {
-			AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType)
-					.addToClass(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
-			pat.setAnnotatedType(builder.create());
+			AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType()
+				.add(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
 		}
 	}
 

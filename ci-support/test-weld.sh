@@ -13,13 +13,8 @@ else
 fi
 
 for WELD_VERSION in ${WELD_VERSIONS[*]}; do
-  if [[ $WELD_VERSION == 1.* || $WELD_VERSION == 2.* ]]; then
-    TEST_OPTS=-Dweld.test.1or2
-  else
-    TEST_OPTS=
-  fi
   "$BASE_DIR/hide-logs.sh" ./mvnw -V -B test \
     --projects cdi-unit-tests-parent,cdi-unit-tests-external-dependency \
     --also-make-dependents \
-    -Dweld.test.version="$WELD_VERSION" $TEST_OPTS "$@"
+    -Dversion.weld.test="$WELD_VERSION" "$@"
 done

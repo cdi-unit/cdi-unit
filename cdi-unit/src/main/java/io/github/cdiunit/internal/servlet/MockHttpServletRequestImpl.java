@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet30;
+package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.internal.servlet.*;
+import io.github.cdiunit.internal.ExceptionUtils;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import jakarta.inject.Inject;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,17 +29,14 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Function;
 
 /**
- * Shamlessly ripped from mockrunner. If mockrunner supports servlet 3.1 https://github.com/mockrunner/mockrunner/issues/4 then this class can extend mockrunner instead.
+ * Shamelessly ripped from mockrunner.
  *
  * @author Various
  */
-public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
-
-	private final Function<byte[], ServletInputStream> inputStreamSupplier;
-
+@CdiUnitServlet
+public class MockHttpServletRequestImpl implements HttpServletRequest {
 	private Map attributes;
 	private Map parameters;
 	private Vector locales;
@@ -65,10 +63,10 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 	private String remoteAddr;
 	private Map roles;
 	private String characterEncoding;
-	protected long contentLength;
+	private long contentLength;
 	private String contentType;
 	private List cookies;
-	private ServletInputStream bodyContent;
+	private MockServletInputStream bodyContent;
 	private String localAddr;
 	private String localName;
 	private int localPort;
@@ -77,16 +75,18 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 	private List attributeListener;
 	private boolean isAsyncSupported;
 
+	@Inject
+	@CdiUnitServlet
 	private ServletContext servletContext;
 
+
+	@Inject
+	@CdiUnitServlet
 	private HttpSession session;
 
 	private AsyncContextImpl asyncContext;
 
-	public MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession, Function<byte[], ServletInputStream> inputStreamSupplier) {
-		this.servletContext = servletContext;
-		this.session = httpSession;
-		this.inputStreamSupplier = inputStreamSupplier;
+	public MockHttpServletRequestImpl() {
 		resetAll();
 	}
 
@@ -116,7 +116,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 		remotePort = 5000;
 		sessionCreated = false;
 		attributeListener = new ArrayList();
-		setBodyContent(new byte[0]);
+		bodyContent = new MockServletInputStream(new byte[0]);
 		isAsyncSupported = false;
 	}
 
@@ -207,6 +207,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 		return getSession(true);
 	}
 
+	@Override
+	public String changeSessionId() {
+		throw new UnsupportedOperationException();
+	}
+
 	public HttpSession getSession(boolean create) {
 		if (!create && !sessionCreated) {
 			return null;
@@ -227,7 +232,6 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 	 *
 	 * @param session the <code>HttpSession</code>
 	 */
-	@Override
 	public void setSession(HttpSession session) {
 		this.session = session;
 	}
@@ -511,7 +515,12 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 		return (int) contentLength;
 	}
 
-	public void setContentLength(int contentLength) {
+	@Override
+	public long getContentLengthLong() {
+		return contentLength;
+	}
+
+	public void setContentLength(long contentLength) {
 		this.contentLength = contentLength;
 	}
 
@@ -580,7 +589,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 	}
 
 	public void setBodyContent(byte[] data) {
-		bodyContent = inputStreamSupplier.apply(data);
+		bodyContent = new MockServletInputStream(data);
 	}
 
 	public void setBodyContent(String bodyContent) {
@@ -742,6 +751,11 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 
 	@Override
 	public Part getPart(String name) throws IOException, ServletException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
 		throw new UnsupportedOperationException();
 	}
 

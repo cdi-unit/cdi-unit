@@ -14,8 +14,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>${weld-se-shaded.artifact}</artifactId>
-			<version>${weld.test.version}</version>
+			<artifactId>weld-se-shaded</artifactId>
+			<version>${version.weld.test}</version>
 			<scope>test</scope>
 		</dependency>
 
