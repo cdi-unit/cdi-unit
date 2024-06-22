@@ -1,7 +1,5 @@
 package io.github.cdiunit.internal;
 
-import static io.github.cdiunit.internal.WeldComponentFactory.createMetadata;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -16,6 +14,8 @@ import jakarta.enterprise.inject.spi.Extension;
 
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
+
+import static io.github.cdiunit.internal.WeldComponentFactory.createMetadata;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 

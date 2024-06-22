@@ -1,8 +1,5 @@
 package io.github.cdiunit;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -12,6 +9,9 @@ import jakarta.inject.Named;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @AdditionalClasses(TestNgProducerConfig.Producers.class)
 public class TestNgProducerConfig extends NgCdiRunner {

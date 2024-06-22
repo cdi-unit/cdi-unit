@@ -1,7 +1,5 @@
 package io.github.cdiunit.mockito;
 
-import static org.junit.Assert.assertTrue;
-
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
@@ -11,6 +9,8 @@ import org.mockito.Mock;
 
 import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.ProducesAlternative;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(CdiRunner.class)
 public class TestIgnoreMockedClasses {
