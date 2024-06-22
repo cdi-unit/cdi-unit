@@ -7,3 +7,5 @@ build/
 # Eclipse
 .classpath
 .project
+# Formatting
+.cache/

@@ -44,6 +44,10 @@
 		<pushChanges>false</pushChanges>
 		<localCheckout>true</localCheckout>
 
+		<!-- Formatting versions and config -->
+		<format.skip>false</format.skip>
+		<formatter.version>2.24.1</formatter.version>
+		<impsort.version>1.10.0</impsort.version>
 	</properties>
 
 	<licenses>
@@ -55,6 +59,7 @@
 	</licenses>
 
 	<modules>
+		<module>independent-projects/ide-config</module>
 		<module>cdi-unit</module>
 		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests-parent</module>
@@ -198,6 +203,40 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>3.5.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>net.revelc.code.formatter</groupId>
+					<artifactId>formatter-maven-plugin</artifactId>
+					<version>${formatter.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>ide-config</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<!-- store outside of target to speed up formatting when mvn clean is used -->
+						<cachedir>.cache/formatter-maven-plugin-${formatter-maven-plugin.version}</cachedir>
+						<configFile>cdi-unit-format.xml</configFile>
+						<lineEnding>LF</lineEnding>
+						<skip>${format.skip}</skip>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>net.revelc.code</groupId>
+					<artifactId>impsort-maven-plugin</artifactId>
+					<version>${impsort.version}</version>
+					<configuration>
+						<!-- store outside of target to speed up formatting when mvn clean is used -->
+						<cachedir>.cache/impsort-maven-plugin-${impsort-maven-plugin.version}</cachedir>
+						<groups>java.,javax.,jakarta.,org.,com.</groups>
+						<staticGroups>*</staticGroups>
+						<skip>${format.skip}</skip>
+						<removeUnused>true</removeUnused>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -399,6 +438,93 @@
 						</executions>
 					</plugin>
 
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Formatting setup, inherited by all projects using this parent -->
+		<profile>
+			<id>format</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>!no-format</name>
+				</property>
+				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
+				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<file>
+					<exists>src/main/java</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.revelc.code.formatter</groupId>
+						<artifactId>formatter-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>format</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.revelc.code</groupId>
+						<artifactId>impsort-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sort-imports</id>
+								<goals>
+									<goal>sort</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>validate</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>no-format</name>
+				</property>
+				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
+				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<file>
+					<exists>src/main/java</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.revelc.code.formatter</groupId>
+						<artifactId>formatter-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>validate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.revelc.code</groupId>
+						<artifactId>impsort-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>check-imports</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
