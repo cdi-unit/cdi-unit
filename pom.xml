@@ -86,7 +86,7 @@
 					<artifactId>central-publishing-maven-plugin</artifactId>
 					<version>0.4.0</version>
 					<configuration>
-						<publishingServerId>central</publishingServerId>
+						<publishingServerId>cdi-unit-publish</publishingServerId>
 						<tokenAuth>true</tokenAuth>
 						<deploymentName>Deployment ${project.groupId}-${project.version}</deploymentName>
 					</configuration>
