@@ -486,6 +486,10 @@ CDI-Unit has not been tested with Java 9 modules or the module path, but it can 
 
 ### Changelog
 
+#### 4.4
+
+- Servlet API 3.1+ support
+
 #### 4.3
 
 - CDI-Unit artifacts moved to the new group ID `io.github.cdi-unit`.

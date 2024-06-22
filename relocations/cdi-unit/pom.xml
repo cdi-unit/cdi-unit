@@ -4,7 +4,7 @@
 
 	<groupId>org.jglue.cdi-unit</groupId>
 	<artifactId>cdi-unit</artifactId>
-	<version>4.3.0</version>
+	<version>4.4.0</version>
 	<packaging>pom</packaging>
 
 	<name>CDI-Unit-Parent</name>
@@ -50,6 +50,31 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<configuration>
+					<flattenMode>minimum</flattenMode>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten.flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
