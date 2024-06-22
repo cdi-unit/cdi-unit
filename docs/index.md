@@ -71,7 +71,7 @@ For Weld 3.x, you will probably also need [Weld Web](https://search.maven.org/se
 - Supports CDI 3.x+ (`jakarta.` packages)
 - Requires Java 11
 
-[CDI-Unit 4](https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.3.0)
+[CDI-Unit 4](https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.4.0)
 - Supports CDI 1.x or 2.x (`javax.` packages)
 - Supports Java 8 and Java 11
 
