@@ -186,13 +186,23 @@
 						<artifactId>flatten-maven-plugin</artifactId>
 						<configuration>
 							<flattenMode>ossrh</flattenMode>
+							<pomElements>
+								<profiles>remove</profiles>
+							</pomElements>
 						</configuration>
 						<executions>
 							<execution>
-								<id>flatten</id>
+								<id>flatten.flatten</id>
 								<phase>process-resources</phase>
 								<goals>
 									<goal>flatten</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>flatten.clean</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>clean</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -260,6 +270,29 @@
 									<excludeTransitive>true</excludeTransitive>
 									<includes>**/*.class</includes>
 									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>3.6.0</version>
+						<executions>
+							<execution>
+								<id>add-servlet-3.0-source</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>add-resource</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>${maven.multiModuleProjectDirectory}/cdi-unit-servlet30/src/main/java</directory>
+											<targetPath>/</targetPath>
+										</resource>
+									</resources>
 								</configuration>
 							</execution>
 						</executions>
