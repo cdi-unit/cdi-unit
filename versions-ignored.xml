@@ -27,6 +27,16 @@
 				<ignoreVersion type="regex">10.*</ignoreVersion>
 			</ignoreVersions>
 		</rule>
+		<rule groupId="net.revelc.code" artifactId="impsort-maven-plugin" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">1.10.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
+		<rule groupId="net.revelc.code.formatter" artifactId="formatter-maven-plugin" comparisonMethod="numeric">
+			<ignoreVersions>
+				<ignoreVersion type="regex">2.24.*</ignoreVersion>
+			</ignoreVersions>
+		</rule>
 		<rule groupId="org.apache.deltaspike.*" comparisonMethod="numeric">
 			<ignoreVersions>
 				<ignoreVersion type="regex">3.*</ignoreVersion>
