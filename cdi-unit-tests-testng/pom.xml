@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-tests-parent</artifactId>
-		<version>5.0.0-EA1</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
 
