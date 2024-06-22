@@ -16,5 +16,6 @@ for DELTASPIKE_VERSION in ${DELTASPIKE_VERSIONS[*]}; do
   "$BASE_DIR/hide-logs.sh" ./mvnw -V -B test \
     --projects cdi-unit-tests-parent,cdi-unit-tests-external-dependency \
     --also-make-dependents \
+    -Dformat-skip \
     -Dversion.deltaspike.test="$DELTASPIKE_VERSION" "$@"
 done
