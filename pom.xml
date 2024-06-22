@@ -459,7 +459,7 @@
 					<name>!no-format</name>
 				</property>
 				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
 				<file>
 					<exists>src/main/java</exists>
 				</file>
@@ -502,7 +502,7 @@
 					<name>no-format</name>
 				</property>
 				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as spec text or this parent) -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
 				<file>
 					<exists>src/main/java</exists>
 				</file>
