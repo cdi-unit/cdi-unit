@@ -13,9 +13,13 @@ updates:
     labels:
       - area/dependencies
     ignore:
+      # explicitly keep baseline version
       - dependency-name: jakarta.platform:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
       - dependency-name: net.revelc.code.formatter:formatter-maven-plugin
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+      # explicitly keep baseline version
+      - dependency-name: org.jboss.weld.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
     rebase-strategy: auto
 
