@@ -12,6 +12,7 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - area/dependencies
+    rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -22,4 +23,4 @@ updates:
     open-pull-requests-limit: 2
     labels:
       - area/infra
-    rebase-strategy: disabled
+    rebase-strategy: auto
