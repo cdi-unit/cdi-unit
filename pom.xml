@@ -97,7 +97,7 @@
 				<plugin>
 					<groupId>org.sonatype.central</groupId>
 					<artifactId>central-publishing-maven-plugin</artifactId>
-					<version>0.4.0</version>
+					<version>0.5.0</version>
 					<configuration>
 						<publishingServerId>cdi-unit-publish</publishingServerId>
 						<tokenAuth>true</tokenAuth>
