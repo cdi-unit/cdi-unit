@@ -47,7 +47,7 @@
 		<!-- Formatting versions and config -->
 		<format.skip>false</format.skip>
 		<version.formatter-maven-plugin>2.23.0</version.formatter-maven-plugin>
-		<version.impsort-maven-plugin>1.9.0</version.impsort-maven-plugin>
+		<version.impsort-maven-plugin>1.10.0</version.impsort-maven-plugin>
 	</properties>
 
 	<licenses>
