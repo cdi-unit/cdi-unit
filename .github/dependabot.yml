@@ -21,6 +21,9 @@ updates:
       - dependency-name: net.revelc.code:impsort-maven-plugin
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
       # explicitly keep baseline version
+      - dependency-name: org.hibernate.orm:*
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+      # explicitly keep baseline version
       - dependency-name: org.jboss.weld.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
     rebase-strategy: auto
