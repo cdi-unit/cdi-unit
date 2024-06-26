@@ -12,6 +12,9 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - area/dependencies
+    ignore:
+      - dependency-name: net.revelc.code.formatter:formatter-maven-plugin
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
     rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
