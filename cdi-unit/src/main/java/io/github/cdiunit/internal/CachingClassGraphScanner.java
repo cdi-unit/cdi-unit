@@ -117,7 +117,7 @@ public class CachingClassGraphScanner implements ClasspathScanner {
                 .enableClassInfo()
                 .ignoreClassVisibility()
                 .overrideClasspath(url)
-                .whitelistPackagesNonRecursive(packageName)
+                .acceptPackagesNonRecursive(packageName)
                 .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
             return scan.getAllClasses().getNames();
         }
