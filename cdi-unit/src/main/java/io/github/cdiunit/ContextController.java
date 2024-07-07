@@ -18,7 +18,6 @@ package io.github.cdiunit;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.ServletContext;
@@ -75,9 +74,6 @@ public class ContextController {
 
     private ThreadLocal<HttpServletRequest> requests;
 
-    @Inject
-    private BeanManager beanManager;
-
     private HttpSession currentSession;
 
     @Inject
@@ -95,7 +91,6 @@ public class ContextController {
 
     @PreDestroy
     void destroyContext() {
-
         listener.contextDestroyed(new ServletContextEvent(context));
         requests = null;
     }
@@ -114,7 +109,6 @@ public class ContextController {
      * @return The request opened.
      */
     public HttpServletRequest openRequest() {
-
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest != null) {
             throw new RuntimeException("A request is already open");
@@ -144,7 +138,6 @@ public class ContextController {
      * @return Returns the current in progress request or throws an exception if the request was not active
      */
     public HttpServletRequest currentRequest() {
-
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest == null) {
             throw new RuntimeException("A request has not been opened");
@@ -188,4 +181,5 @@ public class ContextController {
     public HttpSession getSession() {
         return currentSession;
     }
+
 }
