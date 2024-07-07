@@ -115,7 +115,9 @@ public class WeldTestUrlDeployment implements Deployment {
         beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
         log.debug("CDI-Unit discovered:");
         for (String clazz : discoveredClasses) {
-            if (!clazz.startsWith("io.github.cdiunit.internal.")) {
+            if (clazz.startsWith("io.github.cdiunit.internal.")) {
+                log.trace(clazz);
+            } else {
                 log.debug(clazz);
             }
         }
