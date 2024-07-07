@@ -1,0 +1,19 @@
+_extends: .github
+name-template: '$RESOLVED_VERSION'
+tag-template: 'cdi-unit-parent-$RESOLVED_VERSION'
+version-resolver:
+  major:
+    labels:
+      - major
+  minor:
+    labels:
+      - minor
+      - enhancement
+  patch:
+    labels:
+      - patch
+  default: patch
+template: |
+  ## Changes
+
+  $CHANGES
