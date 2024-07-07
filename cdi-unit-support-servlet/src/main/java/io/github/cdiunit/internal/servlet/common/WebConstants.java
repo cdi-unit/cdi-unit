@@ -13,18 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet.common;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import jakarta.inject.Qualifier;
-
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
-public @interface CdiUnitServlet {
-
+public class WebConstants {
+    public final static String DATE_FORMAT_HEADER = "EEE, d MMM yyyy HH:mm:ss z";
 }

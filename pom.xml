@@ -70,6 +70,7 @@
 		<module>cdi-unit-tests-jandex</module>
 		<module>cdi-unit-tests-testng</module>
 		<module>cdi-unit-tests-deltaspike</module>
+		<module>cdi-unit-support-servlet</module>
 	</modules>
 
 	<distributionManagement>

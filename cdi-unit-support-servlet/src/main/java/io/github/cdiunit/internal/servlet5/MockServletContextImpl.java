@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet5;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.servlet.*;
 import jakarta.servlet.ServletRegistration.Dynamic;
 import jakarta.servlet.descriptor.JspConfigDescriptor;
@@ -33,8 +32,6 @@ import jakarta.servlet.descriptor.JspConfigDescriptor;
  *
  * @author Various
  */
-@ApplicationScoped
-@CdiUnitServlet
 public class MockServletContextImpl implements ServletContext {
     private Map attributes;
     private Map requestDispatchers;

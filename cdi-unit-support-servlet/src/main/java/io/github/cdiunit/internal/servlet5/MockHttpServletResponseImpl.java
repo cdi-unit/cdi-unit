@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet5;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -26,14 +26,14 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.WebConstants;
 
 /**
  * Shamlessly ripped from mockrunner.
  *
  * @author Various
  */
-@CdiUnitServlet
 public class MockHttpServletResponseImpl implements HttpServletResponse {
     private PrintWriter writer;
     private MockServletOutputStream outputStream;
@@ -61,8 +61,8 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
         bufferSize = 8192;
         wasErrorSent = false;
         wasRedirectSent = false;
-        errorCode = SC_OK;
-        statusCode = SC_OK;
+        errorCode = HttpServletResponse.SC_OK;
+        statusCode = HttpServletResponse.SC_OK;
         cookies = new ArrayList();
         outputStream = new MockServletOutputStream(characterEncoding);
         contentLength = -1;
@@ -203,8 +203,8 @@ public class MockHttpServletResponseImpl implements HttpServletResponse {
     }
 
     public void reset() {
-        errorCode = SC_OK;
-        statusCode = SC_OK;
+        errorCode = HttpServletResponse.SC_OK;
+        statusCode = HttpServletResponse.SC_OK;
         clearHeaders();
         resetBuffer();
     }

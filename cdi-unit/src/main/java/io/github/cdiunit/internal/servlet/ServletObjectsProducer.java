@@ -24,12 +24,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import io.github.cdiunit.ContextController;
+import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
 
 public class ServletObjectsProducer {
 
     @Inject
     @CdiUnitServlet
-    MockServletContextImpl servletContext;
+    ServletContext servletContext;
 
     @Produces
     public ServletContext getServletContext() {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet5;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,19 +24,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
-import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.HttpSessionAware;
+import io.github.cdiunit.internal.servlet.common.WebConstants;
 
 /**
  * Shamelessly ripped from mockrunner.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpServletRequestImpl implements HttpServletRequest {
+public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
     private Map attributes;
     private Map parameters;
     private Vector locales;
@@ -75,17 +75,15 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
     private List attributeListener;
     private boolean isAsyncSupported;
 
-    @Inject
-    @CdiUnitServlet
     private ServletContext servletContext;
 
-    @Inject
-    @CdiUnitServlet
     private HttpSession session;
 
     private AsyncContextImpl asyncContext;
 
-    public MockHttpServletRequestImpl() {
+    public MockHttpServletRequestImpl(ServletContext servletContext, HttpSession httpSession) {
+        this.servletContext = servletContext;
+        this.session = httpSession;
         resetAll();
     }
 

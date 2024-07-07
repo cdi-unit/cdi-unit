@@ -33,14 +33,12 @@ import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
 import org.mockito.Mockito;
 
 import io.github.cdiunit.ContextController;
-import io.github.cdiunit.internal.servlet.CdiUnitServlet;
-import io.github.cdiunit.internal.servlet.MockHttpServletResponseImpl;
-import io.github.cdiunit.internal.servlet.MockServletContextImpl;
+import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
 
 public class JaxRsProducers {
     @Inject
     @CdiUnitServlet
-    MockServletContextImpl servletContext;
+    ServletContext servletContext;
 
     @Produces
     @JaxRsQualifier
@@ -58,11 +56,15 @@ public class JaxRsProducers {
         return contextController.currentRequest();
     }
 
+    @Inject
+    @CdiUnitServlet
+    HttpServletResponse servletResponse;
+
     @Produces
     @RequestScoped
     @JaxRsQualifier
     public HttpServletResponse getHttpServletResponse() {
-        return new MockHttpServletResponseImpl();
+        return servletResponse;
     }
 
     @Produces
