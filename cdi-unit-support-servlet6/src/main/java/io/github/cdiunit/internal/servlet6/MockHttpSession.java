@@ -13,34 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet6;
 
 import java.util.*;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionAttributeListener;
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
 
 /**
  * Shamlessly ripped from mockrunner.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpSessionImpl implements HttpSession {
+public class MockHttpSession implements HttpSession {
     private HashMap attributes;
     private String sessionId;
     private boolean isNew;
     private boolean isValid;
     private long creationTime;
 
-    @Inject
-    @CdiUnitServlet
     private ServletContext servletContext;
     private int maxInactiveInterval;
     private List attributeListener;
 
-    public MockHttpSessionImpl() {
+    public MockHttpSession(ServletContext servletContext) {
+        this.servletContext = servletContext;
         resetAll();
     }
 
@@ -222,17 +222,10 @@ public class MockHttpSessionImpl implements HttpSession {
         return maxInactiveInterval;
     }
 
-    public synchronized HttpSessionContext getSessionContext() {
-        return new MockSessionContext();
-    }
-
-    private synchronized void callAttributeListenersAddedMethod(String key,
-            Object value) {
+    private synchronized void callAttributeListenersAddedMethod(String key, Object value) {
         for (int ii = 0; ii < attributeListener.size(); ii++) {
-            HttpSessionBindingEvent event = new HttpSessionBindingEvent(this,
-                    key, value);
-            ((HttpSessionAttributeListener) attributeListener.get(ii))
-                    .attributeAdded(event);
+            HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, key, value);
+            ((HttpSessionAttributeListener) attributeListener.get(ii)).attributeAdded(event);
         }
     }
 

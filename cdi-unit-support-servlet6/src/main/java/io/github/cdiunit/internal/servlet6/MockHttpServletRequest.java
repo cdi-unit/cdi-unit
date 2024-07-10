@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet6;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,19 +24,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
-import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.HttpSessionAware;
+import io.github.cdiunit.internal.servlet.common.WebConstants;
 
 /**
  * Shamelessly ripped from mockrunner.
  *
  * @author Various
  */
-@CdiUnitServlet
-public class MockHttpServletRequestImpl implements HttpServletRequest {
+public class MockHttpServletRequest implements HttpServletRequest, HttpSessionAware {
     private Map attributes;
     private Map parameters;
     private Vector locales;
@@ -75,17 +75,15 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
     private List attributeListener;
     private boolean isAsyncSupported;
 
-    @Inject
-    @CdiUnitServlet
     private ServletContext servletContext;
 
-    @Inject
-    @CdiUnitServlet
     private HttpSession session;
 
-    private AsyncContextImpl asyncContext;
+    private AsyncContext asyncContext;
 
-    public MockHttpServletRequestImpl() {
+    public MockHttpServletRequest(ServletContext servletContext, HttpSession httpSession) {
+        this.servletContext = servletContext;
+        this.session = httpSession;
         resetAll();
     }
 
@@ -217,9 +215,9 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
         }
         if (create) {
             sessionCreated = true;
-            if (session instanceof MockHttpSessionImpl) {
-                if (!((MockHttpSessionImpl) session).isValid()) {
-                    ((MockHttpSessionImpl) session).resetAll();
+            if (session instanceof MockHttpSession) {
+                if (!((MockHttpSession) session).isValid()) {
+                    ((MockHttpSession) session).resetAll();
                 }
             }
         }
@@ -698,15 +696,15 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
-    public AsyncContext startAsync() throws IllegalStateException {
-        asyncContext = new AsyncContextImpl(this, null);
+    public jakarta.servlet.AsyncContext startAsync() throws IllegalStateException {
+        asyncContext = new AsyncContext(this, null);
         return asyncContext;
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest,
+    public jakarta.servlet.AsyncContext startAsync(ServletRequest servletRequest,
             ServletResponse servletResponse) throws IllegalStateException {
-        asyncContext = new AsyncContextImpl(servletRequest, servletResponse);
+        asyncContext = new AsyncContext(servletRequest, servletResponse);
         return asyncContext;
     }
 
@@ -716,13 +714,28 @@ public class MockHttpServletRequestImpl implements HttpServletRequest {
     }
 
     @Override
-    public AsyncContext getAsyncContext() {
+    public jakarta.servlet.AsyncContext getAsyncContext() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public DispatcherType getDispatcherType() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getRequestId() {
+        return "";
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return "";
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return null;
     }
 
     @Override

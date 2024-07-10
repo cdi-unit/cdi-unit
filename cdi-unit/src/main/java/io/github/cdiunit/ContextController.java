@@ -18,7 +18,6 @@ package io.github.cdiunit;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.ServletContext;
@@ -32,9 +31,9 @@ import org.jboss.weld.context.ConversationContext;
 import org.jboss.weld.context.http.Http;
 
 import io.github.cdiunit.internal.servlet.CdiUnitInitialListener;
-import io.github.cdiunit.internal.servlet.CdiUnitServlet;
 import io.github.cdiunit.internal.servlet.LifecycleAwareRequest;
-import io.github.cdiunit.internal.servlet.MockHttpServletRequestImpl;
+import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet.common.HttpSessionAware;
 
 /**
  * Use to explicitly open and close Request, Session and Conversation scopes.
@@ -75,9 +74,6 @@ public class ContextController {
 
     private ThreadLocal<HttpServletRequest> requests;
 
-    @Inject
-    private BeanManager beanManager;
-
     private HttpSession currentSession;
 
     @Inject
@@ -85,29 +81,23 @@ public class ContextController {
     private ServletContext context;
 
     @Inject
-    @CdiUnitServlet
-    private HttpSession session;
-
-    @Inject
     private CdiUnitInitialListener listener;
 
     @PostConstruct
     void initContext() {
-
-        requests = new ThreadLocal<HttpServletRequest>();
+        requests = new ThreadLocal<>();
         listener.contextInitialized(new ServletContextEvent(context));
     }
 
     @PreDestroy
     void destroyContext() {
-
         listener.contextDestroyed(new ServletContextEvent(context));
         requests = null;
     }
 
     @Inject
     @CdiUnitServlet
-    private Provider<MockHttpServletRequestImpl> requestProvider;
+    private Provider<HttpServletRequest> requestProvider;
 
     @Inject
     @Http
@@ -119,17 +109,17 @@ public class ContextController {
      * @return The request opened.
      */
     public HttpServletRequest openRequest() {
-
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest != null) {
             throw new RuntimeException("A request is already open");
         }
 
-        MockHttpServletRequestImpl request = requestProvider.get();
+        HttpServletRequest request = requestProvider.get();
 
         if (currentSession != null) {
-
-            request.setSession(currentSession);
+            if (request instanceof HttpSessionAware) {
+                ((HttpSessionAware) request).setSession(currentSession);
+            }
             request.getSession();
         }
 
@@ -148,7 +138,6 @@ public class ContextController {
      * @return Returns the current in progress request or throws an exception if the request was not active
      */
     public HttpServletRequest currentRequest() {
-
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest == null) {
             throw new RuntimeException("A request has not been opened");
@@ -192,4 +181,5 @@ public class ContextController {
     public HttpSession getSession() {
         return currentSession;
     }
+
 }

@@ -83,13 +83,17 @@ public class WeldTestUrlDeployment implements Deployment {
                     discoveredClasses.add(cls.getName());
                 }
 
-                discoverClass.accept(discoveryContext, cls);
+                try {
+                    discoverClass.accept(discoveryContext, cls);
 
-                for (Field field : cls.getDeclaredFields()) {
-                    discoverField.accept(discoveryContext, field);
-                }
-                for (Method method : cls.getDeclaredMethods()) {
-                    discoverMethod.accept(discoveryContext, method);
+                    for (Field field : cls.getDeclaredFields()) {
+                        discoverField.accept(discoveryContext, field);
+                    }
+                    for (Method method : cls.getDeclaredMethods()) {
+                        discoverMethod.accept(discoveryContext, method);
+                    }
+                } catch (NoClassDefFoundError ncdf) {
+                    throw new IllegalStateException(String.format("Can not discover %s", cls), ncdf);
                 }
             }
 
@@ -111,7 +115,9 @@ public class WeldTestUrlDeployment implements Deployment {
         beanDeploymentArchive.getServices().add(ResourceLoader.class, resourceLoader);
         log.debug("CDI-Unit discovered:");
         for (String clazz : discoveredClasses) {
-            if (!clazz.startsWith("io.github.cdiunit.internal.")) {
+            if (clazz.startsWith("io.github.cdiunit.internal.")) {
+                log.trace(clazz);
+            } else {
                 log.debug(clazz);
             }
         }

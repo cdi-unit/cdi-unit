@@ -59,7 +59,7 @@ class ClassGraphScanner implements ClasspathScanner {
                 .enableClassInfo()
                 .ignoreClassVisibility()
                 .overrideClasspath(url)
-                .whitelistPackagesNonRecursive(packageName)
+                .acceptPackagesNonRecursive(packageName)
                 .scan()) {
             return scan.getAllClasses().getNames();
         }

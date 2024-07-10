@@ -260,16 +260,16 @@ public class TestCdiUnitRunner extends BaseTest {
         contextController.openRequest();
 
         CSessionScoped b1 = sessionScoped.get();
-        b1.setFoo("Bar");
+        b1.setFoo("Session Bar");
 
         BRequestScoped r1 = requestScoped.get();
-        b1.setFoo("Bar");
+        r1.setFoo("Request Bar");
         BRequestScoped r2 = requestScoped.get();
         Assert.assertSame(r1.getFoo(), r2.getFoo());
         contextController.closeRequest();
         contextController.openRequest();
         BRequestScoped r3 = requestScoped.get();
-        Assert.assertEquals(null, r3.getFoo());
+        Assert.assertNull(r3.getFoo());
 
         CSessionScoped b2 = sessionScoped.get();
         Assert.assertEquals(b1.getFoo(), b2.getFoo());

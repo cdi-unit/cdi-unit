@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet;
+package io.github.cdiunit.internal.servlet6;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.io.IOException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 
-import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.servlet.common.ExceptionUtils;
 
 /**
  * Mock implementation of <code>ServletOutputStream</code>.
