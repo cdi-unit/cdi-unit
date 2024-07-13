@@ -72,6 +72,7 @@
 		<module>cdi-unit-tests-deltaspike</module>
 		<module>cdi-unit-support-servlet</module>
 		<module>cdi-unit-support-servlet6</module>
+		<module>cdi-unit</module>
 	</modules>
 
 	<distributionManagement>
@@ -246,6 +247,32 @@
 						<staticAfter>true</staticAfter>
 						<skip>${format.skip}</skip>
 						<removeUnused>true</removeUnused>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.basepom.maven</groupId>
+					<artifactId>duplicate-finder-maven-plugin</artifactId>
+					<version>2.0.1</version>
+					<executions>
+						<execution>
+							<id>default</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
+						<failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
+						<failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+						<checkCompileClasspath>true</checkCompileClasspath>
+						<checkRuntimeClasspath>true</checkRuntimeClasspath>
+						<checkTestClasspath>false</checkTestClasspath>
+						<preferLocal>true</preferLocal>
+						<useResultFile>true</useResultFile>
+						<resultFile>${project.build.directory}/duplicate-finder-result.xml</resultFile>
 					</configuration>
 				</plugin>
 			</plugins>

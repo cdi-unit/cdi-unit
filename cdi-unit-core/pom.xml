@@ -10,7 +10,7 @@
 		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>CDI-Unit Core</name>
+	<name>CDI-Unit - Core</name>
 	<description>JUnit runner for testing CDI based projects.</description>
 
 	<dependencies>
