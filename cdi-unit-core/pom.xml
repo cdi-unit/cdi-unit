@@ -163,23 +163,8 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>flatten-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>flatten.clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.3.1</version>
 				<configuration>
 					<systemPropertyVariables>
 						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
@@ -216,26 +201,6 @@
 			<id>release</id>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>flatten-maven-plugin</artifactId>
-						<configuration>
-							<flattenMode>ossrh</flattenMode>
-							<pomElements>
-								<profiles>remove</profiles>
-							</pomElements>
-						</configuration>
-						<executions>
-							<execution>
-								<id>flatten.flatten</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>flatten</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
 					<plugin>
 						<groupId>org.sonatype.central</groupId>
 						<artifactId>central-publishing-maven-plugin</artifactId>

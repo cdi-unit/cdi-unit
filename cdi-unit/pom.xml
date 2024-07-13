@@ -41,28 +41,6 @@
 				<groupId>org.basepom.maven</groupId>
 				<artifactId>duplicate-finder-maven-plugin</artifactId>
 			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>flatten-maven-plugin</artifactId>
-				<configuration>
-					<flattenMode>ossrh</flattenMode>
-					<!-- Ensure excludes are set correctly -->
-					<flattenDependencyMode>all</flattenDependencyMode>
-					<pomElements>
-						<profiles>remove</profiles>
-					</pomElements>
-				</configuration>
-				<executions>
-					<execution>
-						<id>flatten.flatten</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>flatten</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
