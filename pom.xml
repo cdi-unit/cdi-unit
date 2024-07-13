@@ -60,7 +60,7 @@
 
 	<modules>
 		<module>independent-projects/ide-config</module>
-		<module>cdi-unit</module>
+		<module>cdi-unit-core</module>
 		<module>cdi-unit-tests-external-dependency</module>
 		<module>cdi-unit-tests-parent</module>
 		<module>cdi-unit-tests</module>
