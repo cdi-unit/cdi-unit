@@ -61,18 +61,10 @@
 	<modules>
 		<module>independent-projects/ide-config</module>
 		<module>cdi-unit-core</module>
-		<module>cdi-unit-tests-external-dependency</module>
-		<module>cdi-unit-tests-parent</module>
-		<module>cdi-unit-tests</module>
-		<module>cdi-unit-tests-bare</module>
-		<module>cdi-unit-tests-mockito</module>
-		<module>cdi-unit-tests-easymock</module>
-		<module>cdi-unit-tests-jandex</module>
-		<module>cdi-unit-tests-testng</module>
-		<module>cdi-unit-tests-deltaspike</module>
 		<module>cdi-unit-support-servlet</module>
 		<module>cdi-unit-support-servlet6</module>
 		<module>cdi-unit</module>
+		<module>integration-tests</module>
 	</modules>
 
 	<distributionManagement>

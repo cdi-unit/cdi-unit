@@ -14,7 +14,6 @@ fi
 
 for WELD_VERSION in ${WELD_VERSIONS[*]}; do
   "$BASE_DIR/hide-logs.sh" ./mvnw -V -B test \
-    --projects cdi-unit-tests-parent,cdi-unit-tests-external-dependency \
-    --also-make-dependents \
+    -f integration-tests \
     -Dversion.weld.test="$WELD_VERSION" "$@"
 done

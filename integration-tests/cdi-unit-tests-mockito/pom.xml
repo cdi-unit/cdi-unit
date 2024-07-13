@@ -1,26 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cdi-unit-tests</artifactId>
+	<artifactId>cdi-unit-tests-mockito</artifactId>
 	<packaging>jar</packaging>
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-tests-parent</artifactId>
+		<artifactId>cdi-unit-integration-tests-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
-	<name>CDI-Unit-Tests</name>
+	<name>CDI-Unit-Tests-Mockito</name>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se-core</artifactId>
-			<version>${version.weld.test}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.weld.module</groupId>
-			<artifactId>weld-web</artifactId>
+			<artifactId>weld-se-shaded</artifactId>
 			<version>${version.weld.test}</version>
 			<scope>test</scope>
 		</dependency>
@@ -32,11 +25,6 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.github.cdi-unit</groupId>
-			<artifactId>cdi-unit-tests-external-dependency</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
