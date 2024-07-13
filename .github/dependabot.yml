@@ -14,7 +14,7 @@ updates:
       - area/dependencies
     ignore:
       # explicitly keep baseline version
-      - dependency-name: jakarta.platform:*
+      - dependency-name: jakarta.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
       - dependency-name: net.revelc.code.formatter:formatter-maven-plugin
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
