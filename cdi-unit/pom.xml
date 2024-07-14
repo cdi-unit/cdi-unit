@@ -6,9 +6,9 @@
 
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-build-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../independent-projects/parent</relativePath>
+		<relativePath>../build-parent</relativePath>
 	</parent>
 
 	<artifactId>cdi-unit</artifactId>

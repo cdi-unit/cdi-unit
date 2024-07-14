@@ -22,6 +22,7 @@
 	<modules>
 		<module>independent-projects/parent</module>
 		<module>independent-projects/ide-config</module>
+		<module>build-parent</module>
 		<module>cdi-unit-core</module>
 		<module>cdi-unit-support-servlet</module>
 		<module>cdi-unit-support-servlet6</module>

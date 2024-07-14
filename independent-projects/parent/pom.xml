@@ -10,8 +10,8 @@
 	<packaging>pom</packaging>
 
 	<name>CDI-Unit - Parent</name>
-
 	<description>JUnit runner for testing CDI based projects.</description>
+
 	<url>https://cdi-unit.github.io/cdi-unit/</url>
 	<developers>
 		<developer>
@@ -65,6 +65,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -247,17 +248,9 @@
 					<groupId>net.revelc.code.formatter</groupId>
 					<artifactId>formatter-maven-plugin</artifactId>
 					<version>${version.formatter-maven-plugin}</version>
-					<dependencies>
-						<dependency>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>ide-config</artifactId>
-							<version>${project.version}</version>
-						</dependency>
-					</dependencies>
 					<configuration>
 						<!-- store outside of target to speed up formatting when mvn clean is used -->
 						<cachedir>.cache/formatter-maven-plugin-${version.formatter-maven-plugin}</cachedir>
-						<configFile>cdi-unit-format.xml</configFile>
 						<lineEnding>LF</lineEnding>
 						<skip>${format.skip}</skip>
 					</configuration>
@@ -508,93 +501,6 @@
 			</build>
 		</profile>
 
-		<!-- Formatting setup, inherited by all projects using this parent -->
-		<profile>
-			<id>format</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>!no-format</name>
-				</property>
-				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as this parent) -->
-				<file>
-					<exists>src/main/java</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>format</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sort-imports</id>
-								<goals>
-									<goal>sort</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>validate</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>no-format</name>
-				</property>
-				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as this parent) -->
-				<file>
-					<exists>src/main/java</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>validate</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>check-imports</id>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
 		<profile>
 			<id>clean-cache</id>
 			<activation>
@@ -638,32 +544,5 @@
 		<url>https://github.com/cdi-unit/cdi-unit</url>
 		<tag>HEAD</tag>
 	</scm>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.github.classgraph</groupId>
-				<artifactId>classgraph</artifactId>
-				<version>4.8.174</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>5.12.0</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.13.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.30.2-GA</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 </project>
