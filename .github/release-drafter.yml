@@ -1,6 +1,6 @@
 _extends: .github
 name-template: 'CDI-Unit $RESOLVED_VERSION'
-tag-template: 'cdi-unit-parent-$RESOLVED_VERSION'
+tag-template: 'cdi-unit-$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
     labels:
