@@ -119,14 +119,14 @@
 	</dependencies>
 
 	<modules>
-		<module>cdi-unit-tests-external-dependency</module>
-		<module>cdi-unit-tests</module>
-		<module>cdi-unit-tests-bare</module>
-		<module>cdi-unit-tests-mockito</module>
-		<module>cdi-unit-tests-easymock</module>
-		<module>cdi-unit-tests-jandex</module>
-		<module>cdi-unit-tests-testng</module>
-		<module>cdi-unit-tests-deltaspike</module>
+		<module>tests-external-dependency</module>
+		<module>tests</module>
+		<module>tests-bare</module>
+		<module>tests-mockito</module>
+		<module>tests-easymock</module>
+		<module>tests-jandex</module>
+		<module>tests-testng</module>
+		<module>tests-deltaspike</module>
 	</modules>
 
 </project>
