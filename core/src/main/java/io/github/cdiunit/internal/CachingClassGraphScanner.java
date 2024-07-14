@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -12,8 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.deltaspike.core.util.ExceptionUtils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -66,9 +63,8 @@ public class CachingClassGraphScanner implements ClasspathScanner {
         try {
             return beanArchiveScanner.findBeanArchives(urls);
         } catch (Exception e) {
-            ExceptionUtils.throwAsRuntimeException(e);
+            throw ExceptionUtils.asRuntimeException(e);
         }
-        return Collections.emptyList();
     }
 
     private List<URL> computeClasspathUrls() {

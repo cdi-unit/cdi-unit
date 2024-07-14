@@ -4,7 +4,7 @@
 						 version="3.1">
 
 	<persistence-unit name="DefaultPersistenceUnit">
-		<class>io.github.cdiunit.tests.deltaspike.TestEntity</class>
+		<class>io.github.cdiunit.deltaspike.TestEntity</class>
 		<properties>
 			<property name="hibernate.connection.url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />

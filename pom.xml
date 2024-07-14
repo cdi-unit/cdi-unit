@@ -27,6 +27,7 @@
 		<module>support-servlet6</module>
 		<module>cdi-unit</module>
 		<module>integration-tests</module>
-	</modules>
+    <module>support-deltaspike</module>
+  </modules>
 
 </project>
