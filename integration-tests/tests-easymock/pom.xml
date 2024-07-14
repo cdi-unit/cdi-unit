@@ -1,14 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cdi-unit-tests-mockito</artifactId>
+	<artifactId>cdi-unit-tests-easymock</artifactId>
 	<packaging>jar</packaging>
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-tests-parent</artifactId>
+		<artifactId>cdi-unit-integration-tests-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../cdi-unit-tests-parent</relativePath>
 	</parent>
-	<name>CDI-Unit-Tests-Mockito</name>
+	<name>CDI-Unit-Tests-EasyMock</name>
 	<description>CDI-Unit test suite.</description>
 
 	<dependencies>
@@ -23,9 +22,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>5.3.0</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

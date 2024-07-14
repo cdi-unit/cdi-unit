@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-build-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../build-parent</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-tests-parent</artifactId>
+	<artifactId>cdi-unit-integration-tests-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>CDI-Unit-Tests-Parent</name>
+
+	<name>CDI-Unit - Integration Tests - Parent</name>
+	<description>CDI-Unit Integration Tests Parent.</description>
 
 	<properties>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<gpg.skip>true</gpg.skip>
+
 		<version.weld.test>${version.weld.baseline}</version.weld.test>
 
 		<!-- Use the same version for the tests as for the build by default -->
@@ -110,5 +117,16 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<modules>
+		<module>tests-external-dependency</module>
+		<module>tests</module>
+		<module>tests-bare</module>
+		<module>tests-mockito</module>
+		<module>tests-easymock</module>
+		<module>tests-jandex</module>
+		<module>tests-testng</module>
+		<module>tests-deltaspike</module>
+	</modules>
 
 </project>

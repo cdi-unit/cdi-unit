@@ -5,19 +5,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-build-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../build-parent</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-support-servlet6</artifactId>
-	<name>CDI-Unit - Servlet API 6 Support</name>
-	<description>CDI-Unit Servlet API 6 Support.</description>
+	<artifactId>cdi-unit-support-servlet</artifactId>
+	<name>CDI-Unit - Servlet API Support</name>
+	<description>CDI-Unit Servlet API Support.</description>
+
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>6.0.0</version>
+			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -26,12 +31,6 @@
 			<version>3.0.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cdi-unit-support-servlet</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 	</dependencies>
 
 </project>

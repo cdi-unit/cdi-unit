@@ -3,22 +3,27 @@
 				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
-		<artifactId>cdi-unit-parent</artifactId>
+		<artifactId>cdi-unit-build-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../build-parent</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-support-servlet</artifactId>
-	<name>CDI-Unit - Servlet API Support</name>
-	<description>CDI-Unit Servlet API Support.</description>
+	<artifactId>cdi-unit-support-servlet6</artifactId>
+	<name>CDI-Unit - Servlet API 6 Support</name>
+	<description>CDI-Unit Servlet API 6 Support.</description>
+
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>5.0.0</version>
+			<version>6.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -27,6 +32,12 @@
 			<version>3.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-support-servlet</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
