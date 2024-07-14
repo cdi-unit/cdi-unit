@@ -13,6 +13,10 @@
 	<name>CDI-Unit - Servlet API 6 Support</name>
 	<description>CDI-Unit Servlet API 6 Support.</description>
 
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>

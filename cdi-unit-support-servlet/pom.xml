@@ -14,6 +14,10 @@
 	<name>CDI-Unit - Servlet API Support</name>
 	<description>CDI-Unit Servlet API Support.</description>
 
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>

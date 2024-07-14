@@ -50,6 +50,9 @@
 		<format.skip>false</format.skip>
 		<version.formatter-maven-plugin>2.23.0</version.formatter-maven-plugin>
 		<version.impsort-maven-plugin>1.9.0</version.impsort-maven-plugin>
+
+		<!-- Skip publishing by default -->
+		<central.publishing.phase>skip-deploy</central.publishing.phase>
 	</properties>
 
 	<licenses>
@@ -99,7 +102,17 @@
 						<publishingServerId>cdi-unit-publish</publishingServerId>
 						<deploymentName>Deployment ${project.groupId}-${project.version}</deploymentName>
 					</configuration>
+					<executions>
+						<execution>
+							<id>injected-central-publishing</id>
+							<phase>${central.publishing.phase}</phase>
+							<goals>
+								<goal>publish</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
@@ -471,6 +484,11 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
 					</plugin>
 
 					<plugin>

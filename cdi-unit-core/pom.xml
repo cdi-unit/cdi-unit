@@ -13,6 +13,10 @@
 	<name>CDI-Unit - Core</name>
 	<description>JUnit runner for testing CDI based projects.</description>
 
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.ejb</groupId>
@@ -195,20 +199,5 @@
 		</plugins>
 
 	</build>
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.sonatype.central</groupId>
-						<artifactId>central-publishing-maven-plugin</artifactId>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
