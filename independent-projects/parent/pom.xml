@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>io.github.cdi-unit</groupId>
+	<artifactId>cdi-unit-parent</artifactId>
+	<version>5.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>CDI-Unit - Parent</name>
+
+	<description>JUnit runner for testing CDI based projects.</description>
+	<url>https://cdi-unit.github.io/cdi-unit/</url>
+	<developers>
+		<developer>
+			<name>Bryn Cooke</name>
+		</developer>
+		<developer>
+			<name>Sean Flanigan</name>
+		</developer>
+		<developer>
+			<name>Illya Kysil</name>
+			<email>ikysil@ikysil.name</email>
+		</developer>
+	</developers>
+
+	<mailingLists>
+		<mailingList>
+			<name>cdi-unit</name>
+			<archive>https://groups.google.com/forum/#!forum/cdi-unit</archive>
+		</mailingList>
+	</mailingLists>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
+
+		<!-- The version of the Weld to compile against -->
+		<version.weld.baseline>4.0.3.Final</version.weld.baseline>
+
+		<!-- The version of the DeltaSpike to compile against -->
+		<version.deltaspike.baseline>2.0.0</version.deltaspike.baseline>
+
+		<!-- For maven-release-plugin. Use 'git push' after release:perform is successful. -->
+		<pushChanges>false</pushChanges>
+		<localCheckout>true</localCheckout>
+
+		<!-- Formatting versions and config -->
+		<format.skip>false</format.skip>
+		<version.formatter-maven-plugin>2.23.0</version.formatter-maven-plugin>
+		<version.impsort-maven-plugin>1.9.0</version.impsort-maven-plugin>
+
+		<!-- Skip publishing by default -->
+		<central.publishing.phase>skip-deploy</central.publishing.phase>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+	<build>
+		<defaultGoal>clean package</defaultGoal>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.4.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.sonatype.central</groupId>
+					<artifactId>central-publishing-maven-plugin</artifactId>
+					<version>0.5.0</version>
+					<configuration>
+						<publishingServerId>cdi-unit-publish</publishingServerId>
+						<deploymentName>Deployment ${project.groupId}-${project.version}</deploymentName>
+						<excludeArtifacts>
+							<artifact>cdi-unit-project</artifact>
+						</excludeArtifacts>
+						<forcedOutputDirectory>${maven.multiModuleProjectDirectory}/target/central-publishing</forcedOutputDirectory>
+						<forcedStagingDirectory>${maven.multiModuleProjectDirectory}/target/central-staging</forcedStagingDirectory>
+					</configuration>
+					<executions>
+						<execution>
+							<id>injected-central-publishing</id>
+							<phase>${central.publishing.phase}</phase>
+							<goals>
+								<goal>publish</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.1.2</version>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<version>1.6.0</version>
+					<configuration>
+						<flattenMode>ossrh</flattenMode>
+						<pomElements>
+							<profiles>remove</profiles>
+						</pomElements>
+					</configuration>
+					<executions>
+						<execution>
+							<id>flatten.flatten</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>flatten</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>flatten.clean</id>
+							<phase>clean</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>3.6.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.7.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>4.0.0-M15</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.13.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>3.1.0</version>
+					<configuration>
+						<mavenExecutorId>forked-path</mavenExecutorId>
+						<useReleaseProfile>false</useReleaseProfile>
+						<arguments>${arguments} -Prelease</arguments>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>3.2.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.4.2</version>
+					<configuration>
+						<archive>
+							<index>true</index>
+							<manifest>
+								<addDefaultSpecificationEntries>
+									true
+								</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>
+									true
+								</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries combine.children="append">
+								<Implementation-URL>${project.url}</Implementation-URL>
+								<Scm-Url>${project.scm.url}</Scm-Url>
+								<Scm-Connection>${project.scm.connection}</Scm-Connection>
+								<Bundle-License>Apache License 2.0</Bundle-License>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.3.1</version>
+					<configuration>
+						<archive>
+							<index>true</index>
+							<manifest>
+								<addDefaultSpecificationEntries>
+									true
+								</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>
+									true
+								</addDefaultImplementationEntries>
+							</manifest>
+							<manifestEntries combine.children="append">
+								<Implementation-URL>${project.url}</Implementation-URL>
+								<Scm-Url>${project.scm.url}</Scm-Url>
+								<Scm-Connection>${project.scm.connection}</Scm-Connection>
+								<Bundle-License>Apache License 2.0</Bundle-License>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.17.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.5.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>net.revelc.code.formatter</groupId>
+					<artifactId>formatter-maven-plugin</artifactId>
+					<version>${version.formatter-maven-plugin}</version>
+					<dependencies>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>ide-config</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<!-- store outside of target to speed up formatting when mvn clean is used -->
+						<cachedir>.cache/formatter-maven-plugin-${version.formatter-maven-plugin}</cachedir>
+						<configFile>cdi-unit-format.xml</configFile>
+						<lineEnding>LF</lineEnding>
+						<skip>${format.skip}</skip>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>net.revelc.code</groupId>
+					<artifactId>impsort-maven-plugin</artifactId>
+					<version>${version.impsort-maven-plugin}</version>
+					<configuration>
+						<!-- store outside of target to speed up formatting when mvn clean is used -->
+						<cachedir>.cache/impsort-maven-plugin-${version.impsort-maven-plugin}</cachedir>
+						<groups>java.,javax.,jakarta.,org.,com.</groups>
+						<staticGroups>*</staticGroups>
+						<staticAfter>true</staticAfter>
+						<skip>${format.skip}</skip>
+						<removeUnused>true</removeUnused>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.basepom.maven</groupId>
+					<artifactId>duplicate-finder-maven-plugin</artifactId>
+					<version>2.0.1</version>
+					<executions>
+						<execution>
+							<id>default</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
+						<failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
+						<failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+						<checkCompileClasspath>true</checkCompileClasspath>
+						<checkRuntimeClasspath>true</checkRuntimeClasspath>
+						<checkTestClasspath>false</checkTestClasspath>
+						<preferLocal>true</preferLocal>
+						<useResultFile>true</useResultFile>
+						<resultFile>${project.build.directory}/duplicate-finder-result.xml</resultFile>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<configuration>
+					<rulesUri>file:///${maven.multiModuleProjectDirectory}/versions-ignored.xml</rulesUri>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.6.3</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-bad-dependencies</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<searchTransitive>true</searchTransitive>
+									<excludes>
+										<exclude>javax.activation:activation</exclude>
+										<exclude>javax.activation:javax.activation-api</exclude>
+										<exclude>javax.enterprise:cdi-api</exclude>
+										<exclude>javax.inject:javax.inject</exclude>
+										<exclude>javax.json:javax.json-api</exclude>
+										<exclude>javax.persistence:javax.persistence-api</exclude>
+										<exclude>javax.persistence:persistence-api</exclude>
+										<exclude>javax.security.enterprise:javax.security.enterprise-api</exclude>
+										<exclude>javax.servlet:servlet-api</exclude>
+										<exclude>javax.transaction:jta</exclude>
+										<exclude>javax.validation:validation-api</exclude>
+										<exclude>javax.xml:jaxrpc-api</exclude>
+										<exclude>javax.xml.bind:jaxb-api</exclude>
+										<exclude>javax.xml.soap:saaj-api</exclude>
+										<exclude>javax.xml.stream:stax-api</exclude>
+										<exclude>log4j:log4j</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<configuration>
+					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<show>public</show>
+					<excludePackageNames>*.internal.*</excludePackageNames>
+					<doclint>all</doclint>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<archive>
+								<manifestEntries combine.children="append">
+									<Java-Version>${java.version}</Java-Version>
+									<Java-Vendor>${java.vendor}</Java-Vendor>
+									<Os-Name>${os.name}</Os-Name>
+									<Os-Arch>${os.arch}</Os-Arch>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<archive>
+								<manifestEntries combine.children="append">
+									<Java-Version>${java.version}</Java-Version>
+									<Java-Vendor>${java.vendor}</Java-Vendor>
+									<Os-Name>${os.name}</Os-Name>
+									<Os-Arch>${os.arch}</Os-Arch>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Formatting setup, inherited by all projects using this parent -->
+		<profile>
+			<id>format</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>!no-format</name>
+				</property>
+				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
+				<file>
+					<exists>src/main/java</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.revelc.code.formatter</groupId>
+						<artifactId>formatter-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>format</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.revelc.code</groupId>
+						<artifactId>impsort-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sort-imports</id>
+								<goals>
+									<goal>sort</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>validate</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>no-format</name>
+				</property>
+				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
+				<!-- for all modules that don't contain actual code (such as this parent) -->
+				<file>
+					<exists>src/main/java</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.revelc.code.formatter</groupId>
+						<artifactId>formatter-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>validate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.revelc.code</groupId>
+						<artifactId>impsort-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>check-imports</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>clean-cache</id>
+			<activation>
+				<property>
+					<name>clean-cache</name>
+					<value>!false</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>clean-cache-dirs</id>
+								<phase>pre-clean</phase>
+								<inherited>true</inherited>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<filesets>
+										<fileset>
+											<directory>.cache</directory>
+										</fileset>
+									</filesets>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false"
+			 child.scm.url.inherit.append.path="false">
+		<connection>scm:git:git@github.com/cdi-unit/cdi-unit.git</connection>
+		<developerConnection>scm:git:git@github.com/cdi-unit/cdi-unit.git</developerConnection>
+		<url>https://github.com/cdi-unit/cdi-unit</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.github.classgraph</groupId>
+				<artifactId>classgraph</artifactId>
+				<version>4.8.174</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>5.12.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.13.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>3.30.2-GA</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
