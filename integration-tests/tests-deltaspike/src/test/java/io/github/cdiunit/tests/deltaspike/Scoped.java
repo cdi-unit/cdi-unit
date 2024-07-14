@@ -1,8 +1,8 @@
-package io.github.cdiunit;
+package io.github.cdiunit.tests.deltaspike;
 
-import jakarta.enterprise.inject.Vetoed;
+import org.apache.deltaspike.core.api.exclude.Exclude;
 
-@Vetoed
+@Exclude
 public class Scoped {
 
     private Runnable disposeListener;

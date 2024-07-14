@@ -2,10 +2,7 @@ package io.github.cdiunit.internal;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
-import org.apache.deltaspike.core.util.ExceptionUtils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -35,9 +32,8 @@ class ClassGraphScanner implements ClasspathScanner {
         try {
             return beanArchiveScanner.findBeanArchives(urls);
         } catch (Exception e) {
-            ExceptionUtils.throwAsRuntimeException(e);
+            throw ExceptionUtils.asRuntimeException(e);
         }
-        return Collections.emptyList();
     }
 
     @Override

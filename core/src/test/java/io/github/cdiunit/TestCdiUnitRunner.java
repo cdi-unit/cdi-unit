@@ -31,7 +31,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
-        ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
 public class TestCdiUnitRunner extends BaseTest {
 
     @Inject
@@ -85,7 +83,6 @@ public class TestCdiUnitRunner extends BaseTest {
     Instance<List<?>> generics;
 
     @Produces
-
     List<Object> producedList = new ArrayList<Object>();
 
     @Produces
@@ -135,7 +132,6 @@ public class TestCdiUnitRunner extends BaseTest {
     @InRequestScope
     @InConversationScope
     public void testConversationScope() {
-
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
         DConversationScoped d2 = conversationScoped.get();
