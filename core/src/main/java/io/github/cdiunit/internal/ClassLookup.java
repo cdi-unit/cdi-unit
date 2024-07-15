@@ -19,8 +19,9 @@ public enum ClassLookup {
      * @param className class name to search
      * @return class instance if found, null otherwise
      */
-    public Class<?> lookup(final String className) {
-        return classes.computeIfAbsent(className, this::lookupAbsent).get();
+    @SuppressWarnings("unchecked")
+    public <T> Class<? extends T> lookup(final String className) {
+        return (Class<T>) classes.computeIfAbsent(className, this::lookupAbsent).get();
     }
 
     public boolean isPresent(final String className) {

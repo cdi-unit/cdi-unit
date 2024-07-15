@@ -10,7 +10,7 @@
 8.  [Using a specific version of Weld](#using-a-specific-version-of-weld)
 9.  [TestNG support](#testng-support)
 10.  [EJB support](#ejb-support)
-11.  [Deltaspike support](#deltaspike-support)
+11.  [DeltaSpike support](#deltaspike-support)
 12.  [JaxRS support](#jaxrs-support)
 13.  [Support for Java 9 and later](#support-for-java-9-and-later)
 14.  [Changelog](#changelog)
@@ -398,9 +398,9 @@ class EJBStatelessNamed implements EJBI {
 }
 ```
 
-### Deltaspike support
+### DeltaSpike support
 
-Once a test class is annotated with @SupportDeltaspikeCore @SupportDeltaspikeData @SupportDeltaspikeJpa @SupportDeltaspikePartialBean then the corresponding deltaspike module can be used. The deltaspike modules must be on the classpath.
+Once a test class is annotated with `@SupportDeltaspikeCore`, `@SupportDeltaspikeData`, `@SupportDeltaspikeJpa`, `@SupportDeltaspikePartialBean` then the corresponding DeltaSpike module can be used. The DeltaSpike's modules must be on the classpath.
 
 ```java
 @SupportDeltaspikeJpa
@@ -430,6 +430,73 @@ class TestDeltaspikeTransactions {
     TestEntity t = new TestEntity();
     er.save(t);
   }
+}
+```
+
+Additional scopes provided by DeltaSpike are also supported: `@WindowScoped`, `@ViewAccessScoped`, and `@GroupedConversationScoped`.
+
+```java
+@WindowScoped
+public class WindowScopedBeanX implements Serializable {
+
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+}
+
+@RunWith(CdiRunner.class)
+public class TestWindowScoped {
+
+    @Inject
+    WindowScopedBeanX someWindowScopedBean;
+
+    @Inject
+    WindowContext windowContext;
+
+    @Test
+    @InRequestScope
+    public void testWindowScopedBean() {
+        Assert.assertNotNull(someWindowScopedBean);
+        Assert.assertNotNull(windowContext);
+
+        {
+            windowContext.activateWindow("window1");
+            someWindowScopedBean.setValue("Hans");
+            Assert.assertEquals("Hans", someWindowScopedBean.getValue());
+        }
+
+        // now we switch it away to another 'window'
+        {
+            windowContext.activateWindow("window2");
+            Assert.assertNull(someWindowScopedBean.getValue());
+            someWindowScopedBean.setValue("Karl");
+            Assert.assertEquals("Karl", someWindowScopedBean.getValue());
+        }
+
+        // and now back to the first window
+        {
+            windowContext.activateWindow("window1");
+
+            // which must still contain the old value
+            Assert.assertEquals("Hans", someWindowScopedBean.getValue());
+        }
+
+        // and again back to the second window
+        {
+            windowContext.activateWindow("window2");
+
+            // which must still contain the old value of the 2nd window
+            Assert.assertEquals("Karl", someWindowScopedBean.getValue());
+        }
+    }
+
 }
 ```
 
