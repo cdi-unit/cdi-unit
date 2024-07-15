@@ -31,19 +31,6 @@ import jakarta.interceptor.InterceptorBinding;
  * }
  * </pre>
  *
- * <p>
- * Remember to add an implementation of <a href=
- * "http://download.oracle.com/javaee/1.3/api/javax/servlet/http/HttpServletRequest.html"
- * >HttpServletRequest</a> to your test e.g.
- * </p>
- *
- * <pre>
- * &#064;Produces
- * HttpServletRequest getRequest() {
- *     return new DummyHttpRequest();
- * }
- * </pre>
- *
  * @author Bryn Cooke
  */
 @InterceptorBinding
