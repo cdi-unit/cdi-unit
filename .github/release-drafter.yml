@@ -4,17 +4,17 @@ tag-template: 'cdi-unit-$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
     labels:
-      - 'feature'
-      - 'enhancement'
+      - 'kind/feature'
+      - 'kind/enhancement'
   - title: '🐛 Bug Fixes'
     labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
+      - 'kind/fix'
+      - 'kind/bugfix'
+      - 'kind/bug'
   - title: '🧰 Maintenance'
     labels:
       - 'area/infra'
-      - 'chore'
+      - 'kind/chore'
   - title: '⬆️ Dependencies'
     collapse-after: 3
     labels:
@@ -27,13 +27,13 @@ version-resolver:
       - 'semver/major'
   minor:
     labels:
-      - bug
-      - enhancement
-      - feature
+      - 'kind/bug'
+      - 'kind/enhancement'
+      - 'kind/feature'
       - 'semver/minor'
   patch:
     labels:
-      - performance
+      - 'kind/performance'
       - 'semver/patch'
   default: patch
 template: |
