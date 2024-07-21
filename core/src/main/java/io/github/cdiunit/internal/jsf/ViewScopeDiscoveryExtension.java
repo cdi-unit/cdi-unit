@@ -15,7 +15,7 @@ public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverCdiExtension(Context context) {
-        context.extension(new ViewScopeExtension(), ViewScopeDiscoveryExtension.class.getName());
+        context.extension(new ViewScopeExtension());
     }
 
 }

@@ -1,5 +1,6 @@
 package io.github.cdiunit.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -70,7 +71,7 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
     private void discoverExtensions(Context context, Class<?> beanClass) {
         if (Extension.class.isAssignableFrom(beanClass) && !Modifier.isAbstract(beanClass.getModifiers())) {
             try {
-                context.extension((Extension) beanClass.getConstructor().newInstance(), beanClass.getName());
+                context.extension((Extension) beanClass.getConstructor().newInstance());
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
@@ -89,14 +90,15 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void discoverAlternativeStereotype(Context context, Class<?> beanClass) {
         if (isAlternativeStereotype(beanClass)) {
-            context.enableAlternativeStereotype(beanClass);
+            context.enableAlternativeStereotype((Class<? extends Annotation>) beanClass);
         }
     }
 
     private static boolean isAlternativeStereotype(Class<?> c) {
-        return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
+        return c.isAnnotation() && c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
     }
 
 }

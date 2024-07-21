@@ -16,8 +16,7 @@ public class ProducerConfigDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverCdiExtension(Context context) {
-        context.extension(new ProducerConfigExtension(context.getTestConfiguration()),
-                ProducerConfigDiscoveryExtension.class.getName());
+        context.extension(new ProducerConfigExtension(context.getTestConfiguration()));
     }
 
 }

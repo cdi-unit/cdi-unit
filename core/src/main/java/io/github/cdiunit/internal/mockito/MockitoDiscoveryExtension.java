@@ -25,7 +25,7 @@ public class MockitoDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverCdiExtension(Context context) {
-        context.extension(new MockitoExtension(), MockitoDiscoveryExtension.class.getName());
+        context.extension(new MockitoExtension());
     }
 
     private void discoverField(Context context, Field field) {
