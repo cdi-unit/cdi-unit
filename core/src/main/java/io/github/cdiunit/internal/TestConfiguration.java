@@ -10,7 +10,7 @@ import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 
 /**
- * Defines, how the WeldTestUrlDeployment should initialize Weld.
+ * Defines how CDI-Unit should initialize Weld.
  *
  * @author aschoerk
  */

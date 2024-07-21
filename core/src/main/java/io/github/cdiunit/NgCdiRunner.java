@@ -14,17 +14,13 @@ import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.InjectionTarget;
 
-import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
-import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
-import org.jboss.weld.resources.spi.ResourceLoader;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldTestUrlDeployment;
+import io.github.cdiunit.internal.WeldComponentFactory;
 
 @SuppressWarnings("unchecked")
 public class NgCdiRunner {
@@ -47,17 +43,8 @@ public class NgCdiRunner {
     @BeforeMethod(alwaysRun = true)
     public void initializeCdi(final Method method) {
         final TestConfiguration testConfig = createTestConfiguration(method);
-        weld = new Weld() {
 
-            @Override
-            protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
-                try {
-                    return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                } catch (Exception e) {
-                    throw ExceptionUtils.asRuntimeException(e);
-                }
-            }
-        };
+        weld = WeldComponentFactory.configureWeld(testConfig);
 
         container = weld.initialize();
         BeanManager beanManager = container.getBeanManager();

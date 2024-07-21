@@ -21,11 +21,8 @@ import java.net.URL;
 
 import javax.naming.InitialContext;
 
-import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
-import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
-import org.jboss.weld.resources.spi.ResourceLoader;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -33,9 +30,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldTestUrlDeployment;
+import io.github.cdiunit.internal.WeldComponentFactory;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -103,20 +99,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             return;
 
         try {
-            weld = new Weld() {
-
-                @Override
-                protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
-                    try {
-                        return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                    } catch (Exception e) {
-                        startupException = e;
-                        throw ExceptionUtils.asRuntimeException(e);
-                    }
-                }
-
-            };
-
+            weld = WeldComponentFactory.configureWeld(testConfig);
             try {
                 container = weld.initialize();
             } catch (Throwable e) {
