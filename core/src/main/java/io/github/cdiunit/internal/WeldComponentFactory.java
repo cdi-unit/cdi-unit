@@ -34,7 +34,7 @@ public final class WeldComponentFactory {
         final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
         final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, testConfiguration);
 
-        final Set<String> discoveredClasses = new LinkedHashSet<>();
+        final Set<Class<?>> discoveredClasses = new LinkedHashSet<>();
         final Set<Class<?>> classesProcessed = new HashSet<>();
 
         discoverExtension.accept(discoveryContext);
@@ -52,7 +52,7 @@ public final class WeldComponentFactory {
             if (candidate && !processed && !primitive && !ignored) {
                 classesProcessed.add(cls);
                 if (!cls.isAnnotation()) {
-                    discoveredClasses.add(cls.getName());
+                    discoveredClasses.add(cls);
                 }
 
                 try {
@@ -77,17 +77,17 @@ public final class WeldComponentFactory {
 
         discoveryContext.configure(weld);
 
-        for (var className : discoveredClasses) {
-            Class<?> mClass = ClassLookup.INSTANCE.lookup(className);
-            weld.addBeanClass(mClass);
+        for (var clazz : discoveredClasses) {
+            weld.addBeanClass(clazz);
         }
 
         log.debug("CDI-Unit discovered:");
-        for (String clazz : discoveredClasses) {
-            if (clazz.startsWith("io.github.cdiunit.internal.")) {
-                log.trace(clazz);
+        for (var clazz : discoveredClasses) {
+            var clsName = clazz.getName();
+            if (clsName.startsWith("io.github.cdiunit.internal.")) {
+                log.trace(clsName);
             } else {
-                log.debug(clazz);
+                log.debug(clsName);
             }
         }
         return weld;
