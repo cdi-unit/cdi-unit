@@ -15,10 +15,6 @@
  */
 package io.github.cdiunit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
-
 import javax.naming.InitialContext;
 
 import org.jboss.weld.environment.se.Weld;
@@ -59,28 +55,11 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     private Throwable startupException;
     private FrameworkMethod frameworkMethod;
     private TestConfiguration testConfiguration;
-    private static final String ABSENT_CODE_PREFIX = "Absent Code attribute in method that is not native or abstract in class file ";
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
-        super(checkClass(clazz));
+        super(clazz);
         this.clazz = clazz;
-    }
-
-    private static Class<?> checkClass(Class<?> clazz) {
-        try {
-            for (Method m : clazz.getMethods()) {
-                m.getReturnType();
-                m.getParameterTypes();
-                m.getParameterAnnotations();
-            }
-            for (Field f : clazz.getFields()) {
-                f.getType();
-            }
-        } catch (ClassFormatError e) {
-            throw parseClassFormatError(e);
-        }
-        return clazz;
     }
 
     protected TestConfiguration createTestConfiguration() {
@@ -110,24 +89,8 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                     throw e;
                 }
             }
-
-        } catch (ClassFormatError e) {
-            startupException = parseClassFormatError(e);
         } catch (Throwable e) {
             startupException = new Exception("Unable to start weld", e);
-        }
-    }
-
-    private static ClassFormatError parseClassFormatError(ClassFormatError e) {
-        if (e.getMessage().startsWith(ABSENT_CODE_PREFIX)) {
-            String offendingClass = e.getMessage().substring(ABSENT_CODE_PREFIX.length());
-            URL url = CdiRunner.class.getClassLoader().getResource(offendingClass + ".class");
-
-            return new ClassFormatError("'" + offendingClass.replace('/', '.')
-                    + "' is an API only class. You need to remove '"
-                    + url.toString().substring(9, url.toString().indexOf("!")) + "' from your classpath");
-        } else {
-            return e;
         }
     }
 
