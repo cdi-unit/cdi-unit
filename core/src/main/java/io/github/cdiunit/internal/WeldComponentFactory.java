@@ -10,6 +10,7 @@ import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
+import org.jboss.weld.bootstrap.spi.helpers.MetadataImpl;
 import org.jboss.weld.metadata.BeansXmlImpl;
 
 public final class WeldComponentFactory {
@@ -18,30 +19,7 @@ public final class WeldComponentFactory {
     }
 
     static <T> Metadata<T> createMetadata(T value, String location) {
-        try {
-            return new org.jboss.weld.bootstrap.spi.helpers.MetadataImpl<>(value, location);
-        } catch (NoClassDefFoundError e) {
-            // MetadataImpl moved to a new package in Weld 2.4, old copy removed in 3.0
-            try {
-                // If Weld < 2.4, the new package isn't there, so we try the old package.
-                //noinspection unchecked
-                Class<Metadata<T>> oldClass = (Class<Metadata<T>>) ClassLookup.INSTANCE
-                        .lookup("org.jboss.weld.metadata.MetadataImpl");
-                Constructor<Metadata<T>> ctor = oldClass.getConstructor(Object.class, String.class);
-                return ctor.newInstance(value, location);
-            } catch (ReflectiveOperationException e1) {
-                throw new RuntimeException(e1);
-            }
-        }
-    }
-
-    static Object annotatedDiscoveryMode() {
-        try {
-            return BeanDiscoveryMode.ANNOTATED;
-        } catch (NoClassDefFoundError e) {
-            // No such enum in Weld 1.x, but the constructor for BeansXmlImpl has fewer parameters so we don't need it
-            return null;
-        }
+        return new MetadataImpl<>(value, location);
     }
 
     static BeansXml createBeansXml() {
@@ -53,7 +31,7 @@ public final class WeldComponentFactory {
                     new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
                     new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING,
                     // These were added in Weld 2.0:
-                    new URL("file:cdi-unit"), annotatedDiscoveryMode(), "cdi-unit",
+                    new URL("file:cdi-unit"), BeanDiscoveryMode.ANNOTATED, "cdi-unit",
                     // isTrimmed: added in Weld 2.4.2 [WELD-2314]:
                     false
             };
@@ -61,7 +39,7 @@ public final class WeldComponentFactory {
             return (BeansXml) beansXmlConstructor.newInstance(
                     Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
         } catch (MalformedURLException | ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.asRuntimeException(e);
         }
     }
 
