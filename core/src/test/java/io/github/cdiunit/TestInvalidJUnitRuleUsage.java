@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldTestUrlDeployment;
+import io.github.cdiunit.internal.WeldComponentFactory;
 import io.github.cdiunit.internal.junit.InvalidRuleFieldUsageException;
 
 public class TestInvalidJUnitRuleUsage {
@@ -17,7 +17,7 @@ public class TestInvalidJUnitRuleUsage {
 
     @Test(expected = InvalidRuleFieldUsageException.class)
     public void test() throws IOException {
-        new WeldTestUrlDeployment(null, null, new TestConfiguration(TestInvalidJUnitRuleUsage.class, null));
+        WeldComponentFactory.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class, null));
     }
 
 }

@@ -1,68 +1,96 @@
 package io.github.cdiunit.internal;
 
-import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
-import org.jboss.weld.bootstrap.spi.BeansXml;
-import org.jboss.weld.bootstrap.spi.Metadata;
-import org.jboss.weld.bootstrap.spi.Scanning;
-import org.jboss.weld.metadata.BeansXmlImpl;
+import jakarta.enterprise.inject.spi.Extension;
+
+import org.jboss.weld.environment.se.Weld;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class WeldComponentFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(WeldComponentFactory.class);
 
     private WeldComponentFactory() {
     }
 
-    static <T> Metadata<T> createMetadata(T value, String location) {
-        try {
-            return new org.jboss.weld.bootstrap.spi.helpers.MetadataImpl<>(value, location);
-        } catch (NoClassDefFoundError e) {
-            // MetadataImpl moved to a new package in Weld 2.4, old copy removed in 3.0
-            try {
-                // If Weld < 2.4, the new package isn't there, so we try the old package.
-                //noinspection unchecked
-                Class<Metadata<T>> oldClass = (Class<Metadata<T>>) ClassLookup.INSTANCE
-                        .lookup("org.jboss.weld.metadata.MetadataImpl");
-                Constructor<Metadata<T>> ctor = oldClass.getConstructor(Object.class, String.class);
-                return ctor.newInstance(value, location);
-            } catch (ReflectiveOperationException e1) {
-                throw new RuntimeException(e1);
+    public static Weld configureWeld(TestConfiguration testConfiguration) {
+        final DefaultBootstrapDiscoveryContext bdc = new DefaultBootstrapDiscoveryContext();
+
+        final ServiceLoader<DiscoveryExtension> discoveryExtensions = ServiceLoader.load(DiscoveryExtension.class);
+        discoveryExtensions.forEach(extension -> extension.bootstrap(bdc));
+
+        // Capture values to ignore potential updates after the bootstrap
+        final Consumer<DiscoveryExtension.Context> discoverExtension = bdc.discoverExtension;
+        final BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = bdc.discoverClass;
+        final BiConsumer<DiscoveryExtension.Context, Field> discoverField = bdc.discoverField;
+        final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
+
+        final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
+        final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, testConfiguration);
+
+        final Set<Class<?>> discoveredClasses = new LinkedHashSet<>();
+        final Set<Class<?>> classesProcessed = new HashSet<>();
+
+        discoverExtension.accept(discoveryContext);
+
+        discoveryContext.processBean(testConfiguration.getTestClass());
+
+        while (discoveryContext.hasClassesToProcess()) {
+            final Class<?> cls = discoveryContext.nextClassToProcess();
+
+            final boolean candidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
+            final boolean processed = classesProcessed.contains(cls);
+            final boolean primitive = cls.isPrimitive();
+            final boolean ignored = discoveryContext.isIgnored(cls);
+
+            if (candidate && !processed && !primitive && !ignored) {
+                classesProcessed.add(cls);
+                if (!cls.isAnnotation()) {
+                    discoveredClasses.add(cls);
+                }
+
+                try {
+                    discoverClass.accept(discoveryContext, cls);
+
+                    for (Field field : cls.getDeclaredFields()) {
+                        discoverField.accept(discoveryContext, field);
+                    }
+                    for (Method method : cls.getDeclaredMethods()) {
+                        discoverMethod.accept(discoveryContext, method);
+                    }
+                } catch (NoClassDefFoundError ncdf) {
+                    throw new IllegalStateException(String.format("Can not discover %s", cls), ncdf);
+                }
+            }
+
+            discoveryContext.processed(cls);
+        }
+
+        var weld = new Weld("cdi-unit-" + UUID.randomUUID())
+                .disableDiscovery();
+
+        discoveryContext.configure(weld);
+
+        for (var clazz : discoveredClasses) {
+            weld.addBeanClass(clazz);
+        }
+
+        log.debug("CDI-Unit discovered:");
+        for (var clazz : discoveredClasses) {
+            var clsName = clazz.getName();
+            if (clsName.startsWith("io.github.cdiunit.internal.")) {
+                log.trace(clsName);
+            } else {
+                log.debug(clsName);
             }
         }
-    }
-
-    static Object annotatedDiscoveryMode() {
-        try {
-            return BeanDiscoveryMode.ANNOTATED;
-        } catch (NoClassDefFoundError e) {
-            // No such enum in Weld 1.x, but the constructor for BeansXmlImpl has fewer parameters so we don't need it
-            return null;
-        }
-    }
-
-    static BeansXml createBeansXml() {
-        try {
-            // The constructor for BeansXmlImpl has added more parameters in newer Weld versions. The parameter list
-            // is truncated in older version of Weld where the number of parameters is shorter, thus omitting the
-            // newer parameters.
-            Object[] initArgs = new Object[] {
-                    new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(),
-                    new ArrayList<Metadata<String>>(), new ArrayList<Metadata<String>>(), Scanning.EMPTY_SCANNING,
-                    // These were added in Weld 2.0:
-                    new URL("file:cdi-unit"), annotatedDiscoveryMode(), "cdi-unit",
-                    // isTrimmed: added in Weld 2.4.2 [WELD-2314]:
-                    false
-            };
-            Constructor<?> beansXmlConstructor = BeansXmlImpl.class.getConstructors()[0];
-            return (BeansXml) beansXmlConstructor.newInstance(
-                    Arrays.copyOfRange(initArgs, 0, beansXmlConstructor.getParameterCount()));
-        } catch (MalformedURLException | ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return weld;
     }
 
 }

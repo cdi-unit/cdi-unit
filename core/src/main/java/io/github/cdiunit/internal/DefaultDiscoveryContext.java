@@ -1,9 +1,9 @@
 package io.github.cdiunit.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -12,31 +12,33 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.inject.spi.Extension;
 
-import org.jboss.weld.bootstrap.spi.BeansXml;
-import org.jboss.weld.bootstrap.spi.Metadata;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
-import static io.github.cdiunit.internal.WeldComponentFactory.createMetadata;
+import io.github.cdiunit.ProducesAlternative;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
     private final ClasspathScanner scanner;
 
-    private final BeansXml beansXml;
-
     private final TestConfiguration testConfiguration;
 
-    private final Collection<Metadata<Extension>> extensions = new ArrayList<>();
+    private final Set<Extension> extensions = new LinkedHashSet<>();
 
     private final Set<Class<?>> classesToProcess = new LinkedHashSet<>();
 
     private final Set<Class<?>> classesToIgnore = new LinkedHashSet<>();
 
-    private final Set<String> alternatives = new LinkedHashSet<>();
+    private final Set<Class<?>> alternatives = new LinkedHashSet<>();
 
-    public DefaultDiscoveryContext(ClasspathScanner scanner, final BeansXml beansXml,
-            final TestConfiguration testConfiguration) {
+    private final Set<Class<?>> decorators = new LinkedHashSet<>();
+
+    private final Set<Class<?>> interceptors = new LinkedHashSet<>();
+
+    private final Set<Class<? extends Annotation>> alternativeStereotypes = new LinkedHashSet<>();
+
+    public DefaultDiscoveryContext(ClasspathScanner scanner, final TestConfiguration testConfiguration) {
         this.scanner = scanner;
-        this.beansXml = beansXml;
         this.testConfiguration = testConfiguration;
     }
 
@@ -73,7 +75,7 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
     @Override
     public void processBean(String className) {
-        processBean(ClassLookup.INSTANCE.lookup(className));
+        processBean(loadClass(className));
     }
 
     @Override
@@ -83,7 +85,7 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
     @Override
     public void ignoreBean(String className) {
-        ignoreBean(ClassLookup.INSTANCE.lookup(className));
+        ignoreBean(loadClass(className));
     }
 
     @Override
@@ -97,54 +99,67 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
     @Override
     public void enableAlternative(String className) {
-        alternatives.add(className);
+        alternatives.add(loadClass(className));
     }
 
     @Override
     public void enableAlternative(Class<?> alternativeClass) {
-        enableAlternative(alternativeClass.getName());
+        alternatives.add(alternativeClass);
     }
 
-    public Collection<String> getAlternatives() {
+    public Collection<Class<?>> getAlternatives() {
         return alternatives;
     }
 
     @Override
     public void enableDecorator(String className) {
-        beansXml.getEnabledDecorators().add(createMetadata(className, className));
+        decorators.add(loadClass(className));
     }
 
     @Override
     public void enableDecorator(Class<?> decoratorClass) {
-        enableDecorator(decoratorClass.getName());
+        decorators.add(decoratorClass);
+    }
+
+    public Collection<Class<?>> getDecorators() {
+        return decorators;
     }
 
     @Override
     public void enableInterceptor(String className) {
-        beansXml.getEnabledInterceptors().add(createMetadata(className, className));
+        interceptors.add(loadClass(className));
     }
 
     @Override
     public void enableInterceptor(Class<?> interceptorClass) {
-        enableInterceptor(interceptorClass.getName());
+        interceptors.add(interceptorClass);
+    }
+
+    public Collection<Class<?>> getInterceptors() {
+        return interceptors;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void enableAlternativeStereotype(String className) {
-        beansXml.getEnabledAlternativeStereotypes().add(createMetadata(className, className));
+        alternativeStereotypes.add((Class<? extends Annotation>) loadClass(className));
     }
 
     @Override
-    public void enableAlternativeStereotype(Class<?> alternativeStereotypeClass) {
-        enableAlternativeStereotype(alternativeStereotypeClass.getName());
+    public void enableAlternativeStereotype(Class<? extends Annotation> alternativeStereotypeClass) {
+        alternativeStereotypes.add(alternativeStereotypeClass);
+    }
+
+    public Collection<Class<? extends Annotation>> getAlternativeStereotypes() {
+        return alternativeStereotypes;
     }
 
     @Override
-    public void extension(Extension extension, String location) {
-        extensions.add(createMetadata(extension, location));
+    public void extension(Extension extension) {
+        extensions.add(extension);
     }
 
-    public Collection<Metadata<Extension>> getExtensions() {
+    public Collection<Extension> getExtensions() {
         return extensions;
     }
 
@@ -181,8 +196,21 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
         try {
             return getClass().getClassLoader().loadClass(name);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.asRuntimeException(e);
         }
+    }
+
+    void configure(Weld weld) {
+        weld.addExtension(new WeldSEBeanRegistrant());
+        weld.addAlternativeStereotype(ProducesAlternative.class);
+
+        weld.addBeanClass(testConfiguration.getTestClass());
+
+        extensions.forEach(weld::addExtension);
+        alternatives.forEach(weld::addAlternative);
+        alternativeStereotypes.forEach(weld::addAlternativeStereotype);
+        decorators.forEach(weld::addDecorator);
+        interceptors.forEach(weld::addInterceptor);
     }
 
 }

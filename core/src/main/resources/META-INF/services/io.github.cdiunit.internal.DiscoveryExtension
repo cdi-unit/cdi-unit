@@ -1,4 +1,3 @@
-# The order of the implementations matches the original order in WeldTestUrlDeployment
 io.github.cdiunit.internal.testscope.TestScopeDiscoveryExtension
 io.github.cdiunit.internal.producerconfig.ProducerConfigDiscoveryExtension
 io.github.cdiunit.internal.jsf.ViewScopeDiscoveryExtension

@@ -25,7 +25,7 @@ public class EasyMockDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverCdiExtension(Context context) {
-        context.extension(new EasyMockExtension(), EasyMockDiscoveryExtension.class.getName());
+        context.extension(new EasyMockExtension());
     }
 
     private void discoverField(Context context, Field field) {

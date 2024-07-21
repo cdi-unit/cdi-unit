@@ -1,5 +1,6 @@
 package io.github.cdiunit.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -87,9 +88,9 @@ public interface DiscoveryExtension {
 
         void enableAlternativeStereotype(String className);
 
-        void enableAlternativeStereotype(Class<?> alternativeStereotypeClass);
+        void enableAlternativeStereotype(Class<? extends Annotation> alternativeStereotypeClass);
 
-        void extension(Extension extension, String location);
+        void extension(Extension extension);
 
         Collection<Class<?>> scanPackages(Collection<Class<?>> baseClasses);
 

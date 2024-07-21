@@ -10,7 +10,7 @@ public class TestScopeDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverCdiExtension(Context context) {
-        context.extension(new TestScopeExtension(context.getTestConfiguration()), TestScopeDiscoveryExtension.class.getName());
+        context.extension(new TestScopeExtension(context.getTestConfiguration()));
     }
 
 }

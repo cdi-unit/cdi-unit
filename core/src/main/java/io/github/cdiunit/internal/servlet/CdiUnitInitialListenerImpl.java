@@ -1,12 +1,14 @@
 package io.github.cdiunit.internal.servlet;
 
+import jakarta.enterprise.inject.Typed;
+
 import org.jboss.weld.module.web.servlet.WeldInitialListener;
 
 /**
- * Enables us to inject initial listener. This implementation is for Weld 3. See CdiUnitInitialListenerProducer for
- * the implementation which is dynamically generated when running with Weld 1 or 2.
+ * Enables us to inject initial listener.
  *
  * @author Sean Flanigan
  */
+@Typed(CdiUnitInitialListener.class)
 public class CdiUnitInitialListenerImpl extends WeldInitialListener implements CdiUnitInitialListener {
 }

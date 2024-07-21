@@ -28,7 +28,7 @@ public class ServletDiscoveryExtension implements DiscoveryExtension {
         context.processBean(InRequestInterceptor.class);
         context.processBean(InSessionInterceptor.class);
         context.processBean(InConversationInterceptor.class);
-        context.processBean(CdiUnitInitialListenerProducer.class);
+        context.processBean(CdiUnitInitialListenerImpl.class);
         if (servletApi5) {
             context.processBean(ServletAPI5Mocks.class);
         } else {
