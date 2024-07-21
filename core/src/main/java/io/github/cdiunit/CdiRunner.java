@@ -15,21 +15,17 @@
  */
 package io.github.cdiunit;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 
 import javax.naming.InitialContext;
 
-import org.jboss.weld.bootstrap.WeldBootstrap;
-import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.resources.spi.ResourceLoader;
-import org.jboss.weld.util.reflection.Formats;
 import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -37,8 +33,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.Weld11TestUrlDeployment;
 import io.github.cdiunit.internal.WeldTestUrlDeployment;
 
 /**
@@ -107,35 +103,21 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             return;
 
         try {
-            checkSupportedVersion();
-
             weld = new Weld() {
 
-                // override for Weld 2.0, 3.0
+                @Override
                 protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
                     try {
-                        return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                    } catch (IOException e) {
-                        startupException = e;
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                // override for Weld 1.x
-                @SuppressWarnings("unused")
-                protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
-                    try {
                         return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         startupException = e;
-                        throw new RuntimeException(e);
+                        throw ExceptionUtils.asRuntimeException(e);
                     }
                 }
 
             };
 
             try {
-
                 container = weld.initialize();
             } catch (Throwable e) {
                 if (startupException == null) {
@@ -147,17 +129,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             }
 
         } catch (ClassFormatError e) {
-
             startupException = parseClassFormatError(e);
         } catch (Throwable e) {
             startupException = new Exception("Unable to start weld", e);
-        }
-    }
-
-    private void checkSupportedVersion() {
-        String version = Formats.version(WeldBootstrap.class.getPackage());
-        if ("2.2.8 (Final)".equals(version) || "2.2.7 (Final)".equals(version)) {
-            startupException = new Exception("Weld 2.2.8 and 2.2.7 are not supported. Suggest upgrading to 2.2.9");
         }
     }
 

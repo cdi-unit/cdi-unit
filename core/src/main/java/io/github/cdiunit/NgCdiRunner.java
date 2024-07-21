@@ -1,6 +1,5 @@
 package io.github.cdiunit;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -15,7 +14,6 @@ import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.InjectionTarget;
 
-import org.jboss.weld.bootstrap.api.Bootstrap;
 import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.spi.Deployment;
 import org.jboss.weld.environment.se.Weld;
@@ -24,8 +22,8 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.Weld11TestUrlDeployment;
 import io.github.cdiunit.internal.WeldTestUrlDeployment;
 
 @SuppressWarnings("unchecked")
@@ -51,23 +49,12 @@ public class NgCdiRunner {
         final TestConfiguration testConfig = createTestConfiguration(method);
         weld = new Weld() {
 
-            // override for Weld 2.0, 3.0
-            protected Deployment createDeployment(
-                    ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
-                try {
-                    return new Weld11TestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            // override for Weld 1.x
-            @SuppressWarnings("unused")
-            protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
+            @Override
+            protected Deployment createDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap) {
                 try {
                     return new WeldTestUrlDeployment(resourceLoader, bootstrap, testConfig);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (Exception e) {
+                    throw ExceptionUtils.asRuntimeException(e);
                 }
             }
         };

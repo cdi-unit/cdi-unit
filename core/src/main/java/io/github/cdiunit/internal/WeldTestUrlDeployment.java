@@ -15,7 +15,6 @@
  */
 package io.github.cdiunit.internal;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -24,13 +23,10 @@ import java.util.function.Consumer;
 
 import jakarta.enterprise.inject.spi.Extension;
 
-import org.jboss.weld.bootstrap.api.Bootstrap;
+import org.jboss.weld.bootstrap.api.CDI11Bootstrap;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.api.helpers.SimpleServiceRegistry;
-import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
-import org.jboss.weld.bootstrap.spi.BeansXml;
-import org.jboss.weld.bootstrap.spi.Deployment;
-import org.jboss.weld.bootstrap.spi.Metadata;
+import org.jboss.weld.bootstrap.spi.*;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.slf4j.Logger;
@@ -38,15 +34,14 @@ import org.slf4j.LoggerFactory;
 
 import io.github.cdiunit.ProducesAlternative;
 
-public class WeldTestUrlDeployment implements Deployment {
+public class WeldTestUrlDeployment implements CDI11Deployment {
     private final BeanDeploymentArchive beanDeploymentArchive;
     private final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
     private final Collection<Metadata<Extension>> extensions = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(WeldTestUrlDeployment.class);
     private final ServiceRegistry serviceRegistry = new SimpleServiceRegistry();
 
-    public WeldTestUrlDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap, TestConfiguration testConfiguration)
-            throws IOException {
+    public WeldTestUrlDeployment(ResourceLoader resourceLoader, CDI11Bootstrap bootstrap, TestConfiguration testConfiguration) {
         final DefaultBootstrapDiscoveryContext bdc = new DefaultBootstrapDiscoveryContext();
 
         final ServiceLoader<DiscoveryExtension> discoveryExtensions = ServiceLoader.load(DiscoveryExtension.class);
