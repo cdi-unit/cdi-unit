@@ -10,10 +10,11 @@
 8.  [Using a specific version of Weld](#using-a-specific-version-of-weld)
 9.  [TestNG support](#testng-support)
 10.  [EJB support](#ejb-support)
-11.  [DeltaSpike support](#deltaspike-support)
-12.  [JaxRS support](#jaxrs-support)
-13.  [Support for Java 9 and later](#support-for-java-9-and-later)
-14.  [Changelog](#changelog)
+11.  [Resource support](#resource-support)
+12.  [DeltaSpike support](#deltaspike-support)
+13.  [JaxRS support](#jaxrs-support)
+14.  [Support for Java 9 and later](#support-for-java-9-and-later)
+15.  [Changelog](#changelog)
 
 ### Quickstart
 
@@ -395,6 +396,125 @@ class EJBByClass implements EJBI {
 
 @Stateless(name = "statelessNamed")
 class EJBStatelessNamed implements EJBI {
+}
+```
+
+### Resource support
+
+Once a test class is annotated with @SupportResource then @Resource may be used to inject classes. The optional name and type parameters are resolved as per @Resource specification.
+
+```java
+package io.github.cdiunit;
+
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.inject.Named;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import io.github.cdiunit.resource.SupportResource;
+
+@RunWith(CdiRunner.class)
+@SupportResource
+public class TestResource {
+
+    AResourceType _unnamedAResource;
+    AResourceType _namedAResource;
+    AResource _typedAResource;
+
+    @Resource
+    void unnamedAResource(AResourceType resource) {
+        _unnamedAResource = resource;
+    }
+
+    @Resource
+    BResourceType unnamedBResource;
+
+    @Resource(name = "namedAResource")
+    void withNamedAResource(AResourceType resource) {
+        _namedAResource = resource;
+    }
+
+    @Resource(name = "namedBResource")
+    BResourceType namedBResource;
+
+    @Resource
+    public void setTypedAResource(AResource resource) {
+        // public to make it visible as Java Bean property to derive the name
+        _typedAResource = resource;
+    }
+
+    @Resource
+    BResource typedBResource;
+
+    @Test
+    public void testResourceSupport() {
+        Assert.assertNotEquals(_unnamedAResource, _namedAResource);
+        Assert.assertNotEquals(unnamedBResource, namedBResource);
+        Assert.assertTrue(_unnamedAResource instanceof AResource);
+        Assert.assertTrue(unnamedBResource instanceof BResource);
+        Assert.assertTrue(_namedAResource instanceof AResource);
+        Assert.assertTrue(namedBResource instanceof BResource);
+        Assert.assertTrue(_typedAResource instanceof AResourceExt);
+        Assert.assertTrue(typedBResource instanceof BResourceExt);
+    }
+
+    interface AResourceType {
+    }
+
+    public interface BResourceType {
+    }
+
+    @Vetoed
+    public static class AResource implements AResourceType {
+    }
+
+    @Vetoed
+    static class BResource implements BResourceType {
+    }
+
+    @Vetoed
+    static class AResourceExt extends AResource {
+    }
+
+    @Vetoed
+    static class BResourceExt extends BResource {
+    }
+
+    @Produces
+    @Resource(name = "unnamedAResource")
+    AResourceType produceUnnamedAResource = new AResource();
+
+    @Produces
+    @Resource(name = "unnamedBResource")
+    BResourceType produceUnnamedBResource() {
+        return new BResource();
+    }
+
+    @Produces
+    @Named("namedAResource")
+    AResourceType produceNamedAResource = new AResource();
+
+    @Produces
+    @Resource
+    public BResourceType getNamedBResource() {
+        // public to make it visible as Java Bean property to derive the name
+        return new BResource();
+    }
+
+    @Produces
+    @Resource(name = "typedAResource", type = AResource.class)
+    AResourceExt produceTypedAResource = new AResourceExt();
+
+    @Produces
+    @Resource(name = "typedBResource", type = BResource.class)
+    BResourceExt produceTypedBResource() {
+        return new BResourceExt();
+    }
+
 }
 ```
 
