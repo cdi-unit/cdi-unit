@@ -404,48 +404,72 @@ class EJBStatelessNamed implements EJBI {
 Once a test class is annotated with @SupportResource then @Resource may be used to inject classes. The optional name and type parameters are resolved as per @Resource specification.
 
 ```java
+package io.github.cdiunit;
+
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.inject.Named;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import io.github.cdiunit.resource.SupportResource;
+
 @RunWith(CdiRunner.class)
 @SupportResource
 public class TestResource {
 
+    AResourceType _unnamedAResource;
+    AResourceType _namedAResource;
+    AResource _typedAResource;
+
     @Resource
-    AResourceType unnamedAResource;
+    void unnamedAResource(AResourceType resource) {
+        _unnamedAResource = resource;
+    }
 
     @Resource
     BResourceType unnamedBResource;
 
     @Resource(name = "namedAResource")
-    AResourceType namedAResource;
+    void withNamedAResource(AResourceType resource) {
+        _namedAResource = resource;
+    }
 
     @Resource(name = "namedBResource")
     BResourceType namedBResource;
 
     @Resource
-    AResource typedAResource;
+    public void setTypedAResource(AResource resource) {
+        // public to make it visible as Java Bean property to derive the name
+        _typedAResource = resource;
+    }
 
     @Resource
     BResource typedBResource;
 
     @Test
     public void testResourceSupport() {
-        Assert.assertNotEquals(unnamedAResource, namedAResource);
+        Assert.assertNotEquals(_unnamedAResource, _namedAResource);
         Assert.assertNotEquals(unnamedBResource, namedBResource);
-        Assert.assertTrue(unnamedAResource instanceof AResource);
+        Assert.assertTrue(_unnamedAResource instanceof AResource);
         Assert.assertTrue(unnamedBResource instanceof BResource);
-        Assert.assertTrue(namedAResource instanceof AResource);
+        Assert.assertTrue(_namedAResource instanceof AResource);
         Assert.assertTrue(namedBResource instanceof BResource);
-        Assert.assertTrue(typedAResource instanceof AResourceExt);
+        Assert.assertTrue(_typedAResource instanceof AResourceExt);
         Assert.assertTrue(typedBResource instanceof BResourceExt);
     }
 
     interface AResourceType {
     }
 
-    interface BResourceType {
+    public interface BResourceType {
     }
 
     @Vetoed
-    static class AResource implements AResourceType {
+    public static class AResource implements AResourceType {
     }
 
     @Vetoed
@@ -475,8 +499,9 @@ public class TestResource {
     AResourceType produceNamedAResource = new AResource();
 
     @Produces
-    @Named("namedBResource")
-    BResourceType produceNamedBResource() {
+    @Resource
+    public BResourceType getNamedBResource() {
+        // public to make it visible as Java Bean property to derive the name
         return new BResource();
     }
 
