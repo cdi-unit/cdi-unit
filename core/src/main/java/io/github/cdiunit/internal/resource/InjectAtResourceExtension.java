@@ -1,6 +1,7 @@
 package io.github.cdiunit.internal.resource;
 
-import java.beans.MethodDescriptor;
+import java.beans.*;
+import java.util.Arrays;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.event.Observes;
@@ -22,11 +23,14 @@ public class InjectAtResourceExtension implements Extension {
         private static final long serialVersionUID = 1L;
     };
 
-    <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
+    <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) throws IntrospectionException {
         final AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType();
+
+        var beanInfo = Introspector.getBeanInfo(pat.getAnnotatedType().getJavaClass());
 
         builder.filterFields(this::eligibleField).forEach(field -> {
             final AnnotatedField<? super T> annotatedField = field.getAnnotated();
+            final var javaMember = annotatedField.getJavaMember();
             Resource resource = annotatedField.getAnnotation(Resource.class);
             boolean producesPresent = annotatedField.isAnnotationPresent(Produces.class);
             if (!producesPresent) {
@@ -38,7 +42,7 @@ public class InjectAtResourceExtension implements Extension {
             // For field annotations, the default is the field name.
             var name = resource.name();
             if (name.isEmpty()) {
-                name = annotatedField.getJavaMember().getName();
+                name = javaMember.getName();
             }
             field.add(new NamedLiteral(name));
 
@@ -46,7 +50,7 @@ public class InjectAtResourceExtension implements Extension {
                 // For field annotations, the default is the type of the field.
                 var type = resource.type();
                 if (type == Object.class) {
-                    type = annotatedField.getJavaMember().getType();
+                    type = javaMember.getType();
                 }
                 final var types = new Class<?>[] { type };
                 field.add(Typed.Literal.of(types));
@@ -55,7 +59,10 @@ public class InjectAtResourceExtension implements Extension {
 
         builder.filterMethods(this::eligibleMethod).forEach(method -> {
             final AnnotatedMethod<? super T> annotatedMethod = method.getAnnotated();
-            final var methodDescriptor = new MethodDescriptor(annotatedMethod.getJavaMember());
+            final var javaMember = annotatedMethod.getJavaMember();
+            final var propertyDescriptor = Arrays.stream(beanInfo.getPropertyDescriptors())
+                    .filter(o -> javaMember.equals(o.getReadMethod()) || javaMember.equals(o.getWriteMethod()))
+                    .findAny();
             Resource resource = annotatedMethod.getAnnotation(Resource.class);
             boolean producesPresent = annotatedMethod.isAnnotationPresent(Produces.class);
             if (!producesPresent) {
@@ -67,15 +74,25 @@ public class InjectAtResourceExtension implements Extension {
             // For method annotations, the default is the JavaBeans property name corresponding to the method.
             var name = resource.name();
             if (name.isEmpty()) {
-                name = methodDescriptor.getName();
+                name = propertyDescriptor.map(FeatureDescriptor::getName).orElse(javaMember.getName());
             }
-            method.add(new NamedLiteral(name));
+            final var namedLiteral = new NamedLiteral(name);
+            if (producesPresent) {
+                method.add(namedLiteral);
+            } else {
+                method.params().forEach(param -> {
+                    param.add(namedLiteral);
+                });
+            }
 
             if (producesPresent) {
                 // For method annotations, the default is the type of the JavaBeans property.
                 var type = resource.type();
                 if (type == Object.class) {
-                    type = annotatedMethod.getJavaMember().getReturnType();
+                    type = propertyDescriptor.map(PropertyDescriptor::getPropertyType).orElse(null);
+                }
+                if (type == null) {
+                    type = javaMember.getReturnType();
                 }
                 final var types = new Class<?>[] { type };
                 method.add(Typed.Literal.of(types));
