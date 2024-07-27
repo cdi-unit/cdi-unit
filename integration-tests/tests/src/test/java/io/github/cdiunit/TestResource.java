@@ -1,7 +1,5 @@
 package io.github.cdiunit;
 
-import io.github.cdiunit.resource.SupportResource;
-
 import jakarta.annotation.Resource;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Vetoed;
@@ -10,6 +8,8 @@ import jakarta.inject.Named;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import io.github.cdiunit.resource.SupportResource;
 
 @RunWith(CdiRunner.class)
 @SupportResource
