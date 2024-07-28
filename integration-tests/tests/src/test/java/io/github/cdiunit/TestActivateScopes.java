@@ -26,6 +26,9 @@ public class TestActivateScopes {
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
         Assert.assertEquals(b1, b2);
+
+        b1.setDisposedListener(() -> Assert.assertTrue(true));
+        b2.setDisposedListener(() -> Assert.assertTrue(true));
     }
 
     @Test
