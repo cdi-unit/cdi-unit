@@ -10,10 +10,7 @@ import java.util.stream.Collectors;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Stereotype;
 
-import io.github.cdiunit.ActivatedAlternatives;
-import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.AdditionalClasspaths;
-import io.github.cdiunit.AdditionalPackages;
+import io.github.cdiunit.*;
 
 /**
  * Discover CDI Unit features:
@@ -37,6 +34,8 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         discover(context, cls.getAnnotation(AdditionalPackages.class));
         discover(context, cls.getAnnotation(AdditionalClasses.class));
         discover(context, cls.getAnnotation(ActivatedAlternatives.class));
+        discover(context, cls.getAnnotation(ActivateScopes.class));
+        discover(context, cls.getAnnotation(ActivateScopes.All.class));
         discover(context, cls.getAnnotations());
         discover(context, cls.getGenericSuperclass());
     }
@@ -77,6 +76,22 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
                 context.enableAlternative(alternativeClass);
             }
         }
+    }
+
+    private void discover(Context context, ActivateScopes activateScopes) {
+        if (activateScopes == null) {
+            return;
+        }
+
+        Arrays.stream(activateScopes.value()).forEach(context::scope);
+    }
+
+    private void discover(Context context, ActivateScopes.All activateScopes) {
+        if (activateScopes == null) {
+            return;
+        }
+
+        Arrays.stream(activateScopes.value()).forEach(scope -> discover(context, scope));
     }
 
     private static boolean isAlternativeStereotype(Class<?> c) {

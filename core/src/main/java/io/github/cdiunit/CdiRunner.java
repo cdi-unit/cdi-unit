@@ -27,7 +27,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldComponentFactory;
+import io.github.cdiunit.internal.WeldHelper;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -78,9 +78,10 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             return;
 
         try {
-            weld = WeldComponentFactory.configureWeld(testConfig);
+            weld = WeldHelper.configureWeld(testConfig);
             try {
                 container = weld.initialize();
+                WeldHelper.activateContexts(container);
             } catch (Throwable e) {
                 if (startupException == null) {
                     startupException = e;
@@ -109,6 +110,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
                     initWeld(testConfiguration);
                     defaultStatement.evaluate();
+                    WeldHelper.deactivateContexts(container);
                     weld.shutdown();
                     weld = null;
                 } else {
@@ -148,6 +150,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 } finally {
                     initialContext.close();
                     if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                        WeldHelper.deactivateContexts(container);
                         weld.shutdown();
                         weld = null;
                     }

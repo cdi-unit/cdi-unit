@@ -9,14 +9,15 @@ import java.util.function.Consumer;
 import jakarta.enterprise.inject.spi.Extension;
 
 import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class WeldComponentFactory {
+public final class WeldHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(WeldComponentFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(WeldHelper.class);
 
-    private WeldComponentFactory() {
+    private WeldHelper() {
     }
 
     public static Weld configureWeld(TestConfiguration testConfiguration) {
@@ -91,6 +92,18 @@ public final class WeldComponentFactory {
             }
         }
         return weld;
+    }
+
+    public static void activateContexts(WeldContainer container) {
+        container.getBeanManager().getEvent()
+                .select(ScopesExtension.ActivateContexts.Literal.INSTANCE)
+                .fire(new Object());
+    }
+
+    public static void deactivateContexts(WeldContainer container) {
+        container.getBeanManager().getEvent()
+                .select(ScopesExtension.DeactivateContexts.Literal.INSTANCE)
+                .fire(new Object());
     }
 
 }

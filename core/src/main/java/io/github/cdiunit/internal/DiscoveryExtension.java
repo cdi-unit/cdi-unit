@@ -92,6 +92,8 @@ public interface DiscoveryExtension {
 
         void extension(Extension extension);
 
+        void scope(Class<? extends Annotation> scope);
+
         Collection<Class<?>> scanPackages(Collection<Class<?>> baseClasses);
 
         Collection<Class<?>> scanBeanArchives(Collection<Class<?>> baseClasses);
