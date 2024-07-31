@@ -56,6 +56,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     private FrameworkMethod frameworkMethod;
     private TestConfiguration testConfiguration;
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
+    private boolean contextsActivated;
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
@@ -125,12 +126,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;
-        final Statement defaultStatement = super.methodBlock(frameworkMethod);
+        var statement = super.methodBlock(frameworkMethod);
+        statement = new CdiContextStatement(statement);
+        final var defaultStatement = statement;
         return new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
-
                 if (startupException != null) {
                     if (frameworkMethod.getAnnotation(Test.class).expected()
                             .isAssignableFrom(startupException.getClass())) {
@@ -145,14 +147,12 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 InitialContext initialContext = new InitialContext();
                 initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 
-                final var testMethod = testConfiguration.getTestMethod();
+                final var isolationLevel = testConfiguration.getIsolationLevel();
                 try {
-                    WeldHelper.activateContexts(container, testMethod);
                     defaultStatement.evaluate();
                 } finally {
-                    WeldHelper.deactivateContexts(container, testMethod);
                     initialContext.close();
-                    if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                    if (isolationLevel == IsolationLevel.PER_METHOD) {
                         weld.shutdown();
                         weld = null;
                     }
@@ -165,6 +165,34 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
             }
         };
+
+    }
+
+    class CdiContextStatement extends Statement {
+
+        private final Statement next;
+
+        CdiContextStatement(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            final var testMethod = testConfiguration.getTestMethod();
+            final var isolationLevel = testConfiguration.getIsolationLevel();
+            try {
+                if (!contextsActivated) {
+                    WeldHelper.activateContexts(container, testMethod);
+                    contextsActivated = true;
+                }
+                next.evaluate();
+            } finally {
+                if (contextsActivated && isolationLevel == IsolationLevel.PER_METHOD) {
+                    contextsActivated = false;
+                    WeldHelper.deactivateContexts(container, testMethod);
+                }
+            }
+        }
 
     }
 
