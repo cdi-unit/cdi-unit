@@ -30,6 +30,7 @@ public final class WeldHelper {
         final BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = bdc.discoverClass;
         final BiConsumer<DiscoveryExtension.Context, Field> discoverField = bdc.discoverField;
         final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
+        final Consumer<DiscoveryExtension.Context> afterDiscovery = bdc.afterDiscovery;
 
         final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
         final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, testConfiguration);
@@ -71,6 +72,8 @@ public final class WeldHelper {
 
             discoveryContext.processed(cls);
         }
+
+        afterDiscovery.accept(discoveryContext);
 
         var weld = new Weld("cdi-unit-" + UUID.randomUUID())
                 .disableDiscovery();

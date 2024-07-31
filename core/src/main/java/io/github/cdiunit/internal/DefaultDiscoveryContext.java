@@ -16,7 +16,6 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
 import io.github.cdiunit.ProducesAlternative;
-import io.github.cdiunit.internal.activatescopes.ScopesExtension;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
@@ -25,8 +24,6 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     private final TestConfiguration testConfiguration;
 
     private final Set<Extension> extensions = new LinkedHashSet<>();
-
-    private final Set<Class<? extends Annotation>> scopes = new LinkedHashSet<>();
 
     private final Set<Class<?>> classesToProcess = new LinkedHashSet<>();
 
@@ -167,15 +164,6 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     }
 
     @Override
-    public void scope(Class<? extends Annotation> scope) {
-        scopes.add(scope);
-    }
-
-    public Collection<Class<? extends Annotation>> getScopes() {
-        return scopes;
-    }
-
-    @Override
     public Collection<Class<?>> scanPackages(Collection<Class<?>> baseClasses) {
         final Collection<Class<?>> result = new LinkedHashSet<>();
         for (Class<?> baseClass : baseClasses) {
@@ -217,10 +205,6 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
         weld.addAlternativeStereotype(ProducesAlternative.class);
 
         weld.addBeanClass(testConfiguration.getTestClass());
-
-        if (!scopes.isEmpty()) {
-            extensions.add(new ScopesExtension(scopes));
-        }
 
         extensions.forEach(weld::addExtension);
         alternatives.forEach(weld::addAlternative);

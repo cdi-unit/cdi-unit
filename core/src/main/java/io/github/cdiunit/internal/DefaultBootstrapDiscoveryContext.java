@@ -19,6 +19,9 @@ class DefaultBootstrapDiscoveryContext implements DiscoveryExtension.BootstrapDi
     BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = (context, method) -> {
     };
 
+    Consumer<DiscoveryExtension.Context> afterDiscovery = context -> {
+    };
+
     @Override
     public void discoverExtension(Consumer<DiscoveryExtension.Context> callback) {
         discoverExtension = discoverExtension.andThen(callback);
@@ -37,6 +40,11 @@ class DefaultBootstrapDiscoveryContext implements DiscoveryExtension.BootstrapDi
     @Override
     public void discoverMethod(BiConsumer<DiscoveryExtension.Context, Method> callback) {
         discoverMethod = discoverMethod.andThen(callback);
+    }
+
+    @Override
+    public void afterDiscovery(Consumer<DiscoveryExtension.Context> callback) {
+        afterDiscovery = afterDiscovery.andThen(callback);
     }
 
 }
