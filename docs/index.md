@@ -352,11 +352,12 @@ Note that if you close a session while a request is active then it will not be c
 
 ### TestNg support
 
-A base class NgCdiRunner can be used to add CDI-Unit to your TestNG tests. For example:
+Use the NgCdiListener to add CDI-Unit to your TestNG tests. For example:
 
 ```java
 @ActivatedAlternatives(TranswarpDrive.class)
-class TestStarship extends NgCdiRunner { //Extending NgCdiRunner adds CDI-Unit functionality
+@Listeners(NgCdiListener.class)
+class TestStarship {
 
   @Inject
   Starship starship;
@@ -365,8 +366,12 @@ class TestStarship extends NgCdiRunner { //Extending NgCdiRunner adds CDI-Unit f
   public void testStart() {
     starship.start(); // Transwarp activated!
   }
+
 }
+
 ```
+
+> NOTE: Usage of NgCdiRunner is deprecated and provided for backwards compatibility only.
 
 ### Ejb support
 
