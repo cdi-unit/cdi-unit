@@ -20,7 +20,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldComponentFactory;
+import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 @SuppressWarnings("unchecked")
 public class NgCdiRunner {
@@ -44,7 +45,7 @@ public class NgCdiRunner {
     public void initializeCdi(final Method method) {
         final TestConfiguration testConfig = createTestConfiguration(method);
 
-        weld = WeldComponentFactory.configureWeld(testConfig);
+        weld = WeldHelper.configureWeld(testConfig);
 
         container = weld.initialize();
         BeanManager beanManager = container.getBeanManager();
@@ -65,6 +66,7 @@ public class NgCdiRunner {
     }
 
     private void initContexts(final Method method) {
+        ScopesHelper.activateContexts(container.getBeanManager(), method);
         // FIXME - this code effectively duplicates code from interceptors bound to the corresponding annotation.
         if (isAnnotatedBy(method, InRequestScope.class)) {
             getInstance(ContextController.class).openRequest();
@@ -85,6 +87,7 @@ public class NgCdiRunner {
         if (isAnnotatedBy(method, InRequestScope.class)) {
             getInstance(ContextController.class).closeRequest();
         }
+        ScopesHelper.deactivateContexts(container.getBeanManager(), method);
     }
 
     private boolean isAnnotatedBy(final Method method, Class<? extends Annotation> annotation) {

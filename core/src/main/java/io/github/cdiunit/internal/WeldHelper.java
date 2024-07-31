@@ -12,11 +12,11 @@ import org.jboss.weld.environment.se.Weld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class WeldComponentFactory {
+public final class WeldHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(WeldComponentFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(WeldHelper.class);
 
-    private WeldComponentFactory() {
+    private WeldHelper() {
     }
 
     public static Weld configureWeld(TestConfiguration testConfiguration) {
@@ -30,6 +30,7 @@ public final class WeldComponentFactory {
         final BiConsumer<DiscoveryExtension.Context, Class<?>> discoverClass = bdc.discoverClass;
         final BiConsumer<DiscoveryExtension.Context, Field> discoverField = bdc.discoverField;
         final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
+        final Consumer<DiscoveryExtension.Context> afterDiscovery = bdc.afterDiscovery;
 
         final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
         final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, testConfiguration);
@@ -71,6 +72,8 @@ public final class WeldComponentFactory {
 
             discoveryContext.processed(cls);
         }
+
+        afterDiscovery.accept(discoveryContext);
 
         var weld = new Weld("cdi-unit-" + UUID.randomUUID())
                 .disableDiscovery();

@@ -36,7 +36,7 @@ public interface DiscoveryExtension {
         /**
          * Register callback to handle class discovery.
          * <p>
-         * The callback is invoked once per each class to discoverField.
+         * The callback is invoked once per each class to discover.
          *
          * @param callback callback to handle extensions discovery
          */
@@ -45,7 +45,7 @@ public interface DiscoveryExtension {
         /**
          * Register callback to handle field discovery.
          * <p>
-         * The callback is invoked once per each declared field of each class to discoverField.
+         * The callback is invoked once per each declared field of each class to discover.
          *
          * @param callback callback to handle field discovery
          */
@@ -59,6 +59,15 @@ public interface DiscoveryExtension {
          * @param callback callback to handle method discovery
          */
         void discoverMethod(BiConsumer<Context, Method> callback);
+
+        /**
+         * Register callback to run after discovery.
+         * <p>
+         * The callback is invoked once per discovery cycle.
+         *
+         * @param callback callback to run after discovery
+         */
+        void afterDiscovery(Consumer<Context> callback);
 
     }
 

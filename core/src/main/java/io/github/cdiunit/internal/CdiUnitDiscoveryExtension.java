@@ -10,10 +10,7 @@ import java.util.stream.Collectors;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Stereotype;
 
-import io.github.cdiunit.ActivatedAlternatives;
-import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.AdditionalClasspaths;
-import io.github.cdiunit.AdditionalPackages;
+import io.github.cdiunit.*;
 
 /**
  * Discover CDI Unit features:

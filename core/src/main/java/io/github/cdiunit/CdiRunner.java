@@ -27,7 +27,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldComponentFactory;
+import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -56,6 +57,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     private FrameworkMethod frameworkMethod;
     private TestConfiguration testConfiguration;
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
+    private boolean contextsActivated;
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
@@ -78,7 +80,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             return;
 
         try {
-            weld = WeldComponentFactory.configureWeld(testConfig);
+            weld = WeldHelper.configureWeld(testConfig);
             try {
                 container = weld.initialize();
             } catch (Throwable e) {
@@ -107,10 +109,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             public void evaluate() throws Throwable {
                 testConfiguration = createTestConfiguration();
                 if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-                    initWeld(testConfiguration);
-                    defaultStatement.evaluate();
-                    weld.shutdown();
-                    weld = null;
+                    try {
+                        initWeld(testConfiguration);
+                        defaultStatement.evaluate();
+                    } finally {
+                        weld.shutdown();
+                        weld = null;
+                    }
                 } else {
                     defaultStatement.evaluate();
                 }
@@ -122,12 +127,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;
-        final Statement defaultStatement = super.methodBlock(frameworkMethod);
+        var statement = super.methodBlock(frameworkMethod);
+        statement = new CdiContextStatement(statement);
+        final var defaultStatement = statement;
         return new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
-
                 if (startupException != null) {
                     if (frameworkMethod.getAnnotation(Test.class).expected()
                             .isAssignableFrom(startupException.getClass())) {
@@ -142,12 +148,12 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 InitialContext initialContext = new InitialContext();
                 initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 
+                final var isolationLevel = testConfiguration.getIsolationLevel();
                 try {
                     defaultStatement.evaluate();
-
                 } finally {
                     initialContext.close();
-                    if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                    if (isolationLevel == IsolationLevel.PER_METHOD) {
                         weld.shutdown();
                         weld = null;
                     }
@@ -160,6 +166,34 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
             }
         };
+
+    }
+
+    class CdiContextStatement extends Statement {
+
+        private final Statement next;
+
+        CdiContextStatement(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            final var method = testConfiguration.getTestMethod();
+            final var isolationLevel = testConfiguration.getIsolationLevel();
+            try {
+                if (!contextsActivated) {
+                    ScopesHelper.activateContexts(container.getBeanManager(), method);
+                    contextsActivated = true;
+                }
+                next.evaluate();
+            } finally {
+                if (contextsActivated && isolationLevel == IsolationLevel.PER_METHOD) {
+                    contextsActivated = false;
+                    ScopesHelper.deactivateContexts(container.getBeanManager(), method);
+                }
+            }
+        }
 
     }
 
