@@ -28,6 +28,7 @@ import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -178,18 +179,18 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
         @Override
         public void evaluate() throws Throwable {
-            final var testMethod = testConfiguration.getTestMethod();
+            final var method = testConfiguration.getTestMethod();
             final var isolationLevel = testConfiguration.getIsolationLevel();
             try {
                 if (!contextsActivated) {
-                    WeldHelper.activateContexts(container, testMethod);
+                    ScopesHelper.activateContexts(container.getBeanManager(), method);
                     contextsActivated = true;
                 }
                 next.evaluate();
             } finally {
                 if (contextsActivated && isolationLevel == IsolationLevel.PER_METHOD) {
                     contextsActivated = false;
-                    WeldHelper.deactivateContexts(container, testMethod);
+                    ScopesHelper.deactivateContexts(container.getBeanManager(), method);
                 }
             }
         }

@@ -20,6 +20,8 @@ import io.github.cdiunit.*;
  * <li>{@link AdditionalPackages}</li>
  * <li>{@link AdditionalClasses}</li>
  * <li>{@link ActivatedAlternatives}</li>
+ * <li>{@link ActivateScopes}</li>
+ * <li>{@link ActivateScopes.All}</li>
  * <li>meta annotations</li>
  * </ul>
  */

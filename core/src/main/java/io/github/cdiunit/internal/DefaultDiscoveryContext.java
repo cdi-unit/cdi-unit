@@ -16,6 +16,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
 import io.github.cdiunit.ProducesAlternative;
+import io.github.cdiunit.internal.activatescopes.ScopesExtension;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 

@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import jakarta.enterprise.inject.spi.Extension;
 
 import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,18 +91,6 @@ public final class WeldHelper {
             }
         }
         return weld;
-    }
-
-    public static void activateContexts(WeldContainer container, Object target) {
-        container.getBeanManager().getEvent()
-                .select(ScopesExtension.ActivateContexts.Literal.INSTANCE)
-                .fire(target);
-    }
-
-    public static void deactivateContexts(WeldContainer container, Object target) {
-        container.getBeanManager().getEvent()
-                .select(ScopesExtension.DeactivateContexts.Literal.INSTANCE)
-                .fire(target);
     }
 
 }

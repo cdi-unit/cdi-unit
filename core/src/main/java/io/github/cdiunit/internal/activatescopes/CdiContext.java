@@ -1,4 +1,4 @@
-package io.github.cdiunit.internal;
+package io.github.cdiunit.internal.activatescopes;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
