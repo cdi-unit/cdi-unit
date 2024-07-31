@@ -1,6 +1,7 @@
 package io.github.cdiunit.internal;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,7 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {
         bdc.discoverClass(this::discoverClass);
+        bdc.discoverMethod(this::discoverMethod);
     }
 
     private void discoverClass(Context context, Class<?> cls) {
@@ -38,6 +40,11 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         discover(context, cls.getAnnotation(ActivateScopes.All.class));
         discover(context, cls.getAnnotations());
         discover(context, cls.getGenericSuperclass());
+    }
+
+    private void discoverMethod(Context context, Method method) {
+        discover(context, method.getAnnotation(ActivateScopes.class));
+        discover(context, method.getAnnotation(ActivateScopes.All.class));
     }
 
     private void discover(Context context, AdditionalClasspaths additionalClasspaths) {

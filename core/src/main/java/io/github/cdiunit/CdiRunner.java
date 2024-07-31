@@ -81,7 +81,6 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             weld = WeldHelper.configureWeld(testConfig);
             try {
                 container = weld.initialize();
-                WeldHelper.activateContexts(container);
             } catch (Throwable e) {
                 if (startupException == null) {
                     startupException = e;
@@ -108,11 +107,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
             public void evaluate() throws Throwable {
                 testConfiguration = createTestConfiguration();
                 if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-                    initWeld(testConfiguration);
-                    defaultStatement.evaluate();
-                    WeldHelper.deactivateContexts(container);
-                    weld.shutdown();
-                    weld = null;
+                    try {
+                        initWeld(testConfiguration);
+                        defaultStatement.evaluate();
+                    } finally {
+                        weld.shutdown();
+                        weld = null;
+                    }
                 } else {
                     defaultStatement.evaluate();
                 }
@@ -144,13 +145,14 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                 InitialContext initialContext = new InitialContext();
                 initialContext.bind("java:comp/BeanManager", container.getBeanManager());
 
+                final var testMethod = testConfiguration.getTestMethod();
                 try {
+                    WeldHelper.activateContexts(container, testMethod);
                     defaultStatement.evaluate();
-
                 } finally {
+                    WeldHelper.deactivateContexts(container, testMethod);
                     initialContext.close();
                     if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-                        WeldHelper.deactivateContexts(container);
                         weld.shutdown();
                         weld = null;
                     }

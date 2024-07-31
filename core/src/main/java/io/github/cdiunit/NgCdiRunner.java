@@ -65,7 +65,7 @@ public class NgCdiRunner {
     }
 
     private void initContexts(final Method method) {
-        WeldHelper.activateContexts(container);
+        WeldHelper.activateContexts(container, method);
         // FIXME - this code effectively duplicates code from interceptors bound to the corresponding annotation.
         if (isAnnotatedBy(method, InRequestScope.class)) {
             getInstance(ContextController.class).openRequest();
@@ -86,7 +86,7 @@ public class NgCdiRunner {
         if (isAnnotatedBy(method, InRequestScope.class)) {
             getInstance(ContextController.class).closeRequest();
         }
-        WeldHelper.deactivateContexts(container);
+        WeldHelper.deactivateContexts(container, method);
     }
 
     private boolean isAnnotatedBy(final Method method, Class<? extends Annotation> annotation) {

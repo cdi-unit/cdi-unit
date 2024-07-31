@@ -1,7 +1,9 @@
 package io.github.cdiunit;
 
 import jakarta.enterprise.context.ContextNotActiveException;
+import jakarta.enterprise.context.ConversationScoped;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
@@ -20,6 +22,9 @@ public class TestActivateScopes {
     @Inject
     private CSessionScoped sessionScoped;
 
+    @Inject
+    private DConversationScoped conversationScoped;
+
     @Test
     public void testRequestScoped() {
         Scoped b1 = scoped.get();
@@ -31,9 +36,29 @@ public class TestActivateScopes {
     }
 
     @Test
-    public void testSessionScoped() {
+    public void testNoActiveSessionScope() {
         Assert.assertNotNull(sessionScoped);
         Assert.assertThrows(ContextNotActiveException.class, () -> sessionScoped.getFoo());
+    }
+
+    @Test
+    @ActivateScopes.All({ @ActivateScopes(SessionScoped.class) })
+    public void testActiveSessionScope() {
+        Assert.assertNotNull(sessionScoped);
+        sessionScoped.setFoo("success");
+    }
+
+    @Test
+    public void testNoActiveConversationScope() {
+        Assert.assertNotNull(conversationScoped);
+        Assert.assertThrows(ContextNotActiveException.class, () -> conversationScoped.getFoo());
+    }
+
+    @Test
+    @ActivateScopes(ConversationScoped.class)
+    public void testActiveConversationScope() {
+        Assert.assertNotNull(conversationScoped);
+        conversationScoped.setFoo("success");
     }
 
 }

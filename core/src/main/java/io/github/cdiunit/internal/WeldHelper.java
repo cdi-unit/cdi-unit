@@ -94,16 +94,16 @@ public final class WeldHelper {
         return weld;
     }
 
-    public static void activateContexts(WeldContainer container) {
+    public static void activateContexts(WeldContainer container, Object target) {
         container.getBeanManager().getEvent()
                 .select(ScopesExtension.ActivateContexts.Literal.INSTANCE)
-                .fire(new Object());
+                .fire(target);
     }
 
-    public static void deactivateContexts(WeldContainer container) {
+    public static void deactivateContexts(WeldContainer container, Object target) {
         container.getBeanManager().getEvent()
                 .select(ScopesExtension.DeactivateContexts.Literal.INSTANCE)
-                .fire(new Object());
+                .fire(target);
     }
 
 }

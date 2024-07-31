@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * Activate listed scopes for the duration of the test.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Inherited
 @Repeatable(ActivateScopes.All.class)
 public @interface ActivateScopes {
@@ -17,7 +17,7 @@ public @interface ActivateScopes {
      * Container annotation for repeatable {@link ActivateScopes}.
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ ElementType.TYPE })
+    @Target({ ElementType.TYPE, ElementType.METHOD })
     @Inherited
     @interface All {
         ActivateScopes[] value();
