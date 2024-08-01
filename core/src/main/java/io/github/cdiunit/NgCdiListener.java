@@ -74,7 +74,9 @@ public class NgCdiListener implements IHookable {
     }
 
     private void shutdownCdi(final Method method) {
-        ScopesHelper.deactivateContexts(container.getBeanManager(), method);
+        if (container != null) {
+            ScopesHelper.deactivateContexts(container.getBeanManager(), method);
+        }
         if (weld != null) {
             weld.shutdown();
         }
