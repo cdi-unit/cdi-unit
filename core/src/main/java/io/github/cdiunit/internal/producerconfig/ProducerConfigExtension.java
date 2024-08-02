@@ -34,9 +34,13 @@ public class ProducerConfigExtension implements Extension {
 
     @SuppressWarnings("unused")
     void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) throws Exception {
-        addConfigValues(configurations, null, testConfiguration.getTestClass().getAnnotations());
-        for (Method m : testConfiguration.getTestClass().getMethods()) {
-            addConfigValues(configurations, m, m.getAnnotations());
+        var testClass = testConfiguration.getTestClass();
+        while (!Object.class.equals(testClass)) {
+            addConfigValues(configurations, null, testClass.getAnnotations());
+            for (Method m : testClass.getMethods()) {
+                addConfigValues(configurations, m, m.getAnnotations());
+            }
+            testClass = testClass.getSuperclass();
         }
         Set<Class<? extends Annotation>> annotationClasses = configurations.values().stream()
                 .flatMap(m -> m.values().stream())
@@ -80,11 +84,11 @@ public class ProducerConfigExtension implements Extension {
                 .filter(m -> m.getJavaMember().getName().equals("produceConfigValue"))
                 .findFirst()
                 .get();
-        Bean<ProducerConfigExtension> bean = new Bean<ProducerConfigExtension>() {
+        Bean<ProducerConfigExtension> bean = new Bean<>() {
 
             @Override
             public Set<Type> getTypes() {
-                Set<Type> types = new HashSet<Type>();
+                Set<Type> types = new HashSet<>();
                 types.add(ProducerConfigExtension.class);
                 types.add(Extension.class);
                 types.add(Object.class);

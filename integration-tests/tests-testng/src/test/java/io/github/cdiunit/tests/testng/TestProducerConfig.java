@@ -13,9 +13,11 @@ import org.testng.Assert;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.NgCdiListener;
 import io.github.cdiunit.NgCdiRunner;
 import io.github.cdiunit.ProducerConfig;
 
@@ -24,10 +26,10 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @AdditionalClasses(TestProducerConfig.Producers.class)
+@TestProducerConfig.ProducerConfigClass(Object.class)
+@TestProducerConfig.ProducerConfigNum(0)
 abstract class TestProducerConfig extends BaseTest {
 
-    @ProducerConfigClass(Object.class)
-    @ProducerConfigNum(0)
     public static class TestWithRunner extends TestProducerConfig implements IHookable {
 
         private final NgCdiRunner runner = new NgCdiRunner() {
@@ -40,13 +42,10 @@ abstract class TestProducerConfig extends BaseTest {
 
     }
 
-    //    @Listeners(NgCdiListener.class)
-    //    @TestProducerConfig.ProducerConfigClass(Object.class)
-    //    @TestProducerConfig.ProducerConfigNum(0)
-    //    @Ignore("FIXME - #280")
-    //    public static class TestWithListener extends TestProducerConfig {
-    //
-    //    }
+    @Listeners(NgCdiListener.class)
+    public static class TestWithListener extends TestProducerConfig {
+
+    }
 
     @Inject
     @Named("a")
