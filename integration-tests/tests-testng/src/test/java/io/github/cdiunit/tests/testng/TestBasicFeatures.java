@@ -24,7 +24,6 @@ import org.testng.Assert;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -236,7 +235,6 @@ abstract class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    @Ignore("FIXME - #279")
     public void testPostConstruct() {
         Assert.assertTrue(postConstructCalled);
     }
