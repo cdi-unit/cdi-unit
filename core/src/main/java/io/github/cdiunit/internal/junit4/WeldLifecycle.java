@@ -2,9 +2,6 @@ package io.github.cdiunit.internal.junit4;
 
 import java.util.function.Consumer;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.InjectionTarget;
@@ -12,7 +9,6 @@ import jakarta.enterprise.inject.spi.InjectionTarget;
 import org.jboss.weld.environment.se.Weld;
 import org.junit.runners.model.Statement;
 
-import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 
@@ -26,7 +22,6 @@ public class WeldLifecycle extends Statement {
     private Weld weld;
     private BeanManager beanManager;
     private CreationalContext<Object> creationalContext;
-    private InitialContext initialContext;
     private InjectionTarget<Object> injectionTarget;
 
     public WeldLifecycle(Statement base, TestConfiguration testConfiguration, Object target,
@@ -59,27 +54,11 @@ public class WeldLifecycle extends Statement {
         injectionTarget = (InjectionTarget<Object>) beanManager.getInjectionTargetFactory(annotatedType)
                 .createInjectionTarget(null);
         injectionTarget.inject(target, creationalContext);
-
-        System.setProperty("java.naming.factory.initial",
-                "io.github.cdiunit.internal.naming.CdiUnitContextFactory");
-        try {
-            initialContext = new InitialContext();
-            initialContext.bind("java:comp/BeanManager", beanManager);
-        } catch (NamingException e) {
-            throw ExceptionUtils.asRuntimeException(e);
-        }
     }
 
     private void shutdown() {
         if (creationalContext != null) {
             creationalContext.release();
-        }
-        if (initialContext != null) {
-            try {
-                initialContext.close();
-            } catch (NamingException e) {
-                throw ExceptionUtils.asRuntimeException(e);
-            }
         }
         if (weld != null) {
             weld.shutdown();

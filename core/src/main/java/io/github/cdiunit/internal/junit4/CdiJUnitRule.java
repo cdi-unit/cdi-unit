@@ -35,6 +35,7 @@ public class CdiJUnitRule implements MethodRule {
         };
         statement = new BeanLifecycle(statement, testConfiguration, target);
         statement = new ActivateScopes(statement, testConfiguration, contextsActivated, () -> beanManager);
+        statement = new NamingContextLifecycle(statement, testConfiguration, () -> beanManager);
         statement = new WeldLifecycle(statement, testConfiguration, target, bm -> this.beanManager = bm);
         return statement;
     }

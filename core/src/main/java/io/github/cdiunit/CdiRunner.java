@@ -17,7 +17,7 @@ package io.github.cdiunit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.naming.InitialContext;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -31,6 +31,7 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 import io.github.cdiunit.internal.junit4.ActivateScopes;
+import io.github.cdiunit.internal.junit4.NamingContextLifecycle;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -127,11 +128,19 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         };
     }
 
+    private BeanManager getBeanManager() {
+        if (container == null) {
+            throw new IllegalStateException("Weld container is not created yet");
+        }
+        return container.getBeanManager();
+    }
+
     @Override
     protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;
         var statement = super.methodBlock(frameworkMethod);
-        statement = new ActivateScopes(statement, testConfiguration, contextsActivated, () -> container.getBeanManager());
+        statement = new ActivateScopes(statement, testConfiguration, contextsActivated, this::getBeanManager);
+        statement = new NamingContextLifecycle(statement, testConfiguration, this::getBeanManager);
         final var defaultStatement = statement;
         return new Statement() {
 
@@ -144,26 +153,13 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
                     }
                     throw startupException;
                 }
-                String oldFactory = System.getProperty(JNDI_FACTORY_PROPERTY);
-                if (oldFactory == null) {
-                    System.setProperty(JNDI_FACTORY_PROPERTY, "io.github.cdiunit.internal.naming.CdiUnitContextFactory");
-                }
-                InitialContext initialContext = new InitialContext();
-                initialContext.bind("java:comp/BeanManager", container.getBeanManager());
-
                 final var isolationLevel = testConfiguration.getIsolationLevel();
                 try {
                     defaultStatement.evaluate();
                 } finally {
-                    initialContext.close();
                     if (isolationLevel == IsolationLevel.PER_METHOD) {
                         weld.shutdown();
                         weld = null;
-                    }
-                    if (oldFactory != null) {
-                        System.setProperty(JNDI_FACTORY_PROPERTY, oldFactory);
-                    } else {
-                        System.clearProperty(JNDI_FACTORY_PROPERTY);
                     }
                 }
 
