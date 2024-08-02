@@ -1,7 +1,5 @@
 package io.github.cdiunit;
 
-import java.lang.reflect.Method;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -16,6 +14,7 @@ import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 
+import io.github.cdiunit.internal.BeanLifecycleHelper;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
@@ -36,23 +35,27 @@ public class NgCdiListener implements IHookable {
             callBack.runTestMethod(testResult);
             return;
         }
+        final var target = testResult.getInstance();
+        final TestConfiguration testConfig = new TestConfiguration(target.getClass(), method);
         try {
-            initializeCdi(testResult.getInstance(), method);
+            initializeCdi(testConfig, target);
             var beanManager = container.getBeanManager();
             var ic = new NgInvocationContext<>(callBack, testResult);
             ic.configure(beanManager);
             ic.proceed();
-        } catch (Exception e) {
-            testResult.setThrowable(e);
+        } catch (Throwable t) {
+            testResult.setThrowable(t);
         } finally {
-            shutdownCdi(method);
+            try {
+                shutdownCdi(testConfig, target);
+            } catch (Throwable t) {
+                testResult.setThrowable(t);
+            }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void initializeCdi(Object instance, final Method method) {
-        final TestConfiguration testConfig = new TestConfiguration(instance.getClass(), method);
-
+    private void initializeCdi(final TestConfiguration testConfig, final Object target) throws Throwable {
         weld = WeldHelper.configureWeld(testConfig);
 
         container = weld.initialize();
@@ -60,7 +63,7 @@ public class NgCdiListener implements IHookable {
         CreationalContext creationalContext = beanManager.createCreationalContext(null);
         AnnotatedType annotatedType = beanManager.createAnnotatedType(testConfig.getTestClass());
         InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType).createInjectionTarget(null);
-        injectionTarget.inject(instance, creationalContext);
+        injectionTarget.inject(target, creationalContext);
 
         System.setProperty("java.naming.factory.initial",
                 "io.github.cdiunit.internal.naming.CdiUnitContextFactory");
@@ -70,12 +73,14 @@ public class NgCdiListener implements IHookable {
         } catch (NamingException e) {
             throw ExceptionUtils.asRuntimeException(e);
         }
-        ScopesHelper.activateContexts(container.getBeanManager(), method);
+        ScopesHelper.activateContexts(container.getBeanManager(), testConfig.getTestMethod());
+        BeanLifecycleHelper.invokePostConstruct(testConfig.getTestClass(), target);
     }
 
-    private void shutdownCdi(final Method method) {
+    private void shutdownCdi(final TestConfiguration testConfig, final Object target) throws Throwable {
+        BeanLifecycleHelper.invokePreDestroy(testConfig.getTestClass(), target);
         if (container != null) {
-            ScopesHelper.deactivateContexts(container.getBeanManager(), method);
+            ScopesHelper.deactivateContexts(container.getBeanManager(), testConfig.getTestMethod());
         }
         if (weld != null) {
             weld.shutdown();
