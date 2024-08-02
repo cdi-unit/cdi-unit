@@ -7,10 +7,11 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Test
 @AdditionalClasses(AImplementation1.class)
@@ -31,7 +32,7 @@ public class TestActivateScopes extends NgCdiRunner {
 
     @Test
     public void testStart() {
-        Assert.assertNotNull(a);
+        assertThat(a).isNotNull();
     }
 
     @Test
@@ -39,7 +40,7 @@ public class TestActivateScopes extends NgCdiRunner {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("test"); // Force scoping
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals(b1, b2);
+        assertThat(b1).isEqualTo(b2);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class TestActivateScopes extends NgCdiRunner {
         CSessionScoped c1 = sessionScoped.get();
         c1.setFoo("test"); // Force scoping
         CSessionScoped c2 = sessionScoped.get();
-        Assert.assertEquals(c1, c2);
+        assertThat(c1).isEqualTo(c2);
     }
 
     @Test(expectedExceptions = ContextNotActiveException.class)
@@ -63,7 +64,7 @@ public class TestActivateScopes extends NgCdiRunner {
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
         DConversationScoped d2 = conversationScoped.get();
-        Assert.assertEquals(d1, d2);
+        assertThat(d1).isEqualTo(d2);
     }
 
     @Test(expectedExceptions = ContextNotActiveException.class)

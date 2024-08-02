@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.testng.Assert;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
@@ -27,6 +26,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
 abstract class TestBasicFeatures extends BaseTest {
@@ -79,7 +80,7 @@ abstract class TestBasicFeatures extends BaseTest {
 
         @PostConstruct
         void checkMocks() {
-            Assert.assertNotNull(mocks, "mocks are expected");
+            assertThat(mocks).withFailMessage("mocks are expected").isNotNull();
         }
 
         @ApplicationScoped
@@ -167,11 +168,11 @@ abstract class TestBasicFeatures extends BaseTest {
     Instance<List<?>> generics;
 
     @Produces
-    List<Object> producedList = new ArrayList<Object>();
+    List<Object> producedList = new ArrayList<>();
 
     @Test
     public void testGenerics() {
-        Assert.assertEquals(generics.get(), producedList);
+        assertThat(generics.get()).as("generics").isEqualTo(producedList);
     }
 
     @Test
@@ -180,8 +181,7 @@ abstract class TestBasicFeatures extends BaseTest {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("test"); // Force scoping
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals(b1, b2);
-
+        assertThat(b1).isEqualTo(b2);
     }
 
     @Test(expectedExceptions = ContextNotActiveException.class)
@@ -197,8 +197,7 @@ abstract class TestBasicFeatures extends BaseTest {
         CSessionScoped c1 = sessionScoped.get();
         c1.setFoo("test"); // Force scoping
         CSessionScoped c2 = sessionScoped.get();
-        Assert.assertEquals(c1, c2);
-
+        assertThat(c1).isEqualTo(c2);
     }
 
     @Test(expectedExceptions = ContextNotActiveException.class)
@@ -214,8 +213,7 @@ abstract class TestBasicFeatures extends BaseTest {
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
         DConversationScoped d2 = conversationScoped.get();
-        Assert.assertEquals(d1, d2);
-
+        assertThat(d1).isEqualTo(d2);
     }
 
     @Test(expectedExceptions = ContextNotActiveException.class)
@@ -230,12 +228,12 @@ abstract class TestBasicFeatures extends BaseTest {
     @Test
     public void testTestAlternative() {
         AInterface a1 = a.get();
-        Assert.assertEquals(a1, producerAccess.mockA());
+        assertThat(a1).as("injected instance").isEqualTo(producerAccess.mockA());
     }
 
     @Test
     public void testPostConstruct() {
-        Assert.assertTrue(postConstructCalled);
+        assertThat(postConstructCalled).as("postConstructCalled").isTrue();
     }
 
     @PostConstruct
@@ -245,23 +243,23 @@ abstract class TestBasicFeatures extends BaseTest {
 
     @Test
     public void testBeanManager() {
-        Assert.assertNotNull(getBeanManager());
-        Assert.assertNotNull(beanManager);
+        assertThat(getBeanManager()).isNotNull();
+        assertThat(beanManager).isNotNull();
     }
 
     @Test
     public void testSuper() {
-        Assert.assertNotNull(aImpl.getBeanManager());
+        assertThat(aImpl.getBeanManager()).isNotNull();
     }
 
     @Test
     public void testApplicationScoped() {
-        Assert.assertNotNull(f1);
-        Assert.assertNotNull(f2);
-        Assert.assertEquals(f1, f2);
+        assertThat(f1).isNotNull();
+        assertThat(f2).isNotNull();
+        assertThat(f1).isEqualTo(f2);
 
         AInterface a1 = f1.getA();
-        Assert.assertEquals(a1, producerAccess.mockA());
+        assertThat(a1).as("injected instance").isEqualTo(producerAccess.mockA());
     }
 
     @Inject
@@ -273,7 +271,7 @@ abstract class TestBasicFeatures extends BaseTest {
 
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
-        Assert.assertEquals(b1, b2);
+        assertThat(b1).isEqualTo(b2);
         b1.setDisposedListener(producerAccess.disposeListener());
         contextController.closeRequest();
         Mockito.verify(producerAccess.disposeListener()).run();
@@ -292,17 +290,17 @@ abstract class TestBasicFeatures extends BaseTest {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("Bar");
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals(r2.getAttribute("test"), "test");
+        assertThat(r2.getAttribute("test")).as("request attribute").isEqualTo("test");
 
-        Assert.assertSame(b1.getFoo(), b2.getFoo());
+        assertThat(b1.getFoo()).isSameAs(b2.getFoo());
         contextController.closeRequest();
         HttpServletRequest r3 = contextController.openRequest();
         r3.setAttribute("test", "test2");
         HttpServletRequest r4 = requestProvider;
 
-        Assert.assertEquals(r4.getAttribute("test"), "test2");
+        assertThat(r4.getAttribute("test")).as("request attribute").isEqualTo("test2");
         BRequestScoped b3 = requestScoped.get();
-        Assert.assertNull(b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
     }
 
     @Test
@@ -312,13 +310,13 @@ abstract class TestBasicFeatures extends BaseTest {
         CSessionScoped b1 = sessionScoped.get();
         b1.setFoo("Bar");
         CSessionScoped b2 = sessionScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
+        assertThat(b1.getFoo()).isEqualTo(b2.getFoo());
         contextController.closeRequest();
         contextController.closeSession();
 
         contextController.openRequest();
         CSessionScoped b3 = sessionScoped.get();
-        Assert.assertNull(b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
     }
 
     @Test
@@ -331,16 +329,15 @@ abstract class TestBasicFeatures extends BaseTest {
         BRequestScoped r1 = requestScoped.get();
         r1.setFoo("Request Bar");
         BRequestScoped r2 = requestScoped.get();
-        Assert.assertSame(r1.getFoo(), r2.getFoo());
+        assertThat(r1.getFoo()).isSameAs(r2.getFoo());
         contextController.closeRequest();
         contextController.openRequest();
         BRequestScoped r3 = requestScoped.get();
-        Assert.assertNull(r3.getFoo());
+        assertThat(r3.getFoo()).isNull();
 
         CSessionScoped b2 = sessionScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
-        Assert.assertNotNull(b2.getFoo());
-
+        assertThat(b1.getFoo()).isEqualTo(b2.getFoo());
+        assertThat(b2.getFoo()).isNotNull();
     }
 
     @Test
@@ -351,25 +348,25 @@ abstract class TestBasicFeatures extends BaseTest {
         DConversationScoped b1 = conversationScoped.get();
         b1.setFoo("Bar");
         DConversationScoped b2 = conversationScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
+        assertThat(b1.getFoo()).isEqualTo(b2.getFoo());
         conversation.end();
         contextController.closeRequest();
         contextController.openRequest();
         conversation.begin();
         DConversationScoped b3 = conversationScoped.get();
-        Assert.assertNull(b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
     }
 
     @Test
     public void testProducedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        Assert.assertEquals(produced, producesViaField);
+        assertThat(produced).isEqualTo(producesViaField);
     }
 
     @Test
     public void testProducedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
-        Assert.assertNotNull(produced);
+        assertThat(produced).isNotNull();
     }
 
     public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {

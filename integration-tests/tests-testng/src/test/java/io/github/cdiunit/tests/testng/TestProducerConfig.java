@@ -9,7 +9,6 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import org.testng.Assert;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
@@ -24,6 +23,7 @@ import io.github.cdiunit.ProducerConfig;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @AdditionalClasses(TestProducerConfig.Producers.class)
 @TestProducerConfig.ProducerConfigClass(Object.class)
@@ -88,25 +88,25 @@ abstract class TestProducerConfig extends BaseTest {
     @Test
     @ProducerConfigNum(1)
     public void testA1() {
-        Assert.assertEquals(valueNamedA, "A1");
+        assertThat(valueNamedA).as("valueNamedA").isEqualTo("A1");
     }
 
     @Test
     @ProducerConfigNum(2)
     public void testA2() {
-        Assert.assertEquals(valueNamedA, "A2");
+        assertThat(valueNamedA).as("valueNamedA").isEqualTo("A2");
     }
 
     @Test
     @ProducerConfigClass(ArrayList.class)
     public void testArrayList() {
-        Assert.assertEquals(object.getClass(), ArrayList.class);
+        assertThat(object).as("value of type ArrayList").isInstanceOf(ArrayList.class);
     }
 
     @Test
     @ProducerConfigClass(HashSet.class)
     public void testHashSet() {
-        Assert.assertEquals(object.getClass(), HashSet.class);
+        assertThat(object).as("value of type HashSet").isInstanceOf(HashSet.class);
     }
 
 }
