@@ -5,11 +5,12 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Vetoed;
 import jakarta.inject.Named;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.resource.SupportResource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @SupportResource
@@ -46,14 +47,14 @@ public class TestResource {
 
     @Test
     public void testResourceSupport() {
-        Assert.assertNotEquals(_unnamedAResource, _namedAResource);
-        Assert.assertNotEquals(unnamedBResource, namedBResource);
-        Assert.assertTrue(_unnamedAResource instanceof AResource);
-        Assert.assertTrue(unnamedBResource instanceof BResource);
-        Assert.assertTrue(_namedAResource instanceof AResource);
-        Assert.assertTrue(namedBResource instanceof BResource);
-        Assert.assertTrue(_typedAResource instanceof AResourceExt);
-        Assert.assertTrue(typedBResource instanceof BResourceExt);
+        assertThat(_namedAResource).isNotEqualTo(_unnamedAResource);
+        assertThat(namedBResource).isNotEqualTo(unnamedBResource);
+        assertThat(_unnamedAResource instanceof AResource).isTrue();
+        assertThat(unnamedBResource instanceof BResource).isTrue();
+        assertThat(_namedAResource instanceof AResource).isTrue();
+        assertThat(namedBResource instanceof BResource).isTrue();
+        assertThat(_typedAResource instanceof AResourceExt).isTrue();
+        assertThat(typedBResource instanceof BResourceExt).isTrue();
     }
 
     interface AResourceType {

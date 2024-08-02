@@ -3,9 +3,12 @@ package io.github.cdiunit;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
-import org.junit.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @Isolation(IsolationLevel.PER_CLASS)
@@ -19,13 +22,13 @@ public class TestPerClassScopes {
     @ActivateScopes(RequestScoped.class)
     public void testRequestScopeRequest1() {
         requestScoped.setFoo("shared");
-        Assert.assertTrue(true);
+        assertThat(true).isTrue();
     }
 
     @Test
     @ActivateScopes(RequestScoped.class)
     public void testRequestScopeRequest2() {
-        Assert.assertEquals("shared", requestScoped.getFoo());
+        assertThat(requestScoped.getFoo()).isEqualTo("shared");
     }
 
 }

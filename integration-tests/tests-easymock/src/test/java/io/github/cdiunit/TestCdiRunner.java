@@ -4,9 +4,10 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
 import org.easymock.Mock;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestCdiRunner {
@@ -20,7 +21,7 @@ public class TestCdiRunner {
 
     @Test
     public void testStart() {
-        Assert.assertEquals(aMock, a);
+        assertThat(a).isEqualTo(aMock);
     }
 
 }

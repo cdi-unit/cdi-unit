@@ -1,10 +1,11 @@
 package io.github.cdiunit;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestJUnitRule {
@@ -18,7 +19,7 @@ public class TestJUnitRule {
 
     @Test
     public void testName() {
-        Assert.assertNotNull("test name is expected", getTestName().getMethodName());
+        assertThat(getTestName().getMethodName()).as("test name is expected").isNotNull();
     }
 
 }

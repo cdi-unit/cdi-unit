@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.CdiRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pcasaes on 30/03/17.
@@ -25,6 +25,6 @@ public class AddOneDecoratorTest {
 
     @Test
     public void testAddOne() {
-        assertEquals(1, decorated.calculate());
+        assertThat(decorated.calculate()).isEqualTo(1);
     }
 }

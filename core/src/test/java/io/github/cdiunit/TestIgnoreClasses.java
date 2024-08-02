@@ -3,9 +3,10 @@ package io.github.cdiunit;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(TestIgnoreClasses.MyProducer.class)
@@ -32,6 +33,6 @@ public class TestIgnoreClasses {
 
     @Test
     public void test() {
-        Assert.assertEquals("hello", myService.hello());
+        assertThat(myService.hello()).isEqualTo("hello");
     }
 }

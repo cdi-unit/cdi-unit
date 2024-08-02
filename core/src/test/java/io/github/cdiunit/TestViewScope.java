@@ -7,9 +7,10 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Provider;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestViewScope {
@@ -21,7 +22,7 @@ public class TestViewScope {
 
     @Test
     public void testSameBeanEachTime() {
-        Assert.assertEquals(viewScoped.get().getRuntimeId(), viewScoped.get().getRuntimeId());
+        assertThat(viewScoped.get().getRuntimeId()).isEqualTo(viewScoped.get().getRuntimeId());
     }
 
     @Test

@@ -17,9 +17,10 @@ package io.github.cdiunit;
 
 import jakarta.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @ActivatedAlternatives(AImplementation2.class)
@@ -37,7 +38,7 @@ public class TestAlternativeAnnotations {
     @Test
     public void testAlternativeSelected() {
 
-        Assert.assertTrue("Should have been impl2", impl instanceof AImplementation2);
+        assertThat(impl instanceof AImplementation2).as("Should have been impl2").isTrue();
     }
 
 }

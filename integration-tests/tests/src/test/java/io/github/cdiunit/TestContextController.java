@@ -11,9 +11,10 @@ import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestContextController {
@@ -35,14 +36,14 @@ public class TestContextController {
     @Test
     @InRequestScope
     public void testSynchronousExecution() {
-        Assert.assertEquals("Counter values should be equal.", testCounter1.getCounter(), testCounter2.getCounter());
+        assertThat(testCounter2.getCounter()).as("Counter values should be equal.").isEqualTo(testCounter1.getCounter());
     }
 
     @Test
     @InRequestScope
     public void testAsynchronousExecution() throws ExecutionException, InterruptedException {
 
-        Assert.assertEquals("Counter values should be equal.", testCounter1.getCounter(), testCounter2.getCounter());
+        assertThat(testCounter2.getCounter()).as("Counter values should be equal.").isEqualTo(testCounter1.getCounter());
 
         Future<Integer> testCallableResult = Executors.newSingleThreadExecutor().submit(new Callable<Integer>() {
 
@@ -57,7 +58,7 @@ public class TestContextController {
             }
         });
 
-        Assert.assertTrue("Counter values should not be equal.", (testCallableResult.get() != testCounter1.getCounter()));
+        assertThat((testCallableResult.get() != testCounter1.getCounter())).as("Counter values should not be equal.").isTrue();
     }
 
     @Produces

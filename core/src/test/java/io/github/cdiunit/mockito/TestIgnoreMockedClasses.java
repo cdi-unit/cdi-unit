@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.ProducesAlternative;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestIgnoreMockedClasses {
@@ -25,7 +25,7 @@ public class TestIgnoreMockedClasses {
 
     @Test
     public void testConfiguration() {
-        assertTrue("AService must have a mocked BService", service.hasService());
+        assertThat(service.hasService()).as("AService must have a mocked BService").isTrue();
     }
 
 }
