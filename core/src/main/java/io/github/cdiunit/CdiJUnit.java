@@ -11,7 +11,7 @@ import io.github.cdiunit.internal.junit4.CdiJUnitRule;
  * <li>* JUnit runners - see {@link CdiRunner} *</li>
  * </ul>
  */
-public class CdiJUnit {
+public final class CdiJUnit {
 
     /**
      * Creates rule instance that initiates CDI Unit.
@@ -20,6 +20,10 @@ public class CdiJUnit {
      */
     public static MethodRule rule() {
         return new CdiJUnitRule();
+    }
+
+    private CdiJUnit() throws IllegalAccessException {
+        throw new IllegalAccessException("don't instantiate me");
     }
 
 }
