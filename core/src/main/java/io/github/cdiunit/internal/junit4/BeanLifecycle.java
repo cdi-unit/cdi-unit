@@ -40,6 +40,7 @@ public class BeanLifecycle extends Statement {
     private void invokeLifecycleMethods(Class<?> targetClass, Class<? extends Annotation> a, Object target) throws Throwable {
         findLifecycleMethods(targetClass, a).forEach(m -> {
             try {
+                m.setAccessible(true);
                 m.invoke(target);
             } catch (IllegalAccessException e) {
                 throw ExceptionUtils.asRuntimeException(e);
