@@ -8,12 +8,13 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.*;
 import jakarta.ws.rs.ext.Providers;
 
-import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.InRequestScope;
 import io.github.cdiunit.NgCdiRunner;
 import io.github.cdiunit.jaxrs.SupportJaxRs;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SupportJaxRs
 public class TestJaxRs extends NgCdiRunner {
@@ -23,21 +24,21 @@ public class TestJaxRs extends NgCdiRunner {
 
     @Test
     public void testJaxRs() {
-        Assertions.assertThat(webService.request).isNotNull();
-        Assertions.assertThat(webService.response).isNotNull();
-        Assertions.assertThat(webService.context).isNotNull();
-        Assertions.assertThat(webService.uriInfo).isNotNull();
-        Assertions.assertThat(webService.jaxRsRequest).isNotNull();
-        Assertions.assertThat(webService.securityContext).isNotNull();
-        Assertions.assertThat(webService.providers).isNotNull();
-        Assertions.assertThat(webService.headers).isNotNull();
-        Assertions.assertThat(webService.session).isNotNull();
+        assertThat(webService.request).isNotNull();
+        assertThat(webService.response).isNotNull();
+        assertThat(webService.context).isNotNull();
+        assertThat(webService.uriInfo).isNotNull();
+        assertThat(webService.jaxRsRequest).isNotNull();
+        assertThat(webService.securityContext).isNotNull();
+        assertThat(webService.providers).isNotNull();
+        assertThat(webService.headers).isNotNull();
+        assertThat(webService.session).isNotNull();
     }
 
     @Test
     @InRequestScope
     public void testRequestAttributeAccess() {
-        Assertions.assertThat(webService.request.getAttribute("test")).isNull();
+        assertThat(webService.request.getAttribute("test")).isNull();
     }
 
     public static class WebService {
