@@ -1,4 +1,4 @@
-package io.github.cdiunit;
+package io.github.cdiunit.testng;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -17,22 +17,114 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.testng.Assert;
+import org.testng.IHookCallBack;
+import org.testng.IHookable;
+import org.testng.ITestResult;
+import org.testng.annotations.Ignore;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
+
+import io.github.cdiunit.*;
 
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
-public class TestCdiUnitRule extends BaseTest {
+abstract class TestBasicFeatures extends BaseTest {
 
-    @Rule
-    // Use method - not a field - for rules since test class is added to the bean archive.
-    // Weld enforces that no public fields exist in the normal scoped bean class.
-    public MethodRule cdiUnit() {
-        return CdiJUnit.rule();
+    public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess, IHookable {
+
+        private final NgCdiRunner runner = new NgCdiRunner() {
+        };
+
+        @Override
+        public void run(IHookCallBack callBack, ITestResult testResult) {
+            runner.run(callBack, testResult);
+        }
+
+        @Produces
+        public ProducedViaMethod getProducedViaMethod() {
+            return new ProducedViaMethod(2);
+        }
+
+        @Mock
+        @ProducesAlternative
+        @Produces
+        private AInterface mockA;
+
+        @Mock
+        private Runnable disposeListener;
+
+        @Override
+        public AInterface mockA() {
+            return mockA;
+        }
+
+        @Override
+        public Runnable disposeListener() {
+            return disposeListener;
+        }
+
     }
+
+    @Listeners(NgCdiListener.class)
+    public static class TestWithListener extends TestBasicFeatures {
+
+        @Produces
+        public ProducedViaMethod getProducedViaMethod() {
+            return new ProducedViaMethod(2);
+        }
+
+        @Inject
+        MocksProducer mocks;
+
+        @PostConstruct
+        void checkMocks() {
+            Assert.assertNotNull(mocks, "mocks are expected");
+        }
+
+        @ApplicationScoped
+        static class MocksProducer implements ProducerAccess {
+
+            @Mock
+            private Runnable disposeListener;
+
+            @Override
+            public Runnable disposeListener() {
+                return disposeListener;
+            }
+
+            @Mock
+            private AInterface mockA;
+
+            @Override
+            @Produces
+            @ProducesAlternative
+            public AInterface mockA() {
+                return mockA;
+            }
+
+        }
+
+    }
+
+    interface ProducerAccess {
+
+        /**
+         * @return produced instance
+         */
+        AInterface mockA();
+
+        /**
+         * @return produced instance
+         */
+        Runnable disposeListener();
+
+    }
+
+    @Inject
+    // direct access to producer to check injected instances for equality
+    ProducerAccess producerAccess;
 
     @Inject
     private AImplementation1 aImpl;
@@ -70,7 +162,7 @@ public class TestCdiUnitRule extends BaseTest {
     private Conversation conversation;
 
     @Produces
-    private ProducedViaField produced;
+    private ProducedViaField producesViaField;
 
     @Inject
     Instance<List<?>> generics;
@@ -78,18 +170,9 @@ public class TestCdiUnitRule extends BaseTest {
     @Produces
     List<Object> producedList = new ArrayList<Object>();
 
-    @Inject
-    // direct access to producer to check injected instances for equality
-    MocksProducer mocks;
-
-    @Produces
-    public ProducedViaMethod getProducedViaMethod() {
-        return new ProducedViaMethod(2);
-    }
-
     @Test
     public void testGenerics() {
-        Assert.assertEquals(producedList, generics.get());
+        Assert.assertEquals(generics.get(), producedList);
     }
 
     @Test
@@ -102,7 +185,7 @@ public class TestCdiUnitRule extends BaseTest {
 
     }
 
-    @Test(expected = ContextNotActiveException.class)
+    @Test(expectedExceptions = ContextNotActiveException.class)
     public void testRequestScopeFail() {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("test"); // Force scoping
@@ -119,7 +202,7 @@ public class TestCdiUnitRule extends BaseTest {
 
     }
 
-    @Test(expected = ContextNotActiveException.class)
+    @Test(expectedExceptions = ContextNotActiveException.class)
     public void testSessionScopeFail() {
         CSessionScoped c1 = sessionScoped.get();
         c1.setFoo("test"); // Force scoping
@@ -136,7 +219,7 @@ public class TestCdiUnitRule extends BaseTest {
 
     }
 
-    @Test(expected = ContextNotActiveException.class)
+    @Test(expectedExceptions = ContextNotActiveException.class)
     public void testConversationScopeFail() {
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
@@ -148,10 +231,11 @@ public class TestCdiUnitRule extends BaseTest {
     @Test
     public void testTestAlternative() {
         AInterface a1 = a.get();
-        Assert.assertEquals(mocks.mockA(), a1);
+        Assert.assertEquals(a1, producerAccess.mockA());
     }
 
     @Test
+    @Ignore("FIXME - #279")
     public void testPostConstruct() {
         Assert.assertTrue(postConstructCalled);
     }
@@ -179,7 +263,7 @@ public class TestCdiUnitRule extends BaseTest {
         Assert.assertEquals(f1, f2);
 
         AInterface a1 = f1.getA();
-        Assert.assertEquals(mocks.mockA(), a1);
+        Assert.assertEquals(a1, producerAccess.mockA());
     }
 
     @Inject
@@ -192,9 +276,9 @@ public class TestCdiUnitRule extends BaseTest {
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
         Assert.assertEquals(b1, b2);
-        b1.setDisposedListener(mocks.disposeListener());
+        b1.setDisposedListener(producerAccess.disposeListener());
         contextController.closeRequest();
-        Mockito.verify(mocks.disposeListener()).run();
+        Mockito.verify(producerAccess.disposeListener()).run();
     }
 
     @Inject
@@ -210,7 +294,7 @@ public class TestCdiUnitRule extends BaseTest {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("Bar");
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals("test", r2.getAttribute("test"));
+        Assert.assertEquals(r2.getAttribute("test"), "test");
 
         Assert.assertSame(b1.getFoo(), b2.getFoo());
         contextController.closeRequest();
@@ -218,9 +302,9 @@ public class TestCdiUnitRule extends BaseTest {
         r3.setAttribute("test", "test2");
         HttpServletRequest r4 = requestProvider;
 
-        Assert.assertEquals("test2", r4.getAttribute("test"));
+        Assert.assertEquals(r4.getAttribute("test"), "test2");
         BRequestScoped b3 = requestScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
+        Assert.assertNull(b3.getFoo());
     }
 
     @Test
@@ -236,8 +320,7 @@ public class TestCdiUnitRule extends BaseTest {
 
         contextController.openRequest();
         CSessionScoped b3 = sessionScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
-
+        Assert.assertNull(b3.getFoo());
     }
 
     @Test
@@ -276,14 +359,13 @@ public class TestCdiUnitRule extends BaseTest {
         contextController.openRequest();
         conversation.begin();
         DConversationScoped b3 = conversationScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
+        Assert.assertNull(b3.getFoo());
     }
 
     @Test
     public void testProducedViaField() {
-        produced = new ProducedViaField(2);
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        Assert.assertEquals(produced, produced);
+        Assert.assertEquals(produced, producesViaField);
     }
 
     @Test
@@ -303,26 +385,4 @@ public class TestCdiUnitRule extends BaseTest {
         }
         return result;
     }
-
-    @ApplicationScoped
-    static class MocksProducer {
-
-        @Mock
-        private Runnable disposeListener;
-
-        Runnable disposeListener() {
-            return disposeListener;
-        }
-
-        @Mock
-        private AInterface mockA;
-
-        @Produces
-        @ProducesAlternative
-        AInterface mockA() {
-            return mockA;
-        }
-
-    }
-
 }

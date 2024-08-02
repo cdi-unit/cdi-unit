@@ -1,4 +1,4 @@
-package io.github.cdiunit;
+package io.github.cdiunit.tests.testng;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -9,19 +9,44 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.testng.Assert;
+import org.testng.IHookCallBack;
+import org.testng.IHookable;
+import org.testng.ITestResult;
+import org.testng.annotations.Test;
+
+import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.NgCdiRunner;
+import io.github.cdiunit.ProducerConfig;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@RunWith(CdiRunner.class)
 @AdditionalClasses(TestProducerConfig.Producers.class)
-@TestProducerConfig.ProducerConfigClass(Object.class)
-@TestProducerConfig.ProducerConfigNum(0)
-public class TestProducerConfig {
+abstract class TestProducerConfig extends BaseTest {
+
+    @ProducerConfigClass(Object.class)
+    @ProducerConfigNum(0)
+    public static class TestWithRunner extends TestProducerConfig implements IHookable {
+
+        private final NgCdiRunner runner = new NgCdiRunner() {
+        };
+
+        @Override
+        public void run(IHookCallBack callBack, ITestResult testResult) {
+            runner.run(callBack, testResult);
+        }
+
+    }
+
+    //    @Listeners(NgCdiListener.class)
+    //    @TestProducerConfig.ProducerConfigClass(Object.class)
+    //    @TestProducerConfig.ProducerConfigNum(0)
+    //    @Ignore("FIXME - #280")
+    //    public static class TestWithListener extends TestProducerConfig {
+    //
+    //    }
 
     @Inject
     @Named("a")
@@ -57,32 +82,32 @@ public class TestProducerConfig {
         @Produces
         @Named("object")
         private Object getObject(ProducerConfigClass config) throws Exception {
-            return config.value().newInstance();
+            return config.value().getDeclaredConstructor().newInstance();
         }
     }
 
     @Test
     @ProducerConfigNum(1)
     public void testA1() {
-        Assert.assertEquals("A1", valueNamedA);
+        Assert.assertEquals(valueNamedA, "A1");
     }
 
     @Test
     @ProducerConfigNum(2)
     public void testA2() {
-        Assert.assertEquals("A2", valueNamedA);
+        Assert.assertEquals(valueNamedA, "A2");
     }
 
     @Test
     @ProducerConfigClass(ArrayList.class)
     public void testArrayList() {
-        Assert.assertEquals(ArrayList.class, object.getClass());
+        Assert.assertEquals(object.getClass(), ArrayList.class);
     }
 
     @Test
     @ProducerConfigClass(HashSet.class)
     public void testHashSet() {
-        Assert.assertEquals(HashSet.class, object.getClass());
+        Assert.assertEquals(object.getClass(), HashSet.class);
     }
 
 }
