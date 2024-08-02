@@ -30,4 +30,29 @@
     <module>support-deltaspike</module>
   </modules>
 
+	<profiles>
+		<profile>
+			<id>openrewrite</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.openrewrite.maven</groupId>
+						<artifactId>rewrite-maven-plugin</artifactId>
+						<configuration>
+							<activeRecipes>
+<!--								<recipe>org.openrewrite.staticanalysis.CodeCleanup</recipe>-->
+								<recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+<!--								<recipe>org.openrewrite.java.format.AutoFormat</recipe>-->
+							</activeRecipes>
+							<failOnDryRunResults>true</failOnDryRunResults>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
