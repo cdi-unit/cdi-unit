@@ -560,23 +560,6 @@
 			</build>
 		</profile>
 
-		<profile>
-			<id>openrewrite</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.openrewrite.maven</groupId>
-						<artifactId>rewrite-maven-plugin</artifactId>
-						<configuration>
-							<activeRecipes>
-								<recipe>org.openrewrite.staticanalysis.CodeCleanup</recipe>
-							</activeRecipes>
-							<failOnDryRunResults>true</failOnDryRunResults>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 	<scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false"

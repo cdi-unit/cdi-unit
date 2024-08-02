@@ -107,6 +107,17 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.openrewrite.maven</groupId>
+						<artifactId>rewrite-maven-plugin</artifactId>
+						<configuration>
+							<activeRecipes>
+								<recipe>org.openrewrite.staticanalysis.CodeCleanup</recipe>
+								<recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+							</activeRecipes>
+							<failOnDryRunResults>true</failOnDryRunResults>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>net.revelc.code.formatter</groupId>
 						<artifactId>formatter-maven-plugin</artifactId>
 						<executions>
