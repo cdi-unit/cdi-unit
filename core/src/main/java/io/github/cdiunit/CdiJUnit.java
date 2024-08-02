@@ -6,19 +6,10 @@ import io.github.cdiunit.internal.junit4.CdiJUnitRule;
 
 /**
  * CDI Unit supports JUnit via:
- * <li>
  * <ul>
- * JUnit Rules - see {@link CdiJUnitRule}
+ * <li>* JUnit Rules - see {@link CdiJUnitRule} *</li>
+ * <li>* JUnit runners - see {@link CdiRunner} *</li>
  * </ul>
- * <ul>
- * JUnit runners - see {@link CdiRunner}
- * </ul>
- * <ul>
- * <a href=
- * "http://javadoc.io/doc/org.mockito/mockito-junit-jupiter/latest/org/mockito/junit/jupiter/MockitoExtension.html">JUnit
- * Jupiter extension</a>
- * </ul>
- * </li>
  */
 public class CdiJUnit {
 
