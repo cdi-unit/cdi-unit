@@ -17,7 +17,6 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Prepare artifacts
         uses: actions/cache@v4
@@ -25,7 +24,7 @@ jobs:
           cache-name: prepare-maven-repository
         with:
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
 
       - name: Prepare Build
         run: ./ci-support/prepare-build.sh
@@ -41,7 +40,6 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Cache build artifacts
         uses: actions/cache@v4
@@ -51,7 +49,7 @@ jobs:
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            prepare-maven-repository
+            prepare-maven-repository-${{ github.sha }}-${{ github.run_id }}-
 
       - name: Build with Maven
         run: ./ci-support/build.sh
@@ -78,7 +76,6 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Restore build artifacts
         uses: actions/cache@v4
@@ -112,7 +109,6 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
-          cache: 'maven'
 
       - name: Restore build artifacts
         uses: actions/cache@v4
