@@ -4,4 +4,6 @@ set -ex
 
 BASE_DIR=$(dirname "$0")
 
-"$BASE_DIR/hide-logs.sh" ./mvnw -V -B clean install -Dno-format
+export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml"
+
+"$BASE_DIR/hide-logs.sh" ./mvnw -Dno-format clean install

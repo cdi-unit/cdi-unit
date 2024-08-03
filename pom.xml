@@ -21,13 +21,14 @@
 	<modules>
 		<module>independent-projects/parent</module>
 		<module>independent-projects/ide-config</module>
+		<module>independent-projects/rewrite-recipes</module>
 		<module>build-parent</module>
 		<module>core</module>
 		<module>support-servlet</module>
 		<module>support-servlet6</module>
 		<module>cdi-unit</module>
-		<module>integration-tests</module>
     <module>support-deltaspike</module>
-  </modules>
+		<module>integration-tests</module>
+	</modules>
 
 </project>

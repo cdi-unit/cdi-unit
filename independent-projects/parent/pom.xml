@@ -311,19 +311,9 @@
 					</configuration>
 					<dependencies>
 						<dependency>
-							<groupId>org.openrewrite.recipe</groupId>
-							<artifactId>rewrite-static-analysis</artifactId>
-							<version>1.13.0</version>
-						</dependency>
-						<dependency>
-							<groupId>org.openrewrite.recipe</groupId>
-							<artifactId>rewrite-testing-frameworks</artifactId>
-							<version>2.15.0</version>
-						</dependency>
-						<dependency>
-							<groupId>org.openrewrite.recipe</groupId>
-							<artifactId>rewrite-third-party</artifactId>
-							<version>0.5.4</version>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>cdi-unit-rewrite-recipes</artifactId>
+							<version>${project.version}</version>
 						</dependency>
 					</dependencies>
 				</plugin>
