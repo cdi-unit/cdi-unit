@@ -16,10 +16,6 @@ updates:
       # explicitly keep baseline version
       - dependency-name: jakarta.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch" ]
-      - dependency-name: net.revelc.code.formatter:formatter-maven-plugin
-        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-      - dependency-name: net.revelc.code:impsort-maven-plugin
-        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
       # explicitly keep baseline version
       - dependency-name: org.hibernate.orm:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
