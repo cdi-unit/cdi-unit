@@ -164,7 +164,7 @@ public class TestBasicFeatures extends BaseTest {
      * Test that we can use the test alternative annotation to specify that a mock is used
      */
     @Test
-    void testAlternative() {
+    void alternative() {
         AInterface a1 = a.get();
         assertThat(a1).isEqualTo(mockA);
     }
