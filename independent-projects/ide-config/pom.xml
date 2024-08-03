@@ -11,7 +11,8 @@
 	</parent>
 
 	<artifactId>cdi-unit-ide-config</artifactId>
-	<name>CDI-Unit - IDE/Tools - Config</name>
+
+	<name>CDI-Unit - Coding Rules and Conventions - Config</name>
 
 	<build>
 		<pluginManagement>

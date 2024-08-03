@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.cdi-unit</groupId>
+		<artifactId>cdi-unit-project</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>cdi-unit-rewrite-recipes</artifactId>
+
+	<name>CDI-Unit - Coding Rules and Conventions - Recipes</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openrewrite.recipe</groupId>
+			<artifactId>rewrite-static-analysis</artifactId>
+			<version>1.13.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrewrite.recipe</groupId>
+			<artifactId>rewrite-testing-frameworks</artifactId>
+			<version>2.15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrewrite.recipe</groupId>
+			<artifactId>rewrite-third-party</artifactId>
+			<version>0.5.4</version>
+		</dependency>
+	</dependencies>
+
+</project>
