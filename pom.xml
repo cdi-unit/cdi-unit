@@ -26,9 +26,10 @@
 		<module>core</module>
 		<module>support-servlet</module>
 		<module>support-servlet6</module>
-		<module>cdi-unit</module>
     <module>support-deltaspike</module>
+		<module>support-junit5</module>
 		<module>integration-tests</module>
+		<module>cdi-unit</module>
 	</modules>
 
 	<profiles>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.cdi-unit</groupId>
+		<artifactId>cdi-unit-build-parent</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>../build-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>cdi-unit-support-junit5</artifactId>
+
+	<name>CDI-Unit - JUnit Jupiter Support</name>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.10.3</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
