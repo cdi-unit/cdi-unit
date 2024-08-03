@@ -16,6 +16,9 @@
 package io.github.cdiunit.junit5;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -24,10 +27,14 @@ import org.junit.jupiter.api.extension.*;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.junit5.ActivateScopes;
+import io.github.cdiunit.internal.junit5.NamingContextLifecycle;
 
 public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
         AfterEachCallback, AfterAllCallback, InvocationInterceptor {
+
+    private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
     private TestConfiguration testConfiguration;
     private Weld weld;
@@ -95,9 +102,18 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         }
     }
 
+    private BeanManager getBeanManager() {
+        if (container == null) {
+            throw new IllegalStateException("Weld container is not created yet");
+        }
+        return container.getBeanManager();
+    }
+
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
             ExtensionContext extensionContext) throws Throwable {
+        invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
+        invocation = new NamingContextLifecycle(invocation, this::getBeanManager);
         invocation.proceed();
     }
 
