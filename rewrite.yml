@@ -1,0 +1,7 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.github.cdiunit.RewriteRules
+recipeList:
+  - org.openrewrite.java.testing.assertj.Assertj
+#  - org.openrewrite.staticanalysis.CodeCleanup
+#  - org.openrewrite.java.format.AutoFormat

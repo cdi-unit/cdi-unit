@@ -302,6 +302,13 @@
 					<groupId>org.openrewrite.maven</groupId>
 					<artifactId>rewrite-maven-plugin</artifactId>
 					<version>5.37.1</version>
+					<configuration>
+						<activeRecipes>
+							<recipe>io.github.cdiunit.RewriteRules</recipe>
+						</activeRecipes>
+						<failOnDryRunResults>true</failOnDryRunResults>
+						<runPerSubmodule>true</runPerSubmodule>
+					</configuration>
 					<dependencies>
 						<dependency>
 							<groupId>org.openrewrite.recipe</groupId>
