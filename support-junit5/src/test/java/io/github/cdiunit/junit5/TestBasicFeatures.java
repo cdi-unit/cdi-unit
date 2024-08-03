@@ -101,13 +101,13 @@ public class TestBasicFeatures extends BaseTest {
     List<Object> producedList = new ArrayList<>();
 
     @Test
-    public void testGenerics() {
+    void generics() {
         assertThat(generics.get()).isEqualTo(producedList);
     }
 
     @Test
     @InRequestScope
-    public void testRequestScope() {
+    void requestScope() {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("test"); // Force scoping
         BRequestScoped b2 = requestScoped.get();
@@ -116,7 +116,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testRequestScopeFail() {
+    void requestScopeFail() {
         assertThatThrownBy(() -> {
             BRequestScoped b1 = requestScoped.get();
             b1.setFoo("test"); // Force scoping
@@ -126,7 +126,7 @@ public class TestBasicFeatures extends BaseTest {
     @Test
     @InRequestScope
     @InSessionScope
-    public void testSessionScope() {
+    void sessionScope() {
         CSessionScoped c1 = sessionScoped.get();
         c1.setFoo("test"); // Force scoping
         CSessionScoped c2 = sessionScoped.get();
@@ -134,7 +134,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testSessionScopeFail() {
+    void sessionScopeFail() {
         assertThatThrownBy(() -> {
             CSessionScoped c1 = sessionScoped.get();
             c1.setFoo("test"); // Force scoping
@@ -144,7 +144,7 @@ public class TestBasicFeatures extends BaseTest {
     @Test
     @InRequestScope
     @InConversationScope
-    public void testConversationScope() {
+    void conversationScope() {
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
         DConversationScoped d2 = conversationScoped.get();
@@ -153,7 +153,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testConversationScopeFail() {
+    void conversationScopeFail() {
         assertThatThrownBy(() -> {
             DConversationScoped d1 = conversationScoped.get();
             d1.setFoo("test"); // Force scoping
@@ -164,13 +164,13 @@ public class TestBasicFeatures extends BaseTest {
      * Test that we can use the test alternative annotation to specify that a mock is used
      */
     @Test
-    public void testTestAlternative() {
+    void testAlternative() {
         AInterface a1 = a.get();
         assertThat(a1).isEqualTo(mockA);
     }
 
     @Test
-    public void testPostConstruct() {
+    void testPostConstruct() {
         assertThat(postConstructCalled).isTrue();
     }
 
@@ -180,18 +180,18 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testBeanManager() {
+    void beanManager() {
         assertThat(getBeanManager()).isNotNull();
         assertThat(beanManager).isNotNull();
     }
 
     @Test
-    public void testSuper() {
+    void testSuper() {
         assertThat(aImpl.getBeanManager()).isNotNull();
     }
 
     @Test
-    public void testApplicationScoped() {
+    void applicationScoped() {
         assertThat(f1).isNotNull();
         assertThat(f2).isNotNull();
         assertThat(f2).isEqualTo(f1);
@@ -204,7 +204,7 @@ public class TestBasicFeatures extends BaseTest {
     private Provider<Scoped> scoped;
 
     @Test
-    public void testContextController() {
+    void contextController() {
         contextController.openRequest();
 
         Scoped b1 = scoped.get();
@@ -219,7 +219,7 @@ public class TestBasicFeatures extends BaseTest {
     private HttpServletRequest requestProvider;
 
     @Test
-    public void testContextControllerRequestScoped() {
+    void contextControllerRequestScoped() {
         HttpServletRequest r1 = contextController.openRequest();
         r1.setAttribute("test", "test");
 
@@ -242,7 +242,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testContextControllerSessionScoped() {
+    void contextControllerSessionScoped() {
         contextController.openRequest();
 
         CSessionScoped b1 = sessionScoped.get();
@@ -259,7 +259,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testContextControllerSessionScopedWithRequest() {
+    void contextControllerSessionScopedWithRequest() {
         contextController.openRequest();
 
         CSessionScoped b1 = sessionScoped.get();
@@ -281,7 +281,7 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testContextControllerConversationScoped() {
+    void contextControllerConversationScoped() {
         contextController.openRequest();
         conversation.begin();
 
@@ -298,13 +298,13 @@ public class TestBasicFeatures extends BaseTest {
     }
 
     @Test
-    public void testProducedViaField() {
+    void producedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
         assertThat(produced).isEqualTo(producesViaField);
     }
 
     @Test
-    public void testProducedViaMethod() {
+    void producedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
         assertThat(produced).isNotNull();
     }

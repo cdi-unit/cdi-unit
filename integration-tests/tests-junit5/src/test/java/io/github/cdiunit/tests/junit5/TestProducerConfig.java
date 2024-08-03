@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AdditionalClasses(TestProducerConfig.Producers.class)
 @TestProducerConfig.ProducerConfigClass(Object.class)
 @TestProducerConfig.ProducerConfigNum(0)
-public class TestProducerConfig extends BaseTest {
+class TestProducerConfig extends BaseTest {
 
     @Inject
     @Named("a")
@@ -79,25 +79,25 @@ public class TestProducerConfig extends BaseTest {
 
     @Test
     @ProducerConfigNum(1)
-    public void testA1() {
+    void a1() {
         assertThat(valueNamedA).isEqualTo("A1");
     }
 
     @Test
     @ProducerConfigNum(2)
-    public void testA2() {
+    void a2() {
         assertThat(valueNamedA).isEqualTo("A2");
     }
 
     @Test
     @ProducerConfigClass(ArrayList.class)
-    public void testArrayList() {
+    void arrayList() {
         assertThat(object.getClass()).isEqualTo(ArrayList.class);
     }
 
     @Test
     @ProducerConfigClass(HashSet.class)
-    public void testHashSet() {
+    void hashSet() {
         assertThat(object.getClass()).isEqualTo(HashSet.class);
     }
 

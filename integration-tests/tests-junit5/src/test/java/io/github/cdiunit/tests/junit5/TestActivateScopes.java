@@ -32,7 +32,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 
 @AdditionalClasses(ScopedFactory.class)
 @ActivateScopes(RequestScoped.class)
-public class TestActivateScopes extends BaseTest {
+class TestActivateScopes extends BaseTest {
 
     @Inject
     private Provider<Scoped> scoped;
@@ -44,7 +44,7 @@ public class TestActivateScopes extends BaseTest {
     private DConversationScoped conversationScoped;
 
     @Test
-    public void testRequestScoped() {
+    void requestScoped() {
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
         assertThat(b2).isEqualTo(b1);
@@ -54,27 +54,27 @@ public class TestActivateScopes extends BaseTest {
     }
 
     @Test
-    public void testNoActiveSessionScope() {
+    void noActiveSessionScope() {
         assertThat(sessionScoped).isNotNull();
         assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> sessionScoped.getFoo());
     }
 
     @Test
     @ActivateScopes.All({ @ActivateScopes(SessionScoped.class) })
-    public void testActiveSessionScope() {
+    void activeSessionScope() {
         assertThat(sessionScoped).isNotNull();
         sessionScoped.setFoo("success");
     }
 
     @Test
-    public void testNoActiveConversationScope() {
+    void noActiveConversationScope() {
         assertThat(conversationScoped).isNotNull();
         assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> conversationScoped.getFoo());
     }
 
     @Test
     @ActivateScopes(ConversationScoped.class)
-    public void testActiveConversationScope() {
+    void activeConversationScope() {
         assertThat(conversationScoped).isNotNull();
         conversationScoped.setFoo("success");
     }

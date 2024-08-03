@@ -4,6 +4,7 @@ name: io.github.cdiunit.CodingRulesAndConventions
 displayName: CDI Unit Coding Rules & Conventions
 recipeList:
   - io.github.cdiunit.AddApache2LicenseHeader
+  - io.github.cdiunit.JUnit5BestPractices
   - org.openrewrite.java.testing.assertj.Assertj
   - org.openrewrite.staticanalysis.CommonStaticAnalysis
   - org.openrewrite.staticanalysis.RemoveJavaDocAuthorTag
@@ -31,3 +32,14 @@ recipeList:
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
         limitations under the License.
+
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.github.cdiunit.JUnit5BestPractices
+displayName: JUnit Jupiter best practices
+preconditions:
+  - org.openrewrite.java.search.FindImports:
+      typePattern: org.junit.jupiter..*
+recipeList:
+  - org.openrewrite.java.testing.junit5.JUnit5BestPractices
