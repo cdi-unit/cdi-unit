@@ -49,7 +49,7 @@ jobs:
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            prepare-maven-repository-${{ github.sha }}-${{ github.run_id }}-
+            prepare-maven-repository-${{ github.sha }}-${{ github.run_id }}
 
       - name: Build with Maven
         run: ./ci-support/build.sh
@@ -85,8 +85,8 @@ jobs:
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-
-            ${{ env.cache-name }}-${{ github.sha }}-
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
 
       - name: Test Weld ${{ matrix.weld }}
         run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
@@ -118,8 +118,8 @@ jobs:
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-
-            ${{ env.cache-name }}-${{ github.sha }}-
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
 
       - name: Test DeltaSpike
         run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
