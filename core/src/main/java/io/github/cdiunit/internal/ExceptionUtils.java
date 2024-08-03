@@ -1,20 +1,18 @@
 package io.github.cdiunit.internal;
 
 /**
- * This product includes software developed at
- * The Apache Software Foundation (https://www.apache.org/).
+ * This product includes software developed at The Apache Software Foundation (https://www.apache.org/).
  */
 public final class ExceptionUtils {
 
     private ExceptionUtils() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
     /**
-     * Reinterprets the given (usually checked) exception without adding the exception to the throws
-     * clause of the calling method. This method prevents throws clause
-     * inflation and reduces the clutter of "Caused by" exceptions in the
-     * stack trace.
+     * Reinterprets the given (usually checked) exception without adding the exception to the throws clause of the calling
+     * method. This method prevents throws clause inflation and reduces the clutter of "Caused by" exceptions in the stack
+     * trace.
      * <p>
      * The use of this technique may be controversial, but useful.
      * </p>
@@ -35,8 +33,7 @@ public final class ExceptionUtils {
      *  }
      * </pre>
      * <p>
-     * This is an alternative to the more conservative approach of wrapping the
-     * checked exception in a RuntimeException:
+     * This is an alternative to the more conservative approach of wrapping the checked exception in a RuntimeException:
      * </p>
      *
      * <pre>
@@ -60,16 +57,12 @@ public final class ExceptionUtils {
      *  }
      * </pre>
      * <p>
-     * One downside to using this approach is that the Java compiler will not
-     * allow invoking code to specify a checked exception in a catch clause
-     * unless there is some code path within the try block that has invoked a
-     * method declared with that checked exception. If the invoking site wishes
-     * to catch the shaded checked exception, it must either invoke the shaded
-     * code through a method re-declaring the desired checked exception, or
-     * catch Exception and use the {@code instanceof} operator. Either of these
-     * techniques are required when interacting with non-Java JVM code such as
-     * Jython, Scala, or Groovy, since these languages do not consider any
-     * exceptions as checked.
+     * One downside to using this approach is that the Java compiler will not allow invoking code to specify a checked exception
+     * in a catch clause unless there is some code path within the try block that has invoked a method declared with that
+     * checked exception. If the invoking site wishes to catch the shaded checked exception, it must either invoke the shaded
+     * code through a method re-declaring the desired checked exception, or catch Exception and use the {@code instanceof}
+     * operator. Either of these techniques are required when interacting with non-Java JVM code such as Jython, Scala, or
+     * Groovy, since these languages do not consider any exceptions as checked.
      * </p>
      *
      * @param throwable The throwable to reinterpret as a {@link RuntimeException}.
@@ -82,14 +75,16 @@ public final class ExceptionUtils {
     }
 
     /**
-     * Claims a Throwable is another Throwable type using type erasure. This
-     * hides a checked exception from the Java compiler, allowing a checked
-     * exception to be thrown without having the exception in the method's throw
-     * clause.
+     * Claims a Throwable is another Throwable type using type erasure. This hides a checked exception from the Java compiler,
+     * allowing a checked exception to be thrown without having the exception in the method's throw clause.
      */
     @SuppressWarnings("unchecked")
     private static <R, T extends Throwable> R eraseType(final Throwable throwable) throws T {
         throw (T) throwable;
+    }
+
+    public static void illegalInstantiation() throws IllegalAccessException {
+        throw new IllegalAccessException("don't instantiate me");
     }
 
 }

@@ -2,10 +2,12 @@ package io.github.cdiunit.internal.activatescopes;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
+import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
+
 public final class ScopesHelper {
 
     private ScopesHelper() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
     public static void activateContexts(BeanManager beanManager, Object target) {

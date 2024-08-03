@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
+import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
+
 public final class BeanLifecycleHelper {
 
     public static void invokePostConstruct(Class<?> targetClass, Object target) throws Throwable {
@@ -47,7 +49,7 @@ public final class BeanLifecycleHelper {
     }
 
     private BeanLifecycleHelper() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
 }
