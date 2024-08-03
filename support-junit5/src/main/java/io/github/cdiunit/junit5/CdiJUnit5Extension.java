@@ -17,41 +17,88 @@ package io.github.cdiunit.junit5;
 
 import java.lang.reflect.Method;
 
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.jupiter.api.extension.*;
+
+import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.WeldHelper;
 
 public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
         AfterEachCallback, AfterAllCallback, InvocationInterceptor {
 
+    private TestConfiguration testConfiguration;
+    private Weld weld;
+    private WeldContainer container;
+
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext)
             throws TestInstantiationException {
-        return null;
+        try {
+            initWeld(testConfiguration);
+            return createTest(testConfiguration.getTestClass());
+        } catch (Throwable t) {
+            throw new TestInstantiationException(t.getMessage(), t);
+        }
+    }
+
+    private void initWeld(final TestConfiguration testConfig) throws Exception {
+        if (weld != null) {
+            return;
+        }
+
+        weld = WeldHelper.configureWeld(testConfig);
+        container = weld.initialize();
+    }
+
+    private void shutdownWeld() {
+        if (weld != null) {
+            weld.shutdown();
+            weld = null;
+            container = null;
+        }
+    }
+
+    private <T> T createTest(Class<T> testClass) {
+        return container.select(testClass).get();
     }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-
+        this.testConfiguration = new TestConfiguration(context.getRequiredTestClass(), null);
+        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+            initWeld(testConfiguration);
+        }
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-
-    }
-
-    @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-
+        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+            shutdownWeld();
+        }
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        this.testConfiguration.setTestMethod(context.getRequiredTestMethod());
+        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+            initWeld(testConfiguration);
+        }
+    }
 
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+            shutdownWeld();
+        }
     }
 
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
             ExtensionContext extensionContext) throws Throwable {
+        invocation.proceed();
     }
 
 }
