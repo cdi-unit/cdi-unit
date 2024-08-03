@@ -15,11 +15,13 @@
  */
 package io.github.cdiunit.internal.servlet.common;
 
+import static io.github.cdiunit.internal.servlet.common.ExceptionUtils.illegalInstantiation;
+
 public final class WebConstants {
     public static final String DATE_FORMAT_HEADER = "EEE, d MMM yyyy HH:mm:ss z";
 
     private WebConstants() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
 }

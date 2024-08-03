@@ -7,7 +7,7 @@ package io.github.cdiunit.internal.servlet.common;
 public final class ExceptionUtils {
 
     private ExceptionUtils() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
     /**
@@ -90,6 +90,10 @@ public final class ExceptionUtils {
     @SuppressWarnings("unchecked")
     private static <R, T extends Throwable> R eraseType(final Throwable throwable) throws T {
         throw (T) throwable;
+    }
+
+    public static void illegalInstantiation() throws IllegalAccessException {
+        throw new IllegalAccessException("don't instantiate me");
     }
 
 }

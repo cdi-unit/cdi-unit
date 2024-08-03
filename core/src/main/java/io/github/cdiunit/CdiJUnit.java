@@ -4,6 +4,8 @@ import org.junit.rules.MethodRule;
 
 import io.github.cdiunit.internal.junit4.CdiJUnitRule;
 
+import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
+
 /**
  * CDI Unit supports JUnit via:
  * <ul>
@@ -23,7 +25,7 @@ public final class CdiJUnit {
     }
 
     private CdiJUnit() throws IllegalAccessException {
-        throw new IllegalAccessException("don't instantiate me");
+        illegalInstantiation();
     }
 
 }
