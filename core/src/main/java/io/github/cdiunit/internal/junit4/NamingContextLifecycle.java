@@ -23,7 +23,6 @@ import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.junit.runners.model.Statement;
 
-import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.naming.CdiUnitContextFactory;
 
 public class NamingContextLifecycle extends Statement {
@@ -31,14 +30,11 @@ public class NamingContextLifecycle extends Statement {
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
     private static final String JNDI_BEAN_MANAGER_NAME = "java:comp/BeanManager";
 
-    private final Statement base;
-    private final TestConfiguration testConfiguration;
+    private final Statement next;
     private final Supplier<BeanManager> beanManager;
 
-    public NamingContextLifecycle(Statement base, TestConfiguration testConfiguration,
-            Supplier<BeanManager> beanManager) {
-        this.base = base;
-        this.testConfiguration = testConfiguration;
+    public NamingContextLifecycle(Statement next, Supplier<BeanManager> beanManager) {
+        this.next = next;
         this.beanManager = beanManager;
     }
 
@@ -52,7 +48,7 @@ public class NamingContextLifecycle extends Statement {
             }
             initialContext = new InitialContext();
             initialContext.bind(JNDI_BEAN_MANAGER_NAME, beanManager.get());
-            base.evaluate();
+            next.evaluate();
         } finally {
             try {
                 if (initialContext != null) {
