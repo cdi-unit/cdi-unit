@@ -75,7 +75,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
     private List attributeListener;
     private boolean isAsyncSupported;
 
-    private ServletContext servletContext;
+    private final ServletContext servletContext;
 
     private HttpSession session;
 
@@ -276,7 +276,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
     }
 
     public Locale getLocale() {
-        if (locales.size() < 1) {
+        if (locales.isEmpty()) {
             return Locale.getDefault();
         }
         return (Locale) locales.get(0);
@@ -325,7 +325,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 
     public String getHeader(String key) {
         List headerList = (List) headers.get(key);
-        if (null == headerList || 0 == headerList.size()) {
+        if (null == headerList || headerList.isEmpty()) {
             return null;
         }
         return (String) headerList.get(0);
@@ -340,7 +340,6 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
         if (null == headerList) {
             return new Vector().elements();
         }
-        ;
         return new Vector(headerList).elements();
     }
 
@@ -349,7 +348,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
         if (null == header) {
             return -1;
         }
-        return new Integer(header).intValue();
+        return Integer.valueOf(header).intValue();
     }
 
     public void addHeader(String key, String value) {
@@ -483,10 +482,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
 
     public boolean isRequestedSessionIdValid() {
         HttpSession session = getSession();
-        if (null == session) {
-            return false;
-        }
-        return true;
+        return null != session;
     }
 
     public boolean isUserInRole(String role) {
@@ -497,7 +493,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
     }
 
     public void setUserInRole(String role, boolean isInRole) {
-        roles.put(role, new Boolean(isInRole));
+        roles.put(role, Boolean.valueOf(isInRole));
     }
 
     public String getCharacterEncoding() {
@@ -590,7 +586,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
     }
 
     public void setBodyContent(String bodyContent) {
-        String encoding = (null == characterEncoding) ? "ISO-8859-1" : characterEncoding;
+        String encoding = null == characterEncoding ? "ISO-8859-1" : characterEncoding;
         try {
             setBodyContent(bodyContent.getBytes(encoding));
         } catch (UnsupportedEncodingException exc) {
@@ -611,7 +607,7 @@ public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessi
         if (null == scheme) {
             return false;
         }
-        return scheme.equals("https");
+        return "https".equals(scheme);
     }
 
     public String getLocalAddr() {

@@ -88,7 +88,7 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
     }
 
     private boolean exceptCdiUnitAnnotations(Annotation annotation) {
-        return !annotation.annotationType().getPackage().getName().equals("io.github.cdiunit");
+        return !"io.github.cdiunit".equals(annotation.annotationType().getPackage().getName());
     }
 
     private void discover(Context context, Type genericSuperclass) {

@@ -80,9 +80,7 @@ public class InjectAtResourceExtension implements Extension {
             if (producesPresent) {
                 method.add(namedLiteral);
             } else {
-                method.params().forEach(param -> {
-                    param.add(namedLiteral);
-                });
+                method.params().forEach(param -> param.add(namedLiteral));
             }
 
             if (producesPresent) {

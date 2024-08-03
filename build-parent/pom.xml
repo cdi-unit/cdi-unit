@@ -109,7 +109,7 @@
 								<goals>
 									<goal>runNoFork</goal>
 								</goals>
-								<phase>prepare-package</phase>
+								<phase>generate-sources</phase>
 							</execution>
 						</executions>
 					</plugin>

@@ -1,7 +1,9 @@
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: io.github.cdiunit.RewriteRules
+name: io.github.cdiunit.CodingRulesAndConventions
+displayName: CDI Unit Coding Rules & Conventions
 recipeList:
   - org.openrewrite.java.testing.assertj.Assertj
+  - org.openrewrite.staticanalysis.CommonStaticAnalysis
 #  - org.openrewrite.staticanalysis.CodeCleanup
 #  - org.openrewrite.java.format.AutoFormat

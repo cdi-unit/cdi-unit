@@ -304,7 +304,7 @@
 					<version>5.37.1</version>
 					<configuration>
 						<activeRecipes>
-							<recipe>io.github.cdiunit.RewriteRules</recipe>
+							<recipe>io.github.cdiunit.CodingRulesAndConventions</recipe>
 						</activeRecipes>
 						<failOnDryRunResults>true</failOnDryRunResults>
 						<runPerSubmodule>true</runPerSubmodule>

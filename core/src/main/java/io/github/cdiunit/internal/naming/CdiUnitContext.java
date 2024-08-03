@@ -28,8 +28,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 public class CdiUnitContext implements Context {
-    private Map<String, Object> properties = new HashMap<String, Object>();
-    private Map<String, Object> bindings = new HashMap<String, Object>();
+    private final Map<String, Object> properties = new HashMap<>();
+    private final Map<String, Object> bindings = new HashMap<>();
 
     @Override
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {

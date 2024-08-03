@@ -71,8 +71,9 @@ public class ProducerConfigExtension implements Extension {
     @SuppressWarnings("unused")
     Object produceConfigValue(InjectionPoint ip) {
         Map<Method, Annotation> values = configurations.get(ip.getType());
-        if (values == null)
+        if (values == null) {
             return null;
+        }
         Annotation result = values.get(testConfiguration.getTestMethod());
         return result != null ? result : values.get(null);
     }
@@ -81,7 +82,7 @@ public class ProducerConfigExtension implements Extension {
         ProducerConfigExtension extension = this;
         AnnotatedType<ProducerConfigExtension> at = bm.createAnnotatedType(ProducerConfigExtension.class);
         AnnotatedMethod<? super ProducerConfigExtension> producerMethod = at.getMethods().stream()
-                .filter(m -> m.getJavaMember().getName().equals("produceConfigValue"))
+                .filter(m -> "produceConfigValue".equals(m.getJavaMember().getName()))
                 .findFirst()
                 .get();
         Bean<ProducerConfigExtension> bean = new Bean<>() {

@@ -12,8 +12,8 @@ import io.github.cdiunit.internal.DiscoveryExtension;
  */
 public class InvalidRuleFieldUsageDiscoveryExtension implements DiscoveryExtension {
 
-    public static final String INVALID_RULE_USAGE_MESSAGE = "Invalid @Rule usage detected on field %s of class %s. " +
-            "To use rules in CDI tests, put the @Rule annotation on a method instead of a field.";
+    public static final String INVALID_RULE_USAGE_MESSAGE = "Invalid @Rule usage detected on field %s of class %s. "
+            + "To use rules in CDI tests, put the @Rule annotation on a method instead of a field.";
 
     /**
      * The non-null value here means that we have JUnit in the classpath.
@@ -37,8 +37,8 @@ public class InvalidRuleFieldUsageDiscoveryExtension implements DiscoveryExtensi
         final Class<?> testClass = context.getTestConfiguration().getTestClass();
         final Class<?> declaringClass = field.getDeclaringClass();
         final int fieldModifiers = field.getModifiers();
-        final boolean acceptedRuleFieldModifiers = Modifier.isPublic(fieldModifiers) &&
-                !Modifier.isStatic(fieldModifiers);
+        final boolean acceptedRuleFieldModifiers = Modifier.isPublic(fieldModifiers)
+                && !Modifier.isStatic(fieldModifiers);
         if (declaringClass.isAssignableFrom(testClass) && acceptedRuleFieldModifiers) {
             final String message = String.format(INVALID_RULE_USAGE_MESSAGE, field.getName(), declaringClass.getName());
             throw new InvalidRuleFieldUsageException(message);

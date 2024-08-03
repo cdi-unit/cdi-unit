@@ -46,9 +46,9 @@ public class DeltaspikeScopeDiscoveryExtension implements DiscoveryExtension {
     }
 
     private void discoverAnnotated(Context context, AnnotatedElement e) {
-        var matchingAnnotationPresent = isAnnotationPresent(e, windowScopedAnnotation) ||
-                isAnnotationPresent(e, viewAccessScopedAnnotation) ||
-                isAnnotationPresent(e, groupedConversationScopedAnnotation);
+        var matchingAnnotationPresent = isAnnotationPresent(e, windowScopedAnnotation)
+                || isAnnotationPresent(e, viewAccessScopedAnnotation)
+                || isAnnotationPresent(e, groupedConversationScopedAnnotation);
         if (matchingAnnotationPresent) {
             context.scanPackages(supportClassesToLoad).forEach(context::processBean);
         }
@@ -63,9 +63,9 @@ public class DeltaspikeScopeDiscoveryExtension implements DiscoveryExtension {
     }
 
     private boolean typeMatches(Class<?> t) {
-        return (windowContext != null && windowContext.isAssignableFrom(t)) ||
-                (viewAccessContextManager != null && viewAccessContextManager.isAssignableFrom(t)) ||
-                (groupedConversationManager != null && groupedConversationManager.isAssignableFrom(t));
+        return (windowContext != null && windowContext.isAssignableFrom(t))
+                || (viewAccessContextManager != null && viewAccessContextManager.isAssignableFrom(t))
+                || (groupedConversationManager != null && groupedConversationManager.isAssignableFrom(t));
     }
 
     private void discoverField(Context context, Field field) {

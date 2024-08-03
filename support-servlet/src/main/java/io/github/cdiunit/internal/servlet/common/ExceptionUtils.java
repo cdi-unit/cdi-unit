@@ -4,7 +4,7 @@ package io.github.cdiunit.internal.servlet.common;
  * This product includes software developed at
  * The Apache Software Foundation (https://www.apache.org/).
  */
-public class ExceptionUtils {
+public final class ExceptionUtils {
 
     private ExceptionUtils() throws IllegalAccessException {
         throw new IllegalAccessException("don't instantiate me");
@@ -78,7 +78,7 @@ public class ExceptionUtils {
      */
     public static <T extends RuntimeException> T asRuntimeException(final Throwable throwable) {
         // claim that the eraseType invocation returns a RuntimeException
-        return ExceptionUtils.<T, RuntimeException> eraseType(throwable);
+        return ExceptionUtils.eraseType(throwable);
     }
 
     /**
