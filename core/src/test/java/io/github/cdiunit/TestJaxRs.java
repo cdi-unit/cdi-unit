@@ -7,11 +7,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.*;
 import jakarta.ws.rs.ext.Providers;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.jaxrs.SupportJaxRs;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @SupportJaxRs
@@ -22,20 +23,20 @@ public class TestJaxRs {
 
     @Test
     public void testJaxRs() {
-        Assert.assertNotNull(webService.request);
-        Assert.assertNotNull(webService.response);
-        Assert.assertNotNull(webService.context);
-        Assert.assertNotNull(webService.uriInfo);
-        Assert.assertNotNull(webService.jaxRsRequest);
-        Assert.assertNotNull(webService.securityContext);
-        Assert.assertNotNull(webService.providers);
-        Assert.assertNotNull(webService.headers);
+        assertThat(webService.request).isNotNull();
+        assertThat(webService.response).isNotNull();
+        assertThat(webService.context).isNotNull();
+        assertThat(webService.uriInfo).isNotNull();
+        assertThat(webService.jaxRsRequest).isNotNull();
+        assertThat(webService.securityContext).isNotNull();
+        assertThat(webService.providers).isNotNull();
+        assertThat(webService.headers).isNotNull();
     }
 
     @Test
     @InRequestScope
     public void testRequestAttributeAccess() {
-        Assert.assertNull(webService.request.getAttribute("test"));
+        assertThat(webService.request.getAttribute("test")).isNull();
     }
 
     public static class WebService {

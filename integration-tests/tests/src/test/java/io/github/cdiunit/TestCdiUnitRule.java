@@ -18,12 +18,13 @@ import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
 public class TestCdiUnitRule extends BaseTest {
@@ -90,7 +91,7 @@ public class TestCdiUnitRule extends BaseTest {
 
     @Test
     public void testGenerics() {
-        Assert.assertEquals(producedList, generics.get());
+        assertThat(generics.get()).isEqualTo(producedList);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class TestCdiUnitRule extends BaseTest {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("test"); // Force scoping
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals(b1, b2);
+        assertThat(b2).isEqualTo(b1);
 
     }
 
@@ -116,7 +117,7 @@ public class TestCdiUnitRule extends BaseTest {
         CSessionScoped c1 = sessionScoped.get();
         c1.setFoo("test"); // Force scoping
         CSessionScoped c2 = sessionScoped.get();
-        Assert.assertEquals(c1, c2);
+        assertThat(c2).isEqualTo(c1);
 
     }
 
@@ -133,7 +134,7 @@ public class TestCdiUnitRule extends BaseTest {
         DConversationScoped d1 = conversationScoped.get();
         d1.setFoo("test"); // Force scoping
         DConversationScoped d2 = conversationScoped.get();
-        Assert.assertEquals(d1, d2);
+        assertThat(d2).isEqualTo(d1);
 
     }
 
@@ -149,12 +150,12 @@ public class TestCdiUnitRule extends BaseTest {
     @Test
     public void testTestAlternative() {
         AInterface a1 = a.get();
-        Assert.assertEquals(mocks.mockA(), a1);
+        assertThat(a1).isEqualTo(mocks.mockA());
     }
 
     @Test
     public void testPostConstruct() {
-        Assert.assertTrue(postConstructCalled);
+        assertThat(postConstructCalled).isTrue();
     }
 
     @PostConstruct
@@ -164,23 +165,23 @@ public class TestCdiUnitRule extends BaseTest {
 
     @Test
     public void testBeanManager() {
-        Assert.assertNotNull(getBeanManager());
-        Assert.assertNotNull(beanManager);
+        assertThat(getBeanManager()).isNotNull();
+        assertThat(beanManager).isNotNull();
     }
 
     @Test
     public void testSuper() {
-        Assert.assertNotNull(aImpl.getBeanManager());
+        assertThat(aImpl.getBeanManager()).isNotNull();
     }
 
     @Test
     public void testApplicationScoped() {
-        Assert.assertNotNull(f1);
-        Assert.assertNotNull(f2);
-        Assert.assertEquals(f1, f2);
+        assertThat(f1).isNotNull();
+        assertThat(f2).isNotNull();
+        assertThat(f2).isEqualTo(f1);
 
         AInterface a1 = f1.getA();
-        Assert.assertEquals(mocks.mockA(), a1);
+        assertThat(a1).isEqualTo(mocks.mockA());
     }
 
     @Inject
@@ -192,7 +193,7 @@ public class TestCdiUnitRule extends BaseTest {
 
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
-        Assert.assertEquals(b1, b2);
+        assertThat(b2).isEqualTo(b1);
         b1.setDisposedListener(mocks.disposeListener());
         contextController.closeRequest();
         Mockito.verify(mocks.disposeListener()).run();
@@ -211,17 +212,17 @@ public class TestCdiUnitRule extends BaseTest {
         BRequestScoped b1 = requestScoped.get();
         b1.setFoo("Bar");
         BRequestScoped b2 = requestScoped.get();
-        Assert.assertEquals("test", r2.getAttribute("test"));
+        assertThat(r2.getAttribute("test")).isEqualTo("test");
 
-        Assert.assertSame(b1.getFoo(), b2.getFoo());
+        assertThat(b2.getFoo()).isSameAs(b1.getFoo());
         contextController.closeRequest();
         HttpServletRequest r3 = contextController.openRequest();
         r3.setAttribute("test", "test2");
         HttpServletRequest r4 = requestProvider;
 
-        Assert.assertEquals("test2", r4.getAttribute("test"));
+        assertThat(r4.getAttribute("test")).isEqualTo("test2");
         BRequestScoped b3 = requestScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
     }
 
     @Test
@@ -231,13 +232,13 @@ public class TestCdiUnitRule extends BaseTest {
         CSessionScoped b1 = sessionScoped.get();
         b1.setFoo("Bar");
         CSessionScoped b2 = sessionScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
+        assertThat(b2.getFoo()).isEqualTo(b1.getFoo());
         contextController.closeRequest();
         contextController.closeSession();
 
         contextController.openRequest();
         CSessionScoped b3 = sessionScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
 
     }
 
@@ -251,15 +252,15 @@ public class TestCdiUnitRule extends BaseTest {
         BRequestScoped r1 = requestScoped.get();
         r1.setFoo("Request Bar");
         BRequestScoped r2 = requestScoped.get();
-        Assert.assertSame(r1.getFoo(), r2.getFoo());
+        assertThat(r2.getFoo()).isSameAs(r1.getFoo());
         contextController.closeRequest();
         contextController.openRequest();
         BRequestScoped r3 = requestScoped.get();
-        Assert.assertNull(r3.getFoo());
+        assertThat(r3.getFoo()).isNull();
 
         CSessionScoped b2 = sessionScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
-        Assert.assertNotNull(b2.getFoo());
+        assertThat(b2.getFoo()).isEqualTo(b1.getFoo());
+        assertThat(b2.getFoo()).isNotNull();
 
     }
 
@@ -271,26 +272,26 @@ public class TestCdiUnitRule extends BaseTest {
         DConversationScoped b1 = conversationScoped.get();
         b1.setFoo("Bar");
         DConversationScoped b2 = conversationScoped.get();
-        Assert.assertEquals(b1.getFoo(), b2.getFoo());
+        assertThat(b2.getFoo()).isEqualTo(b1.getFoo());
         conversation.end();
         contextController.closeRequest();
         contextController.openRequest();
         conversation.begin();
         DConversationScoped b3 = conversationScoped.get();
-        Assert.assertEquals(null, b3.getFoo());
+        assertThat(b3.getFoo()).isNull();
     }
 
     @Test
     public void testProducedViaField() {
         produced = new ProducedViaField(2);
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        Assert.assertEquals(produced, produced);
+        assertThat(produced).isEqualTo(produced);
     }
 
     @Test
     public void testProducedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
-        Assert.assertNotNull(produced);
+        assertThat(produced).isNotNull();
     }
 
     public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {

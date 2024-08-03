@@ -7,9 +7,11 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ScopedFactory.class)
@@ -29,35 +31,35 @@ public class TestActivateScopesAll {
     public void testRequestScoped() {
         Scoped b1 = scoped.get();
         Scoped b2 = scoped.get();
-        Assert.assertEquals(b1, b2);
+        assertThat(b2).isEqualTo(b1);
 
-        b1.setDisposedListener(() -> Assert.assertTrue(true));
-        b2.setDisposedListener(() -> Assert.assertTrue(true));
+        b1.setDisposedListener(() -> assertThat(this).isNotNull());
+        b2.setDisposedListener(() -> assertThat(this).isNotNull());
     }
 
     @Test
     public void testNoActiveSessionScope() {
-        Assert.assertNotNull(sessionScoped);
-        Assert.assertThrows(ContextNotActiveException.class, () -> sessionScoped.getFoo());
+        assertThat(sessionScoped).isNotNull();
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> sessionScoped.getFoo());
     }
 
     @Test
     @ActivateScopes.All({ @ActivateScopes(SessionScoped.class) })
     public void testActiveSessionScope() {
-        Assert.assertNotNull(sessionScoped);
+        assertThat(sessionScoped).isNotNull();
         sessionScoped.setFoo("success");
     }
 
     @Test
     public void testNoActiveConversationScope() {
-        Assert.assertNotNull(conversationScoped);
-        Assert.assertThrows(ContextNotActiveException.class, () -> conversationScoped.getFoo());
+        assertThat(conversationScoped).isNotNull();
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> conversationScoped.getFoo());
     }
 
     @Test
     @ActivateScopes(ConversationScoped.class)
     public void testActiveConversationScope() {
-        Assert.assertNotNull(conversationScoped);
+        assertThat(conversationScoped).isNotNull();
         conversationScoped.setFoo("success");
     }
 

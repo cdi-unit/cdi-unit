@@ -20,12 +20,13 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
 import org.easymock.Mock;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.AInterface;
 import io.github.cdiunit.CdiRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 public class TestEasymock {
@@ -40,8 +41,8 @@ public class TestEasymock {
     @Test
     public void testEasyMock() {
         AInterface a1 = a.get();
-        Assert.assertEquals(mockA, a1);
-        Assert.assertNotNull(mockA);
+        assertThat(a1).isEqualTo(mockA);
+        assertThat(mockA).isNotNull();
     }
 
 }

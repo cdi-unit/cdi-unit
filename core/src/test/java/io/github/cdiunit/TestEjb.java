@@ -20,12 +20,13 @@ import jakarta.ejb.Singleton;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.inject.Produces;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.TestEjb.*;
 import io.github.cdiunit.ejb.SupportEjb;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ EJBStateless.class, EJBStatelessNamed.class, EJBStateful.class, EJBStatefulNamed.class, EJBSingleton.class,
@@ -68,13 +69,13 @@ public class TestEjb {
 
     @Test
     public void testEjb() {
-        Assert.assertNotEquals(inject, injectNamed);
-        Assert.assertTrue(injectStateless instanceof EJBStateless);
-        Assert.assertTrue(injectStatelessNamed instanceof EJBStatelessNamed);
-        Assert.assertTrue(injectSingleton instanceof EJBSingleton);
-        Assert.assertTrue(injectSingletonNamed instanceof EJBSingletonNamed);
-        Assert.assertTrue(injectStateful instanceof EJBStateful);
-        Assert.assertTrue(injectStatefulNamed instanceof EJBStatefulNamed);
+        assertThat(injectNamed).isNotEqualTo(inject);
+        assertThat(injectStateless instanceof EJBStateless).isTrue();
+        assertThat(injectStatelessNamed instanceof EJBStatelessNamed).isTrue();
+        assertThat(injectSingleton instanceof EJBSingleton).isTrue();
+        assertThat(injectSingletonNamed instanceof EJBSingletonNamed).isTrue();
+        assertThat(injectStateful instanceof EJBStateful).isTrue();
+        assertThat(injectStatefulNamed instanceof EJBStatefulNamed).isTrue();
     }
 
     public static interface EJBI {

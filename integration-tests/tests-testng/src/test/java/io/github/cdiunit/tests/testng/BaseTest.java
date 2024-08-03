@@ -3,10 +3,11 @@ package io.github.cdiunit.tests.testng;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 
 import io.github.cdiunit.NgCdiRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class BaseTest {
 
@@ -19,8 +20,8 @@ abstract class BaseTest {
 
     @BeforeClass
     void failIfExtendsRunner() {
-        Assert.assertFalse(NgCdiRunner.class.isInstance(this),
-                String.format("%s MUST NOT extend %s", this.getClass(), NgCdiRunner.class));
+        assertThat(NgCdiRunner.class.isInstance(this))
+                .withFailMessage(String.format("%s MUST NOT extend %s", this.getClass(), NgCdiRunner.class)).isFalse();
     }
 
 }
