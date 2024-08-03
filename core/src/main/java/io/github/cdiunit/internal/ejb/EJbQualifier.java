@@ -34,7 +34,7 @@ public @interface EJbQualifier {
         private static final long serialVersionUID = 6325669711688098239L;
         private final String name;
 
-        public final static EJbQualifierLiteral INSTANCE = new EJbQualifierLiteral("");
+        public static final EJbQualifierLiteral INSTANCE = new EJbQualifierLiteral("");
 
         public EJbQualifierLiteral(String name) {
             this.name = name;

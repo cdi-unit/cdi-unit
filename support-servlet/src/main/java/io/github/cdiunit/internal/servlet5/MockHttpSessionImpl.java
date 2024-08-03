@@ -48,7 +48,7 @@ public class MockHttpSessionImpl implements HttpSession {
         attributes = new HashMap();
         isValid = true;
         creationTime = System.currentTimeMillis();
-        sessionId = new Double(Math.random()).toString();
+        sessionId = Double.toString(Math.random());
         maxInactiveInterval = -1;
         attributeListener = new ArrayList();
     }

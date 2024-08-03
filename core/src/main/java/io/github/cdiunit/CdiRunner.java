@@ -55,7 +55,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
-    private Class<?> clazz;
+    private final Class<?> clazz;
     private Weld weld;
     private WeldContainer container;
     private Throwable startupException;
@@ -80,8 +80,9 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
     }
 
     private void initWeld(final TestConfiguration testConfig) {
-        if (weld != null)
+        if (weld != null) {
             return;
+        }
 
         try {
             weld = WeldHelper.configureWeld(testConfig);

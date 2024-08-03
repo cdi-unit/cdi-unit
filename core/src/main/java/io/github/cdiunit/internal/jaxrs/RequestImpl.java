@@ -20,11 +20,11 @@ import org.jboss.resteasy.util.HttpHeaderNames;
  * Treaked from resteasy RequestImpl
  */
 public class RequestImpl implements Request {
-    private HttpHeaders headers;
+    private final HttpHeaders headers;
     private String varyHeader;
-    private String httpMethod;
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    private final String httpMethod;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
 
     public RequestImpl(HttpServletRequest request, HttpServletResponse response) {
         this.headers = ServletUtil.extractHttpHeaders(request);
@@ -38,7 +38,7 @@ public class RequestImpl implements Request {
     }
 
     public MultivaluedMap<String, String> getFormParameters() {
-        MultivaluedMapImpl<String, String> params = new MultivaluedMapImpl<String, String>();
+        MultivaluedMapImpl<String, String> params = new MultivaluedMapImpl<>();
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             for (String value : entry.getValue()) {
@@ -49,8 +49,9 @@ public class RequestImpl implements Request {
     }
 
     public Variant selectVariant(List<Variant> variants) throws IllegalArgumentException {
-        if (variants == null || variants.size() == 0)
+        if (variants == null || variants.isEmpty()) {
             throw new IllegalArgumentException("Variant list must not be zero");
+        }
 
         ServerDrivenNegotiation negotiation = new ServerDrivenNegotiation();
         MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
@@ -70,34 +71,40 @@ public class RequestImpl implements Request {
         boolean acceptEncoding = false;
 
         for (Variant variant : variants) {
-            if (variant.getMediaType() != null)
+            if (variant.getMediaType() != null) {
                 accept = true;
-            if (variant.getLanguage() != null)
+            }
+            if (variant.getLanguage() != null) {
                 acceptLanguage = true;
-            if (variant.getEncoding() != null)
+            }
+            if (variant.getEncoding() != null) {
                 acceptEncoding = true;
+            }
         }
 
         String vary = null;
-        if (accept)
+        if (accept) {
             vary = HttpHeaderNames.ACCEPT;
+        }
         if (acceptLanguage) {
-            if (vary == null)
+            if (vary == null) {
                 vary = HttpHeaderNames.ACCEPT_LANGUAGE;
-            else
+            } else {
                 vary += ", " + HttpHeaderNames.ACCEPT_LANGUAGE;
+            }
         }
         if (acceptEncoding) {
-            if (vary == null)
+            if (vary == null) {
                 vary = HttpHeaderNames.ACCEPT_ENCODING;
-            else
+            } else {
                 vary += ", " + HttpHeaderNames.ACCEPT_ENCODING;
+            }
         }
         return vary;
     }
 
     public List<EntityTag> convertEtag(List<String> tags) {
-        ArrayList<EntityTag> result = new ArrayList<EntityTag>();
+        ArrayList<EntityTag> result = new ArrayList<>();
         for (String tag : tags) {
             String[] split = tag.split(",");
             for (String etag : split) {
@@ -110,13 +117,14 @@ public class RequestImpl implements Request {
     public Response.ResponseBuilder ifMatch(List<EntityTag> ifMatch, EntityTag eTag) {
         boolean match = false;
         for (EntityTag tag : ifMatch) {
-            if (tag.equals(eTag) || tag.getValue().equals("*")) {
+            if (tag.equals(eTag) || "*".equals(tag.getValue())) {
                 match = true;
                 break;
             }
         }
-        if (match)
+        if (match) {
             return null;
+        }
         return Response.status(Response.Status.PRECONDITION_FAILED).tag(eTag);
 
     }
@@ -124,7 +132,7 @@ public class RequestImpl implements Request {
     public Response.ResponseBuilder ifNoneMatch(List<EntityTag> ifMatch, EntityTag eTag) {
         boolean match = false;
         for (EntityTag tag : ifMatch) {
-            if (tag.equals(eTag) || tag.getValue().equals("*")) {
+            if (tag.equals(eTag) || "*".equals(tag.getValue())) {
                 match = true;
                 break;
             }
@@ -140,24 +148,26 @@ public class RequestImpl implements Request {
     }
 
     public Response.ResponseBuilder evaluatePreconditions(EntityTag eTag) {
-        if (eTag == null)
+        if (eTag == null) {
             throw new IllegalArgumentException("eTag param null");
+        }
         Response.ResponseBuilder builder = null;
         List<String> ifMatch = headers.getRequestHeaders().get(HttpHeaderNames.IF_MATCH);
-        if (ifMatch != null && ifMatch.size() > 0) {
+        if (ifMatch != null && !ifMatch.isEmpty()) {
             builder = ifMatch(convertEtag(ifMatch), eTag);
         }
         if (builder == null) {
             List<String> ifNoneMatch = headers.getRequestHeaders().get(HttpHeaderNames.IF_NONE_MATCH);
-            if (ifNoneMatch != null && ifNoneMatch.size() > 0) {
+            if (ifNoneMatch != null && !ifNoneMatch.isEmpty()) {
                 builder = ifNoneMatch(convertEtag(ifNoneMatch), eTag);
             }
         }
         if (builder != null) {
             builder.tag(eTag);
         }
-        if (builder != null && varyHeader != null)
+        if (builder != null && varyHeader != null) {
             builder.header(HttpHeaderNames.VARY, varyHeader);
+        }
         return builder;
     }
 
@@ -182,8 +192,9 @@ public class RequestImpl implements Request {
     }
 
     public Response.ResponseBuilder evaluatePreconditions(Date lastModified) {
-        if (lastModified == null)
+        if (lastModified == null) {
             throw new IllegalArgumentException("lastModified param null");
+        }
         Response.ResponseBuilder builder = null;
         String ifModifiedSince = headers.getRequestHeaders().getFirst(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null) {
@@ -196,38 +207,42 @@ public class RequestImpl implements Request {
                 builder = ifUnmodifiedSince(ifUnmodifiedSince, lastModified);
             }
         }
-        if (builder != null && varyHeader != null)
+        if (builder != null && varyHeader != null) {
             builder.header(HttpHeaderNames.VARY, varyHeader);
+        }
 
         return builder;
     }
 
     public Response.ResponseBuilder evaluatePreconditions(Date lastModified, EntityTag eTag) {
-        if (lastModified == null)
+        if (lastModified == null) {
             throw new IllegalArgumentException("lastModified param null");
-        if (eTag == null)
+        }
+        if (eTag == null) {
             throw new IllegalArgumentException("eTag param null");
+        }
         Response.ResponseBuilder rtn = null;
         Response.ResponseBuilder lastModifiedBuilder = evaluatePreconditions(lastModified);
         Response.ResponseBuilder etagBuilder = evaluatePreconditions(eTag);
-        if (lastModifiedBuilder == null && etagBuilder == null)
+        if (lastModifiedBuilder == null && etagBuilder == null) {
             rtn = null;
-        else if (lastModifiedBuilder != null && etagBuilder == null)
+        } else if (lastModifiedBuilder != null && etagBuilder == null) {
             rtn = lastModifiedBuilder;
-        else if (lastModifiedBuilder == null && etagBuilder != null)
+        } else if (lastModifiedBuilder == null && etagBuilder != null) {
             rtn = etagBuilder;
-        else {
+        } else {
             rtn = lastModifiedBuilder;
             rtn.tag(eTag);
         }
-        if (rtn != null && varyHeader != null)
+        if (rtn != null && varyHeader != null) {
             rtn.header(HttpHeaderNames.VARY, varyHeader);
+        }
         return rtn;
     }
 
     public Response.ResponseBuilder evaluatePreconditions() {
         List<String> ifMatch = headers.getRequestHeaders().get(HttpHeaderNames.IF_MATCH);
-        if (ifMatch == null || ifMatch.size() == 0) {
+        if (ifMatch == null || ifMatch.isEmpty()) {
             return null;
         }
 

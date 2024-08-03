@@ -78,7 +78,7 @@ public class TestCdiUnitRule extends BaseTest {
     Instance<List<?>> generics;
 
     @Produces
-    List<Object> producedList = new ArrayList<Object>();
+    List<Object> producedList = new ArrayList<>();
 
     @Inject
     // direct access to producer to check injected instances for equality

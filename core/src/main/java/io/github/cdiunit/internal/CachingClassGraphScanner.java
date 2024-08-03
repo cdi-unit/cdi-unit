@@ -29,8 +29,9 @@ public class CachingClassGraphScanner implements ClasspathScanner {
             2, //
             (int) Math.ceil(
                     // Num IO threads (top out at 4, since most I/O devices won't scale better than this)
-                    Math.min(4.0f, Runtime.getRuntime().availableProcessors() * 0.75f) +
-                    // Num scanning threads (higher than available processors, because some threads can be blocked)
+                    Math.min(4.0f, Runtime.getRuntime().availableProcessors() * 0.75f)
+                            // Num scanning threads (higher than available processors, because some threads can be blocked)
+                            + // Num scanning threads (higher than available processors, because some threads can be blocked)
                             Runtime.getRuntime().availableProcessors() * 1.25f) //
     );
 

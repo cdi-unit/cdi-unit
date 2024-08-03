@@ -25,7 +25,7 @@ import jakarta.servlet.ServletInputStream;
  * Mock implementation of <code>ServletInputStream</code>.
  */
 public class MockServletInputStream extends ServletInputStream {
-    private ByteArrayInputStream stream;
+    private final ByteArrayInputStream stream;
 
     public MockServletInputStream(byte[] data) {
         stream = new ByteArrayInputStream(data);

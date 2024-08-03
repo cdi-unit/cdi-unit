@@ -181,7 +181,7 @@ abstract class TestBasicFeatures extends BaseTest {
     Instance<List<?>> generics;
 
     @Produces
-    List<Object> producedList = new ArrayList<Object>();
+    List<Object> producedList = new ArrayList<>();
 
     @Test
     public void testGenerics() {

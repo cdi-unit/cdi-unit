@@ -523,8 +523,8 @@ public class MockServletContext implements ServletContext {
 
     @Override
     public Set<SessionTrackingMode> getEffectiveSessionTrackingModes() {
-        return (this.sessionTrackingModes != null ? Collections.unmodifiableSet(this.sessionTrackingModes)
-                : DEFAULT_SESSION_TRACKING_MODES);
+        return this.sessionTrackingModes != null ? Collections.unmodifiableSet(this.sessionTrackingModes)
+                : DEFAULT_SESSION_TRACKING_MODES;
     }
 
     @Override

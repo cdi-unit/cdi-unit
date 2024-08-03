@@ -44,7 +44,7 @@ public class BeanDeploymentArchiveImpl implements BeanDeploymentArchive {
 
     public BeanDeploymentArchiveImpl(String id,
             Collection<String> beanClasses, BeansXml beansXml) {
-        this(id, beanClasses, beansXml, new ArrayList<BeanDeploymentArchive>());
+        this(id, beanClasses, beansXml, new ArrayList<>());
     }
 
     public Collection<String> getBeanClasses() {

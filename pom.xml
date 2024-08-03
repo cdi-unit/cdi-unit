@@ -31,4 +31,13 @@
 		<module>integration-tests</module>
 	</modules>
 
+	<profiles>
+		<profile>
+			<id>rewrite</id>
+			<build>
+				<defaultGoal>package</defaultGoal>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
