@@ -14,6 +14,10 @@
 
 	<name>CDI-Unit - JUnit Jupiter Support</name>
 
+	<properties>
+		<central.publishing.phase>deploy</central.publishing.phase>
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
