@@ -90,6 +90,42 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>openrewrite</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.openrewrite.maven</groupId>
+						<artifactId>rewrite-maven-plugin</artifactId>
+						<configuration>
+							<activeRecipes>
+								<!--								<recipe>org.openrewrite.staticanalysis.CodeCleanup</recipe>-->
+								<recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+								<!--								<recipe>org.openrewrite.java.format.AutoFormat</recipe>-->
+							</activeRecipes>
+							<failOnDryRunResults>true</failOnDryRunResults>
+							<runPerSubmodule>true</runPerSubmodule>
+						</configuration>
+						<executions>
+							<execution>
+								<id>default-rewrite</id>
+								<goals>
+									<goal>runNoFork</goal>
+								</goals>
+								<phase>prepare-package</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<!-- Formatting setup, inherited by all projects using this parent -->
 		<profile>
 			<id>format</id>
