@@ -38,7 +38,6 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  *
- * @author Bryn Cooke
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

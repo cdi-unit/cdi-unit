@@ -21,10 +21,6 @@ import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 
-/**
- *
- * @author russell
- */
 public class ViewScopeExtension implements Extension {
     public ViewScopeExtension() {
 

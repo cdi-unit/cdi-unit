@@ -26,7 +26,6 @@ import jakarta.servlet.http.HttpSessionBindingListener;
 /**
  * Shamlessly ripped from mockrunner.
  *
- * @author Various
  */
 public class MockHttpSession implements HttpSession {
     private HashMap attributes;

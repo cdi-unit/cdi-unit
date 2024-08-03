@@ -24,7 +24,6 @@ import io.github.cdiunit.internal.ejb.EjbExtension;
 /**
  * Enable support for Ejb
  *
- * @author bryn
  *
  */
 @AdditionalClasses({ EjbExtension.class })

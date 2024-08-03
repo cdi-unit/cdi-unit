@@ -30,7 +30,6 @@ import jakarta.servlet.descriptor.JspConfigDescriptor;
 /**
  * Shamlessly ripped from mockrunner.
  *
- * @author Various
  */
 public class MockServletContext implements ServletContext {
 

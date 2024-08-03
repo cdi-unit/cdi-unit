@@ -5,5 +5,4 @@ displayName: CDI Unit Coding Rules & Conventions
 recipeList:
   - org.openrewrite.java.testing.assertj.Assertj
   - org.openrewrite.staticanalysis.CommonStaticAnalysis
-#  - org.openrewrite.staticanalysis.CodeCleanup
-#  - org.openrewrite.java.format.AutoFormat
+  - org.openrewrite.staticanalysis.RemoveJavaDocAuthorTag

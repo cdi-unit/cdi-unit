@@ -26,10 +26,6 @@ import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.faces.view.ViewScoped;
 
-/**
- *
- * @author russell
- */
 // TODO bean.getName() is null for unnamed beans (may return wrong bean). Should try bean.getTypes()
 public class ViewContext implements Context {
 

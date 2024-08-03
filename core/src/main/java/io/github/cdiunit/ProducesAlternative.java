@@ -36,7 +36,6 @@ import jakarta.enterprise.inject.Stereotype;
  * Engine engine;
  * </pre>
  *
- * @author Bryn Cooke
  */
 @Stereotype
 @Alternative

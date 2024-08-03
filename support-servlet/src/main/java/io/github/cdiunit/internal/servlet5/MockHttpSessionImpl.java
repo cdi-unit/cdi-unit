@@ -23,7 +23,6 @@ import jakarta.servlet.http.*;
 /**
  * Shamlessly ripped from mockrunner.
  *
- * @author Various
  */
 public class MockHttpSessionImpl implements HttpSession {
     private HashMap attributes;

@@ -66,8 +66,6 @@ import io.github.cdiunit.internal.servlet.common.HttpSessionAware;
  * }
  * </pre>
  *
- * @author Bryn Cooke
- * @author Lars-Fredrik Smedberg
  */
 @ApplicationScoped
 public class ContextController {

@@ -12,7 +12,6 @@ import io.github.cdiunit.IsolationLevel;
 /**
  * Defines how CDI-Unit should initialize Weld.
  *
- * @author aschoerk
  */
 public class TestConfiguration {
 

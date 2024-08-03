@@ -12,9 +12,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
- */
 public interface ClasspathScanner {
 
     Logger log = LoggerFactory.getLogger(ClasspathScanner.class);

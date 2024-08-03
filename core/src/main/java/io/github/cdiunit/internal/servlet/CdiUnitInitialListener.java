@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpSessionEvent;
  * WeldListener/WeldInitialListener, but allows us to avoid coding directly against
  * these interfaces (which moved around between Weld 1.x and Weld 3.x).
  *
- * @author Sean Flanigan
  */
 public interface CdiUnitInitialListener {
     void contextInitialized(ServletContextEvent sce);

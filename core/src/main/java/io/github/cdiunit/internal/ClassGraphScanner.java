@@ -7,9 +7,6 @@ import java.util.List;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-/**
- * @author Sean Flanigan <a href="mailto:sflaniga@redhat.com">sflaniga@redhat.com</a>
- */
 class ClassGraphScanner implements ClasspathScanner {
 
     private final BeanArchiveScanner beanArchiveScanner;

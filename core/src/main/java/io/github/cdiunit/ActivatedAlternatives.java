@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
  * that are not discovered automatically and marks them as an activated
  * alternative as if they were specified in beans.xml.
  *
- * @author Bryn Cooke
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

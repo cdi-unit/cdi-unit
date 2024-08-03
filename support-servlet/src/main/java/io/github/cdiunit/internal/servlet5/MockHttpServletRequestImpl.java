@@ -34,7 +34,6 @@ import io.github.cdiunit.internal.servlet.common.WebConstants;
 /**
  * Shamelessly ripped from mockrunner.
  *
- * @author Various
  */
 public class MockHttpServletRequestImpl implements HttpServletRequest, HttpSessionAware {
     private Map attributes;
