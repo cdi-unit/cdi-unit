@@ -32,7 +32,6 @@ import io.github.cdiunit.internal.servlet.common.WebConstants;
 /**
  * Shamlessly ripped from mockrunner.
  *
- * @author Various
  */
 public class MockHttpServletResponse implements HttpServletResponse {
     private PrintWriter writer;

@@ -26,7 +26,6 @@ import io.github.cdiunit.AdditionalClasspaths;
 /**
  * Enable support for DeltaSpike core in this test.
  *
- * @author bryn
  *
  */
 @AdditionalClasspaths({ BeanManagerProvider.class,

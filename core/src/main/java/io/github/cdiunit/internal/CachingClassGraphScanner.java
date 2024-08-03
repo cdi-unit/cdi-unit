@@ -15,9 +15,6 @@ import java.util.stream.Stream;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-/**
- * @author Illya Kysil <a href="mailto:ikysil@ikysil.name">ikysil@ikysil.name</a>
- */
 public class CachingClassGraphScanner implements ClasspathScanner {
 
     /**

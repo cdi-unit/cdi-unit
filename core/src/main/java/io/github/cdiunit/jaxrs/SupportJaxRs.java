@@ -25,7 +25,6 @@ import io.github.cdiunit.internal.jaxrs.JaxRsProducers;
 /**
  * Enable support for JaxRs mocking.
  *
- * @author bryn
  *
  */
 @AdditionalClasses({ JaxRsExtension.class, JaxRsProducers.class })

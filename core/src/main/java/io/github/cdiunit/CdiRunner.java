@@ -49,7 +49,6 @@ import io.github.cdiunit.internal.junit4.NamingContextLifecycle;
  * }</code>
  * </pre>
  *
- * @author Bryn Cooke
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 

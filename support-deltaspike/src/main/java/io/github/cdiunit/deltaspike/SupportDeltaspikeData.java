@@ -25,7 +25,6 @@ import io.github.cdiunit.AdditionalClasspaths;
 /**
  * Enable support for DeltaSpike data in this test.
  *
- * @author bryn
  *
  */
 @AdditionalClasspaths({ RepositoryExtension.class })

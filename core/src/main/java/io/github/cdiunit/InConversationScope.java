@@ -31,7 +31,6 @@ import jakarta.interceptor.InterceptorBinding;
  * }
  * </pre>
  *
- * @author Bryn Cooke
  */
 @InterceptorBinding
 @Inherited
