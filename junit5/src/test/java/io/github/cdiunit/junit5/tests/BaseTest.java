@@ -15,12 +15,12 @@
  */
 package io.github.cdiunit.junit5.tests;
 
-import io.github.cdiunit.junit5.CdiJUnit5Extension;
-
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import io.github.cdiunit.junit5.CdiJUnit5Extension;
 
 @ExtendWith(CdiJUnit5Extension.class)
 abstract class BaseTest {
