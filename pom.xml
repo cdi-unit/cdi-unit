@@ -27,7 +27,7 @@
 		<module>support-servlet</module>
 		<module>support-servlet6</module>
     <module>support-deltaspike</module>
-		<module>support-junit5</module>
+		<module>junit5</module>
 		<module>integration-tests</module>
 		<module>cdi-unit</module>
 	</modules>

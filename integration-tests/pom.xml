@@ -138,7 +138,7 @@
 		<module>tests-jandex</module>
 		<module>tests-testng</module>
 		<module>tests-deltaspike</module>
-		<module>tests-junit5</module>
+		<module>junit5-tests</module>
 	</modules>
 
 </project>
