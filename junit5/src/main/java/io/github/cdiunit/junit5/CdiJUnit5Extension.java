@@ -17,6 +17,7 @@ package io.github.cdiunit.junit5;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
@@ -36,13 +37,26 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
-    private TestConfiguration testConfiguration;
+    private final AtomicReference<TestConfiguration> testConfigurationHolder = new AtomicReference<>();
     private Weld weld;
     private WeldContainer container;
+
+    private TestConfiguration contextualTestConfiguration(ExtensionContext context) {
+        var testConfiguration = testConfigurationHolder.get();
+        if (testConfiguration == null) {
+            testConfiguration = new TestConfiguration(context.getRequiredTestClass(), null);
+            testConfigurationHolder.set(testConfiguration);
+        }
+
+        context.getTestMethod().ifPresent(testConfiguration::setTestMethod);
+
+        return testConfiguration;
+    }
 
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext)
             throws TestInstantiationException {
+        var testConfiguration = contextualTestConfiguration(extensionContext);
         try {
             initWeld(testConfiguration);
             return createTest(testConfiguration.getTestClass());
@@ -74,7 +88,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        this.testConfiguration = new TestConfiguration(context.getRequiredTestClass(), null);
+        var testConfiguration = contextualTestConfiguration(context);
         if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
             initWeld(testConfiguration);
         }
@@ -82,14 +96,16 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
+        var testConfiguration = contextualTestConfiguration(context);
         if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
             shutdownWeld();
         }
+        testConfigurationHolder.set(null);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        this.testConfiguration.setTestMethod(context.getRequiredTestMethod());
+        var testConfiguration = contextualTestConfiguration(context);
         if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
             initWeld(testConfiguration);
         }
@@ -97,9 +113,11 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
+        var testConfiguration = contextualTestConfiguration(context);
         if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
             shutdownWeld();
         }
+        testConfiguration.setTestMethod(null);
     }
 
     private BeanManager getBeanManager() {
@@ -112,6 +130,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
             ExtensionContext extensionContext) throws Throwable {
+        var testConfiguration = contextualTestConfiguration(extensionContext);
         invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
         invocation = new NamingContextLifecycle(invocation, this::getBeanManager);
         invocation.proceed();
