@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.junit4;
+package io.github.cdiunit.junit5.internal;
 
 import java.util.function.Supplier;
 
@@ -21,25 +21,25 @@ import javax.naming.InitialContext;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
 
 import io.github.cdiunit.internal.naming.CdiUnitContextFactory;
 
-public class NamingContextLifecycle extends Statement {
+public class NamingContextLifecycle implements InvocationInterceptor.Invocation<Void> {
 
     private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
     private static final String JNDI_BEAN_MANAGER_NAME = "java:comp/BeanManager";
 
-    private final Statement next;
+    private final InvocationInterceptor.Invocation<Void> next;
     private final Supplier<BeanManager> beanManager;
 
-    public NamingContextLifecycle(Statement next, Supplier<BeanManager> beanManager) {
+    public NamingContextLifecycle(InvocationInterceptor.Invocation<Void> next, Supplier<BeanManager> beanManager) {
         this.next = next;
         this.beanManager = beanManager;
     }
 
     @Override
-    public void evaluate() throws Throwable {
+    public Void proceed() throws Throwable {
         var oldFactory = System.getProperty(JNDI_FACTORY_PROPERTY);
         InitialContext initialContext = null;
         try {
@@ -48,7 +48,7 @@ public class NamingContextLifecycle extends Statement {
             }
             initialContext = new InitialContext();
             initialContext.bind(JNDI_BEAN_MANAGER_NAME, beanManager.get());
-            next.evaluate();
+            return next.proceed();
         } finally {
             try {
                 if (initialContext != null) {
@@ -64,5 +64,4 @@ public class NamingContextLifecycle extends Statement {
             }
         }
     }
-
 }

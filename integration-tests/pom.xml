@@ -85,6 +85,12 @@
 				<artifactId>cal10n-api</artifactId>
 				<version>0.8.1</version>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.10.3</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -132,6 +138,7 @@
 		<module>tests-jandex</module>
 		<module>tests-testng</module>
 		<module>tests-deltaspike</module>
+		<module>junit5-tests</module>
 	</modules>
 
 </project>

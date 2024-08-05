@@ -140,7 +140,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         this.frameworkMethod = frameworkMethod;
         var statement = super.methodBlock(frameworkMethod);
         statement = new ActivateScopes(statement, testConfiguration, contextsActivated, this::getBeanManager);
-        statement = new NamingContextLifecycle(statement, testConfiguration, this::getBeanManager);
+        statement = new NamingContextLifecycle(statement, this::getBeanManager);
         final var defaultStatement = statement;
         return new Statement() {
 

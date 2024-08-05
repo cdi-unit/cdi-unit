@@ -52,7 +52,8 @@ public class ProducerConfigExtension implements Extension {
         var testClass = testConfiguration.getTestClass();
         while (!Object.class.equals(testClass)) {
             addConfigValues(configurations, null, testClass.getAnnotations());
-            for (Method m : testClass.getMethods()) {
+            // all declared methods - public, protected, package-private, and private
+            for (Method m : testClass.getDeclaredMethods()) {
                 addConfigValues(configurations, m, m.getAnnotations());
             }
             testClass = testClass.getSuperclass();
