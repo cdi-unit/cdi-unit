@@ -134,11 +134,6 @@ class TestInstanceIsolation {
         @Inject
         ApplicationCounter applicationCounter;
 
-        @BeforeEach
-        void initialCounter() {
-            assertThat(counter.get()).as("instance counter").isEqualTo(0);
-        }
-
         @Test
         void step1() {
             int number = applicationCounter.incrementAndGet();
@@ -150,17 +145,17 @@ class TestInstanceIsolation {
         @Test
         void step2() {
             int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isGreaterThan(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
             number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isGreaterThan(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
         }
 
         @Test
         void step3() {
             int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isGreaterThan(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
             number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isGreaterThan(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
         }
 
     }
