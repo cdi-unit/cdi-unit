@@ -18,6 +18,7 @@ package io.github.cdiunit.junit5.tests;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.*;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(CdiJUnit5Extension.class)
 class TestInstanceIsolation {
 
+    @ApplicationScoped
     static class ApplicationCounter {
 
         private AtomicInteger counter = new AtomicInteger();
