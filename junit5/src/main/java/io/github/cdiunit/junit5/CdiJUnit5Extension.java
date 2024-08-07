@@ -71,10 +71,11 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
                 return container.select(testClass).get();
             }
 
-            if (AnnotationUtils.isAnnotated(testClass, Nested.class)) {
+            final Class<?> declaringClass = testClass.getDeclaringClass();
+            if (declaringClass != null && declaringClass.isInstance(outerInstance)) {
                 needsExplicitInterceptorInvocation = true;
 
-                final Constructor<?> constructor = testClass.getDeclaredConstructor(testClass.getDeclaringClass());
+                final Constructor<?> constructor = testClass.getDeclaredConstructor(declaringClass);
                 constructor.setAccessible(true);
                 var testInstance = constructor.newInstance(outerInstance);
                 BeanManager beanManager = container.getBeanManager();
