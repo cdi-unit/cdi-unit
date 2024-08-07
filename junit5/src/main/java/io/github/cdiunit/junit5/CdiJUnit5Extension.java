@@ -38,7 +38,6 @@ import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
 import io.github.cdiunit.junit5.internal.JUnit5InvocationContext;
-import io.github.cdiunit.junit5.internal.NamingContextLifecycle;
 
 public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
@@ -154,7 +153,6 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
                 invocation = interceptingInvocation;
             }
             invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
-            invocation = new NamingContextLifecycle(invocation, this::getBeanManager);
             invocation.proceed();
         }
     }

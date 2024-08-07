@@ -33,7 +33,7 @@ public class NamingExtension implements Extension {
 
     void onAfterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) throws Exception {
         var existingFactory = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
-        if (existingFactory == null) {
+        if (existingFactory == null && !NamingManager.hasInitialContextFactoryBuilder()) {
             NamingManager.setInitialContextFactoryBuilder(CdiUnitContextFactory::new);
         }
         boundToContext = new InitialContext();
