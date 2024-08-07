@@ -15,25 +15,14 @@
  */
 package io.github.cdiunit.junit5;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.InjectionTarget;
-
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.jupiter.api.extension.*;
 
-import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.internal.BeanLifecycleHelper;
-import io.github.cdiunit.internal.ExceptionUtils;
-import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.*;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
 import io.github.cdiunit.junit5.internal.JUnit5InvocationContext;
 
@@ -41,136 +30,37 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
         AfterEachCallback, AfterAllCallback, InvocationInterceptor {
 
-    static class TestContext {
-        TestConfiguration testConfiguration;
-        Weld weld;
-        WeldContainer container;
+    static class TestContext extends TestLifecycle {
+
         AtomicBoolean contextsActivated = new AtomicBoolean();
 
-        boolean needsExplicitInterceptorInvocation;
-        AutoCloseable instanceDisposer;
-        Throwable startupException;
-
-        private void initWeld() {
-            if (weld != null) {
-                return;
-            }
-
-            weld = WeldHelper.configureWeld(testConfiguration);
-            container = weld.initialize();
-        }
-
-        private Object createTest(Object outerInstance) throws Throwable {
-            if (startupException != null) {
-                throw startupException;
-            }
-            final Class<?> testClass = testConfiguration.getTestClass();
-            if (outerInstance == null) {
-                return container.select(testClass).get();
-            }
-
-            final Class<?> declaringClass = testClass.getDeclaringClass();
-            if (declaringClass != null && declaringClass.isInstance(outerInstance)) {
-                needsExplicitInterceptorInvocation = true;
-
-                final Constructor<?> constructor = testClass.getDeclaredConstructor(declaringClass);
-                constructor.setAccessible(true);
-                var testInstance = constructor.newInstance(outerInstance);
-                BeanManager beanManager = container.getBeanManager();
-                var creationalContext = beanManager.createCreationalContext(null);
-                AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
-                InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
-                        .createInjectionTarget(null);
-                injectionTarget.inject(testInstance, creationalContext);
-
-                BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
-                instanceDisposer = () -> {
-                    try {
-                        BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
-                        injectionTarget.dispose(testInstance);
-                        creationalContext.release();
-                    } catch (Throwable t) {
-                        throw ExceptionUtils.asRuntimeException(t);
-                    }
-                };
-
-                return testInstance;
-            }
-
-            throw new IllegalStateException(String.format("Don't know how to instantiate %s", testClass));
-        }
-
-        private void shutdownWeld() throws Exception {
-            if (instanceDisposer != null) {
-                instanceDisposer.close();
-                instanceDisposer = null;
-            }
-            if (weld != null) {
-                weld.shutdown();
-                weld = null;
-                container = null;
-            }
-        }
-
-        void beforeTestClass() {
-            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-                initWeld();
-            }
-        }
-
-        void afterTestClass() throws Exception {
-            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-                shutdownWeld();
-            }
-        }
-
-        void beforeTestMethod() {
-            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-                initWeld();
-            }
-        }
-
-        void afterTestMethod() throws Exception {
-            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-                shutdownWeld();
-            }
-            testConfiguration.setTestMethod(null);
-        }
-
-        BeanManager getBeanManager() {
-            if (container == null) {
-                throw new IllegalStateException("Weld container is not created yet");
-            }
-            return container.getBeanManager();
+        protected TestContext(TestConfiguration testConfiguration) {
+            super(testConfiguration);
         }
 
         void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext)
                 throws Throwable {
-            if (needsExplicitInterceptorInvocation) {
+            if (explicitInterceptorInvocation()) {
                 var interceptingInvocation = new JUnit5InvocationContext<>(invocation, invocationContext);
                 interceptingInvocation.configure(getBeanManager());
                 invocation = interceptingInvocation;
             }
-            invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
+            invocation = new ActivateScopes(invocation, getTestConfiguration(), contextsActivated, this::getBeanManager);
             invocation.proceed();
         }
+
     }
 
     private final Map<Class<?>, TestContext> testContexts = new ConcurrentHashMap<>();
 
     private TestContext initialTestContext(Class<?> testClass) {
-        return testContexts.computeIfAbsent(testClass, aClass -> {
-            var testContext = new TestContext();
-            testContext.testConfiguration = new TestConfiguration(aClass, null);
-
-            return testContext;
-        });
+        return testContexts.computeIfAbsent(testClass, aClass -> new TestContext(new TestConfiguration(aClass, null)));
     }
 
     private TestContext requiredTestContext(ExtensionContext context) {
         final Class<?> testClass = context.getRequiredTestClass();
         var testContext = initialTestContext(testClass);
-        context.getTestMethod().ifPresent(testContext.testConfiguration::setTestMethod);
+        context.getTestMethod().ifPresent(testContext::setTestMethod);
         return testContext;
     }
 
@@ -183,7 +73,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
             testContext.initWeld();
             return testContext.createTest(outerInstance);
         } catch (Throwable t) {
-            testContext.startupException = t;
+            testContext.setStartupException(t);
             throw new TestInstantiationException(t.getMessage(), t);
         }
     }
