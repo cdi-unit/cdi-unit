@@ -22,7 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.extension.*;
 
-import io.github.cdiunit.internal.*;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
 import io.github.cdiunit.junit5.internal.JUnit5InvocationContext;
 
@@ -70,10 +71,8 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         var testContext = initialTestContext(factoryContext.getTestClass());
         var outerInstance = factoryContext.getOuterInstance().orElse(null);
         try {
-            testContext.initWeld();
             return testContext.createTest(outerInstance);
         } catch (Throwable t) {
-            testContext.setStartupException(t);
             throw new TestInstantiationException(t.getMessage(), t);
         }
     }

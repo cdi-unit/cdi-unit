@@ -17,6 +17,8 @@ package io.github.cdiunit.internal;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -35,7 +37,7 @@ public abstract class TestLifecycle {
     private WeldContainer container;
 
     private boolean needsExplicitInterceptorInvocation;
-    private AutoCloseable instanceDisposer;
+    private final Deque<AutoCloseable> instanceDisposers = new ArrayDeque<>();
     private Throwable startupException;
 
     private IsolationLevel isolationLevel;
@@ -45,31 +47,41 @@ public abstract class TestLifecycle {
         isolationLevel = testConfiguration.getIsolationLevel();
     }
 
-    public void initWeld() {
+    protected void initWeld() {
+        if (startupException != null) {
+            throw ExceptionUtils.asRuntimeException(startupException);
+        }
+
         if (weld != null) {
             return;
         }
 
-        weld = WeldHelper.configureWeld(testConfiguration);
-        container = weld.initialize();
+        try {
+            weld = WeldHelper.configureWeld(testConfiguration);
+            container = weld.initialize();
+        } catch (Throwable t) {
+            startupException = t;
+            throw t;
+        }
     }
 
-    private void shutdownWeld() throws Exception {
-        if (instanceDisposer != null) {
-            instanceDisposer.close();
-            instanceDisposer = null;
+    protected void shutdownWeld() throws Exception {
+        while (!instanceDisposers.isEmpty()) {
+            try (var instanceDisposer = instanceDisposers.pollLast()) {
+                // dispose instance on close
+            }
         }
         if (weld != null) {
             weld.shutdown();
             weld = null;
             container = null;
+            startupException = null;
         }
     }
 
     public Object createTest(Object outerInstance) throws Throwable {
-        if (startupException != null) {
-            throw startupException;
-        }
+        initWeld();
+
         final Class<?> testClass = testConfiguration.getTestClass();
         if (outerInstance == null) {
             return container.select(testClass).get();
@@ -77,33 +89,46 @@ public abstract class TestLifecycle {
 
         final Class<?> declaringClass = testClass.getDeclaringClass();
         if (declaringClass != null && declaringClass.isInstance(outerInstance)) {
-            needsExplicitInterceptorInvocation = true;
-
             final Constructor<?> constructor = testClass.getDeclaredConstructor(declaringClass);
             constructor.setAccessible(true);
             var testInstance = constructor.newInstance(outerInstance);
-            BeanManager beanManager = container.getBeanManager();
-            var creationalContext = beanManager.createCreationalContext(null);
-            AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
-            InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
-                    .createInjectionTarget(null);
-            injectionTarget.inject(testInstance, creationalContext);
-
-            BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
-            instanceDisposer = () -> {
-                try {
-                    BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
-                    injectionTarget.dispose(testInstance);
-                    creationalContext.release();
-                } catch (Throwable t) {
-                    throw ExceptionUtils.asRuntimeException(t);
-                }
-            };
+            configureTest(testInstance);
 
             return testInstance;
         }
 
         throw new IllegalStateException(String.format("Don't know how to instantiate %s", testClass));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void configureTest(Object testInstance) throws Throwable {
+        var testClass = testInstance.getClass();
+
+        if (!testClass.equals(testConfiguration.getTestClass())) {
+            throw new IllegalStateException(String.format("mismatched test class: %s instance provided while %s configured",
+                    testClass, testConfiguration.getTestClass()));
+        }
+
+        initWeld();
+
+        needsExplicitInterceptorInvocation = true;
+        BeanManager beanManager = container.getBeanManager();
+        var creationalContext = beanManager.createCreationalContext(null);
+        AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
+        InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
+                .createInjectionTarget(null);
+        injectionTarget.inject(testInstance, creationalContext);
+
+        BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
+        instanceDisposers.add(() -> {
+            try {
+                BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
+                injectionTarget.dispose(testInstance);
+                creationalContext.release();
+            } catch (Throwable t) {
+                throw ExceptionUtils.asRuntimeException(t);
+            }
+        });
     }
 
     public void beforeTestClass() {
@@ -131,7 +156,7 @@ public abstract class TestLifecycle {
         testConfiguration.setTestMethod(null);
     }
 
-    protected BeanManager getBeanManager() {
+    public BeanManager getBeanManager() {
         if (container == null) {
             throw new IllegalStateException("Weld container is not created yet");
         }
@@ -148,10 +173,6 @@ public abstract class TestLifecycle {
 
     protected boolean explicitInterceptorInvocation() {
         return needsExplicitInterceptorInvocation;
-    }
-
-    public void setStartupException(Throwable startupException) {
-        this.startupException = startupException;
     }
 
     public void setIsolationLevel(IsolationLevel isolationLevel) {
