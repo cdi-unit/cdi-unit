@@ -15,125 +15,211 @@
  */
 package io.github.cdiunit.junit5;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
+import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.InjectionTarget;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.*;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.internal.BeanLifecycleHelper;
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
+import io.github.cdiunit.junit5.internal.JUnit5InvocationContext;
 import io.github.cdiunit.junit5.internal.NamingContextLifecycle;
 
 public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
         AfterEachCallback, AfterAllCallback, InvocationInterceptor {
 
-    private final AtomicBoolean contextsActivated = new AtomicBoolean();
+    static class TestContext {
+        TestConfiguration testConfiguration;
+        Weld weld;
+        WeldContainer container;
+        AtomicBoolean contextsActivated = new AtomicBoolean();
 
-    private final AtomicReference<TestConfiguration> testConfigurationHolder = new AtomicReference<>();
-    private Weld weld;
-    private WeldContainer container;
+        boolean needsExplicitInterceptorInvocation;
+        AutoCloseable instanceDisposer;
+        Throwable startupException;
 
-    private TestConfiguration contextualTestConfiguration(ExtensionContext context) {
-        var testConfiguration = testConfigurationHolder.get();
-        if (testConfiguration == null) {
-            testConfiguration = new TestConfiguration(context.getRequiredTestClass(), null);
-            testConfigurationHolder.set(testConfiguration);
+        private void initWeld() {
+            if (weld != null) {
+                return;
+            }
+
+            weld = WeldHelper.configureWeld(testConfiguration);
+            container = weld.initialize();
         }
 
-        context.getTestMethod().ifPresent(testConfiguration::setTestMethod);
+        private Object createTest(Object outerInstance) throws Throwable {
+            if (startupException != null) {
+                throw startupException;
+            }
+            final Class<?> testClass = testConfiguration.getTestClass();
+            if (outerInstance == null) {
+                return container.select(testClass).get();
+            }
 
-        return testConfiguration;
+            if (AnnotationUtils.isAnnotated(testClass, Nested.class)) {
+                needsExplicitInterceptorInvocation = true;
+
+                final Constructor<?> constructor = testClass.getDeclaredConstructor(testClass.getDeclaringClass());
+                constructor.setAccessible(true);
+                var testInstance = constructor.newInstance(outerInstance);
+                BeanManager beanManager = container.getBeanManager();
+                var creationalContext = beanManager.createCreationalContext(null);
+                AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
+                InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
+                        .createInjectionTarget(null);
+                injectionTarget.inject(testInstance, creationalContext);
+
+                BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
+                instanceDisposer = () -> {
+                    try {
+                        BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
+                        injectionTarget.dispose(testInstance);
+                        creationalContext.release();
+                    } catch (Throwable t) {
+                        throw ExceptionUtils.asRuntimeException(t);
+                    }
+                };
+
+                return testInstance;
+            }
+
+            throw new IllegalStateException(String.format("Don't know how to instantiate %s", testClass));
+        }
+
+        private void shutdownWeld() throws Exception {
+            if (instanceDisposer != null) {
+                instanceDisposer.close();
+                instanceDisposer = null;
+            }
+            if (weld != null) {
+                weld.shutdown();
+                weld = null;
+                container = null;
+            }
+        }
+
+        void beforeTestClass() {
+            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+                initWeld();
+            }
+        }
+
+        void afterTestClass() throws Exception {
+            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
+                shutdownWeld();
+            }
+        }
+
+        void beforeTestMethod() {
+            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                initWeld();
+            }
+        }
+
+        void afterTestMethod() throws Exception {
+            if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
+                shutdownWeld();
+            }
+            testConfiguration.setTestMethod(null);
+        }
+
+        BeanManager getBeanManager() {
+            if (container == null) {
+                throw new IllegalStateException("Weld container is not created yet");
+            }
+            return container.getBeanManager();
+        }
+
+        void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext)
+                throws Throwable {
+            if (needsExplicitInterceptorInvocation) {
+                var interceptingInvocation = new JUnit5InvocationContext<>(invocation, invocationContext);
+                interceptingInvocation.configure(getBeanManager());
+                invocation = interceptingInvocation;
+            }
+            invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
+            invocation = new NamingContextLifecycle(invocation, this::getBeanManager);
+            invocation.proceed();
+        }
+    }
+
+    private final Map<Class<?>, TestContext> testContexts = new ConcurrentHashMap<>();
+
+    private TestContext initialTestContext(Class<?> testClass) {
+        return testContexts.computeIfAbsent(testClass, aClass -> {
+            var testContext = new TestContext();
+            testContext.testConfiguration = new TestConfiguration(aClass, null);
+
+            return testContext;
+        });
+    }
+
+    private TestContext requiredTestContext(ExtensionContext context) {
+        final Class<?> testClass = context.getRequiredTestClass();
+        var testContext = initialTestContext(testClass);
+        context.getTestMethod().ifPresent(testContext.testConfiguration::setTestMethod);
+        return testContext;
     }
 
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext)
             throws TestInstantiationException {
-        var testConfiguration = contextualTestConfiguration(extensionContext);
+        var testContext = initialTestContext(factoryContext.getTestClass());
+        var outerInstance = factoryContext.getOuterInstance().orElse(null);
         try {
-            initWeld(testConfiguration);
-            return createTest(testConfiguration.getTestClass());
+            testContext.initWeld();
+            return testContext.createTest(outerInstance);
         } catch (Throwable t) {
+            testContext.startupException = t;
             throw new TestInstantiationException(t.getMessage(), t);
         }
     }
 
-    private void initWeld(final TestConfiguration testConfig) throws Exception {
-        if (weld != null) {
-            return;
-        }
-
-        weld = WeldHelper.configureWeld(testConfig);
-        container = weld.initialize();
-    }
-
-    private void shutdownWeld() {
-        if (weld != null) {
-            weld.shutdown();
-            weld = null;
-            container = null;
-        }
-    }
-
-    private <T> T createTest(Class<T> testClass) {
-        return container.select(testClass).get();
-    }
-
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        var testConfiguration = contextualTestConfiguration(context);
-        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-            initWeld(testConfiguration);
-        }
+        var testContext = requiredTestContext(context);
+        testContext.beforeTestClass();
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        var testConfiguration = contextualTestConfiguration(context);
-        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-            shutdownWeld();
-        }
-        testConfigurationHolder.set(null);
+        var testContext = requiredTestContext(context);
+        testContext.afterTestClass();
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        var testConfiguration = contextualTestConfiguration(context);
-        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-            initWeld(testConfiguration);
-        }
+        var testContext = requiredTestContext(context);
+        testContext.beforeTestMethod();
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        var testConfiguration = contextualTestConfiguration(context);
-        if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_METHOD) {
-            shutdownWeld();
-        }
-        testConfiguration.setTestMethod(null);
-    }
-
-    private BeanManager getBeanManager() {
-        if (container == null) {
-            throw new IllegalStateException("Weld container is not created yet");
-        }
-        return container.getBeanManager();
+        var testContext = requiredTestContext(context);
+        testContext.afterTestMethod();
     }
 
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
             ExtensionContext extensionContext) throws Throwable {
-        var testConfiguration = contextualTestConfiguration(extensionContext);
-        invocation = new ActivateScopes(invocation, testConfiguration, contextsActivated, this::getBeanManager);
-        invocation = new NamingContextLifecycle(invocation, this::getBeanManager);
-        invocation.proceed();
+        var testContext = requiredTestContext(extensionContext);
+        testContext.interceptTestMethod(invocation, invocationContext);
     }
 
 }

@@ -56,6 +56,7 @@ public final class WeldHelper {
         discoverExtension.accept(discoveryContext);
 
         discoveryContext.processBean(testConfiguration.getTestClass());
+        testConfiguration.getAdditionalClasses().forEach(discoveryContext::processBean);
 
         while (discoveryContext.hasClassesToProcess()) {
             final Class<?> cls = discoveryContext.nextClassToProcess();
