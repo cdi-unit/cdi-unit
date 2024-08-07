@@ -31,11 +31,11 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
         AfterEachCallback, AfterAllCallback, InvocationInterceptor {
 
-    static class TestContext extends TestLifecycle {
+    static class JupiterTestLifecycle extends TestLifecycle {
 
         AtomicBoolean contextsActivated = new AtomicBoolean();
 
-        protected TestContext(TestConfiguration testConfiguration) {
+        protected JupiterTestLifecycle(TestConfiguration testConfiguration) {
             super(testConfiguration);
         }
 
@@ -52,13 +52,13 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     }
 
-    private final Map<Class<?>, TestContext> testContexts = new ConcurrentHashMap<>();
+    private final Map<Class<?>, JupiterTestLifecycle> testContexts = new ConcurrentHashMap<>();
 
-    private TestContext initialTestContext(Class<?> testClass) {
-        return testContexts.computeIfAbsent(testClass, aClass -> new TestContext(new TestConfiguration(aClass, null)));
+    private JupiterTestLifecycle initialTestContext(Class<?> testClass) {
+        return testContexts.computeIfAbsent(testClass, aClass -> new JupiterTestLifecycle(new TestConfiguration(aClass, null)));
     }
 
-    private TestContext requiredTestContext(ExtensionContext context) {
+    private JupiterTestLifecycle requiredTestContext(ExtensionContext context) {
         final Class<?> testClass = context.getRequiredTestClass();
         var testContext = initialTestContext(testClass);
         context.getTestMethod().ifPresent(testContext::setTestMethod);

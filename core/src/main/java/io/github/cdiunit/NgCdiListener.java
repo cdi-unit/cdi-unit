@@ -26,9 +26,9 @@ import io.github.cdiunit.internal.testng.NgInvocationContext;
 
 public class NgCdiListener implements IHookable {
 
-    static class TestContext extends TestLifecycle {
+    static class NgTestLifecycle extends TestLifecycle {
 
-        protected TestContext(TestConfiguration testConfiguration) {
+        protected NgTestLifecycle(TestConfiguration testConfiguration) {
             super(testConfiguration);
         }
 
@@ -56,7 +56,7 @@ public class NgCdiListener implements IHookable {
         }
         final var target = testResult.getInstance();
         final TestConfiguration testConfig = new TestConfiguration(target.getClass(), method);
-        var testLifecycle = new TestContext(testConfig);
+        var testLifecycle = new NgTestLifecycle(testConfig);
         // FIXME - #289
         testLifecycle.setIsolationLevel(IsolationLevel.PER_METHOD);
         try {

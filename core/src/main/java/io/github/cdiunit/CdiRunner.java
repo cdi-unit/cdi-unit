@@ -47,22 +47,14 @@ import io.github.cdiunit.internal.junit4.ExpectStartupException;
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
-    private final TestContext testLifecycle;
-
-    static class TestContext extends TestLifecycle {
-
-        protected TestContext(TestConfiguration testConfiguration) {
-            super(testConfiguration);
-        }
-
-    }
+    private final TestLifecycle testLifecycle;
 
     private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
         var testConfiguration = new TestConfiguration(clazz, null);
-        this.testLifecycle = new TestContext(testConfiguration);
+        this.testLifecycle = new TestLifecycle(testConfiguration);
     }
 
     @Override

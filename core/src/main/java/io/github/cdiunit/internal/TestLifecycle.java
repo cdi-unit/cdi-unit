@@ -29,7 +29,7 @@ import org.jboss.weld.environment.se.WeldContainer;
 
 import io.github.cdiunit.IsolationLevel;
 
-public abstract class TestLifecycle {
+public class TestLifecycle {
 
     private final TestConfiguration testConfiguration;
 
@@ -43,7 +43,7 @@ public abstract class TestLifecycle {
 
     private IsolationLevel isolationLevel;
 
-    protected TestLifecycle(TestConfiguration testConfiguration) {
+    public TestLifecycle(TestConfiguration testConfiguration) {
         this.testConfiguration = testConfiguration;
         isolationLevel = testConfiguration.getIsolationLevel();
     }

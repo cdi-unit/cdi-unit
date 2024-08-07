@@ -27,20 +27,12 @@ import io.github.cdiunit.internal.TestLifecycle;
 
 public class CdiJUnitRule implements MethodRule {
 
-    static class TestContext extends TestLifecycle {
-
-        protected TestContext(TestConfiguration testConfiguration) {
-            super(testConfiguration);
-        }
-
-    }
-
     private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object testInstance) {
         var testConfiguration = new TestConfiguration(testInstance.getClass(), method.getMethod());
-        var testLifecycle = new TestContext(testConfiguration);
+        var testLifecycle = new TestLifecycle(testConfiguration);
         // FIXME - #289
         testLifecycle.setIsolationLevel(IsolationLevel.PER_METHOD);
 
