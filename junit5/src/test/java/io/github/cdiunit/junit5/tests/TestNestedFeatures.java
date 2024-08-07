@@ -15,12 +15,69 @@
  */
 package io.github.cdiunit.junit5.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+
 import org.junit.jupiter.api.Nested;
+import org.mockito.Mock;
+
+import io.github.cdiunit.ProducesAlternative;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestNestedFeatures {
 
+    @ApplicationScoped
+    static class MocksProducer implements BasicFeaturesTestBase.ProducerAccess {
+
+        @Produces
+        public ProducedViaMethod getProducedViaMethod() {
+            return new ProducedViaMethod(2);
+        }
+
+        @Mock
+        private Runnable disposeListener;
+
+        @Override
+        public Runnable disposeListener() {
+            return disposeListener;
+        }
+
+        @Override
+        public List<?> producedList() {
+            return producedList;
+        }
+
+        @Mock
+        private AInterface mockA;
+
+        @Override
+        @Produces
+        @ProducesAlternative
+        public AInterface mockA() {
+            return mockA;
+        }
+
+        @Produces
+        List<Object> producedList = new ArrayList<>();
+
+    }
+
     @Nested
-    class NestedBasicFeatures extends TestBasicFeatures {
+    class NestedBasicFeatures extends BasicFeaturesTestBase {
+
+        @Inject
+        MocksProducer mocks;
+
+        @PostConstruct
+        void checkMocks() {
+            assertThat(mocks).withFailMessage("mocks are expected").isNotNull();
+        }
 
     }
 

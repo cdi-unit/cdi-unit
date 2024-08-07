@@ -52,6 +52,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
         boolean needsExplicitInterceptorInvocation;
         AutoCloseable instanceDisposer;
+        Throwable startupException;
 
         private void initWeld() {
             if (weld != null) {
@@ -63,6 +64,9 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         }
 
         private Object createTest(Object outerInstance) throws Throwable {
+            if (startupException != null) {
+                throw startupException;
+            }
             final Class<?> testClass = testConfiguration.getTestClass();
             if (outerInstance == null) {
                 return container.select(testClass).get();
@@ -181,6 +185,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
             testContext.initWeld();
             return testContext.createTest(outerInstance);
         } catch (Throwable t) {
+            testContext.startupException = t;
             throw new TestInstantiationException(t.getMessage(), t);
         }
     }
