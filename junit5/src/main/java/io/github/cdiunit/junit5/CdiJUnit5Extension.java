@@ -27,9 +27,7 @@ import jakarta.enterprise.inject.spi.InjectionTarget;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.util.AnnotationUtils;
 
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.BeanLifecycleHelper;
