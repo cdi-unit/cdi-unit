@@ -81,4 +81,9 @@ public class TestNestedFeatures {
 
     }
 
+    @Nested
+    class NestedNamingContext extends NamingContextTestBase {
+
+    }
+
 }

@@ -31,7 +31,6 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 import io.github.cdiunit.internal.junit4.ActivateScopes;
-import io.github.cdiunit.internal.junit4.NamingContextLifecycle;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -51,8 +50,6 @@ import io.github.cdiunit.internal.junit4.NamingContextLifecycle;
  *
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
-
-    private static final String JNDI_FACTORY_PROPERTY = "java.naming.factory.initial";
 
     private final Class<?> clazz;
     private Weld weld;
@@ -140,7 +137,6 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         this.frameworkMethod = frameworkMethod;
         var statement = super.methodBlock(frameworkMethod);
         statement = new ActivateScopes(statement, testConfiguration, contextsActivated, this::getBeanManager);
-        statement = new NamingContextLifecycle(statement, this::getBeanManager);
         final var defaultStatement = statement;
         return new Statement() {
 

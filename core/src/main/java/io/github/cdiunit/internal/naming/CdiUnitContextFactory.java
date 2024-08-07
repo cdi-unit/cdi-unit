@@ -25,6 +25,13 @@ public class CdiUnitContextFactory implements InitialContextFactory {
 
     private static final ThreadLocal<CdiUnitContext> context = ThreadLocal.withInitial(CdiUnitContext::new);
 
+    public CdiUnitContextFactory() {
+        this(new Hashtable<>());
+    }
+
+    public CdiUnitContextFactory(Hashtable<?, ?> environment) {
+    }
+
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
         return context.get();
