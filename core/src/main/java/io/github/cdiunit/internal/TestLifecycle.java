@@ -38,6 +38,7 @@ public abstract class TestLifecycle {
 
     private boolean needsExplicitInterceptorInvocation;
     private final Deque<AutoCloseable> instanceDisposers = new ArrayDeque<>();
+
     private Throwable startupException;
 
     private IsolationLevel isolationLevel;
@@ -49,7 +50,7 @@ public abstract class TestLifecycle {
 
     protected void initWeld() {
         if (startupException != null) {
-            throw ExceptionUtils.asRuntimeException(startupException);
+            return;
         }
 
         if (weld != null) {
@@ -61,7 +62,6 @@ public abstract class TestLifecycle {
             container = weld.initialize();
         } catch (Throwable t) {
             startupException = t;
-            throw t;
         }
     }
 
@@ -81,6 +81,8 @@ public abstract class TestLifecycle {
 
     public Object createTest(Object outerInstance) throws Throwable {
         initWeld();
+
+        checkStartupException();
 
         final Class<?> testClass = testConfiguration.getTestClass();
         if (outerInstance == null) {
@@ -102,6 +104,8 @@ public abstract class TestLifecycle {
 
     @SuppressWarnings("unchecked")
     public void configureTest(Object testInstance) throws Throwable {
+        checkStartupException();
+
         var testClass = testInstance.getClass();
 
         if (!testClass.equals(testConfiguration.getTestClass())) {
@@ -157,14 +161,25 @@ public abstract class TestLifecycle {
     }
 
     public BeanManager getBeanManager() {
+        checkStartupException();
         if (container == null) {
             throw new IllegalStateException("Weld container is not created yet");
         }
         return container.getBeanManager();
     }
 
+    protected final void checkStartupException() {
+        if (startupException != null) {
+            throw ExceptionUtils.asRuntimeException(startupException);
+        }
+    }
+
     public void setTestMethod(Method method) {
         testConfiguration.setTestMethod(method);
+    }
+
+    public Method getTestMethod() {
+        return testConfiguration.getTestMethod();
     }
 
     protected TestConfiguration getTestConfiguration() {
@@ -180,6 +195,14 @@ public abstract class TestLifecycle {
             throw new IllegalStateException("Weld container is already created");
         }
         this.isolationLevel = isolationLevel;
+    }
+
+    public IsolationLevel getIsolationLevel() {
+        return isolationLevel;
+    }
+
+    public Throwable getStartupException() {
+        return startupException;
     }
 
 }
