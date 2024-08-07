@@ -19,27 +19,22 @@ import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestLifecycle;
 
-public class WeldLifecycle extends Statement {
+public class InjectTestInstance extends Statement {
 
-    private final Statement base;
+    private final Statement next;
     private final TestLifecycle testLifecycle;
     private final Object target;
 
-    public WeldLifecycle(Statement base, TestLifecycle testLifecycle, Object target) {
-        this.base = base;
+    public InjectTestInstance(Statement next, TestLifecycle testLifecycle, Object target) {
+        this.next = next;
         this.testLifecycle = testLifecycle;
         this.target = target;
     }
 
     @Override
     public void evaluate() throws Throwable {
-        try {
-            testLifecycle.configureTest(target);
-            testLifecycle.beforeTestMethod();
-            base.evaluate();
-        } finally {
-            testLifecycle.afterTestMethod();
-        }
+        testLifecycle.configureTest(target);
+        next.evaluate();
     }
 
 }

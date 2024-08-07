@@ -48,7 +48,8 @@ public class CdiJUnitRule implements MethodRule {
         };
         statement = new ActivateScopes(statement, testLifecycle, contextsActivated);
         statement = new ExpectStartupException(statement, testLifecycle);
-        statement = new WeldLifecycle(statement, testLifecycle, testInstance);
+        statement = new AroundMethod(statement, testLifecycle);
+        statement = new InjectTestInstance(statement, testLifecycle, testInstance);
         return statement;
     }
 

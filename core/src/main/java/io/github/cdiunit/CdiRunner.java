@@ -27,6 +27,7 @@ import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.junit4.ActivateScopes;
+import io.github.cdiunit.internal.junit4.AroundMethod;
 import io.github.cdiunit.internal.junit4.ExpectStartupException;
 
 /**
@@ -90,20 +91,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
         var statement = super.methodBlock(frameworkMethod);
         statement = new ActivateScopes(statement, testLifecycle, contextsActivated);
         statement = new ExpectStartupException(statement, testLifecycle);
-        final var defaultStatement = statement;
-        return new Statement() {
-
-            @Override
-            public void evaluate() throws Throwable {
-                try {
-                    testLifecycle.beforeTestMethod();
-                    defaultStatement.evaluate();
-                } finally {
-                    testLifecycle.afterTestMethod();
-                }
-            }
-        };
-
+        return new AroundMethod(statement, testLifecycle);
     }
 
 }
