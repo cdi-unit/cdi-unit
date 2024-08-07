@@ -17,40 +17,45 @@ package io.github.cdiunit.internal.junit4;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import jakarta.enterprise.inject.spi.BeanManager;
-
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
 
 public class CdiJUnitRule implements MethodRule {
 
+    static class TestContext extends TestLifecycle {
+
+        protected TestContext(TestConfiguration testConfiguration) {
+            super(testConfiguration);
+        }
+
+    }
+
     private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
-    private Object testInstance;
-    private TestConfiguration testConfiguration;
-
-    private BeanManager beanManager;
-
     @Override
-    public Statement apply(Statement base, FrameworkMethod method, Object target) {
-        this.testInstance = target;
-        testConfiguration = new TestConfiguration(testInstance.getClass(), method.getMethod());
+    public Statement apply(Statement base, FrameworkMethod method, Object testInstance) {
+        var testConfiguration = new TestConfiguration(testInstance.getClass(), method.getMethod());
+        var testLifecycle = new TestContext(testConfiguration);
+        // FIXME - #289
+        testLifecycle.setIsolationLevel(IsolationLevel.PER_METHOD);
+
         Statement statement = new Statement() {
 
             @Override
             public void evaluate() throws Throwable {
-                var ic = new JUnitInvocationContext<>(base, target, method.getMethod());
-                ic.configure(beanManager);
+                var ic = new JUnitInvocationContext<>(base, testInstance, method.getMethod());
+                ic.configure(testLifecycle.getBeanManager());
                 ic.proceed();
             }
 
         };
-        statement = new BeanLifecycle(statement, testConfiguration, target);
-        statement = new ActivateScopes(statement, testConfiguration, contextsActivated, () -> beanManager);
-        statement = new WeldLifecycle(statement, testConfiguration, target, bm -> this.beanManager = bm);
+        statement = new ActivateScopes(statement, testConfiguration, contextsActivated, testLifecycle::getBeanManager);
+        statement = new WeldLifecycle(statement, testLifecycle, testInstance);
         return statement;
     }
 
