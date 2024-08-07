@@ -15,27 +15,36 @@
  */
 package io.github.cdiunit;
 
-import jakarta.enterprise.context.spi.CreationalContext;
-import jakarta.enterprise.inject.spi.AnnotatedType;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.InjectionTarget;
-
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
 import org.testng.ITestResult;
 
-import io.github.cdiunit.internal.BeanLifecycleHelper;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 import io.github.cdiunit.internal.testng.NgInvocationContext;
 
 public class NgCdiListener implements IHookable {
 
-    private Weld weld;
-    private WeldContainer container;
+    static class NgTestLifecycle extends TestLifecycle {
+
+        protected NgTestLifecycle(TestConfiguration testConfiguration) {
+            super(testConfiguration);
+        }
+
+        @Override
+        public void beforeTestMethod() {
+            super.beforeTestMethod();
+            ScopesHelper.activateContexts(getBeanManager(), getTestConfiguration().getTestMethod());
+        }
+
+        @Override
+        public void afterTestMethod() throws Exception {
+            ScopesHelper.deactivateContexts(getBeanManager(), getTestConfiguration().getTestMethod());
+            super.afterTestMethod();
+        }
+
+    }
 
     @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
@@ -47,45 +56,23 @@ public class NgCdiListener implements IHookable {
         }
         final var target = testResult.getInstance();
         final TestConfiguration testConfig = new TestConfiguration(target.getClass(), method);
+        var testLifecycle = new NgTestLifecycle(testConfig);
+        // FIXME - #289
+        testLifecycle.setIsolationLevel(IsolationLevel.PER_METHOD);
         try {
-            initializeCdi(testConfig, target);
-            var beanManager = container.getBeanManager();
+            testLifecycle.configureTest(target);
+            testLifecycle.beforeTestMethod();
             var ic = new NgInvocationContext<>(callBack, testResult);
-            ic.configure(beanManager);
+            ic.configure(testLifecycle.getBeanManager());
             ic.proceed();
         } catch (Throwable t) {
             testResult.setThrowable(t);
         } finally {
             try {
-                shutdownCdi(testConfig, target);
+                testLifecycle.afterTestMethod();
             } catch (Throwable t) {
                 testResult.setThrowable(t);
             }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void initializeCdi(final TestConfiguration testConfig, final Object target) throws Throwable {
-        weld = WeldHelper.configureWeld(testConfig);
-
-        container = weld.initialize();
-        BeanManager beanManager = container.getBeanManager();
-        CreationalContext creationalContext = beanManager.createCreationalContext(null);
-        AnnotatedType annotatedType = beanManager.createAnnotatedType(testConfig.getTestClass());
-        InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType).createInjectionTarget(null);
-        injectionTarget.inject(target, creationalContext);
-
-        ScopesHelper.activateContexts(container.getBeanManager(), testConfig.getTestMethod());
-        BeanLifecycleHelper.invokePostConstruct(testConfig.getTestClass(), target);
-    }
-
-    private void shutdownCdi(final TestConfiguration testConfig, final Object target) throws Throwable {
-        BeanLifecycleHelper.invokePreDestroy(testConfig.getTestClass(), target);
-        if (container != null) {
-            ScopesHelper.deactivateContexts(container.getBeanManager(), testConfig.getTestMethod());
-        }
-        if (weld != null) {
-            weld.shutdown();
         }
     }
 

@@ -17,20 +17,18 @@ package io.github.cdiunit;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import jakarta.enterprise.inject.spi.BeanManager;
-
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
-import org.junit.Test;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.junit4.ActivateScopes;
+import io.github.cdiunit.internal.junit4.AroundMethod;
+import io.github.cdiunit.internal.junit4.ExpectStartupException;
 
 /**
  * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
@@ -47,58 +45,26 @@ import io.github.cdiunit.internal.junit4.ActivateScopes;
  *   ... //The rest of the test goes here.
  * }</code>
  * </pre>
- *
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {
 
-    private final Class<?> clazz;
-    private Weld weld;
-    private WeldContainer container;
-    private Throwable startupException;
-    private FrameworkMethod frameworkMethod;
-    private TestConfiguration testConfiguration;
+    private final TestLifecycle testLifecycle;
+
     private final AtomicBoolean contextsActivated = new AtomicBoolean();
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
-        this.clazz = clazz;
-    }
-
-    protected TestConfiguration createTestConfiguration() {
-        return new TestConfiguration(clazz, null);
+        var testConfiguration = new TestConfiguration(clazz, null);
+        this.testLifecycle = new TestLifecycle(testConfiguration);
     }
 
     @Override
     protected Object createTest() {
-        testConfiguration.setTestMethod(frameworkMethod.getMethod());
-        initWeld(testConfiguration);
-        return createTest(clazz);
-    }
-
-    private void initWeld(final TestConfiguration testConfig) {
-        if (weld != null) {
-            return;
-        }
-
         try {
-            weld = WeldHelper.configureWeld(testConfig);
-            try {
-                container = weld.initialize();
-            } catch (Throwable e) {
-                if (startupException == null) {
-                    startupException = e;
-                }
-                if (e instanceof ClassFormatError) {
-                    throw e;
-                }
-            }
-        } catch (Throwable e) {
-            startupException = new Exception("Unable to start weld", e);
+            return testLifecycle.createTest(null);
+        } catch (Throwable t) {
+            throw ExceptionUtils.asRuntimeException(t);
         }
-    }
-
-    private <T> T createTest(Class<T> testClass) {
-        return container.select(testClass).get();
     }
 
     @Override
@@ -108,60 +74,24 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
             @Override
             public void evaluate() throws Throwable {
-                testConfiguration = createTestConfiguration();
-                if (testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS) {
-                    try {
-                        initWeld(testConfiguration);
-                        defaultStatement.evaluate();
-                    } finally {
-                        weld.shutdown();
-                        weld = null;
-                    }
-                } else {
+                try {
+                    testLifecycle.beforeTestClass();
                     defaultStatement.evaluate();
+                } finally {
+                    testLifecycle.afterTestClass();
                 }
             }
 
         };
-    }
-
-    private BeanManager getBeanManager() {
-        if (container == null) {
-            throw new IllegalStateException("Weld container is not created yet");
-        }
-        return container.getBeanManager();
     }
 
     @Override
     protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
-        this.frameworkMethod = frameworkMethod;
+        testLifecycle.setTestMethod(frameworkMethod.getMethod());
         var statement = super.methodBlock(frameworkMethod);
-        statement = new ActivateScopes(statement, testConfiguration, contextsActivated, this::getBeanManager);
-        final var defaultStatement = statement;
-        return new Statement() {
-
-            @Override
-            public void evaluate() throws Throwable {
-                if (startupException != null) {
-                    if (frameworkMethod.getAnnotation(Test.class).expected()
-                            .isAssignableFrom(startupException.getClass())) {
-                        return;
-                    }
-                    throw startupException;
-                }
-                final var isolationLevel = testConfiguration.getIsolationLevel();
-                try {
-                    defaultStatement.evaluate();
-                } finally {
-                    if (isolationLevel == IsolationLevel.PER_METHOD) {
-                        weld.shutdown();
-                        weld = null;
-                    }
-                }
-
-            }
-        };
-
+        statement = new ActivateScopes(statement, testLifecycle, contextsActivated);
+        statement = new ExpectStartupException(statement, testLifecycle);
+        return new AroundMethod(statement, testLifecycle);
     }
 
 }

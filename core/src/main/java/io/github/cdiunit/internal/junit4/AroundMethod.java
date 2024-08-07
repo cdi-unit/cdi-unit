@@ -15,42 +15,27 @@
  */
 package io.github.cdiunit.internal.junit4;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.runners.model.Statement;
 
-import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
-public class ActivateScopes extends Statement {
+public class AroundMethod extends Statement {
 
     private final Statement next;
     private final TestLifecycle testLifecycle;
-    private final AtomicBoolean contextsActivated;
 
-    public ActivateScopes(Statement next, TestLifecycle testLifecycle, AtomicBoolean contextsActivated) {
+    public AroundMethod(Statement next, TestLifecycle testLifecycle) {
         this.next = next;
         this.testLifecycle = testLifecycle;
-        this.contextsActivated = contextsActivated;
     }
 
     @Override
     public void evaluate() throws Throwable {
-        final var method = testLifecycle.getTestMethod();
-        final var isolationLevel = testLifecycle.getIsolationLevel();
-        final var beanManager = testLifecycle.getBeanManager();
         try {
-            if (!contextsActivated.get()) {
-                ScopesHelper.activateContexts(beanManager, method);
-                contextsActivated.set(true);
-            }
+            testLifecycle.beforeTestMethod();
             next.evaluate();
         } finally {
-            if (contextsActivated.get() && isolationLevel == IsolationLevel.PER_METHOD) {
-                contextsActivated.set(false);
-                ScopesHelper.deactivateContexts(beanManager, method);
-            }
+            testLifecycle.afterTestMethod();
         }
     }
 
