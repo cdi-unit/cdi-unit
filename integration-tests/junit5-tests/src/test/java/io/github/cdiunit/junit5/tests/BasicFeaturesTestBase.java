@@ -15,7 +15,8 @@
  */
 package io.github.cdiunit.junit5.tests;
 
-import io.github.cdiunit.*;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ContextNotActiveException;
@@ -32,8 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
+import io.github.cdiunit.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
