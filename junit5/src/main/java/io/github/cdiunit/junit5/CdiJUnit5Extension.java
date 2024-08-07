@@ -89,6 +89,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
                 instanceDisposer = () -> {
                     try {
                         BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
+                        injectionTarget.dispose(testInstance);
                         creationalContext.release();
                     } catch (Throwable t) {
                         throw ExceptionUtils.asRuntimeException(t);
