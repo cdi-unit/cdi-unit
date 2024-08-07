@@ -21,7 +21,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.github.cdiunit.Isolation;
@@ -29,6 +32,7 @@ import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.junit5.CdiJUnit5Extension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(CdiJUnit5Extension.class)
 class TestInstanceIsolation {
@@ -85,43 +89,38 @@ class TestInstanceIsolation {
 
     }
 
+    private static final AtomicInteger perClassCounter = new AtomicInteger();
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_METHOD)
     @Isolation(IsolationLevel.PER_CLASS)
     class PerMethodTestPerClassWeld {
 
-        private final AtomicInteger counter = new AtomicInteger();
-
         @Inject
         ApplicationCounter applicationCounter;
-
-        @BeforeEach
-        void initialCounter() {
-            assertThat(counter.get()).as("instance counter").isEqualTo(0);
-        }
 
         @Test
         void step1() {
             int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
             number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         }
 
         @Test
         void step2() {
             int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
             number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         }
 
         @Test
         void step3() {
             int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
             number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         }
 
     }
@@ -146,18 +145,24 @@ class TestInstanceIsolation {
 
         @Test
         void step2() {
-            int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-            number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThatExceptionOfType(org.jboss.weld.exceptions.IllegalStateException.class)
+                    .isThrownBy(() -> {
+                        int number = applicationCounter.incrementAndGet();
+                        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+                        number = applicationCounter.incrementAndGet();
+                        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+                    });
         }
 
         @Test
         void step3() {
-            int number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-            number = applicationCounter.incrementAndGet();
-            assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+            assertThatExceptionOfType(org.jboss.weld.exceptions.IllegalStateException.class)
+                    .isThrownBy(() -> {
+                        int number = applicationCounter.incrementAndGet();
+                        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+                        number = applicationCounter.incrementAndGet();
+                        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+                    });
         }
 
     }
