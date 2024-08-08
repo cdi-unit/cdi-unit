@@ -18,24 +18,24 @@ package io.github.cdiunit.internal.testng;
 import org.testng.IHookCallBack;
 import org.testng.ITestResult;
 
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodInvocationContext;
 
-public class InvokeInterceptors {
+public class InvokeInterceptors implements IHookCallBack {
 
     private final IHookCallBack callBack;
-    private final ITestResult testResult;
     private final TestLifecycle testLifecycle;
 
     private TestMethodInvocationContext<?> methodInvocationContext;
 
-    public InvokeInterceptors(IHookCallBack callBack, ITestResult testResult, TestLifecycle testLifecycle) {
+    public InvokeInterceptors(IHookCallBack callBack, TestLifecycle testLifecycle) {
         this.callBack = callBack;
-        this.testResult = testResult;
         this.testLifecycle = testLifecycle;
     }
 
-    public void evaluate() throws Exception {
+    @Override
+    public void runTestMethod(ITestResult testResult) {
         if (methodInvocationContext == null) {
             final var target = testResult.getInstance();
             final var parameters = callBack.getParameters();
@@ -44,7 +44,16 @@ public class InvokeInterceptors {
                     () -> callBack.runTestMethod(testResult));
             methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
         }
-        methodInvocationContext.proceed();
+        try {
+            methodInvocationContext.proceed();
+        } catch (Exception e) {
+            throw ExceptionUtils.asRuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object[] getParameters() {
+        return callBack.getParameters();
     }
 
 }

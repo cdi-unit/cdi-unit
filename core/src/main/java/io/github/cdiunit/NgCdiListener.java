@@ -176,7 +176,7 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
             return;
         }
         try {
-            new InvokeInterceptors(callBack, testResult, testLifecycle).evaluate();
+            new InvokeInterceptors(callBack, testLifecycle).runTestMethod(testResult);
         } catch (Throwable t) {
             testResult.setThrowable(t);
             testResult.setStatus(ITestResult.FAILURE);
