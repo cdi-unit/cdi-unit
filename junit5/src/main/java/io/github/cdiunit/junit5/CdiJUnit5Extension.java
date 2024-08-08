@@ -29,7 +29,7 @@ import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
-import io.github.cdiunit.junit5.internal.JUnit5InvocationContext;
+import io.github.cdiunit.junit5.internal.InvokeInterceptors;
 
 public class CdiJUnit5Extension implements TestInstanceFactory,
         BeforeEachCallback, BeforeAllCallback,
@@ -61,9 +61,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
         void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext)
                 throws Throwable {
             if (explicitInterceptorInvocation()) {
-                var interceptingInvocation = new JUnit5InvocationContext<>(invocation, invocationContext);
-                interceptingInvocation.configure(getBeanManager());
-                invocation = interceptingInvocation;
+                invocation = new InvokeInterceptors(invocation, invocationContext, this);
             }
             invocation = new ActivateScopes(invocation, getTestConfiguration(), contextsActivated, this::getBeanManager);
             invocation.proceed();
@@ -71,26 +69,27 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     }
 
-    private final Map<Class<?>, JupiterTestLifecycle> testContexts = new ConcurrentHashMap<>();
+    private final Map<Class<?>, JupiterTestLifecycle> testLifecycles = new ConcurrentHashMap<>();
 
-    private JupiterTestLifecycle initialTestContext(Class<?> testClass) {
-        return testContexts.computeIfAbsent(testClass, aClass -> new JupiterTestLifecycle(new TestConfiguration(aClass, null)));
+    private JupiterTestLifecycle initialTestLifecycle(Class<?> testClass) {
+        return testLifecycles.computeIfAbsent(testClass,
+                aClass -> new JupiterTestLifecycle(new TestConfiguration(aClass, null)));
     }
 
-    private JupiterTestLifecycle requiredTestContext(ExtensionContext context) {
+    private JupiterTestLifecycle requiredTestLifecycle(ExtensionContext context) {
         final Class<?> testClass = context.getRequiredTestClass();
-        var testContext = initialTestContext(testClass);
-        context.getTestMethod().ifPresent(testContext::setTestMethod);
-        return testContext;
+        var testLifecycle = initialTestLifecycle(testClass);
+        context.getTestMethod().ifPresent(testLifecycle::setTestMethod);
+        return testLifecycle;
     }
 
     @Override
     public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext)
             throws TestInstantiationException {
-        var testContext = initialTestContext(factoryContext.getTestClass());
+        var testLifecycle = initialTestLifecycle(factoryContext.getTestClass());
         var outerInstance = factoryContext.getOuterInstance().orElse(null);
         try {
-            return testContext.createTest(outerInstance);
+            return testLifecycle.createTest(outerInstance);
         } catch (Throwable t) {
             throw new TestInstantiationException(t.getMessage(), t);
         }
@@ -98,33 +97,33 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        var testContext = requiredTestContext(context);
-        testContext.beforeTestClass();
+        var testLifecycle = requiredTestLifecycle(context);
+        testLifecycle.beforeTestClass();
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        var testContext = requiredTestContext(context);
-        testContext.afterTestClass();
+        var testLifecycle = requiredTestLifecycle(context);
+        testLifecycle.afterTestClass();
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        var testContext = requiredTestContext(context);
-        testContext.beforeTestMethod();
+        var testLifecycle = requiredTestLifecycle(context);
+        testLifecycle.beforeTestMethod();
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        var testContext = requiredTestContext(context);
-        testContext.afterTestMethod();
+        var testLifecycle = requiredTestLifecycle(context);
+        testLifecycle.afterTestMethod();
     }
 
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
             ExtensionContext extensionContext) throws Throwable {
-        var testContext = requiredTestContext(extensionContext);
-        testContext.interceptTestMethod(invocation, invocationContext);
+        var testLifecycle = requiredTestLifecycle(extensionContext);
+        testLifecycle.interceptTestMethod(invocation, invocationContext);
     }
 
 }
