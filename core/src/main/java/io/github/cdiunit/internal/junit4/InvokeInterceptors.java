@@ -22,14 +22,14 @@ import io.github.cdiunit.internal.TestMethodInvocationContext;
 
 public class InvokeInterceptors extends Statement {
 
-    private final Statement base;
+    private final Statement next;
     private final Object target;
     private final TestLifecycle testLifecycle;
 
     private TestMethodInvocationContext<?> methodInvocationContext;
 
-    public InvokeInterceptors(Statement base, Object target, TestLifecycle testLifecycle) {
-        this.base = base;
+    public InvokeInterceptors(Statement next, Object target, TestLifecycle testLifecycle) {
+        this.next = next;
         this.target = target;
         this.testLifecycle = testLifecycle;
     }
@@ -38,7 +38,7 @@ public class InvokeInterceptors extends Statement {
     public void evaluate() throws Throwable {
         if (methodInvocationContext == null) {
             methodInvocationContext = new TestMethodInvocationContext<>(target, testLifecycle.getTestMethod(), new Object[0],
-                    base::evaluate);
+                    next::evaluate);
             methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
         }
         methodInvocationContext.proceed();

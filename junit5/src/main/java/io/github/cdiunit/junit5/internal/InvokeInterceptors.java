@@ -35,7 +35,6 @@ public class InvokeInterceptors implements InvocationInterceptor.Invocation<Void
             ReflectiveInvocationContext<Method> invocationContext, TestLifecycle testLifecycle) {
         this.next = next;
         this.invocationContext = invocationContext;
-
         this.testLifecycle = testLifecycle;
     }
 
