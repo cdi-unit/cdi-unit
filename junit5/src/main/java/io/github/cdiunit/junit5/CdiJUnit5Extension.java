@@ -16,12 +16,16 @@
 package io.github.cdiunit.junit5;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.*;
 
+import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
@@ -37,6 +41,21 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
         protected JupiterTestLifecycle(TestConfiguration testConfiguration) {
             super(testConfiguration);
+            configureIsolationLevel(testConfiguration.getTestClass());
+        }
+
+        private void configureIsolationLevel(Class<?> testClass) {
+            var defaultTestLifecycle = TestInstance.Lifecycle.PER_METHOD;
+            var defaultTestLifecycleProperty = System.getProperty(TestInstance.Lifecycle.DEFAULT_LIFECYCLE_PROPERTY_NAME);
+            if (defaultTestLifecycleProperty != null) {
+                defaultTestLifecycle = TestInstance.Lifecycle.valueOf(defaultTestLifecycleProperty.toUpperCase(Locale.ROOT));
+            }
+            var testInstanceIsolation = Optional.ofNullable(testClass.getAnnotation(TestInstance.class))
+                    .map(TestInstance::value)
+                    .orElse(defaultTestLifecycle);
+            if (testInstanceIsolation == TestInstance.Lifecycle.PER_CLASS) {
+                setIsolationLevel(IsolationLevel.PER_CLASS);
+            }
         }
 
         void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext)

@@ -28,7 +28,6 @@ import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.junit5.CdiJUnit5Extension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(CdiJUnit5Extension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -50,24 +49,18 @@ class TestIsolationPerClassTestPerMethodWeld {
 
     @Test
     void step2() {
-        assertThatExceptionOfType(org.jboss.weld.exceptions.IllegalStateException.class)
-                .isThrownBy(() -> {
-                    int number = applicationCounter.incrementAndGet();
-                    assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-                    number = applicationCounter.incrementAndGet();
-                    assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-                });
+        int number = applicationCounter.incrementAndGet();
+        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        number = applicationCounter.incrementAndGet();
+        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
     }
 
     @Test
     void step3() {
-        assertThatExceptionOfType(org.jboss.weld.exceptions.IllegalStateException.class)
-                .isThrownBy(() -> {
-                    int number = applicationCounter.incrementAndGet();
-                    assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-                    number = applicationCounter.incrementAndGet();
-                    assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
-                });
+        int number = applicationCounter.incrementAndGet();
+        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        number = applicationCounter.incrementAndGet();
+        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
     }
 
 }
