@@ -24,8 +24,11 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 
+import io.github.cdiunit.Isolation;
+import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.ProducesAlternative;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,6 +86,34 @@ public class TestNestedFeatures {
 
     @Nested
     class NestedNamingContext extends NamingContextTestBase {
+
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @Isolation(IsolationLevel.PER_CLASS)
+    class NestedTestIsolationPerClassTestPerClassWeld extends TestIsolationPerClassTestPerClassWeld {
+
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @Isolation(IsolationLevel.PER_METHOD)
+    class NestedTestIsolationPerClassTestPerMethodWeld extends TestIsolationPerClassTestPerMethodWeld {
+
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+    @Isolation(IsolationLevel.PER_CLASS)
+    class NestedTestIsolationPerMethodTestPerClassWeld extends TestIsolationPerMethodTestPerClassWeld {
+
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+    @Isolation(IsolationLevel.PER_METHOD)
+    class NestedTestIsolationPerMethodTestPerMethodWeld extends TestIsolationPerMethodTestPerMethodWeld {
 
     }
 
