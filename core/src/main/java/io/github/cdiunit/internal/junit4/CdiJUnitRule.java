@@ -72,19 +72,9 @@ public class CdiJUnitRule implements TestRule, MethodRule {
 
     @Override
     public Statement apply(Statement base, FrameworkMethod method, Object testInstance) {
-        var testLifecycle = getTestLifecycle(testInstance.getClass(), method.getMethod(), IsolationLevel.PER_METHOD);
-        var statement = base;
-        statement = new Statement() {
-
-            @Override
-            public void evaluate() throws Throwable {
-                var ic = new JUnitInvocationContext<>(base, testInstance, testLifecycle.getTestMethod());
-                ic.configure(testLifecycle.getBeanManager());
-                ic.proceed();
-            }
-
-        };
         var contextsActivated = contextsActivatedPerClass.computeIfAbsent(testInstance.getClass(), c -> new AtomicBoolean());
+        var testLifecycle = getTestLifecycle(testInstance.getClass(), method.getMethod(), IsolationLevel.PER_METHOD);
+        Statement statement = new InvokeInterceptors(base, testInstance, testLifecycle);
         statement = new ActivateScopes(statement, testLifecycle, contextsActivated);
         statement = new ExpectStartupException(statement, testLifecycle);
         statement = new AroundMethod(statement, testLifecycle);

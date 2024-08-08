@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit5.internal;
+package io.github.cdiunit.internal;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -29,17 +29,12 @@ import jakarta.enterprise.inject.spi.InterceptionType;
 import jakarta.enterprise.inject.spi.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
-import org.junit.jupiter.api.extension.InvocationInterceptor;
-import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
+public class TestMethodInvocationContext<H> implements InvocationContext {
 
-import io.github.cdiunit.internal.ExceptionUtils;
-
-public class JUnit5InvocationContext<H> implements InvocationInterceptor.Invocation<Void>, InvocationContext {
-
-    private final InvocationInterceptor.Invocation<Void> next;
     private final Object target;
     private final Method method;
     private final Object[] parameters;
+    private final ThrowingStatement methodInvoker;
 
     private List<Interceptor<?>> interceptors = List.of();
     private Map<String, Object> contextData;
@@ -47,15 +42,19 @@ public class JUnit5InvocationContext<H> implements InvocationInterceptor.Invocat
 
     private int interceptorIndex;
 
-    public JUnit5InvocationContext(InvocationInterceptor.Invocation<Void> invocation,
-            ReflectiveInvocationContext<Method> invocationContext) {
-        this.next = invocation;
-        this.target = invocationContext.getTarget().orElseThrow(() -> new IllegalStateException("target instance is required"));
-        this.method = invocationContext.getExecutable();
-        this.parameters = invocationContext.getArguments().toArray();
+    @FunctionalInterface
+    public interface ThrowingStatement {
+        void evaluate() throws Throwable;
     }
 
-    public void configure(BeanManager beanManager) {
+    public TestMethodInvocationContext(Object target, Method method, Object[] parameters, ThrowingStatement methodInvoker) {
+        this.target = target;
+        this.method = method;
+        this.parameters = parameters;
+        this.methodInvoker = methodInvoker;
+    }
+
+    public void resolveInterceptors(BeanManager beanManager) {
         if (method == null) {
             return;
         }
@@ -110,7 +109,7 @@ public class JUnit5InvocationContext<H> implements InvocationInterceptor.Invocat
 
     @Override
     @SuppressWarnings("unchecked")
-    public Void proceed() throws Exception {
+    public Object proceed() throws Exception {
         if (interceptors.size() > interceptorIndex) {
             Interceptor<H> interceptor = null;
             CreationalContext<H> creationalContext = null;
@@ -121,7 +120,7 @@ public class JUnit5InvocationContext<H> implements InvocationInterceptor.Invocat
                 creationalContext = beanManager.createCreationalContext(interceptor);
                 interceptorInstance = interceptor.create(creationalContext);
 
-                return (Void) interceptor.intercept(InterceptionType.AROUND_INVOKE, interceptorInstance, this);
+                return interceptor.intercept(InterceptionType.AROUND_INVOKE, interceptorInstance, this);
             } finally {
                 if (creationalContext != null) {
                     if (interceptorInstance != null && interceptor != null) {
@@ -134,12 +133,12 @@ public class JUnit5InvocationContext<H> implements InvocationInterceptor.Invocat
         }
 
         try {
-            next.proceed();
-        } catch (Throwable e) {
-            throw ExceptionUtils.asRuntimeException(e);
+            methodInvoker.evaluate();
+            // test methods are void
+            return null;
+        } catch (Throwable t) {
+            throw ExceptionUtils.asRuntimeException(t);
         }
-        // test methods are void
-        return null;
     }
 
 }
