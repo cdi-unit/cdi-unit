@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.junit4;
+package io.github.cdiunit.internal;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -29,15 +29,12 @@ import jakarta.enterprise.inject.spi.InterceptionType;
 import jakarta.enterprise.inject.spi.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
-import org.junit.runners.model.Statement;
+public class TestMethodInvocationContext<H> implements InvocationContext {
 
-import io.github.cdiunit.internal.ExceptionUtils;
-
-public class JUnitInvocationContext<H> implements InvocationContext {
-
-    private final Statement base;
     private final Object target;
     private final Method method;
+    private final Object[] parameters;
+    private final ThrowingStatement methodInvoker;
 
     private List<Interceptor<?>> interceptors = List.of();
     private Map<String, Object> contextData;
@@ -45,13 +42,19 @@ public class JUnitInvocationContext<H> implements InvocationContext {
 
     private int interceptorIndex;
 
-    public JUnitInvocationContext(Statement base, Object target, Method method) {
-        this.base = base;
-        this.target = target;
-        this.method = method;
+    @FunctionalInterface
+    public interface ThrowingStatement {
+        void evaluate() throws Throwable;
     }
 
-    public void configure(BeanManager beanManager) {
+    public TestMethodInvocationContext(Object target, Method method, Object[] parameters, ThrowingStatement methodInvoker) {
+        this.target = target;
+        this.method = method;
+        this.parameters = parameters;
+        this.methodInvoker = methodInvoker;
+    }
+
+    public void resolveInterceptors(BeanManager beanManager) {
         if (method == null) {
             return;
         }
@@ -88,7 +91,7 @@ public class JUnitInvocationContext<H> implements InvocationContext {
 
     @Override
     public Object[] getParameters() {
-        return new Object[0];
+        return parameters;
     }
 
     @Override
@@ -130,12 +133,12 @@ public class JUnitInvocationContext<H> implements InvocationContext {
         }
 
         try {
-            base.evaluate();
-        } catch (Throwable e) {
-            throw ExceptionUtils.asRuntimeException(e);
+            methodInvoker.evaluate();
+            // test methods are void
+            return null;
+        } catch (Throwable t) {
+            throw ExceptionUtils.asRuntimeException(t);
         }
-        // test methods are void
-        return null;
     }
 
 }
