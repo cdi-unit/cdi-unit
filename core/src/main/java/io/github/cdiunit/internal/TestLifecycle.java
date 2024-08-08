@@ -186,7 +186,7 @@ public class TestLifecycle {
         return testConfiguration;
     }
 
-    protected boolean explicitInterceptorInvocation() {
+    public boolean explicitInterceptorInvocation() {
         return needsExplicitInterceptorInvocation;
     }
 

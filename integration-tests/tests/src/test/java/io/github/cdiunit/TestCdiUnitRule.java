@@ -47,8 +47,8 @@ public class TestCdiUnitRule extends BaseTest {
     @Rule
     // Use method - not a field - for rules since test class is added to the bean archive.
     // Weld enforces that no public fields exist in the normal scoped bean class.
-    public MethodRule cdiUnit() {
-        return CdiJUnit.rule();
+    public MethodRule cdiUnitMethod() {
+        return CdiJUnit.methodRule();
     }
 
     @Inject
