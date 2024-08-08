@@ -24,15 +24,11 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import org.testng.IHookCallBack;
-import org.testng.IHookable;
-import org.testng.ITestResult;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.NgCdiListener;
-import io.github.cdiunit.NgCdiRunner;
 import io.github.cdiunit.ProducerConfig;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -45,15 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestProducerConfig.ProducerConfigNum(0)
 abstract class TestProducerConfig extends BaseTest {
 
-    public static class TestWithRunner extends TestProducerConfig implements IHookable {
-
-        private final NgCdiRunner runner = new NgCdiRunner() {
-        };
-
-        @Override
-        public void run(IHookCallBack callBack, ITestResult testResult) {
-            runner.run(callBack, testResult);
-        }
+    public static class TestWithRunner extends TestProducerConfig {
 
     }
 
