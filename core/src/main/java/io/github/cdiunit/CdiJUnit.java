@@ -16,6 +16,7 @@
 package io.github.cdiunit;
 
 import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
 
 import io.github.cdiunit.internal.junit4.CdiJUnitRule;
 
@@ -31,11 +32,22 @@ import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
 public final class CdiJUnit {
 
     /**
-     * Creates rule instance that initiates CDI Unit.
+     * Creates method rule instance that manages CDI Unit.
      *
      * @return the rule instance
      */
-    public static MethodRule rule() {
+    public static MethodRule methodRule() {
+        return new CdiJUnitRule();
+    }
+
+    /**
+     * Creates rule instance that manages CDI Unit for classes using {@link IsolationLevel#PER_CLASS}.
+     *
+     * An instance of {link CdiJUnit#methodRule} is also required.
+     *
+     * @return the rule instance
+     */
+    public static TestRule classRule() {
         return new CdiJUnitRule();
     }
 
