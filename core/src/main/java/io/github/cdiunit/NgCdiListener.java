@@ -31,7 +31,7 @@ import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
-import io.github.cdiunit.internal.testng.NgInvocationContext;
+import io.github.cdiunit.internal.testng.InvokeInterceptors;
 
 public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {
 
@@ -176,9 +176,7 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
             return;
         }
         try {
-            var ic = new NgInvocationContext<>(callBack, testResult);
-            ic.configure(testLifecycle.getBeanManager());
-            ic.proceed();
+            new InvokeInterceptors(callBack, testResult, testLifecycle).evaluate();
         } catch (Throwable t) {
             testResult.setThrowable(t);
             testResult.setStatus(ITestResult.FAILURE);
