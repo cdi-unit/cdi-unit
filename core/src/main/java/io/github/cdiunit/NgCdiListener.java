@@ -15,21 +15,33 @@
  */
 package io.github.cdiunit;
 
-import org.testng.IHookCallBack;
-import org.testng.IHookable;
-import org.testng.ITestResult;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
+import org.testng.*;
+import org.testng.annotations.Listeners;
+
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 import io.github.cdiunit.internal.testng.NgInvocationContext;
 
-public class NgCdiListener implements IHookable {
+public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {
 
     static class NgTestLifecycle extends TestLifecycle {
 
-        protected NgTestLifecycle(TestConfiguration testConfiguration) {
+        private final boolean configuredOnClass;
+
+        public NgTestLifecycle(TestConfiguration testConfiguration, boolean configuredOnClass) {
             super(testConfiguration);
+            this.configuredOnClass = configuredOnClass;
         }
 
         @Override
@@ -46,33 +58,130 @@ public class NgCdiListener implements IHookable {
 
     }
 
+    private final Map<Class<?>, NgTestLifecycle> testLifecycles = new ConcurrentHashMap<>();
+
+    private NgTestLifecycle initialTestLifecycle(ITestClass ngTestClass) {
+        var testClass = ngTestClass.getRealClass();
+        var superClassSpliterator = new Spliterator<Class<?>>() {
+
+            Class<?> aClass = testClass;
+
+            @Override
+            public boolean tryAdvance(Consumer<? super Class<?>> action) {
+                if (aClass == null) {
+                    return false;
+                }
+
+                action.accept(aClass);
+                aClass = aClass.getSuperclass();
+                return true;
+            }
+
+            @Override
+            public Spliterator<Class<?>> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return ORDERED | DISTINCT | NONNULL | IMMUTABLE;
+            }
+        };
+        var configuredOnClass = StreamSupport.stream(superClassSpliterator, false)
+                .map(c -> c.getAnnotation(Listeners.class))
+                .filter(Objects::nonNull)
+                .flatMap(a -> Arrays.stream(a.value()))
+                .anyMatch(NgCdiListener.class::isAssignableFrom);
+
+        return testLifecycles.computeIfAbsent(testClass,
+                aClass -> new NgTestLifecycle(new TestConfiguration(aClass, null), configuredOnClass));
+    }
+
+    private NgTestLifecycle requiredTestLifecycle(ITestClass ngTestClass, Method method) {
+        var testLifecycle = initialTestLifecycle(ngTestClass);
+        if (method != null) {
+            testLifecycle.setTestMethod(method);
+        }
+        return testLifecycle;
+    }
+
+    @Override
+    public void onBeforeClass(ITestClass testClass) {
+        var testLifecycle = initialTestLifecycle(testClass);
+        if (!testLifecycle.configuredOnClass) {
+            return;
+        }
+        testLifecycle.beforeTestClass();
+    }
+
+    @Override
+    public void onAfterClass(ITestClass testClass) {
+        var testLifecycle = requiredTestLifecycle(testClass, null);
+        if (!testLifecycle.configuredOnClass) {
+            return;
+        }
+        try {
+            testLifecycle.afterTestClass();
+        } catch (Exception e) {
+            throw ExceptionUtils.asRuntimeException(e);
+        } finally {
+            testLifecycles.remove(testClass.getRealClass());
+        }
+    }
+
+    @Override
+    public void beforeInvocation(IInvokedMethod invokedMethod, ITestResult testResult) {
+        final var method = invokedMethod.getTestMethod().getConstructorOrMethod().getMethod();
+        final var testLifecycle = requiredTestLifecycle(testResult.getMethod().getTestClass(), method);
+        if (!testLifecycle.configuredOnClass) {
+            return;
+        }
+        final var target = testResult.getInstance();
+        try {
+            testLifecycle.configureTest(target);
+            testLifecycle.beforeTestMethod();
+        } catch (Throwable t) {
+            testResult.setThrowable(t);
+            testResult.setStatus(ITestResult.FAILURE);
+        }
+    }
+
+    @Override
+    public void afterInvocation(IInvokedMethod invokedMethod, ITestResult testResult) {
+        final var method = invokedMethod.getTestMethod().getConstructorOrMethod().getMethod();
+        final var testLifecycle = requiredTestLifecycle(testResult.getMethod().getTestClass(), method);
+        if (!testLifecycle.configuredOnClass) {
+            return;
+        }
+        try {
+            testLifecycle.afterTestMethod();
+        } catch (Throwable t) {
+            testResult.setThrowable(t);
+            testResult.setStatus(ITestResult.FAILURE);
+        }
+    }
+
     @Override
     public void run(IHookCallBack callBack, ITestResult testResult) {
         var method = testResult.getMethod().getConstructorOrMethod().getMethod();
-        if (method == null) {
+        var testLifecycle = requiredTestLifecycle(testResult.getMethod().getTestClass(), method);
+        if (method == null || !testLifecycle.configuredOnClass) {
             // invoke default callback when running a constructor
             callBack.runTestMethod(testResult);
             return;
         }
-        final var target = testResult.getInstance();
-        final TestConfiguration testConfig = new TestConfiguration(target.getClass(), method);
-        var testLifecycle = new NgTestLifecycle(testConfig);
-        // FIXME - #289
-        testLifecycle.setIsolationLevel(IsolationLevel.PER_METHOD);
         try {
-            testLifecycle.configureTest(target);
-            testLifecycle.beforeTestMethod();
             var ic = new NgInvocationContext<>(callBack, testResult);
             ic.configure(testLifecycle.getBeanManager());
             ic.proceed();
         } catch (Throwable t) {
             testResult.setThrowable(t);
-        } finally {
-            try {
-                testLifecycle.afterTestMethod();
-            } catch (Throwable t) {
-                testResult.setThrowable(t);
-            }
+            testResult.setStatus(ITestResult.FAILURE);
         }
     }
 

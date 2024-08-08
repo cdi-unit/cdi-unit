@@ -15,10 +15,13 @@
  */
 package io.github.cdiunit;
 
+import org.testng.annotations.Listeners;
+
 /**
  * Use {@code @Listeners(NgCdiListener.class)} instead.
  */
 @Deprecated(forRemoval = true)
-public abstract class NgCdiRunner extends NgCdiListener {
+@Listeners(NgCdiListener.class)
+public abstract class NgCdiRunner {
 
 }

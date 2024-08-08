@@ -35,9 +35,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.testng.IHookCallBack;
-import org.testng.IHookable;
-import org.testng.ITestResult;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -48,15 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
 abstract class TestBasicFeatures extends BaseTest {
 
-    public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess, IHookable {
-
-        private final NgCdiRunner runner = new NgCdiRunner() {
-        };
-
-        @Override
-        public void run(IHookCallBack callBack, ITestResult testResult) {
-            runner.run(callBack, testResult);
-        }
+    public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess {
 
         @Produces
         public ProducedViaMethod getProducedViaMethod() {

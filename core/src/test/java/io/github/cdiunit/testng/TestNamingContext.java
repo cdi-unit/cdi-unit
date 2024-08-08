@@ -22,28 +22,16 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import org.testng.IHookCallBack;
-import org.testng.IHookable;
-import org.testng.ITestResult;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.NgCdiListener;
-import io.github.cdiunit.NgCdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class TestNamingContext extends BaseTest {
 
-    public static class TestWithRunner extends TestNamingContext implements IHookable {
-
-        private final NgCdiRunner runner = new NgCdiRunner() {
-        };
-
-        @Override
-        public void run(IHookCallBack callBack, ITestResult testResult) {
-            runner.run(callBack, testResult);
-        }
+    public static class TestWithRunner extends TestNamingContext {
 
     }
 

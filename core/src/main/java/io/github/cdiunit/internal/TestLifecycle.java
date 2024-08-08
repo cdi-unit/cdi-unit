@@ -109,8 +109,9 @@ public class TestLifecycle {
         var testClass = testInstance.getClass();
 
         if (!testClass.equals(testConfiguration.getTestClass())) {
-            throw new IllegalStateException(String.format("mismatched test class: %s instance provided while %s configured",
-                    testClass, testConfiguration.getTestClass()));
+            throw new IllegalStateException(
+                    String.format("mismatched test class: instance of %s provided while configured for %s",
+                            testClass, testConfiguration.getTestClass()));
         }
 
         initWeld();
