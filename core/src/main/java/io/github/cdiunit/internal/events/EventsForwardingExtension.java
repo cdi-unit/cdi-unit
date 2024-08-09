@@ -16,8 +16,7 @@
 package io.github.cdiunit.internal.events;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -32,10 +31,13 @@ import io.github.cdiunit.internal.ExceptionUtils;
 
 public class EventsForwardingExtension implements Extension {
 
+    private static final Map<Class<?>, Map<Class<?>, List<Method>>> discoveredObserverMethods = new ConcurrentHashMap<>();
+
+    // event type -> observer
     private final Map<Class<?>, ObserverBinding> bindings = new ConcurrentHashMap<>();
 
     public void bind(Class<?> testClass, Object testInstance) {
-        findObserverMethods(testClass).forEach(
+        discoveredObserverMethods.computeIfAbsent(testClass, EventsForwardingExtension::findObserverMethods).forEach(
                 (eventType, actions) -> bindings.put(eventType, new ObserverBinding(eventType, testInstance, actions)));
     }
 
@@ -113,8 +115,76 @@ public class EventsForwardingExtension implements Extension {
         unbind();
     }
 
+    /**
+     * Checks if bean type can be proxied by the container.
+     *
+     * See <a href="https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0#unproxyable"> CDI spec unproxyable bean
+     * types</a>
+     *
+     * @param type
+     * @return {@code true} if all proxy conditions are met, {@code false} otherwise
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static boolean isProxyableClass(Type type) {
+        Class clazz = null;
+        if (type instanceof Class) {
+            clazz = (Class) type;
+        }
+        if (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType() instanceof Class) {
+            clazz = (Class) ((ParameterizedType) type).getRawType();
+        }
+        if (clazz == null) {
+            return false;
+        }
+
+        // classes which don’t have a non-private constructor with no parameters
+        try {
+            Constructor constructor = clazz.getConstructor();
+            if (Modifier.isPrivate(constructor.getModifiers())) {
+                return false;
+            }
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+
+        // classes which are declared final
+        if (Modifier.isFinal(clazz.getModifiers())) {
+            return false;
+        }
+
+        // classes which have non-static, final methods with public, protected or default visibility,
+        for (Method method : clazz.getMethods()) {
+            if (method.getDeclaringClass() == Object.class) {
+                continue;
+            }
+
+            final var modifiers = method.getModifiers();
+            if (!method.isBridge() && !method.isSynthetic() && !Modifier.isStatic(modifiers) &&
+                    !Modifier.isPrivate(modifiers) && Modifier.isFinal(modifiers)) {
+                return false;
+            }
+        }
+
+        // primitive types,
+        // and array types.
+        return !(clazz.isPrimitive() || clazz.isArray());
+    }
+
     private <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> pat) {
-        if (pat.getAnnotatedType().isAnnotationPresent(Interceptor.class)) {
+        final var annotatedType = pat.getAnnotatedType();
+        if (annotatedType.isAnnotationPresent(Interceptor.class)) {
+            return;
+        }
+        var javaClass = annotatedType.getJavaClass();
+        if (Extension.class.isAssignableFrom(javaClass)) {
+            return;
+        }
+        var observerMethods = discoveredObserverMethods.computeIfAbsent(javaClass,
+                EventsForwardingExtension::findObserverMethods);
+        if (observerMethods.isEmpty()) {
+            return;
+        }
+        if (!isProxyableClass(javaClass)) {
             return;
         }
         pat.configureAnnotatedType().add(ForwardedEvents.Literal.INSTANCE);

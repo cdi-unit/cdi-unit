@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 
-import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.ProducesAlternative;
@@ -138,7 +137,6 @@ public class TestNestedFeatures {
     }
 
     @Nested
-    @AdditionalClasses(Qualify.class)
     class NestedTestInstanceObserveEvents extends TestInstanceObserveEvents {
 
         int observedQualified;
