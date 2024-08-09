@@ -42,11 +42,6 @@ public class TestMethodInvocationContext<H> implements InvocationContext {
 
     private int interceptorIndex;
 
-    @FunctionalInterface
-    public interface ThrowingStatement {
-        void evaluate() throws Throwable;
-    }
-
     public TestMethodInvocationContext(Object target, Method method, Object[] parameters, ThrowingStatement methodInvoker) {
         this.target = target;
         this.method = method;

@@ -48,6 +48,17 @@ public class TestLifecycle {
         isolationLevel = testConfiguration.getIsolationLevel();
     }
 
+    private void perform(IsolationLevel targetIsolationLevel, ThrowingStatement action) {
+        if (isolationLevel != targetIsolationLevel) {
+            return;
+        }
+        try {
+            action.evaluate();
+        } catch (Throwable t) {
+            throw ExceptionUtils.asRuntimeException(t);
+        }
+    }
+
     protected void initWeld() {
         if (startupException != null) {
             return;
@@ -137,27 +148,19 @@ public class TestLifecycle {
     }
 
     public void beforeTestClass() {
-        if (isolationLevel == IsolationLevel.PER_CLASS) {
-            initWeld();
-        }
+        perform(IsolationLevel.PER_CLASS, this::initWeld);
     }
 
     public void afterTestClass() throws Exception {
-        if (isolationLevel == IsolationLevel.PER_CLASS) {
-            shutdownWeld();
-        }
+        perform(IsolationLevel.PER_CLASS, this::shutdownWeld);
     }
 
     public void beforeTestMethod() {
-        if (isolationLevel == IsolationLevel.PER_METHOD) {
-            initWeld();
-        }
+        perform(IsolationLevel.PER_METHOD, this::initWeld);
     }
 
     public void afterTestMethod() throws Exception {
-        if (isolationLevel == IsolationLevel.PER_METHOD) {
-            shutdownWeld();
-        }
+        perform(IsolationLevel.PER_METHOD, this::shutdownWeld);
         testConfiguration.setTestMethod(null);
     }
 
