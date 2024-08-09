@@ -27,8 +27,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import io.github.cdiunit.NgCdiListener;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class TestInstanceObserveEvents extends BaseTest {

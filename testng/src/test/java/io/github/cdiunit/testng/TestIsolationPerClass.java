@@ -25,28 +25,36 @@ import org.testng.annotations.Test;
 
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.NgCdiListener;
-import io.github.cdiunit.NgCdiRunner;
+import io.github.cdiunit.testng.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-interface TestIsolationPerMethod {
+interface TestIsolationPerClass {
 
-    @Isolation(IsolationLevel.PER_METHOD)
-    public static class TestWithRunner extends NgCdiRunner implements TestIsolationPerMethod {
+    @Isolation(IsolationLevel.PER_CLASS)
+    class TestWithRunner extends NgCdiRunner implements TestIsolationPerClass {
+
         @Inject
         ApplicationCounter applicationCounter;
 
         @Override
         public ApplicationCounter injectedApplicationCounter() {
             return applicationCounter;
+        }
+
+        private AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public AtomicInteger counter() {
+            return counter;
         }
 
     }
 
     @Listeners(NgCdiListener.class)
-    @Isolation(IsolationLevel.PER_METHOD)
-    public static class TestWithListener implements TestIsolationPerMethod {
+    @Isolation(IsolationLevel.PER_CLASS)
+    class TestWithListener implements TestIsolationPerClass {
+
         @Inject
         ApplicationCounter applicationCounter;
 
@@ -54,9 +62,17 @@ interface TestIsolationPerMethod {
         public ApplicationCounter injectedApplicationCounter() {
             return applicationCounter;
         }
+
+        private AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public AtomicInteger counter() {
+            return counter;
+        }
+
     }
 
-    AtomicInteger counter = new AtomicInteger();
+    AtomicInteger counter();
 
     ApplicationCounter injectedApplicationCounter();
 
@@ -65,34 +81,28 @@ interface TestIsolationPerMethod {
         assertThat(injectedApplicationCounter()).as("injected applicationCounter").isNotNull();
     }
 
-    @BeforeMethod
-    default void initialCounter() {
-        // TestNG uses same test instance for all methods
-        counter.set(0);
-    }
-
     @Test(priority = 1)
-    default void step1() {
+    public default void step1() {
         int number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
         number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
     }
 
     @Test(priority = 2)
-    default void step2() {
+    public default void step2() {
         int number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
         number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
     }
 
     @Test(priority = 3)
-    default void step3() {
+    public default void step3() {
         int number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
         number = injectedApplicationCounter().incrementAndGet();
-        assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+        assertThat(number).as("application counter").isEqualTo(counter().incrementAndGet());
     }
 
 }

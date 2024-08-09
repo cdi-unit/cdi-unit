@@ -25,6 +25,7 @@ import jakarta.inject.Provider;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.*;
+import io.github.cdiunit.testng.NgCdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

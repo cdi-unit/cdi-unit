@@ -148,6 +148,10 @@ public class TestLifecycle {
             creationalContext.release();
         });
 
+        afterConfigure(testClass, testInstance);
+    }
+
+    protected void afterConfigure(Class<?> testClass, Object testInstance) throws Throwable {
         BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
         instanceDisposers.add(() -> {
             try {
@@ -157,7 +161,7 @@ public class TestLifecycle {
             }
         });
 
-        var eventsForwarder = beanManager.getExtension(EventsForwardingExtension.class);
+        var eventsForwarder = getBeanManager().getExtension(EventsForwardingExtension.class);
         addBeforeMethod(testLifecycle -> eventsForwarder.bind(testClass, testInstance));
         addAfterMethod(testLifecycle -> eventsForwarder.unbind());
     }

@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.tests.testng;
+package io.github.cdiunit.testng.beans;
 
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.inject.Inject;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import io.github.cdiunit.testng.NgCdiRunner;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
-abstract class BaseTest extends NgCdiRunner {
+@ApplicationScoped
+public class ApplicationCounter {
 
-    @Inject
-    private BeanManager beanManager;
+    private AtomicInteger counter = new AtomicInteger();
 
-    public BeanManager getBeanManager() {
-        return beanManager;
+    @PostConstruct
+    void init() {
+        counter.set(0);
+    }
+
+    public int incrementAndGet() {
+        return counter.incrementAndGet();
     }
 
 }

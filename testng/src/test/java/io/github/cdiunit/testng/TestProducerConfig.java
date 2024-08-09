@@ -28,7 +28,6 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.NgCdiListener;
 import io.github.cdiunit.ProducerConfig;
 
 import static java.lang.annotation.ElementType.METHOD;

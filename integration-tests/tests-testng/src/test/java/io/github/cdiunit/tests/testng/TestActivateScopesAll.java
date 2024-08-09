@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 import io.github.cdiunit.ActivateScopes;
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.NgCdiRunner;
+import io.github.cdiunit.testng.NgCdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

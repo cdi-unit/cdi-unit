@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.testng;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
-import io.github.cdiunit.internal.testng.InvokeInterceptors;
+import io.github.cdiunit.testng.internal.InvokeInterceptors;
 
 public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {
 
@@ -45,15 +45,13 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
         }
 
         @Override
-        public void beforeTestMethod() {
-            super.beforeTestMethod();
-            ScopesHelper.activateContexts(getBeanManager(), getTestConfiguration().getTestMethod());
-        }
+        protected void afterConfigure(Class<?> testClass, Object testInstance) throws Throwable {
+            super.afterConfigure(testClass, testInstance);
 
-        @Override
-        public void afterTestMethod() throws Exception {
-            ScopesHelper.deactivateContexts(getBeanManager(), getTestConfiguration().getTestMethod());
-            super.afterTestMethod();
+            addBeforeMethod(testLifecycle -> ScopesHelper.activateContexts(testLifecycle.getBeanManager(),
+                    testLifecycle.getTestMethod()));
+            addAfterMethod(testLifecycle -> ScopesHelper.deactivateContexts(testLifecycle.getBeanManager(),
+                    testLifecycle.getTestMethod()));
         }
 
     }

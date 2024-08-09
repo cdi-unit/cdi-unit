@@ -26,8 +26,8 @@ import jakarta.ws.rs.ext.Providers;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.InRequestScope;
-import io.github.cdiunit.NgCdiRunner;
 import io.github.cdiunit.jaxrs.SupportJaxRs;
+import io.github.cdiunit.testng.NgCdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

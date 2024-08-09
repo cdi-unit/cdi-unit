@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author or authors.
+ * Copyright 2011 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.tests.testng;
+package io.github.cdiunit.testng.beans;
 
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.inject.Inject;
+import java.io.Serializable;
 
-import io.github.cdiunit.testng.NgCdiRunner;
+import jakarta.enterprise.context.SessionScoped;
 
-abstract class BaseTest extends NgCdiRunner {
+@SessionScoped
+public class CSessionScoped implements Serializable {
 
-    @Inject
-    private BeanManager beanManager;
+    private static final long serialVersionUID = 1L;
+    private String foo;
 
-    public BeanManager getBeanManager() {
-        return beanManager;
+    public String getFoo() {
+        return foo;
+    }
+
+    public void setFoo(String foo) {
+        this.foo = foo;
     }
 
 }
