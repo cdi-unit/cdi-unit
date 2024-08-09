@@ -1,5 +1,4 @@
-cdi-unit
-========
+= cdi-unit
 
 Unit testing for CDI applications. Supports Mockito for mocking dependencies.
 
@@ -7,33 +6,37 @@ See website for full details http://cdi-unit.github.io/cdi-unit
 
 Discussion can be found here https://groups.google.com/forum/#!forum/cdi-unit
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg)](https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/)
-[![javadoc](https://javadoc.io/badge2/io.github.cdi-unit/cdi-unit/javadoc.svg)](https://javadoc.io/doc/io.github.cdi-unit/cdi-unit)
+image:https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg[Maven Central,link=https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/]
+image:https://javadoc.io/badge2/io.github.cdi-unit/cdi-unit/javadoc.svg[javadoc,link=https://javadoc.io/doc/io.github.cdi-unit/cdi-unit]
 
-## Getting the latest release
+== Getting the latest release
 
-[CDI-Unit 5](https://github.com/cdi-unit/cdi-unit/TBD)
+https://github.com/cdi-unit/cdi-unit/TBD[CDI-Unit 5]
+
 - Supports CDI 3.x+ (`jakarta.` packages)
 - Requires Java 11
 
-[CDI-Unit 4](https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.4.0)
+https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.4.0[CDI-Unit 4]
+
 - Supports CDI 1.x or 2.x (`javax.` packages)
 - Supports Java 8 and Java 11
 
 Only one major version is supported at a time, and changes are not backported to older versions.
 
-```xml
+[source,xml]
+----
 <dependency>
   <groupId>io.github.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
   <version>${cdi-unit-version}</version>
   <scope>test</scope>
 </dependency>
-```
+----
 
-## Example unit test
+== Example unit test
 
-```java
+[source,java]
+----
 class Starship {
 
   @Inject
@@ -57,17 +60,19 @@ class TestStarship {
   }
 }
 
-```
+----
 
-### Acknowledgements
+=== Acknowledgements
+
 This project uses code shamelessly copied from:
 
-[Mockrunner](https://github.com/mockrunner/mockrunner) under Apache license.
-[Resteasy](http://resteasy.jboss.org/) under Apache license.
+https://github.com/mockrunner/mockrunner[Mockrunner] under Apache license.
+http://resteasy.jboss.org/[Resteasy] under Apache license.
 
-### License
+=== License
 
-```text
+[source,text]
+----
 Copyright 2013 CDI-Unit contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,4 +86,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-```
+----

@@ -1,26 +1,27 @@
-# CDI-Unit user guide
+= CDI-Unit user guide
 
-1.  [Quickstart](#quickstart)
-2.  [CDI-Unit annotations](#cdi-unit-annotations)
-3.  [Example unit test](#example-unit-test)
-4.  [Controlling the CDI environment](#controlling-the-cdi-environment)
-5.  [Using mocks](#using-mocks)
-6.  [Using alternatives](#using-alternatives)
-7.  [Using scopes](#using-scopes)
-8.  [Using a specific version of Weld](#using-a-specific-version-of-weld)
-9.  [TestNG support](#testng-support)
-10.  [EJB support](#ejb-support)
-11.  [Resource support](#resource-support)
-12.  [DeltaSpike support](#deltaspike-support)
-13.  [JaxRS support](#jaxrs-support)
-14.  [Support for Java 9 and later](#support-for-java-9-and-later)
-15.  [Changelog](#changelog)
+. <<quickstart,Quickstart>>
+. <<cdi-unit-annotations,CDI-Unit annotations>>
+. <<example-unit-test,Example unit test>>
+. <<controlling-the-cdi-environment,Controlling the CDI environment>>
+. <<using-mocks,Using mocks>>
+. <<using-alternatives,Using alternatives>>
+. <<using-scopes,Using scopes>>
+. <<using-a-specific-version-of-weld,Using a specific version of Weld>>
+. <<testng-support,TestNG support>>
+. <<ejb-support,EJB support>>
+. <<resource-support,Resource support>>
+. <<deltaspike-support,DeltaSpike support>>
+. <<jaxrs-support,JaxRS support>>
+. <<support-for-java-9-and-later,Support for Java 9 and later>>
+. <<changelog,Changelog>>
 
-### Quickstart
+=== Quickstart
 
-Testing your Java [CDI](http://download.oracle.com/javaee/6/tutorial/doc/giwhb.html) application with CDI-Unit couldn't be easier. Just specify `@RunWith(CdiRunner.class)` on your [JUnit4](http://www.junit.org/) test class to enable injection directly into the test class.
+Testing your Java http://download.oracle.com/javaee/6/tutorial/doc/giwhb.html[CDI] application with CDI-Unit couldn't be easier. Just specify `@RunWith(CdiRunner.class)` on your http://www.junit.org/[JUnit4] test class to enable injection directly into the test class.
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class) // Runs the test with CDI-Unit
 class MyTest {
   @Inject
@@ -28,24 +29,26 @@ class MyTest {
 
   // ...
 }
-```
+----
+
 Make sure you've added the cdi-unit dependency to your build file
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg)](https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/)
+image:https://img.shields.io/maven-central/v/io.github.cdi-unit/cdi-unit.svg[Maven Central,link=https://search.maven.org/artifact/io.github.cdi-unit/cdi-unit/]
 
-
-```xml
+[source,xml]
+----
 <dependency>
   <groupId>io.github.cdi-unit</groupId>
   <artifactId>cdi-unit</artifactId>
   <version>${cdi-unit-version}</version>
   <scope>test</scope>
 </dependency>
-```
+----
 
-And your preferred version of [Weld SE](https://search.maven.org/search?q=g:org.jboss.weld.se%20AND%20a:weld-se-core&core=gav) (1.x, 2.x or 3.x):
+And your preferred version of https://search.maven.org/search?q=g:org.jboss.weld.se%20AND%20a:weld-se-core&core=gav[Weld SE] (1.x, 2.x or 3.x):
 
-```xml
+[source,xml]
+----
 <dependency>
   <groupId>org.jboss.weld.se</groupId>
   <!-- or weld-se -->
@@ -54,51 +57,54 @@ And your preferred version of [Weld SE](https://search.maven.org/search?q=g:org.
   <version>${weld.version}</version>
   <scope>test</scope>
 </dependency>
-```
-For Weld 3.x, you will probably also need [Weld Web](https://search.maven.org/search?q=g:org.jboss.weld.module%20AND%20a:weld-web&core=gav):
+----
 
-```xml
+For Weld 3.x, you will probably also need https://search.maven.org/search?q=g:org.jboss.weld.module%20AND%20a:weld-web&core=gav[Weld Web]:
+
+[source,xml]
+----
 <dependency>
   <groupId>org.jboss.weld.module</groupId>
   <artifactId>weld-web</artifactId>
   <version>${weld.version}</version>
   <scope>test</scope>
 </dependency>
-```
+----
 
-### Getting the latest release
+=== Getting the latest release
 
-[CDI-Unit 5](https://github.com/cdi-unit/cdi-unit/TBD)
+https://github.com/cdi-unit/cdi-unit/TBD[CDI-Unit 5]
 - Supports CDI 3.x+ (`jakarta.` packages)
 - Requires Java 11
 
-[CDI-Unit 4](https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.4.0)
+https://github.com/cdi-unit/cdi-unit/releases/tag/cdi-unit-parent-4.4.0[CDI-Unit 4]
 - Supports CDI 1.x or 2.x (`javax.` packages)
 - Supports Java 8 and Java 11
 
 Only one major version is supported at a time, and changes are not backported to older versions.
 
-### CDI-Unit Annotations
+=== CDI-Unit Annotations
 
 CDI Unit provides the discovery annotations that affect the classes available to the unit test:
 
-*   [@AdditionalClasses/@AdditionalPackages/@AdditionalClasspath](#controllingEnvironment) – Makes classes/extensions/interceptors available to the unit test if not discovered automatically.
-*   [@EnabledAlternatives](#enablingAlternatives) – Makes classes annotated [@Alternative](http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Alternative.html) available to the unit test and also marks them as enabled.
-*   [@ProducesAlternative](#producingAlternatives) – Makes a [@Produces](http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Produces.html) field or method produce an enabled @Alternative. 
+* <<controllingEnvironment,@AdditionalClasses/@AdditionalPackages/@AdditionalClasspath>> – Makes classes/extensions/interceptors available to the unit test if not discovered automatically.
+* <<enablingAlternatives,@EnabledAlternatives>> – Makes classes annotated http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Alternative.html[@Alternative] available to the unit test and also marks them as enabled.
+* <<producingAlternatives,@ProducesAlternative>> – Makes a http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Produces.html[@Produces] field or method produce an enabled @Alternative. 
 
-In addition [scoping annotations](#scopes) can be used to simulate scopes for method calls:
+In addition <<scopes,scoping annotations>> can be used to simulate scopes for method calls:
 
-*   @InRequestScope – Starts a request for the method call. 
-*   @InSessonScope – Starts a session for the method call.
-*   @InConversationScope – Starts conversation for the method call.
+* @InRequestScope – Starts a request for the method call. 
+* @InSessonScope – Starts a session for the method call.
+* @InConversationScope – Starts conversation for the method call.
 
-Classes, fields and methods can also be annotated with [@IgnoredClasses](#controllingEnvironment) to prevent them from being discovered automatically.
+Classes, fields and methods can also be annotated with <<controllingEnvironment,@IgnoredClasses>> to prevent them from being discovered automatically.
 
-### Example unit test
+=== Example unit test
 
-Suppose you have a class ```Starship``` that injects ```WarpDrive``` that implements ```Engine```:
+Suppose you have a class `Starship` that injects `WarpDrive` that implements `Engine`:
 
-```java
+[source,java]
+----
 class Starship { // We want to test this!
 
   @Inject
@@ -118,11 +124,12 @@ interface Engine {
 class WarpDrive implements Engine {
   // ...
 }
-```
+----
 
 You can test Starship and WarpDrive together:
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 class TestStarship {
 
@@ -134,17 +141,18 @@ class TestStarship {
     starship.start(); // Going to warp!
   }
 }
-```
+----
 
 WarpDrive will be injected into the Starship which will then be injected in to your unit test.
 
-### Controlling the CDI environment
+=== Controlling the CDI environment
 
 CDI-Unit will try to discover what classes should be available to the CDI environment automatically, but sometimes this is not possible. In this scenario we can use the @AdditionalClasses/@AdditionalPackages/@AdditionalClasspath annotations
 
 Suppose that we change the Starship example to inject an Engine rather than a WarpDrive:
 
-```java
+[source,java]
+----
 class Starship {
 
   @Inject
@@ -154,13 +162,14 @@ class Starship {
     engine.start();
   }
 }
-```
+----
 
 Running our test without modification will result in failure because there are no references to WarpDrive in the test or any of the injected fields.
 
 To fix this we have to tell CDI-Unit to explicitly add a class to the CDI environment:
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @AdditionalClasses(WarpDrive.class) // WarpDrive is available to use.
 class TestStarship {
@@ -173,26 +182,27 @@ class TestStarship {
     starship.start(); // Going to warp!
   }
 }
-```
+----
 
 CDI will automatically search for an implementation of Engine when trying to create a Starship instance. WarpDrive is available so it will be injected.
 
-#### Discovery annotations
+==== Discovery annotations
 
-*   @AdditionalClasses – Explicitly add class(es) to the deployment
-*   @AdditionalPackages – Classes in the same package will all be added to the deployment
-*   @AdditionalClasspath – Classes in the same classpath entry location will be added to the deployment
-*   @IgnoredClasses - Explicitly remove class(es) from the deployment
+* @AdditionalClasses – Explicitly add class(es) to the deployment
+* @AdditionalPackages – Classes in the same package will all be added to the deployment
+* @AdditionalClasspath – Classes in the same classpath entry location will be added to the deployment
+* @IgnoredClasses - Explicitly remove class(es) from the deployment
 
 To make it easy to figure out what is in the CDI environment CDI-Unit prints all of the classes added to the environment at DEBUG log level during startup.
 
-### Using mocks
+=== Using mocks
 
-To test classes in isolation we shouldn't be using their dependencies. Instead we should be using a [mock](http://en.wikipedia.org/wiki/Mock_object). There are many mocking libraries out there, however CDI-Unit has extra support for [Mockito](http://code.google.com/p/mockito/) [@Mock](http://docs.mockito.googlecode.com/hg/latest/index.html?org/mockito/Mockito.html) annotations and  [EasyMock](http://easymock.org/) [@Mock](http://easymock.org/EasyMock3_2_Documentation.html) annotations
+To test classes in isolation we shouldn't be using their dependencies. Instead we should be using a http://en.wikipedia.org/wiki/Mock_object[mock]. There are many mocking libraries out there, however CDI-Unit has extra support for http://code.google.com/p/mockito/[Mockito] http://docs.mockito.googlecode.com/hg/latest/index.html?org/mockito/Mockito.html[@Mock] annotations and  http://easymock.org/[EasyMock] http://easymock.org/EasyMock3_2_Documentation.html[@Mock] annotations
 
-Modifying the [StarshipTest](#example) we can use the [@Produces](http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Produces.html) annotation to make our mock available to the classes being tested. 
+Modifying the <<example,StarshipTest>> we can use the http://download.oracle.com/javaee/6/api/javax/enterprise/inject/Produces.html[@Produces] annotation to make our mock available to the classes being tested. 
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 //@AdditionalClasses(WarpDrive.class) WarpDrive is no longer required.
 class TestStarship {
@@ -212,32 +222,34 @@ class TestStarship {
     Mockito.verify(engine, Mockito.atLeastOnce()).start();
   }
 }
-```
+----
 
 That's it! Starship will be injected with our mock engine which we then verify the interaction with.
 
-### Using alternatives
+=== Using alternatives
 
 CDI is all about automatic configuration, but sometimes you need to give a hint as to which implementation to use. This is usually done via beans.xml, but in CDI-Unit we specify alternatives using annotations.
 
 Imagine you have an alternative implementation of Engine that you want to inject in your unit test.
 
-```java
+[source,java]
+----
 @Alternative
 class TranswarpDrive implements Engine {
   // ...
 }
-```
+----
 
 The TranswarpDrive class would normally need to be enabled via beans.xml.
 
-**Enabling alternative classes:**
+*Enabling alternative classes:*
 
-The @ActivatedAlternatives annotation like @AdditionalClasses will allow discovery of a class for testing, however it also [enables the alternative](http://docs.jboss.org/weld/reference/1.1.0.Final/en-US/html_single/#alternatives).
+The @ActivatedAlternatives annotation like @AdditionalClasses will allow discovery of a class for testing, however it also http://docs.jboss.org/weld/reference/1.1.0.Final/en-US/html_single/#alternatives[enables the alternative].
 
-The [StarshipTest](#example) can be modified to use the new type of engine.
+The <<example,StarshipTest>> can be modified to use the new type of engine.
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @ActivatedAlternatives(TranswarpDrive.class) // Enable this class to participate in discovery
                                                // and enable it.
@@ -251,13 +263,14 @@ class TestStarship {
     starship.start(); // Transwarp activated!
   }
 }
-```
+----
 
-**Producing alternatives:**
+*Producing alternatives:*
 
 Sometimes you want to create an alternative at runtime. The @ProducesAlternative annotation marks the class/field/method as an alternative therefore overriding any other implementation that is found during the discovery process. 
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @AdditionalClasses(WarpDrive.class) // Normally this implementation would be used
                                   // as long as there are no alternatives activated...
@@ -275,15 +288,16 @@ class TestStarship {
     starship.start();
   }
 }
-```
+----
 
-### Using scopes
+=== Using scopes
 
 CDI-Unit has built in support for Request, Session and Conversation scopes using @InRequestScope, @InSessionScope and @InConversationScope.
 
-**Running a test within a scope using annotations:**
+*Running a test within a scope using annotations:*
 
-```java
+[source,java]
+----
 class Starship {
 
   @Inject
@@ -299,11 +313,12 @@ class RequestScopedWarpDrive implements Engine {
   // ...
 }
 
-```
+----
 
 In this case @InRequestScope is used to run the test from within the context of a request
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 //Provide implementation of HttpRequest
 @AdditionalClasses({RequestScopedWarpDrive.class})
@@ -318,15 +333,16 @@ class TestStarship {
     starship.start();
   }
 }
-```
+----
 
 CDI-Unit provides Http* classes copied from the Mockrunner project.
 
-**Explicitly controlling active scopes:**
+*Explicitly controlling active scopes:*
 
 If you are testing code that runs over several requests then you may want to explicitly control activation and deactivation of scopes. Use ContextController to do this.
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @AdditionalClasses(RequestScopedWarpDrive.class)
 class TestStarship {
@@ -344,17 +360,18 @@ class TestStarship {
     contextController.closeRequest(); //Close the current request.
   }
 }
-```
+----
 
 ContextController has methods to control Request and Session scopes.
 
 Note that if you close a session while a request is active then it will not be closed until the request is also closed.
 
-### TestNg support
+=== TestNg support
 
 Use the NgCdiListener to add CDI-Unit to your TestNG tests. For example:
 
-```java
+[source,java]
+----
 @ActivatedAlternatives(TranswarpDrive.class)
 @Listeners(NgCdiListener.class)
 class TestStarship {
@@ -369,15 +386,20 @@ class TestStarship {
 
 }
 
-```
+----
 
-> NOTE: Usage of NgCdiRunner is deprecated and provided for backwards compatibility only.
+____
 
-### Ejb support
+NOTE: Usage of NgCdiRunner is deprecated and provided for backwards compatibility only.
+
+____
+
+=== Ejb support
 
 Once a test class is annotated with @SupportEjb then @EJB may be used to inject classes. The optional name or beanName parameter may be used either specify unqualified class name or the corresponding name on @Stateless or @Singleton
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @AdditionalClasses({EJBByClass.class, EJBStatelessNamed.class})
 @SupportEjb
@@ -402,13 +424,14 @@ class EJBByClass implements EJBI {
 @Stateless(name = "statelessNamed")
 class EJBStatelessNamed implements EJBI {
 }
-```
+----
 
-### Resource support
+=== Resource support
 
 Once a test class is annotated with @SupportResource then @Resource may be used to inject classes. The optional name and type parameters are resolved as per @Resource specification.
 
-```java
+[source,java]
+----
 package io.github.cdiunit;
 
 import jakarta.annotation.Resource;
@@ -521,13 +544,14 @@ public class TestResource {
     }
 
 }
-```
+----
 
-### DeltaSpike support
+=== DeltaSpike support
 
 Once a test class is annotated with `@SupportDeltaspikeCore`, `@SupportDeltaspikeData`, `@SupportDeltaspikeJpa`, `@SupportDeltaspikePartialBean` then the corresponding DeltaSpike module can be used. The DeltaSpike's modules must be on the classpath.
 
-```java
+[source,java]
+----
 @SupportDeltaspikeJpa
 @SupportDeltaspikeData
 @RunWith(CdiRunner.class)
@@ -556,11 +580,12 @@ class TestDeltaspikeTransactions {
     er.save(t);
   }
 }
-```
+----
 
 Additional scopes provided by DeltaSpike are also supported: `@WindowScoped`, `@ViewAccessScoped`, and `@GroupedConversationScoped`.
 
-```java
+[source,java]
+----
 @WindowScoped
 public class WindowScopedBeanX implements Serializable {
 
@@ -623,9 +648,9 @@ public class TestWindowScoped {
     }
 
 }
-```
+----
 
-### JaxRs support
+=== JaxRs support
 
 Once a test class is annotated with @SupportJaxRs then many JaxRs classes are available for injection. This means that you can inject your web service classes and call the methods directly.
 
@@ -633,7 +658,8 @@ This will not start up an in memory web server, as this approach always seems to
 
 The following example web service will be injected with CDI-Unit
 
-```java
+[source,java]
+----
 @RunWith(CdiRunner.class)
 @SupportJaxRs
 class TestJaxRs {
@@ -670,37 +696,39 @@ public static class ExampleWebService {
   HttpHeaders headers;
 
 }
-```
+----
 
-### Support for Java 9 and later
+=== Support for Java 9 and later
 
 CDI-Unit has not been tested with Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit 4.1.0 (or later) uses ClassGraph to obtain information about classloaders and classpath entries.
 
-### Changelog
+=== Changelog
 
-#### 4.4
+==== 4.4
 
-- Servlet API 3.1+ support
+* Servlet API 3.1+ support
 
-#### 4.3
+==== 4.3
 
-- CDI-Unit artifacts moved to the new group ID `io.github.cdi-unit`.
-- All packages were renamed from `org.jglue.cdiunit` prefix to `io.github.cdiunit`.
-- Maven Central publishing moved from legacy OSSRH to the Central Portal using `central-publishing-maven-plugin`.
-  See https://central.sonatype.org/register/central-portal/ for details.
+* CDI-Unit artifacts moved to the new group ID `io.github.cdi-unit`.
+* All packages were renamed from `org.jglue.cdiunit` prefix to `io.github.cdiunit`.
+* Maven Central publishing moved from legacy OSSRH to the Central Portal using `central-publishing-maven-plugin`.
+ See https://central.sonatype.org/register/central-portal/ for details.
 
-#### 4.2
+==== 4.2
 
 CDI-Unit reuses results of class path scans between tests executions when possible. It may reduce execution time significantly - 10x speedups were observed.
 
-#### 4.1
+==== 4.1
+
 CDI-Unit no longer depends on Reflections or Guava, so if you need
 these dependencies you should add them to your project directly. It
 now requires ClassGraph 4.x. The JVM argument
 `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is no longer
 required.
 
-#### 4.0
+==== 4.0
+
 CDI-Unit requires Java 8 or higher. The JVM argument
 `--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is required on
 Java 9 or higher (but only in version 4.0).
