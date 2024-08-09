@@ -28,6 +28,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.internal.events.EventsForwardingExtension;
 
 public class TestLifecycle {
 
@@ -120,31 +121,39 @@ public class TestLifecycle {
         var testClass = testInstance.getClass();
 
         if (!testClass.equals(testConfiguration.getTestClass())) {
-            throw new IllegalStateException(
-                    String.format("mismatched test class: instance of %s provided while configured for %s",
-                            testClass, testConfiguration.getTestClass()));
+            throw new IllegalStateException(String.format(
+                    "mismatched test class: instance of %s provided while configured for %s",
+                    testClass, testConfiguration.getTestClass()));
         }
 
         initWeld();
 
         needsExplicitInterceptorInvocation = true;
         BeanManager beanManager = container.getBeanManager();
+
         var creationalContext = beanManager.createCreationalContext(null);
         AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
         InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
                 .createInjectionTarget(null);
         injectionTarget.inject(testInstance, creationalContext);
+        instanceDisposers.add(() -> {
+            injectionTarget.dispose(testInstance);
+            creationalContext.release();
+        });
 
         BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
         instanceDisposers.add(() -> {
             try {
                 BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
-                injectionTarget.dispose(testInstance);
-                creationalContext.release();
             } catch (Throwable t) {
                 throw ExceptionUtils.asRuntimeException(t);
             }
         });
+
+        var eventsForwarder = beanManager.getExtension(EventsForwardingExtension.class);
+        eventsForwarder.bind(testClass, testInstance);
+
+        instanceDisposers.add(eventsForwarder::unbind);
     }
 
     public void beforeTestClass() {

@@ -17,6 +17,7 @@ package io.github.cdiunit.junit5.tests;
 
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,15 +33,15 @@ class TestInstanceObserveEvents extends BaseTest {
     @Inject
     Event<TestEvent> testEvent;
 
-    TestEvent observedEvent;
+    int observedUnqualified;
 
-    void onTestEvent(@Observes TestEvent event) {
-        observedEvent = event;
+    void onTestEvent(@Observes TestEvent event, EventMetadata metadata) {
+        observedUnqualified++;
     }
 
     @BeforeEach
     void resetEvent() {
-        observedEvent = null;
+        observedUnqualified = 0;
     }
 
     @Test
@@ -48,7 +49,7 @@ class TestInstanceObserveEvents extends BaseTest {
         final var expected = new TestEvent();
         testEvent.fire(expected);
 
-        assertThat(observedEvent).as("observed event").isSameAs(expected);
+        assertThat(observedUnqualified).as("observed unqualified event").isEqualTo(1);
     }
 
 }

@@ -20,17 +20,23 @@ import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 
+import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.ProducesAlternative;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestNestedFeatures {
@@ -114,6 +120,46 @@ public class TestNestedFeatures {
     @TestInstance(TestInstance.Lifecycle.PER_METHOD)
     @Isolation(IsolationLevel.PER_METHOD)
     class NestedTestIsolationPerMethodTestPerMethodWeld extends TestIsolationPerMethodTestPerMethodWeld {
+
+    }
+
+    @java.lang.annotation.Documented
+    @java.lang.annotation.Retention(RUNTIME)
+    @jakarta.inject.Qualifier
+    public @interface Qualify {
+
+        final class Literal extends AnnotationLiteral<Qualify> implements Qualify {
+
+            private static final long serialVersionUID = 1L;
+
+            public static final Literal INSTANCE = new Literal();
+
+        }
+    }
+
+    @Nested
+    @AdditionalClasses(Qualify.class)
+    class NestedTestInstanceObserveEvents extends TestInstanceObserveEvents {
+
+        int observedQualified;
+
+        void nestedObserver(@Observes @Qualify TestEvent event) {
+            observedQualified++;
+        }
+
+        @BeforeEach
+        void resetEvent() {
+            observedQualified = 0;
+        }
+
+        @Test
+        void nestedShouldObserveEvent() {
+            final var expected = new TestEvent();
+            testEvent.select(Qualify.Literal.INSTANCE).fire(expected);
+
+            assertThat(observedQualified).as("observed qualified event").isEqualTo(1);
+            assertThat(observedUnqualified).as("observed unqualified event").isEqualTo(1);
+        }
 
     }
 
