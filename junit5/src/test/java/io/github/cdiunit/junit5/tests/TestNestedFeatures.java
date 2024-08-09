@@ -20,10 +20,14 @@ import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.inject.Inject;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 
@@ -115,6 +119,39 @@ public class TestNestedFeatures {
     @Isolation(IsolationLevel.PER_METHOD)
     class NestedTestIsolationPerMethodTestPerMethodWeld extends TestIsolationPerMethodTestPerMethodWeld {
 
+    }
+
+    @Nested
+    class NestedTestInstanceObserveEvents extends TestInstanceObserveEvents {
+
+        @BeforeEach
+        void resetNestedCounters() {
+            nestedObservedQualified = 0;
+            nestedObservedUnqualified = 0;
+        }
+
+        int nestedObservedUnqualified;
+
+        void observeUnqualified(@Observes TestEvent event) {
+            nestedObservedUnqualified++;
+        }
+
+        int nestedObservedQualified;
+
+        void observeQualified(@Observes TestEvent event, EventMetadata metadata) {
+            nestedObservedQualified++;
+        }
+
+        @Test
+        void shouldObserveNestedQualifiedEvent() {
+            final var expected = new TestEvent();
+            testEvent.select(Qualify.Literal.INSTANCE).fire(expected);
+
+            assertThat(nestedObservedQualified).as("nested observed qualified event").isEqualTo(1);
+            assertThat(nestedObservedUnqualified).as("nested observed unqualified event").isEqualTo(1);
+            assertThat(observedQualified).as("observed qualified event").isEqualTo(1);
+            assertThat(observedUnqualified).as("observed unqualified event").isEqualTo(1);
+        }
     }
 
 }

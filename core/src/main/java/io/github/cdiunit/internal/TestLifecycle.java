@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.Consumer;
 
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -28,6 +29,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.internal.events.EventsForwardingExtension;
 
 public class TestLifecycle {
 
@@ -42,6 +44,12 @@ public class TestLifecycle {
     private Throwable startupException;
 
     private IsolationLevel isolationLevel;
+
+    private Consumer<TestLifecycle> doBeforeMethod = testLifecycle -> {
+    };
+
+    private Consumer<TestLifecycle> doAfterMethod = testLifecycle -> {
+    };
 
     public TestLifecycle(TestConfiguration testConfiguration) {
         this.testConfiguration = testConfiguration;
@@ -120,31 +128,46 @@ public class TestLifecycle {
         var testClass = testInstance.getClass();
 
         if (!testClass.equals(testConfiguration.getTestClass())) {
-            throw new IllegalStateException(
-                    String.format("mismatched test class: instance of %s provided while configured for %s",
-                            testClass, testConfiguration.getTestClass()));
+            throw new IllegalStateException(String.format(
+                    "mismatched test class: instance of %s provided while configured for %s",
+                    testClass, testConfiguration.getTestClass()));
         }
 
         initWeld();
 
         needsExplicitInterceptorInvocation = true;
         BeanManager beanManager = container.getBeanManager();
+
         var creationalContext = beanManager.createCreationalContext(null);
         AnnotatedType annotatedType = beanManager.createAnnotatedType(testClass);
         InjectionTarget injectionTarget = beanManager.getInjectionTargetFactory(annotatedType)
                 .createInjectionTarget(null);
         injectionTarget.inject(testInstance, creationalContext);
+        instanceDisposers.add(() -> {
+            injectionTarget.dispose(testInstance);
+            creationalContext.release();
+        });
 
         BeanLifecycleHelper.invokePostConstruct(testClass, testInstance);
         instanceDisposers.add(() -> {
             try {
                 BeanLifecycleHelper.invokePreDestroy(testClass, testInstance);
-                injectionTarget.dispose(testInstance);
-                creationalContext.release();
             } catch (Throwable t) {
                 throw ExceptionUtils.asRuntimeException(t);
             }
         });
+
+        var eventsForwarder = beanManager.getExtension(EventsForwardingExtension.class);
+        addBeforeMethod(testLifecycle -> eventsForwarder.bind(testClass, testInstance));
+        addAfterMethod(testLifecycle -> eventsForwarder.unbind());
+    }
+
+    protected void addBeforeMethod(Consumer<? super TestLifecycle> beforeMethod) {
+        doBeforeMethod = doBeforeMethod.andThen(beforeMethod);
+    }
+
+    protected void addAfterMethod(Consumer<TestLifecycle> afterMethod) {
+        doAfterMethod = afterMethod.andThen(doAfterMethod);
     }
 
     public void beforeTestClass() {
@@ -157,9 +180,11 @@ public class TestLifecycle {
 
     public void beforeTestMethod() {
         perform(IsolationLevel.PER_METHOD, this::initWeld);
+        doBeforeMethod.accept(this);
     }
 
     public void afterTestMethod() throws Exception {
+        doAfterMethod.accept(this);
         perform(IsolationLevel.PER_METHOD, this::shutdownWeld);
         testConfiguration.setTestMethod(null);
     }

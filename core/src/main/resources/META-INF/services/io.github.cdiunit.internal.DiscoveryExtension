@@ -10,3 +10,4 @@ io.github.cdiunit.internal.CdiUnitDiscoveryExtension
 io.github.cdiunit.internal.junit.InvalidRuleFieldUsageDiscoveryExtension
 io.github.cdiunit.internal.activatescopes.ActivateScopesDiscoveryExtension
 io.github.cdiunit.internal.naming.NamingDiscoveryExtension
+io.github.cdiunit.internal.events.EventsForwardingDiscoveryExtension
