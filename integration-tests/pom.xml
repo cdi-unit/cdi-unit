@@ -133,12 +133,12 @@
 		<module>tests-external-dependency</module>
 		<module>tests</module>
 		<module>tests-bare</module>
+		<module>testng-tests</module>
+		<module>junit5-tests</module>
 		<module>tests-mockito</module>
 		<module>tests-easymock</module>
 		<module>tests-jandex</module>
-		<module>tests-testng</module>
 		<module>tests-deltaspike</module>
-		<module>junit5-tests</module>
 	</modules>
 
 </project>

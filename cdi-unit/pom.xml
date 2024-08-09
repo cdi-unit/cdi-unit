@@ -13,13 +13,20 @@
 
 	<artifactId>cdi-unit</artifactId>
 	<name>CDI-Unit</name>
-	<description>JUnit runner for testing CDI based projects.</description>
+	<description>Unit testing for CDI applications.</description>
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.10.2</version>
+			<!-- don't leak dependency to consumers -->
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit-core</artifactId>
@@ -46,6 +53,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit-junit5</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-testng</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
