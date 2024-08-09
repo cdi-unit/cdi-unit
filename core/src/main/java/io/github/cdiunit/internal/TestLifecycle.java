@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.Consumer;
 
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -43,6 +44,12 @@ public class TestLifecycle {
     private Throwable startupException;
 
     private IsolationLevel isolationLevel;
+
+    private Consumer<TestLifecycle> doBeforeMethod = testLifecycle -> {
+    };
+
+    private Consumer<TestLifecycle> doAfterMethod = testLifecycle -> {
+    };
 
     public TestLifecycle(TestConfiguration testConfiguration) {
         this.testConfiguration = testConfiguration;
@@ -151,9 +158,16 @@ public class TestLifecycle {
         });
 
         var eventsForwarder = beanManager.getExtension(EventsForwardingExtension.class);
-        eventsForwarder.bind(testClass, testInstance);
+        addBeforeMethod(testLifecycle -> eventsForwarder.bind(testClass, testInstance));
+        addAfterMethod(testLifecycle -> eventsForwarder.unbind());
+    }
 
-        instanceDisposers.add(eventsForwarder::unbind);
+    protected void addBeforeMethod(Consumer<? super TestLifecycle> beforeMethod) {
+        doBeforeMethod = doBeforeMethod.andThen(beforeMethod);
+    }
+
+    protected void addAfterMethod(Consumer<TestLifecycle> afterMethod) {
+        doAfterMethod = afterMethod.andThen(doAfterMethod);
     }
 
     public void beforeTestClass() {
@@ -166,9 +180,11 @@ public class TestLifecycle {
 
     public void beforeTestMethod() {
         perform(IsolationLevel.PER_METHOD, this::initWeld);
+        doBeforeMethod.accept(this);
     }
 
     public void afterTestMethod() throws Exception {
+        doAfterMethod.accept(this);
         perform(IsolationLevel.PER_METHOD, this::shutdownWeld);
         testConfiguration.setTestMethod(null);
     }
