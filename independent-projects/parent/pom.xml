@@ -11,7 +11,7 @@
 	<packaging>pom</packaging>
 
 	<name>CDI-Unit - Parent</name>
-	<description>JUnit runner for testing CDI based projects.</description>
+	<description>Unit testing for CDI applications.</description>
 
 	<url>https://cdi-unit.github.io/cdi-unit/</url>
 	<developers>

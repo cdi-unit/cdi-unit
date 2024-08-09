@@ -9,7 +9,7 @@
 
 	<name>CDI-Unit-Parent</name>
 	<url>https://cdi-unit.github.io/cdi-unit/</url>
-	<description>JUnit runner for testing CDI based projects.</description>
+	<description>Unit testing for CDI applications.</description>
 
 	<developers>
 		<developer>

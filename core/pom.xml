@@ -10,7 +10,7 @@
 
 	<artifactId>cdi-unit-core</artifactId>
 	<name>CDI-Unit - Core</name>
-	<description>JUnit runner for testing CDI based projects.</description>
+	<description>Unit testing for CDI applications.</description>
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
