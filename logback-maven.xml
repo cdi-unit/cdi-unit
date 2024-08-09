@@ -13,6 +13,10 @@
         <appender-ref ref="STDOUT" />
     </logger>
 
+    <logger name="org.jboss.weld" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
     <root level="error">
         <appender-ref ref="STDOUT" />
     </root>

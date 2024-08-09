@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-integration-tests-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>cdi-unit-junit5-tests</artifactId>
+	<artifactId>cdi-unit-testng-tests</artifactId>
 
-	<name>CDI-Unit - Integration Tests - JUnit Jupiter</name>
+	<name>CDI-Unit - Integration Tests - TestNG</name>
 
 	<dependencies>
 		<dependency>
@@ -20,8 +19,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.10.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -48,10 +48,33 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.3.1</version>
 				<configuration>
+					<properties>
+						<property>
+							<name>junit</name>
+							<value>false</value>
+						</property>
+						<property>
+							<name>surefire.testng.verbose</name>
+							<value>10</value>
+						</property>
+					</properties>
 					<systemPropertyVariables>
 						<logback.configurationFile>${maven.multiModuleProjectDirectory}/logback-maven.xml</logback.configurationFile>
 					</systemPropertyVariables>
+					<junitArtifactName>none:none</junitArtifactName>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-api</artifactId>
+						<version>3.3.1</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-testng</artifactId>
+						<version>3.3.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

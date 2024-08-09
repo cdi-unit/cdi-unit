@@ -112,7 +112,7 @@
 						</property>
 					</properties>
 					<systemPropertyVariables>
-						<logback.configurationFile>..${file.separator}logback-maven.xml</logback.configurationFile>
+						<logback.configurationFile>${maven.multiModuleProjectDirectory}/logback-maven.xml</logback.configurationFile>
 					</systemPropertyVariables>
 					<testNGArtifactName>none:none</testNGArtifactName>
 				</configuration>
