@@ -30,6 +30,7 @@ import jakarta.servlet.http.HttpSessionEvent;
 import org.jboss.weld.context.ConversationContext;
 import org.jboss.weld.context.http.Http;
 
+import io.github.cdiunit.internal.QuietDiscovery;
 import io.github.cdiunit.internal.servlet.CdiUnitInitialListener;
 import io.github.cdiunit.internal.servlet.LifecycleAwareRequest;
 import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
@@ -68,6 +69,7 @@ import io.github.cdiunit.internal.servlet.common.HttpSessionAware;
  *
  */
 @ApplicationScoped
+@QuietDiscovery
 public class ContextController {
 
     private ThreadLocal<HttpServletRequest> requests;

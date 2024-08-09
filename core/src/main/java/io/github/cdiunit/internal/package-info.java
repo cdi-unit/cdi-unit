@@ -13,23 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.events;
-
-import jakarta.enterprise.inject.Vetoed;
-
-import io.github.cdiunit.internal.DiscoveryExtension;
-
-@Vetoed
-public class EventsForwardingDiscoveryExtension implements DiscoveryExtension {
-
-    @Override
-    public void bootstrap(BootstrapDiscoveryContext bdc) {
-        bdc.discoverExtension(this::discoverCdiExtension);
-    }
-
-    private void discoverCdiExtension(Context context) {
-        context.processBean(ForwardingInterceptor.class);
-        context.extension(new EventsForwardingExtension());
-    }
-
-}
+@QuietDiscovery
+package io.github.cdiunit.internal;

@@ -13,4 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@QuietDiscovery
 package io.github.cdiunit.internal.events;
+
+import io.github.cdiunit.internal.QuietDiscovery;

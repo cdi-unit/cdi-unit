@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.events;
+package io.github.cdiunit.internal;
 
-import jakarta.enterprise.inject.Vetoed;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import io.github.cdiunit.internal.DiscoveryExtension;
-
-@Vetoed
-public class EventsForwardingDiscoveryExtension implements DiscoveryExtension {
-
-    @Override
-    public void bootstrap(BootstrapDiscoveryContext bdc) {
-        bdc.discoverExtension(this::discoverCdiExtension);
-    }
-
-    private void discoverCdiExtension(Context context) {
-        context.processBean(ForwardingInterceptor.class);
-        context.extension(new EventsForwardingExtension());
-    }
-
+/**
+ * Don't report marked elements after the discovery.
+ *
+ * Affects all classes in a package when present on a package declaration.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.PACKAGE, ElementType.TYPE })
+public @interface QuietDiscovery {
 }

@@ -100,16 +100,30 @@ public final class WeldHelper {
             weld.addBeanClass(clazz);
         }
 
-        log.debug("CDI-Unit discovered:");
+        log.info("CDI-Unit discovered:");
         for (var clazz : discoveredClasses) {
             var clsName = clazz.getName();
-            if (clsName.startsWith("io.github.cdiunit.internal.")) {
-                log.trace(clsName);
-            } else {
+            if (quietDiscovery(clazz)) {
                 log.debug(clsName);
+            } else {
+                log.info(clsName);
             }
         }
         return weld;
+    }
+
+    static boolean quietDiscovery(Class<?> c) {
+        if (c.isAnnotationPresent(QuietDiscovery.class)) {
+            return true;
+        }
+
+        var p = c.getPackage();
+        if (p.isAnnotationPresent(QuietDiscovery.class)) {
+            return true;
+        }
+
+        var pName = p.getName();
+        return pName.startsWith("io.github.cdiunit") && pName.contains(".internal");
     }
 
 }

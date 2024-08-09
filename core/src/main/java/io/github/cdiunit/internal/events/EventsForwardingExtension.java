@@ -24,12 +24,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.*;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
 import io.github.cdiunit.internal.ExceptionUtils;
 
+@Vetoed
 public class EventsForwardingExtension implements Extension {
 
     // bean class -> event type -> methods

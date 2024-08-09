@@ -9,11 +9,11 @@
         </encoder>
     </appender>
 
-    <logger name="io.github.cdiunit" level="trace" additivity="false">
+    <logger name="io.github.cdiunit" level="info" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <logger name="org.jboss.weld" level="info" additivity="false">
+    <logger name="org.jboss.weld" level="warn" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
