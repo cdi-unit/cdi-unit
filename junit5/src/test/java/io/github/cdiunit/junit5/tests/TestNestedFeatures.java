@@ -22,7 +22,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
-import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,6 @@ import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.ProducesAlternative;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestNestedFeatures {
@@ -122,43 +121,37 @@ public class TestNestedFeatures {
 
     }
 
-    @java.lang.annotation.Documented
-    @java.lang.annotation.Retention(RUNTIME)
-    @jakarta.inject.Qualifier
-    public @interface Qualify {
-
-        final class Literal extends AnnotationLiteral<Qualify> implements Qualify {
-
-            private static final long serialVersionUID = 1L;
-
-            public static final Literal INSTANCE = new Literal();
-
-        }
-    }
-
     @Nested
     class NestedTestInstanceObserveEvents extends TestInstanceObserveEvents {
 
-        int observedQualified;
-
-        void nestedObserver(@Observes @Qualify TestEvent event) {
-            observedQualified++;
+        @BeforeEach
+        void resetNestedCounters() {
+            nestedObservedQualified = 0;
+            nestedObservedUnqualified = 0;
         }
 
-        @BeforeEach
-        void resetEvent() {
-            observedQualified = 0;
+        int nestedObservedUnqualified;
+
+        void observeUnqualified(@Observes TestEvent event) {
+            nestedObservedUnqualified++;
+        }
+
+        int nestedObservedQualified;
+
+        void observeQualified(@Observes TestEvent event, EventMetadata metadata) {
+            nestedObservedQualified++;
         }
 
         @Test
-        void nestedShouldObserveEvent() {
+        void shouldObserveNestedQualifiedEvent() {
             final var expected = new TestEvent();
             testEvent.select(Qualify.Literal.INSTANCE).fire(expected);
 
+            assertThat(nestedObservedQualified).as("nested observed qualified event").isEqualTo(1);
+            assertThat(nestedObservedUnqualified).as("nested observed unqualified event").isEqualTo(1);
             assertThat(observedQualified).as("observed qualified event").isEqualTo(1);
             assertThat(observedUnqualified).as("observed unqualified event").isEqualTo(1);
         }
-
     }
 
 }

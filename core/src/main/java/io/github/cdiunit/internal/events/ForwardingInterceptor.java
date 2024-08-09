@@ -48,7 +48,7 @@ class ForwardingInterceptor implements Serializable {
         if (binding == null) {
             return ic.proceed();
         } else {
-            binding.invoke(beanManager, params);
+            binding.invoke(beanManager, ic, params);
             return null;
         }
     }

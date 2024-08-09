@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit5.tests;
+package io.github.cdiunit.testng;
 
 import java.lang.annotation.RetentionPolicy;
 
@@ -23,12 +23,24 @@ import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
+
+import io.github.cdiunit.NgCdiListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestInstanceObserveEvents extends BaseTest {
+abstract class TestInstanceObserveEvents extends BaseTest {
+
+    public static class TestWithRunner extends TestInstanceObserveEvents {
+
+    }
+
+    @Listeners(NgCdiListener.class)
+    public static class TestWithListener extends TestInstanceObserveEvents {
+
+    }
 
     @java.lang.annotation.Documented
     @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
@@ -56,8 +68,8 @@ public class TestInstanceObserveEvents extends BaseTest {
         observedUnqualified++;
     }
 
-    @BeforeEach
-    void resetCounters() {
+    @BeforeMethod
+    void resetEvent() {
         observedUnqualified = 0;
         observedQualified = 0;
     }

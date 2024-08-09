@@ -26,19 +26,24 @@ import java.util.stream.StreamSupport;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.*;
 import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 import io.github.cdiunit.internal.ExceptionUtils;
 
 public class EventsForwardingExtension implements Extension {
 
+    // bean class -> event type -> methods
     private static final Map<Class<?>, Map<Class<?>, List<Method>>> discoveredObserverMethods = new ConcurrentHashMap<>();
 
-    // event type -> observer
+    // event type -> observer binding
     private final Map<Class<?>, ObserverBinding> bindings = new ConcurrentHashMap<>();
 
     public void bind(Class<?> testClass, Object testInstance) {
-        discoveredObserverMethods.computeIfAbsent(testClass, EventsForwardingExtension::findObserverMethods).forEach(
-                (eventType, actions) -> bindings.put(eventType, new ObserverBinding(eventType, testInstance, actions)));
+        discoveredObserverMethods.computeIfAbsent(testClass, EventsForwardingExtension::findObserverMethods)
+                .forEach((eventType, actions) -> {
+                    final var binding = new ObserverBinding(eventType, testInstance, actions);
+                    bindings.put(eventType, binding);
+                });
     }
 
     public void unbind() {
@@ -61,9 +66,10 @@ public class EventsForwardingExtension implements Extension {
             this.observerMethods = observerMethods;
         }
 
-        void invoke(BeanManager beanManager, Object... args) {
+        void invoke(BeanManager beanManager, InvocationContext ic, Object... args) {
             for (Method m : observerMethods) {
-                if (!matchingQualifiers(m, beanManager, args)) {
+                if (!matchingObserver(m, ic.getMethod(), args)) {
+                    // current method observes event with different qualifiers
                     continue;
                 }
                 try {
@@ -77,16 +83,22 @@ public class EventsForwardingExtension implements Extension {
             }
         }
 
-        private boolean matchingQualifiers(Method m, BeanManager beanManager, Object[] args) {
-            if (args.length < 1) {
+        private boolean matchingObserver(Method candidate, Method intercepted, Object[] args) {
+            var candidateAnnotations = candidate.getParameterAnnotations();
+            if (candidateAnnotations.length < 1) {
                 return false;
             }
-            var instance = beanManager.createInstance();
-            var eventMetadata = instance.select(EventMetadata.class).get();
-            var expectedQualifiers = Arrays.stream(m.getParameterAnnotations()[0])
-                    .filter(a -> beanManager.isQualifier(a.annotationType()))
-                    .collect(Collectors.toList());
-            return eventMetadata.getQualifiers().containsAll(expectedQualifiers);
+            var interceptedAnnotations = intercepted.getParameterAnnotations();
+            if (interceptedAnnotations.length < 1) {
+                return false;
+            }
+            var ca = Set.copyOf(Arrays.asList(candidateAnnotations[0]));
+            var ia = Set.copyOf(Arrays.asList(interceptedAnnotations[0]));
+            var remainingCandidate = new HashSet<>(ca);
+            remainingCandidate.removeAll(ia);
+            var remainingIntercepted = new HashSet<>(ia);
+            remainingIntercepted.removeAll(ca);
+            return remainingCandidate.isEmpty() && remainingIntercepted.isEmpty();
         }
 
         private Object[] observerArgs(BeanManager beanManager, Method m, Object[] args) {
@@ -115,61 +127,6 @@ public class EventsForwardingExtension implements Extension {
         unbind();
     }
 
-    /**
-     * Checks if bean type can be proxied by the container.
-     *
-     * See <a href="https://jakarta.ee/specifications/cdi/3.0/jakarta-cdi-spec-3.0#unproxyable"> CDI spec unproxyable bean
-     * types</a>
-     *
-     * @param type
-     * @return {@code true} if all proxy conditions are met, {@code false} otherwise
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static boolean isProxyableClass(Type type) {
-        Class clazz = null;
-        if (type instanceof Class) {
-            clazz = (Class) type;
-        }
-        if (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType() instanceof Class) {
-            clazz = (Class) ((ParameterizedType) type).getRawType();
-        }
-        if (clazz == null) {
-            return false;
-        }
-
-        // classes which don’t have a non-private constructor with no parameters
-        try {
-            Constructor constructor = clazz.getConstructor();
-            if (Modifier.isPrivate(constructor.getModifiers())) {
-                return false;
-            }
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-
-        // classes which are declared final
-        if (Modifier.isFinal(clazz.getModifiers())) {
-            return false;
-        }
-
-        // classes which have non-static, final methods with public, protected or default visibility,
-        for (Method method : clazz.getMethods()) {
-            if (method.getDeclaringClass() == Object.class) {
-                continue;
-            }
-
-            final var modifiers = method.getModifiers();
-            if (!method.isBridge() && !method.isSynthetic() && !Modifier.isStatic(modifiers) &&
-                    !Modifier.isPrivate(modifiers) && Modifier.isFinal(modifiers)) {
-                return false;
-            }
-        }
-
-        // primitive types,
-        // and array types.
-        return !(clazz.isPrimitive() || clazz.isArray());
-    }
-
     private <T> void processAnnotatedType(@Observes final ProcessAnnotatedType<T> pat) {
         final var annotatedType = pat.getAnnotatedType();
         if (annotatedType.isAnnotationPresent(Interceptor.class)) {
@@ -182,9 +139,6 @@ public class EventsForwardingExtension implements Extension {
         var observerMethods = discoveredObserverMethods.computeIfAbsent(javaClass,
                 EventsForwardingExtension::findObserverMethods);
         if (observerMethods.isEmpty()) {
-            return;
-        }
-        if (!isProxyableClass(javaClass)) {
             return;
         }
         pat.configureAnnotatedType().add(ForwardedEvents.Literal.INSTANCE);
