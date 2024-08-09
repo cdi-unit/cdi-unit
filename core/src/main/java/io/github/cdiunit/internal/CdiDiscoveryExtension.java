@@ -93,13 +93,13 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
         }
     }
 
-    private void discoverDecorators(Context context, Class<?> beanClass) {
+    private void discoverInterceptors(Context context, Class<?> beanClass) {
         if (beanClass.isAnnotationPresent(Interceptor.class)) {
             context.enableInterceptor(beanClass);
         }
     }
 
-    private void discoverInterceptors(Context context, Class<?> beanClass) {
+    private void discoverDecorators(Context context, Class<?> beanClass) {
         if (beanClass.isAnnotationPresent(Decorator.class)) {
             context.enableDecorator(beanClass);
         }
