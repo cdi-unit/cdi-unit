@@ -21,6 +21,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.10.2</version>
+			<!-- don't leak dependency to consumers -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit-core</artifactId>
 			<version>${project.version}</version>
