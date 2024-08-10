@@ -13,10 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.testng.tests.beans;
+package io.github.cdiunit.test.beans;
 
-public class ProducedViaMethod {
-    public ProducedViaMethod(int foo) {
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
 
+@ApplicationScoped
+public class ScopedFactory {
+
+    @Produces
+    @RequestScoped
+    public Scoped getScoped() {
+        return new Scoped();
     }
+
+    public void disposed(@Disposes Scoped scoped) {
+        scoped.dispose();
+    }
+
 }

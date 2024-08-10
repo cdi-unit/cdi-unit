@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.testng.tests.beans;
+package io.github.cdiunit.test.beans;
 
-import jakarta.enterprise.context.RequestScoped;
+public class ProducedViaField {
+    public ProducedViaField(int foo) {
 
-@RequestScoped
-public class BRequestScoped {
-    private String foo;
-
-    public String getFoo() {
-        return foo;
     }
-
-    public void setFoo(String foo) {
-        this.foo = foo;
-    }
-
 }

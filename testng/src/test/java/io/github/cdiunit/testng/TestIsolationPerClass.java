@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.testng.beans.ApplicationCounter;
+import io.github.cdiunit.test.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

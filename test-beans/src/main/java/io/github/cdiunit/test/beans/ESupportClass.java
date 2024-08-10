@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.testng.beans;
+package io.github.cdiunit.test.beans;
 
 public class ESupportClass implements AInterface {
 

@@ -39,8 +39,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import io.github.cdiunit.*;
+import io.github.cdiunit.test.beans.*;
 import io.github.cdiunit.testng.NgCdiListener;
-import io.github.cdiunit.testng.tests.beans.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

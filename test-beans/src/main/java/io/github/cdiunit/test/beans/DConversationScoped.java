@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.testng.beans;
+package io.github.cdiunit.test.beans;
 
-import jakarta.enterprise.context.RequestScoped;
+import java.io.Serializable;
 
-@RequestScoped
-public class BRequestScoped {
+import jakarta.enterprise.context.ConversationScoped;
+
+@ConversationScoped
+public class DConversationScoped implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String foo;
 
     public String getFoo() {
