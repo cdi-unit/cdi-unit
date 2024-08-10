@@ -13,25 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.tests.beans;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class AImplementation1 extends ASuper implements AInterface {
 
-import jakarta.enterprise.inject.Alternative;
-import jakarta.enterprise.inject.Stereotype;
-
-import io.github.cdiunit.AImplementation3.StereotypeAlternative;
-
-@StereotypeAlternative
-public class AImplementation3 implements AInterface {
-
-    @Alternative
-    @Stereotype
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    public static @interface StereotypeAlternative {
-    }
 }

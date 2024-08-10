@@ -20,6 +20,10 @@ import jakarta.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.tests.beans.AImplementation1;
+import io.github.cdiunit.tests.beans.AImplementation2;
+import io.github.cdiunit.tests.beans.AInterface;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)

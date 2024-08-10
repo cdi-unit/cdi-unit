@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.tests.beans;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Disposes;
-import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Vetoed;
 
-@ApplicationScoped
-public class ScopedFactory {
+@Vetoed
+public class Scoped {
 
-    @Produces
-    @RequestScoped
-    public Scoped getScoped() {
-        return new Scoped();
+    private Runnable disposeListener;
+
+    public Scoped() {
+
     }
 
-    public void disposed(@Disposes Scoped scoped) {
-        scoped.dispose();
+    public void setDisposedListener(Runnable disposeListener) {
+        this.disposeListener = disposeListener;
+
     }
 
+    public void dispose() {
+        disposeListener.run();
+    }
 }
