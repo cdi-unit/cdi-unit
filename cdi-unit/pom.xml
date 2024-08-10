@@ -108,19 +108,9 @@
 							<version>${project.version}</version>
 						</dependency>
 						<dependency>
-							<groupId>jakarta.servlet</groupId>
-							<artifactId>jakarta.servlet-api</artifactId>
-							<version>5.0.0</version>
-						</dependency>
-						<dependency>
-							<groupId>jakarta.ejb</groupId>
-							<artifactId>jakarta.ejb-api</artifactId>
-							<version>4.0.1</version>
-						</dependency>
-						<dependency>
-							<groupId>jakarta.ws.rs</groupId>
-							<artifactId>jakarta.ws.rs-api</artifactId>
-							<version>3.0.0</version>
+							<groupId>jakarta.platform</groupId>
+							<artifactId>jakarta.jakartaee-api</artifactId>
+							<version>9.0.0</version>
 						</dependency>
 						<dependency>
 							<groupId>org.apache.deltaspike.modules</groupId>
@@ -143,29 +133,19 @@
 							<version>${version.deltaspike.baseline}</version>
 						</dependency>
 						<dependency>
-							<groupId>org.jboss.weld</groupId>
-							<artifactId>weld-api</artifactId>
-							<version>4.0.SP1</version>
-						</dependency>
-						<dependency>
 							<groupId>org.jboss.weld.se</groupId>
-							<artifactId>weld-se-core</artifactId>
-							<version>${version.weld.baseline}</version>
-						</dependency>
-						<dependency>
-							<groupId>org.jboss.weld</groupId>
-							<artifactId>weld-core-impl</artifactId>
+							<artifactId>weld-se-shaded</artifactId>
 							<version>${version.weld.baseline}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.jboss.resteasy</groupId>
 							<artifactId>resteasy-core</artifactId>
-							<version>6.2.9.Final</version>
+							<version>${version.resteasy-core}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.mockito</groupId>
 							<artifactId>mockito-core</artifactId>
-							<version>5.12.0</version>
+							<version>${version.mockito-core}</version>
 						</dependency>
 					</additionalDependencies>
 				</configuration>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -14,6 +15,11 @@
 
 	<name>CDI-Unit - Build Parent</name>
 	<description>Build parent to bring in required dependencies</description>
+
+	<properties>
+		<version.mockito-core>5.12.0</version.mockito-core>
+		<version.resteasy-core>6.2.9.Final</version.resteasy-core>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -61,7 +67,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>5.12.0</version>
+				<version>${version.mockito-core}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -98,6 +104,12 @@
 				<artifactId>testng</artifactId>
 				<version>7.10.2</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-core</artifactId>
+				<version>${version.resteasy-core}</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
