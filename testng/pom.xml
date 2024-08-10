@@ -11,6 +11,7 @@
 	<artifactId>cdi-unit-testng</artifactId>
 
 	<name>CDI-Unit - TestNG Support</name>
+	<description>CDI-Unit TestNG Support.</description>
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>

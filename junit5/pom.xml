@@ -11,6 +11,7 @@
 	<artifactId>cdi-unit-junit5</artifactId>
 
 	<name>CDI-Unit - JUnit Jupiter Support</name>
+	<description>CDI-Unit JUnit Jupiter Support.</description>
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
