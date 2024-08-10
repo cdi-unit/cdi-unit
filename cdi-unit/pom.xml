@@ -78,6 +78,77 @@
 			<plugin>
 				<groupId>org.basepom.maven</groupId>
 				<artifactId>duplicate-finder-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>check-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<includeDependencySources>true</includeDependencySources>
+					<dependencySourceIncludes>
+						<dependencySourceInclude>${project.groupId}:*</dependencySourceInclude>
+					</dependencySourceIncludes>
+					<additionalDependencies>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>cdi-unit-support-servlet</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>cdi-unit-support-servlet6</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>jakarta.platform</groupId>
+							<artifactId>jakarta.jakartaee-api</artifactId>
+							<version>9.0.0</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.deltaspike.modules</groupId>
+							<artifactId>deltaspike-partial-bean-module-impl</artifactId>
+							<version>${version.deltaspike.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.deltaspike.modules</groupId>
+							<artifactId>deltaspike-jpa-module-impl</artifactId>
+							<version>${version.deltaspike.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.deltaspike.modules</groupId>
+							<artifactId>deltaspike-data-module-impl</artifactId>
+							<version>${version.deltaspike.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.deltaspike.core</groupId>
+							<artifactId>deltaspike-core-impl</artifactId>
+							<version>${version.deltaspike.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.jboss.weld.se</groupId>
+							<artifactId>weld-se-shaded</artifactId>
+							<version>${version.weld.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.jboss.resteasy</groupId>
+							<artifactId>resteasy-core</artifactId>
+							<version>${version.resteasy-core}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.mockito</groupId>
+							<artifactId>mockito-core</artifactId>
+							<version>${version.mockito-core}</version>
+						</dependency>
+					</additionalDependencies>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
