@@ -32,7 +32,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.Listeners;
@@ -44,7 +43,7 @@ import io.github.cdiunit.testng.NgCdiListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
 abstract class TestBasicFeatures extends BaseTest {
 
     public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess {

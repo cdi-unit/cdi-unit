@@ -32,7 +32,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -43,7 +42,7 @@ import io.github.cdiunit.test.beans.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
 public class TestCdiUnitRule extends BaseTest {
 
     @Rule
