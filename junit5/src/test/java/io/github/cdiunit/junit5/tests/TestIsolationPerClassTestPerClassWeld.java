@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.junit5.CdiJUnit5Extension;
-import io.github.cdiunit.junit5.tests.beans.ApplicationCounter;
+import io.github.cdiunit.test.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

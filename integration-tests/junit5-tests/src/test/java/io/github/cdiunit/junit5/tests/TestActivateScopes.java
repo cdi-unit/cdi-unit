@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
 
 import io.github.cdiunit.ActivateScopes;
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.junit5.tests.beans.CSessionScoped;
-import io.github.cdiunit.junit5.tests.beans.DConversationScoped;
-import io.github.cdiunit.junit5.tests.beans.Scoped;
-import io.github.cdiunit.junit5.tests.beans.ScopedFactory;
+import io.github.cdiunit.test.beans.CSessionScoped;
+import io.github.cdiunit.test.beans.DConversationScoped;
+import io.github.cdiunit.test.beans.Scoped;
+import io.github.cdiunit.test.beans.ScopedFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
