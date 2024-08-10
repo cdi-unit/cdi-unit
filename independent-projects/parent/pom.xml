@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-				 child.project.url.inherit.append.path="false">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" child.project.url.inherit.append.path="false">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.cdi-unit</groupId>
 	<artifactId>cdi-unit-parent</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.0-EA3</version>
 	<packaging>pom</packaging>
 
 	<name>CDI-Unit - Parent</name>
@@ -559,12 +556,11 @@
 
 	</profiles>
 
-	<scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false"
-			 child.scm.url.inherit.append.path="false">
+	<scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
 		<connection>scm:git:git@github.com/cdi-unit/cdi-unit.git</connection>
 		<developerConnection>scm:git:git@github.com/cdi-unit/cdi-unit.git</developerConnection>
 		<url>https://github.com/cdi-unit/cdi-unit</url>
-		<tag>HEAD</tag>
+		<tag>cdi-unit-5.0.0-EA3</tag>
 	</scm>
 
 </project>
