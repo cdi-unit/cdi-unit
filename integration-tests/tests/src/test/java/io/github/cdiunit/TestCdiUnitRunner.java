@@ -34,11 +34,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import io.github.cdiunit.test.beans.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
-        ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
 public class TestCdiUnitRunner extends BaseTest {
 
     @Inject

@@ -15,16 +15,25 @@
  */
 package io.github.cdiunit.test.beans;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FApplicationScoped {
+
     @Inject
     private AInterface a;
 
     public AInterface getA() {
         return a;
+    }
+
+    private final AtomicInteger counter = new AtomicInteger();
+
+    public int getCounter() {
+        return counter.incrementAndGet();
     }
 
 }

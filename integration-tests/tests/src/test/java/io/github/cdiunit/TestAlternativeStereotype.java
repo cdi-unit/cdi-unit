@@ -20,12 +20,14 @@ import jakarta.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.AImplementation3.StereotypeAlternative;
+import io.github.cdiunit.test.beans.AImplementation1;
+import io.github.cdiunit.test.beans.AImplementation3;
+import io.github.cdiunit.test.beans.AInterface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses(StereotypeAlternative.class)
+@AdditionalClasses(AImplementation3.StereotypeAlternative.class)
 public class TestAlternativeStereotype {
     @Inject
     private AImplementation1 impl1;

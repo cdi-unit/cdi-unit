@@ -24,6 +24,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import io.github.cdiunit.test.beans.AInterface;
+import io.github.cdiunit.test.beans.FApplicationScoped;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)

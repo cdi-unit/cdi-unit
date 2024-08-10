@@ -26,6 +26,11 @@ import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.test.beans.CSessionScoped;
+import io.github.cdiunit.test.beans.DConversationScoped;
+import io.github.cdiunit.test.beans.Scoped;
+import io.github.cdiunit.test.beans.ScopedFactory;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 

@@ -39,6 +39,8 @@ import org.junit.rules.MethodRule;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import io.github.cdiunit.test.beans.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class, ExcludeExtension.class })
