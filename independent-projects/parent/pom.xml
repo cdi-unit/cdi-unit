@@ -154,6 +154,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.8.0</version>
+					<configuration>
+						<show>public</show>
+						<excludePackageNames>*.internal:*.internal.*</excludePackageNames>
+						<doclint>all</doclint>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -404,11 +409,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<show>public</show>
-					<excludePackageNames>*.internal.*</excludePackageNames>
-					<doclint>all</doclint>
-				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
