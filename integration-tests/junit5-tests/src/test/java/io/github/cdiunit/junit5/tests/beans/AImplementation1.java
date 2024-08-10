@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit5.tests;
+package io.github.cdiunit.junit5.tests.beans;
 
-public class ESupportClass implements AInterface {
+public class AImplementation1 extends ASuper implements AInterface {
 
 }

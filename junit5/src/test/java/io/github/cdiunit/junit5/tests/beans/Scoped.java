@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit5.tests;
+package io.github.cdiunit.junit5.tests.beans;
 
-import java.io.Serializable;
+import jakarta.enterprise.inject.Vetoed;
 
-import jakarta.enterprise.context.ConversationScoped;
+@Vetoed
+public class Scoped {
 
-@ConversationScoped
-public class DConversationScoped implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private String foo;
+    private Runnable disposeListener;
 
-    public String getFoo() {
-        return foo;
+    public Scoped() {
+
     }
 
-    public void setFoo(String foo) {
-        this.foo = foo;
+    public void setDisposedListener(Runnable disposeListener) {
+        this.disposeListener = disposeListener;
+
     }
 
+    public void dispose() {
+        disposeListener.run();
+    }
 }

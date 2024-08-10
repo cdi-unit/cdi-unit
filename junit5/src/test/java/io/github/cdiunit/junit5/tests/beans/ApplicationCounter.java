@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2024 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit5.tests;
+package io.github.cdiunit.junit5.tests.beans;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Disposes;
-import jakarta.enterprise.inject.Produces;
 
 @ApplicationScoped
-public class ScopedFactory {
+public class ApplicationCounter {
 
-    @Produces
-    @RequestScoped
-    public Scoped getScoped() {
-        return new Scoped();
+    private AtomicInteger counter = new AtomicInteger();
+
+    @PostConstruct
+    void init() {
+        counter.set(0);
     }
 
-    public void disposed(@Disposes Scoped scoped) {
-        scoped.dispose();
+    public int incrementAndGet() {
+        return counter.incrementAndGet();
     }
 
 }
