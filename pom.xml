@@ -23,6 +23,7 @@
 		<module>independent-projects/ide-config</module>
 		<module>independent-projects/rewrite-recipes</module>
 		<module>build-parent</module>
+		<module>test-beans</module>
 		<module>core</module>
 		<module>support-servlet</module>
 		<module>support-servlet6</module>

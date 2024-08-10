@@ -35,12 +35,6 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>cdi-unit</artifactId>
-				<version>${project.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
 				<version>3.6.0.Final</version>
@@ -98,6 +92,13 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-test-beans</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
