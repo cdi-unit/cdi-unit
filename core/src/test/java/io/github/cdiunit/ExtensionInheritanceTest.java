@@ -18,6 +18,8 @@ package io.github.cdiunit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiRunner;
+
 @RunWith(CdiRunner.class)
 @AdditionalClasses({ InheretedExtension.class })
 public class ExtensionInheritanceTest {

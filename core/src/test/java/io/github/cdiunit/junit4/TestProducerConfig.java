@@ -30,8 +30,6 @@ import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.CdiJUnit;
-import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.ProducerConfig;
 
 import static java.lang.annotation.ElementType.METHOD;

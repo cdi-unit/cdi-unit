@@ -20,6 +20,7 @@ import jakarta.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.AImplementation1;
 import io.github.cdiunit.test.beans.AImplementation3;
 import io.github.cdiunit.test.beans.AImplementation3.StereotypeAlternative;

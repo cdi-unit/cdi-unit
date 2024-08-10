@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.junit;
+package io.github.cdiunit.junit4.internal;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

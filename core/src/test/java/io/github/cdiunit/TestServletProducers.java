@@ -23,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiRunner;
+
 @RunWith(CdiRunner.class)
 public class TestServletProducers {
     @Inject

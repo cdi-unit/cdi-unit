@@ -27,8 +27,6 @@ import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import io.github.cdiunit.CdiJUnit;
-import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.test.beans.ApplicationCounter;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.junit4;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,24 +26,24 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.junit4.ActivateScopes;
-import io.github.cdiunit.internal.junit4.AroundMethod;
-import io.github.cdiunit.internal.junit4.ExpectStartupException;
+import io.github.cdiunit.junit4.internal.ActivateScopes;
+import io.github.cdiunit.junit4.internal.AroundMethod;
+import io.github.cdiunit.junit4.internal.ExpectStartupException;
 
 /**
- * <code>&#064;CdiRunner</code> is a JUnit runner that uses a CDI container to
- * create unit test objects. Simply add
- * <code>&#064;RunWith(CdiRunner.class)</code> to your test class.
+ * {@code CdiRunner} is a JUnit runner that uses a CDI container to create unit test objects. Simply add
+ * {@code @RunWith(CdiRunner.class)} to your test class.
  *
  * <pre>
  * <code>
- * &#064;RunWith(CdiRunner.class) // Runs the test with CDI-Unit
+ * {@code @RunWith(CdiRunner.class)}) // Runs the test with CDI-Unit
  * class MyTest {
- *   &#064;Inject
+ *   {@code @Inject}
  *   Something something; // This will be injected before the tests are run!
  *
  *   ... //The rest of the test goes here.
- * }</code>
+ * }
+ * </code>
  * </pre>
  */
 public class CdiRunner extends BlockJUnit4ClassRunner {

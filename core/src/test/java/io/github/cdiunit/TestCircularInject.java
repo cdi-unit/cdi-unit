@@ -22,6 +22,8 @@ import jakarta.inject.Provider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiRunner;
+
 @RunWith(CdiRunner.class)
 public class TestCircularInject {
     @Inject

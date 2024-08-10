@@ -21,8 +21,8 @@ import org.apache.deltaspike.core.spi.scope.window.WindowContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.InRequestScope;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

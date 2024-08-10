@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.junit4;
 
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 
-import io.github.cdiunit.internal.junit4.CdiJUnitRule;
+import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.junit4.internal.CdiJUnitRule;
 
 import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
 
@@ -29,7 +30,7 @@ import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
  * <li>* JUnit runners - see {@link CdiRunner} *</li>
  * </ul>
  */
-public final class CdiJUnit {
+public abstract class CdiJUnit {
 
     /**
      * Creates method rule instance that manages CDI Unit.
@@ -51,7 +52,7 @@ public final class CdiJUnit {
         return new CdiJUnitRule();
     }
 
-    private CdiJUnit() throws IllegalAccessException {
+    protected CdiJUnit() throws IllegalAccessException {
         illegalInstantiation();
     }
 

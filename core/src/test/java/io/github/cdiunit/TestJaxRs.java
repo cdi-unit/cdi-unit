@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.cdiunit.jaxrs.SupportJaxRs;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

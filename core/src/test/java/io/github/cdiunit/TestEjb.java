@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 
 import io.github.cdiunit.TestEjb.*;
 import io.github.cdiunit.ejb.SupportEjb;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

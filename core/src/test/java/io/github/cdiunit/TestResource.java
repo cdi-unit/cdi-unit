@@ -23,6 +23,7 @@ import jakarta.inject.Named;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.resource.SupportResource;
 
 import static org.assertj.core.api.Assertions.assertThat;

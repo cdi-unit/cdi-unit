@@ -13,12 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.junit;
+package io.github.cdiunit.junit4;
 
-public class InvalidRuleFieldUsageException extends RuntimeException {
+import java.io.IOException;
 
-    public InvalidRuleFieldUsageException(String message) {
-        super(message);
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.junit4.internal.InvalidRuleFieldUsageException;
+
+public class TestInvalidJUnitRuleUsage {
+
+    @Rule
+    public final TestName testName = new TestName();
+
+    @Test(expected = InvalidRuleFieldUsageException.class)
+    public void test() throws IOException {
+        WeldHelper.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class, null));
     }
 
 }

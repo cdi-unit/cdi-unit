@@ -25,8 +25,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.ContextController;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

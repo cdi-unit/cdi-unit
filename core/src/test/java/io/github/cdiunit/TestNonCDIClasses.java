@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.core.filter.Filter;
+import io.github.cdiunit.junit4.CdiRunner;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ThresholdFilter.class)

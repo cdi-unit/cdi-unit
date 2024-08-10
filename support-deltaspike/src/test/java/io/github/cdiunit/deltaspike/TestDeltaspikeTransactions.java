@@ -26,8 +26,8 @@ import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.CdiRunner;
 import io.github.cdiunit.InRequestScope;
+import io.github.cdiunit.junit4.CdiRunner;
 
 @SupportDeltaspikeJpa
 @SupportDeltaspikeData

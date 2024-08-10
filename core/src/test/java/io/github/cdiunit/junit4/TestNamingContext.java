@@ -27,9 +27,6 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.CdiJUnit;
-import io.github.cdiunit.CdiRunner;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class TestNamingContext {
