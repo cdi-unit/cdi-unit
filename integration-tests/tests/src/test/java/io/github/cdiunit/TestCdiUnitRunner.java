@@ -28,17 +28,17 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import io.github.cdiunit.test.beans.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ESupportClass.class, ScopedFactory.class,
-        ExcludeExtension.class })
+@AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
 public class TestCdiUnitRunner extends BaseTest {
 
     @Inject

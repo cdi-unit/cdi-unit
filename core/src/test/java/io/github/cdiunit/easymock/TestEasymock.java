@@ -23,8 +23,8 @@ import org.easymock.Mock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.AInterface;
 import io.github.cdiunit.CdiRunner;
+import io.github.cdiunit.test.beans.AInterface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -22,15 +22,19 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import io.github.cdiunit.test.beans.CSessionScoped;
+import io.github.cdiunit.test.beans.DConversationScoped;
+import io.github.cdiunit.test.beans.Scoped;
+import io.github.cdiunit.test.beans.ScopedFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ ScopedFactory.class, ExcludeExtension.class })
+@AdditionalClasses({ ScopedFactory.class })
 @ActivateScopes(RequestScoped.class)
 public class TestActivateScopes {
 

@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import io.github.cdiunit.test.beans.BRequestScoped;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(CdiRunner.class)

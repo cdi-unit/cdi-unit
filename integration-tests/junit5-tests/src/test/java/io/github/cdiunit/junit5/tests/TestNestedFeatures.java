@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Nested;
 import org.mockito.Mock;
 
 import io.github.cdiunit.ProducesAlternative;
+import io.github.cdiunit.test.beans.AInterface;
+import io.github.cdiunit.test.beans.ProducedViaMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
