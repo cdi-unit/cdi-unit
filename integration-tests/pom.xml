@@ -120,7 +120,7 @@
 		<module>tests-mockito</module>
 		<module>tests-easymock</module>
 		<module>tests-jandex</module>
-		<module>tests-deltaspike</module>
+		<module>deltaspike-tests</module>
 	</modules>
 
 </project>
