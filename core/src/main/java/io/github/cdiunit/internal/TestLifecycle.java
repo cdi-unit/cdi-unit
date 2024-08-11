@@ -85,32 +85,39 @@ public class TestLifecycle {
     }
 
     protected void shutdownWeld() throws Exception {
-        while (!instanceDisposers.isEmpty()) {
-            try (var instanceDisposer = instanceDisposers.pollLast()) {
-                // dispose instance on close
+        try {
+            while (!instanceDisposers.isEmpty()) {
+                try (var instanceDisposer = instanceDisposers.pollLast()) {
+                    // dispose instance on close
+                }
             }
-        }
-        if (weld != null) {
-            weld.shutdown();
-            weld = null;
-            container = null;
-            startupException = null;
+        } finally {
+            if (weld != null) {
+                weld.shutdown();
+                weld = null;
+                container = null;
+                startupException = null;
+            }
         }
     }
 
-    public Object createTest(Object outerInstance) throws Throwable {
+    public <T> T createTest(Object outerInstance) throws Throwable {
         initWeld();
 
         checkStartupException();
 
-        final Class<?> testClass = testConfiguration.getTestClass();
+        final Class<T> testClass = (Class<T>) testConfiguration.getTestClass();
         if (outerInstance == null) {
-            return container.select(testClass).get();
+            final var instance = getBeanManager().createInstance();
+            final var beanInstance = instance.select(testClass);
+            T testInstance = beanInstance.get();
+            instanceDisposers.add(() -> beanInstance.destroy(testInstance));
+            return testInstance;
         }
 
         final Class<?> declaringClass = testClass.getDeclaringClass();
         if (declaringClass != null && declaringClass.isInstance(outerInstance)) {
-            final Constructor<?> constructor = testClass.getDeclaredConstructor(declaringClass);
+            final Constructor<T> constructor = testClass.getDeclaredConstructor(declaringClass);
             constructor.setAccessible(true);
             var testInstance = constructor.newInstance(outerInstance);
             configureTest(testInstance);
