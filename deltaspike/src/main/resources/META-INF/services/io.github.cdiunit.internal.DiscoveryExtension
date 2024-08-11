@@ -1,2 +1,2 @@
-io.github.cdiunit.internal.deltaspike.DeltaspikeProxyDiscoveryExtension
-io.github.cdiunit.internal.deltaspike.DeltaspikeScopeDiscoveryExtension
+io.github.cdiunit.deltaspike.internal.DeltaspikeProxyDiscoveryExtension
+io.github.cdiunit.deltaspike.internal.DeltaspikeScopeDiscoveryExtension
