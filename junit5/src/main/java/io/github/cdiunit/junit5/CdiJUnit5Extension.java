@@ -18,12 +18,12 @@ package io.github.cdiunit.junit5;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.*;
+import org.junit.platform.commons.support.AnnotationSupport;
 
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
@@ -50,7 +50,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
             if (defaultTestLifecycleProperty != null) {
                 defaultTestLifecycle = TestInstance.Lifecycle.valueOf(defaultTestLifecycleProperty.toUpperCase(Locale.ROOT));
             }
-            var testInstanceIsolation = Optional.ofNullable(testClass.getAnnotation(TestInstance.class))
+            var testInstanceIsolation = AnnotationSupport.findAnnotation(testClass, TestInstance.class)
                     .map(TestInstance::value)
                     .orElse(defaultTestLifecycle);
             if (testInstanceIsolation == TestInstance.Lifecycle.PER_CLASS) {

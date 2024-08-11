@@ -17,6 +17,7 @@ package io.github.cdiunit.junit5.tests;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,14 @@ class TestIsolationPerClassTestPerMethodWeld {
         assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
         number = applicationCounter.incrementAndGet();
         assertThat(number).as("application counter").isEqualTo(counter.incrementAndGet());
+    }
+
+    @PreDestroy
+    void checkPreDestroy() {
+        int number = applicationCounter.incrementAndGet();
+        assertThat(number).as("application counter").isEqualTo(7);
+        number = counter.incrementAndGet();
+        assertThat(number).as("instance counter").isEqualTo(7);
     }
 
 }

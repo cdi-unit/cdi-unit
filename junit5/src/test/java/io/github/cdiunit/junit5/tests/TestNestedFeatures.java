@@ -156,4 +156,10 @@ public class TestNestedFeatures {
         }
     }
 
+    @Nested
+    @Isolation(IsolationLevel.PER_METHOD)
+    class NestedTestIsolationPerClassHierarchyIssue316 extends TestIsolationPerClassTestPerMethodWeld {
+
+    }
+
 }

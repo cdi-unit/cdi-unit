@@ -15,8 +15,12 @@
  */
 package io.github.cdiunit.junit5.tests;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -38,9 +42,21 @@ class TestIsolationPerMethodTestPerClassWeld {
 
     private static final AtomicInteger perClassCounter = new AtomicInteger();
 
+    private static final Set<Object> instances = new LinkedHashSet<>();
+
     @BeforeAll
     static void resetCounter() {
         perClassCounter.set(0);
+    }
+
+    @PostConstruct
+    void checkin() {
+        assertThat(instances.add(this)).as("constructed instance").isTrue();
+    }
+
+    @PreDestroy
+    void checkout() {
+        assertThat(instances.remove(this)).as("registered instance").isTrue();
     }
 
     @Inject
@@ -48,6 +64,8 @@ class TestIsolationPerMethodTestPerClassWeld {
 
     @Test
     void step1() {
+        assertThat(instances).as("existing instances").hasSize(1);
+
         int number = applicationCounter.incrementAndGet();
         assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         number = applicationCounter.incrementAndGet();
@@ -56,6 +74,8 @@ class TestIsolationPerMethodTestPerClassWeld {
 
     @Test
     void step2() {
+        assertThat(instances).as("existing instances").hasSize(2);
+
         int number = applicationCounter.incrementAndGet();
         assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         number = applicationCounter.incrementAndGet();
@@ -64,6 +84,8 @@ class TestIsolationPerMethodTestPerClassWeld {
 
     @Test
     void step3() {
+        assertThat(instances).as("existing instances").hasSize(3);
+
         int number = applicationCounter.incrementAndGet();
         assertThat(number).as("application counter").isEqualTo(perClassCounter.incrementAndGet());
         number = applicationCounter.incrementAndGet();
