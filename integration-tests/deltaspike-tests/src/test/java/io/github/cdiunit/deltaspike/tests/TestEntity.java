@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2014 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.tests.deltaspike;
+package io.github.cdiunit.deltaspike.tests;
 
-import org.apache.deltaspike.core.api.exclude.Exclude;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-@Exclude
-public class Scoped {
+@Entity
+public class TestEntity {
 
-    private Runnable disposeListener;
+    @Id
+    private int id;
 
-    public Scoped() {
-
-    }
-
-    public void setDisposedListener(Runnable disposeListener) {
-        this.disposeListener = disposeListener;
-
-    }
-
-    public void dispose() {
-        disposeListener.run();
-    }
+    @Column
+    private String name;
 }

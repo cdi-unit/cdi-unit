@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.tests.deltaspike;
+package io.github.cdiunit.deltaspike.tests;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
 
-@Entity
-public class TestEntity {
+@ApplicationScoped
+public class ScopedFactory {
 
-    @Id
-    private int id;
+    @Produces
+    @RequestScoped
+    public Scoped getScoped() {
+        return new Scoped();
+    }
 
-    @Column
-    private String name;
+    public void disposed(@Disposes Scoped scoped) {
+        scoped.dispose();
+    }
+
 }
