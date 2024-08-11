@@ -9,7 +9,7 @@
 		<relativePath>../build-parent</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-support-deltaspike</artifactId>
+	<artifactId>cdi-unit-deltaspike</artifactId>
 	<name>CDI-Unit - DeltaSpike Support</name>
 	<description>CDI-Unit DeltaSpike Support.</description>
 
@@ -73,27 +73,18 @@
 			<artifactId>assertj-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>jakarta.enterprise</groupId>
-			<artifactId>jakarta.enterprise.cdi-api</artifactId>
-			<version>3.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>jakarta.persistence</groupId>
 			<artifactId>jakarta.persistence-api</artifactId>
-			<version>3.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.ejb</groupId>
 			<artifactId>jakarta.ejb-api</artifactId>
-			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
