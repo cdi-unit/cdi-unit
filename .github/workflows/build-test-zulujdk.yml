@@ -138,7 +138,7 @@ jobs:
         # LTS versions
         java: [11, 17, 21]
         groovy:
-          - v2.5
+          # FIXME - #330 - v2.5
           - v3.0
           - v4.0
 
