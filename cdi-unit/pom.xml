@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -98,6 +99,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
+					<links>
+						<link>https://static.javadoc.io/jakarta.enterprise/jakarta.enterprise.cdi-api/3.0.0/</link>
+						<link>https://static.javadoc.io/jakarta.inject/jakarta.inject-api/2.0.0/</link>
+						<link>https://static.javadoc.io/junit/junit/4.13.2/</link>
+						<link>https://static.javadoc.io/org.apache.deltaspike.core/deltaspike-core-api/2.0.0/</link>
+						<link>https://static.javadoc.io/org.apache.deltaspike.modules/deltaspike-data-module-api/2.0.0/</link>
+						<link>https://static.javadoc.io/org.apache.deltaspike.modules/deltaspike-jpa-module-api/2.0.0/</link>
+						<link>https://static.javadoc.io/org.apache.deltaspike.modules/deltaspike-proxy-module-api/2.0.0/</link>
+						<link>https://static.javadoc.io/org.jboss.weld.se/weld-se-core/${version.weld.baseline}/</link>
+						<link>https://static.javadoc.io/org.junit.jupiter/junit-jupiter-api/5.11.0/</link>
+						<link>https://static.javadoc.io/org.spockframework/spock-core/2.4-M4-groovy-2.5/</link>
+						<link>https://static.javadoc.io/org.testng/testng/7.10.2/</link>
+					</links>
 					<includeDependencySources>true</includeDependencySources>
 					<dependencySourceIncludes>
 						<dependencySourceInclude>${project.groupId}:*</dependencySourceInclude>

@@ -15,15 +15,19 @@
  */
 package io.github.cdiunit.spock;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import org.spockframework.runtime.extension.ExtensionAnnotation;
 
 import io.github.cdiunit.spock.internal.CdiSpockExtension;
 
+/**
+ * Bind <em>CDI Unit</em> extension to the specification.
+ *
+ * @see org.spockframework.runtime.extension.ExtensionAnnotation
+ * @see spock.lang.Specification
+ */
+@Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtensionAnnotation(CdiSpockExtension.class)
