@@ -21,7 +21,7 @@ import jakarta.enterprise.event.Observes
 import jakarta.enterprise.inject.spi.EventMetadata
 import jakarta.inject.Inject
 
-class InstanceObserveEventsSpecification extends BaseSpecification {
+class InstanceObserveEventsSpec extends BaseSpec {
 
     static class TestEvent {
     }

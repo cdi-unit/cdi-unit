@@ -23,17 +23,18 @@ import spock.lang.Stepwise
 
 import java.util.concurrent.atomic.AtomicInteger
 
-@Isolation(IsolationLevel.PER_CLASS)
+@Isolation(IsolationLevel.PER_METHOD)
 @Stepwise
-class IsolationPerClassSpecification extends BaseSpecification {
+class IsolationPerMethodSpec extends BaseSpec {
 
-    private static final AtomicInteger counter = new AtomicInteger();
+    private final AtomicInteger counter = new AtomicInteger();
 
     @Inject
     ApplicationCounter applicationCounter;
 
-    def setupSpec() {
-        counter.set(0)
+    def setup() {
+        expect:
+        counter.get() == 0
     }
 
     def 'step1'() {
@@ -84,8 +85,8 @@ class IsolationPerClassSpecification extends BaseSpecification {
         final specNumber = counter.incrementAndGet()
 
         then:
-        appNumber == 7
-        specNumber == 7
+        appNumber == 1
+        specNumber == 1
     }
 
 }

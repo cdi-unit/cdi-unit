@@ -8,7 +8,7 @@ import jakarta.inject.Named
 @AdditionalClasses(Producers.class)
 @ProducerConfigClass(Object.class)
 @ProducerConfigNum(0)
-class ProducerConfigSpecification extends BaseSpecification {
+class ProducerConfigSpec extends BaseSpec {
 
     @Inject
     @Named("a")

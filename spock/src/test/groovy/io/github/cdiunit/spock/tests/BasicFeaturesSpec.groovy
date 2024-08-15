@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType
 
 @AdditionalClasses([ESupportClass, ScopedFactory])
-class BasicFeaturesSpecification extends BaseSpecification {
+class BasicFeaturesSpec extends BaseSpec {
 
     @Produces
     public ProducedViaMethod getProducedViaMethod() {

@@ -21,7 +21,7 @@ import jakarta.inject.Inject
 import spock.lang.Specification
 
 @CdiUnit
-abstract class BaseSpecification extends Specification {
+abstract class BaseSpec extends Specification {
 
     @Inject
     private BeanManager beanManager;

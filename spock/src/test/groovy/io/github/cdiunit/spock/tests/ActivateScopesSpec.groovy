@@ -33,7 +33,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 
 @AdditionalClasses(ScopedFactory.class)
 @ActivateScopes(RequestScoped.class)
-class ActivateScopesSpecification extends BaseSpecification {
+class ActivateScopesSpec extends BaseSpec {
 
     @Inject
     private Provider<Scoped> scoped;
