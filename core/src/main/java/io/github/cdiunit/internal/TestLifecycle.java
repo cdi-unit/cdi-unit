@@ -141,6 +141,7 @@ public class TestLifecycle {
         }
 
         initWeld();
+        checkStartupException();
 
         needsExplicitInterceptorInvocation = true;
         BeanManager beanManager = container.getBeanManager();
