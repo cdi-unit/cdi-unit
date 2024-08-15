@@ -17,29 +17,36 @@ package io.github.cdiunit.spock.internal;
 
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStore;
 
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodInvocationContext;
 
-public class InvokeInterceptors implements IMethodInterceptor {
+public class InvokeBoundInterceptors implements IMethodInterceptor {
 
-    private final TestLifecycle testLifecycle;
+    private final IStore.Namespace namespace;
 
-    private TestMethodInvocationContext<?> methodInvocationContext;
-
-    public InvokeInterceptors(TestLifecycle testLifecycle) {
-        this.testLifecycle = testLifecycle;
+    public InvokeBoundInterceptors(IStore.Namespace namespace) {
+        this.namespace = namespace;
     }
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
-        if (methodInvocationContext == null) {
-            final var target = invocation.getInstance();
-            final var parameters = invocation.getArguments();
-            final var method = testLifecycle.getTestMethod();
-            methodInvocationContext = new TestMethodInvocationContext<>(target, method, parameters, invocation::proceed);
-            methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
+        var store = invocation.getStore(namespace);
+        var testLifecycle = store.get(invocation, TestLifecycle.class);
+        if (testLifecycle == null) {
+            throw new IllegalStateException(String.format("no test lifecycle bound to %s", invocation));
         }
+        final var method = testLifecycle.getTestMethod();
+        if (method == null) {
+            invocation.proceed();
+            return;
+        }
+
+        final var target = invocation.getInstance();
+        final var parameters = invocation.getArguments();
+        var methodInvocationContext = new TestMethodInvocationContext<>(target, method, parameters, invocation::proceed);
+        methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
 
         methodInvocationContext.proceed();
     }

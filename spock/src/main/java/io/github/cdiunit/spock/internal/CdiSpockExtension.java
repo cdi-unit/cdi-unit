@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.spockframework.runtime.extension.IAnnotationDrivenExtension;
 import org.spockframework.runtime.extension.IMethodInterceptor;
 import org.spockframework.runtime.extension.IMethodInvocation;
+import org.spockframework.runtime.extension.IStore;
 import org.spockframework.runtime.model.SpecInfo;
 
 import io.github.cdiunit.internal.TestConfiguration;
@@ -30,6 +31,8 @@ import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.spock.CdiUnit;
 
 public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
+
+    private static final IStore.Namespace NAMESPACE = IStore.Namespace.create(CdiSpockExtension.class);
 
     private final Map<Class<?>, TestLifecycle> testLifecycles = new ConcurrentHashMap<>();
 
@@ -54,8 +57,12 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
 
     @Override
     public void visitSpec(SpecInfo spec) {
-        var featureInterceptor = new FeatureInterceptor();
-        spec.getAllFeatures().forEach(feature -> feature.addIterationInterceptor(featureInterceptor));
+        var featureInterceptors = List.of(
+                new InjectTestInstance(),
+                new AroundMethod(),
+                new InvokeBoundInterceptors(NAMESPACE),
+                new ActivateScopes(NAMESPACE));
+        spec.getAllFeatures().forEach(feature -> featureInterceptors.forEach(feature::addIterationInterceptor));
     }
 
     private class SetupInterceptor implements IMethodInterceptor {
@@ -78,15 +85,31 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
                 invocation.proceed();
             } finally {
                 Object instance = invocation.getInstance();
-                var testLifecycle = initialTestLifecycle(instance.getClass());
-                testLifecycle.afterTestClass();
-                testLifecycles.remove(instance.getClass());
+                final Class<?> testClass = instance.getClass();
+                var testLifecycle = initialTestLifecycle(testClass);
+                try {
+                    testLifecycle.afterTestClass();
+                } finally {
+                    testLifecycles.remove(testClass);
+                }
             }
         }
 
     }
 
-    private class FeatureInterceptor implements IMethodInterceptor {
+    private class InjectTestInstance implements IMethodInterceptor {
+
+        @Override
+        public void intercept(IMethodInvocation invocation) throws Throwable {
+            final var instance = invocation.getInstance();
+            final var testLifecycle = requiredTestLifecycle(instance.getClass(), null);
+            testLifecycle.configureTest(instance);
+            invocation.proceed();
+        }
+
+    }
+
+    private class AroundMethod implements IMethodInterceptor {
 
         @Override
         public void intercept(IMethodInvocation invocation) throws Throwable {
@@ -94,9 +117,9 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
             final var method = invocation.getFeature().getFeatureMethod().getReflection();
             final var testLifecycle = requiredTestLifecycle(instance.getClass(), method);
             try {
-                testLifecycle.configureTest(instance);
                 testLifecycle.beforeTestMethod();
-                new InvokeInterceptors(testLifecycle).intercept(invocation);
+                invocation.getStore(NAMESPACE).put(invocation, testLifecycle);
+                invocation.proceed();
             } finally {
                 testLifecycle.afterTestMethod();
             }
