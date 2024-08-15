@@ -13,4 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Support classes for integrating the <em>CDI Unit</em> with the <a href="https://spockframework.org/">Spock Framework</a>
+ * extension model.
+ *
+ * @see <a href="https://spockframework.org/">Spock Framework</a>
+ */
 package io.github.cdiunit.spock;
