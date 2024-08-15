@@ -121,6 +121,7 @@
 		<module>tests-easymock</module>
 		<module>tests-jandex</module>
 		<module>deltaspike-tests</module>
-	</modules>
+    <module>spock-tests</module>
+  </modules>
 
 </project>
