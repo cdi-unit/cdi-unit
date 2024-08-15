@@ -51,8 +51,8 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
 
     @Override
     public void visitSpecAnnotations(List<CdiUnit> annotations, SpecInfo spec) {
-        spec.addSetupInterceptor(new SetupInterceptor());
-        spec.addCleanupInterceptor(new CleanupInterceptor());
+        spec.addSetupSpecInterceptor(new SetupInterceptor());
+        spec.addCleanupSpecInterceptor(new CleanupInterceptor());
     }
 
     @Override
