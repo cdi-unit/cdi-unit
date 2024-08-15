@@ -37,6 +37,7 @@ import io.github.cdiunit.ProducesAlternative;
 import io.github.cdiunit.test.beans.AInterface;
 import io.github.cdiunit.test.beans.ProducedViaField;
 import io.github.cdiunit.test.beans.ProducedViaMethod;
+import io.github.cdiunit.test.beans.Qualify;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

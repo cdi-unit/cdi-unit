@@ -15,34 +15,19 @@
  */
 package io.github.cdiunit.junit5.tests;
 
-import java.lang.annotation.RetentionPolicy;
-
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.EventMetadata;
-import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.github.cdiunit.test.beans.Qualify;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestInstanceObserveEvents extends BaseTest {
-
-    @java.lang.annotation.Documented
-    @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
-    @jakarta.inject.Qualifier
-    public @interface Qualify {
-
-        final class Literal extends AnnotationLiteral<Qualify> implements Qualify {
-
-            private static final long serialVersionUID = 1L;
-
-            public static final Literal INSTANCE = new Literal();
-
-        }
-    }
 
     static class TestEvent {
     }
