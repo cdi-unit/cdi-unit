@@ -77,7 +77,7 @@ public class TestCdiUnitRunner extends BaseTest {
     private Conversation conversation;
 
     @Produces
-    private ProducedViaField produced;
+    private ProducedViaField produced = new ProducedViaField(123);
 
     @Produces
     public ProducedViaMethod getProducedViaMethod() {

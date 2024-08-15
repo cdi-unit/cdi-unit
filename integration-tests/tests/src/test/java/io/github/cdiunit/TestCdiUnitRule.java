@@ -88,7 +88,7 @@ public class TestCdiUnitRule extends BaseTest {
     private Conversation conversation;
 
     @Produces
-    private ProducedViaField produced;
+    private ProducedViaField produced = new ProducedViaField(123);
 
     @Inject
     Instance<List<?>> generics;

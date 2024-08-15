@@ -167,7 +167,7 @@ abstract class TestBasicFeatures extends BaseTest {
     private Conversation conversation;
 
     @Produces
-    private ProducedViaField producesViaField;
+    private ProducedViaField producesViaField = new ProducedViaField(123);
 
     @Inject
     Instance<List<?>> generics;
@@ -365,7 +365,7 @@ abstract class TestBasicFeatures extends BaseTest {
     @Test
     public void testProducedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        assertThat(produced).as("produced via field").isNotNull();
+        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producesViaField);
     }
 
     @Test
