@@ -1,15 +1,9 @@
 package io.github.cdiunit.spock.tests
 
 import io.github.cdiunit.AdditionalClasses
-import io.github.cdiunit.ProducerConfig
 import jakarta.enterprise.inject.Produces
 import jakarta.inject.Inject
 import jakarta.inject.Named
-
-import java.lang.annotation.ElementType
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.lang.annotation.Target
 
 @AdditionalClasses(Producers.class)
 @ProducerConfigClass(Object.class)
@@ -73,19 +67,4 @@ class ProducerConfigSpecification extends BaseSpecification {
         object.getClass() == HashSet.class
     }
 
-}
-
-// example ProducerConfig annotations
-@Retention(RetentionPolicy.RUNTIME)
-@Target([ElementType.METHOD, ElementType.TYPE])
-@ProducerConfig
-@interface ProducerConfigNum {
-    int value();
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target([ElementType.METHOD, ElementType.TYPE])
-@ProducerConfig
-@interface ProducerConfigClass {
-    Class<?> value();
 }
