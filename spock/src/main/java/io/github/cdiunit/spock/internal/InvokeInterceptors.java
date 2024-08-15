@@ -23,23 +23,21 @@ import io.github.cdiunit.internal.TestMethodInvocationContext;
 
 public class InvokeInterceptors implements IMethodInterceptor {
 
-    private final IMethodInvocation next;
     private final TestLifecycle testLifecycle;
 
     private TestMethodInvocationContext<?> methodInvocationContext;
 
-    public InvokeInterceptors(IMethodInvocation next, TestLifecycle testLifecycle) {
-        this.next = next;
+    public InvokeInterceptors(TestLifecycle testLifecycle) {
         this.testLifecycle = testLifecycle;
     }
 
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
         if (methodInvocationContext == null) {
-            final var target = next.getInstance();
-            final var parameters = next.getArguments();
+            final var target = invocation.getInstance();
+            final var parameters = invocation.getArguments();
             final var method = testLifecycle.getTestMethod();
-            methodInvocationContext = new TestMethodInvocationContext<>(target, method, parameters, next::proceed);
+            methodInvocationContext = new TestMethodInvocationContext<>(target, method, parameters, invocation::proceed);
             methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
         }
 

@@ -96,7 +96,7 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
             try {
                 testLifecycle.configureTest(instance);
                 testLifecycle.beforeTestMethod();
-                new InvokeInterceptors(invocation, testLifecycle).intercept(invocation);
+                new InvokeInterceptors(testLifecycle).intercept(invocation);
             } finally {
                 testLifecycle.afterTestMethod();
             }
