@@ -127,3 +127,40 @@ jobs:
 
       - name: Test DeltaSpike
         run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
+
+  test-spock:
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [11, 17, 21]
+        groovy:
+          # FIXME - #330 - v2.5
+          - v3.0
+          - v4.0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
+
+      - name: Test Spock with Groovy ${{ matrix.groovy }}
+        run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
