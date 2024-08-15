@@ -30,6 +30,7 @@
 		<module>deltaspike</module>
 		<module>junit5</module>
 		<module>testng</module>
+		<module>spock</module>
 		<module>integration-tests</module>
 		<module>cdi-unit</module>
 	</modules>
