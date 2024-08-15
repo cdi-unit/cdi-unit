@@ -80,8 +80,8 @@ class IsolationPerClassSpecification extends BaseSpecification {
 
     def 'check counters'() {
         when:
-        var appNumber = applicationCounter.incrementAndGet()
-        var specNumber = counter.incrementAndGet()
+        final appNumber = applicationCounter.incrementAndGet()
+        final specNumber = counter.incrementAndGet()
 
         then:
         appNumber == 7

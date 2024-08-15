@@ -37,7 +37,7 @@ class InstanceObserveEventsSpecification extends BaseSpecification {
 
     def 'should observe unqualified event'() {
         when:
-        final var expected = new TestEvent();
+        final expected = new TestEvent();
         testEvent.fire(expected);
 
         then:
@@ -53,7 +53,7 @@ class InstanceObserveEventsSpecification extends BaseSpecification {
 
     def 'should observe qualified event'() {
         when:
-        final var expected = new TestEvent();
+        final expected = new TestEvent();
         testEvent.select(Qualify.Literal.INSTANCE).fire(expected);
 
         then:

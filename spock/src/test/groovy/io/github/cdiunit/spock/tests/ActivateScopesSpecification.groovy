@@ -53,14 +53,14 @@ class ActivateScopesSpecification extends BaseSpecification {
         b2 == b1
 
         and:
-        b1.setDisposedListener(() -> assertThat(this).isNotNull());
-        b2.setDisposedListener(() -> assertThat(this).isNotNull());
+        b1.setDisposedListener({ -> assertThat(this).isNotNull() });
+        b2.setDisposedListener({ -> assertThat(this).isNotNull() });
     }
 
     def 'testNoActiveSessionScope'() {
         expect:
         sessionScoped != null;
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> sessionScoped.getFoo());
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> sessionScoped.getFoo() });
     }
 
     @ActivateScopes.All([@ActivateScopes(SessionScoped.class)])
@@ -73,7 +73,7 @@ class ActivateScopesSpecification extends BaseSpecification {
     def 'testNoActiveConversationScope'() {
         expect:
         conversationScoped != null;
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> conversationScoped.getFoo());
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> conversationScoped.getFoo() });
     }
 
     @ActivateScopes(ConversationScoped.class)
