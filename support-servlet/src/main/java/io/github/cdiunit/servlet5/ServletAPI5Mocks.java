@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet5;
+package io.github.cdiunit.servlet5;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -24,7 +24,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet5.MockHttpServletRequestImpl;
+import io.github.cdiunit.internal.servlet5.MockHttpServletResponseImpl;
+import io.github.cdiunit.internal.servlet5.MockHttpSessionImpl;
+import io.github.cdiunit.internal.servlet5.MockServletContextImpl;
 
+/**
+ * Producer for mocks compatible with the <a href="https://jakarta.ee/specifications/servlet/5.0/">Jakarta Servlet 5.0</a>.
+ *
+ * NOTE: This class is exposed for satisfy Maven Central javadoc requirements.
+ *
+ * @see <a href="https://jakarta.ee/specifications/servlet/5.0/">Jakarta Servlet 5.0</a>
+ */
 public class ServletAPI5Mocks {
 
     @Produces

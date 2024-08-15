@@ -17,8 +17,8 @@ package io.github.cdiunit.internal.servlet;
 
 import io.github.cdiunit.internal.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
-import io.github.cdiunit.internal.servlet5.ServletAPI5Mocks;
-import io.github.cdiunit.internal.servlet6.ServletAPI6Mocks;
+import io.github.cdiunit.servlet5.ServletAPI5Mocks;
+import io.github.cdiunit.servlet6.ServletAPI6Mocks;
 
 public class ServletDiscoveryExtension implements DiscoveryExtension {
 

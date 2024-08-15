@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.servlet6;
+package io.github.cdiunit.servlet6;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -24,6 +24,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
+import io.github.cdiunit.internal.servlet6.MockHttpServletRequest;
+import io.github.cdiunit.internal.servlet6.MockHttpServletResponse;
+import io.github.cdiunit.internal.servlet6.MockHttpSession;
+import io.github.cdiunit.internal.servlet6.MockServletContext;
+
+/**
+ * Producer for mocks compatible with the <a href="https://jakarta.ee/specifications/servlet/6.0/">Jakarta Servlet 6.0</a>.
+ *
+ * NOTE: This class is exposed for satisfy Maven Central javadoc requirements.
+ *
+ * @see <a href="https://jakarta.ee/specifications/servlet/6.0/">Jakarta Servlet 6.0</a>
+ */
 
 public class ServletAPI6Mocks {
 
