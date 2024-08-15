@@ -307,7 +307,7 @@ public class TestCdiUnitRule extends BaseTest {
     @Test
     public void testProducedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
-        assertThat(produced).isNotNull();
+        assertThat(produced).as("produced via method").isNotNull();
     }
 
     public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {
