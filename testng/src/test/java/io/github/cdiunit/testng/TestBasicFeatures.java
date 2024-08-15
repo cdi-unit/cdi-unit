@@ -70,6 +70,14 @@ abstract class TestBasicFeatures extends BaseTest {
             return disposeListener;
         }
 
+        @Produces
+        private ProducedViaField producesViaField = new ProducedViaField(123);
+
+        @Override
+        public ProducedViaField producesViaField() {
+            return producesViaField;
+        }
+
     }
 
     @Listeners(NgCdiListener.class)
@@ -109,6 +117,14 @@ abstract class TestBasicFeatures extends BaseTest {
                 return mockA;
             }
 
+            @Produces
+            private ProducedViaField producesViaField = new ProducedViaField(123);
+
+            @Override
+            public ProducedViaField producesViaField() {
+                return producesViaField;
+            }
+
         }
 
     }
@@ -124,6 +140,8 @@ abstract class TestBasicFeatures extends BaseTest {
          * @return produced instance
          */
         Runnable disposeListener();
+
+        ProducedViaField producesViaField();
 
     }
 
@@ -165,9 +183,6 @@ abstract class TestBasicFeatures extends BaseTest {
 
     @Inject
     private Conversation conversation;
-
-    @Produces
-    private ProducedViaField producesViaField;
 
     @Inject
     Instance<List<?>> generics;
@@ -365,13 +380,13 @@ abstract class TestBasicFeatures extends BaseTest {
     @Test
     public void testProducedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        assertThat(produced).isEqualTo(producesViaField);
+        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producerAccess.producesViaField());
     }
 
     @Test
     public void testProducedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
-        assertThat(produced).isNotNull();
+        assertThat(produced).as("produced via method").isNotNull();
     }
 
     public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {

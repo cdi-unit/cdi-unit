@@ -28,6 +28,7 @@ import org.mockito.Mock;
 
 import io.github.cdiunit.ProducesAlternative;
 import io.github.cdiunit.test.beans.AInterface;
+import io.github.cdiunit.test.beans.ProducedViaField;
 import io.github.cdiunit.test.beans.ProducedViaMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +68,14 @@ public class TestNestedFeatures {
 
         @Produces
         List<Object> producedList = new ArrayList<>();
+
+        @Produces
+        private ProducedViaField producesViaField = new ProducedViaField(123);
+
+        @Override
+        public ProducedViaField producesViaField() {
+            return producesViaField;
+        }
 
     }
 

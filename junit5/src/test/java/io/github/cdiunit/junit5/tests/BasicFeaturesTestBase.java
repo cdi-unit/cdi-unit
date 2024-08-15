@@ -23,7 +23,6 @@ import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.Conversation;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
@@ -58,6 +57,8 @@ abstract class BasicFeaturesTestBase extends BaseTest {
          * @return produced instance
          */
         List<?> producedList();
+
+        ProducedViaField producesViaField();
 
     }
 
@@ -99,9 +100,6 @@ abstract class BasicFeaturesTestBase extends BaseTest {
 
     @Inject
     private Conversation conversation;
-
-    @Produces
-    private ProducedViaField producesViaField;
 
     @Inject
     Instance<List<?>> generics;
@@ -306,13 +304,13 @@ abstract class BasicFeaturesTestBase extends BaseTest {
     @Test
     void producedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        assertThat(produced).isEqualTo(producesViaField);
+        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producerAccess.producesViaField());
     }
 
     @Test
     void producedViaMethod() {
         ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
-        assertThat(produced).isNotNull();
+        assertThat(produced).as("produced via method").isNotNull();
     }
 
     public static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {

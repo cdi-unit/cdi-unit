@@ -24,6 +24,7 @@ import org.mockito.Mock;
 
 import io.github.cdiunit.ProducesAlternative;
 import io.github.cdiunit.test.beans.AInterface;
+import io.github.cdiunit.test.beans.ProducedViaField;
 import io.github.cdiunit.test.beans.ProducedViaMethod;
 
 public class TestBasicFeatures extends BasicFeaturesTestBase implements BasicFeaturesTestBase.ProducerAccess {
@@ -57,6 +58,14 @@ public class TestBasicFeatures extends BasicFeaturesTestBase implements BasicFea
     @Override
     public List<?> producedList() {
         return producedList;
+    }
+
+    @Produces
+    private ProducedViaField producesViaField = new ProducedViaField(123);
+
+    @Override
+    public ProducedViaField producesViaField() {
+        return producesViaField;
     }
 
 }
