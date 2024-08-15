@@ -102,7 +102,8 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
         @Override
         public void intercept(IMethodInvocation invocation) throws Throwable {
             final var instance = invocation.getInstance();
-            final var testLifecycle = requiredTestLifecycle(instance.getClass(), null);
+            final var method = invocation.getFeature().getFeatureMethod().getReflection();
+            final var testLifecycle = requiredTestLifecycle(instance.getClass(), method);
             testLifecycle.configureTest(instance);
             invocation.proceed();
         }
