@@ -22,6 +22,9 @@ updates:
       # explicitly keep baseline version
       - dependency-name: org.jboss.weld.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+      # explicitly keep baseline version
+      - dependency-name: org.spockframework:*
+        update-types: [ "version-update:semver-patch" ]
     rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
