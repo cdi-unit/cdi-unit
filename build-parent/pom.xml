@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -18,6 +19,9 @@
 	<properties>
 		<version.mockito-core>5.12.0</version.mockito-core>
 		<version.resteasy-core>6.2.9.Final</version.resteasy-core>
+		<ide-config.resources.dir>
+			${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/
+		</ide-config.resources.dir>
 	</properties>
 
 	<dependencyManagement>
@@ -125,9 +129,8 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>net.revelc.code.formatter</groupId>
-					<artifactId>formatter-maven-plugin</artifactId>
-					<version>${version.formatter-maven-plugin}</version>
+					<groupId>com.diffplug.spotless</groupId>
+					<artifactId>spotless-maven-plugin</artifactId>
 					<dependencies>
 						<dependency>
 							<groupId>${project.groupId}</groupId>
@@ -136,7 +139,42 @@
 						</dependency>
 					</dependencies>
 					<configuration>
-						<configFile>cdi-unit-format.xml</configFile>
+						<java>
+							<importOrder>
+								<file>${ide-config.resources.dir}/eclipse.importorder</file>
+								<wildcardsLast>true</wildcardsLast>
+							</importOrder>
+							<removeUnusedImports>
+								<engine>cleanthat-javaparser-unnecessaryimport</engine>
+							</removeUnusedImports>
+							<formatAnnotations/>
+							<eclipse>
+								<!-- optional version of Eclipse Formatter -->
+								<version>4.26</version>
+								<file>
+									${ide-config.resources.dir}/cdi-unit-format.xml
+								</file>
+							</eclipse>
+							<licenseHeader>
+								<file>
+									${ide-config.resources.dir}/license-header.txt
+								</file>
+							</licenseHeader>
+						</java>
+						<groovy>
+							<importOrder>
+								<file>${ide-config.resources.dir}/eclipse.importorder</file>
+							</importOrder>
+							<removeSemicolons/>
+							<greclipse>
+								<!-- optional version of Eclipse Formatter -->
+								<version>4.26</version>
+								<file>${ide-config.resources.dir}/greclipse.properties</file>
+							</greclipse>
+							<licenseHeader>
+								<file>${ide-config.resources.dir}/license-header.txt</file>
+							</licenseHeader>
+						</groovy>
 					</configuration>
 				</plugin>
 
@@ -190,35 +228,18 @@
 				<property>
 					<name>!no-format</name>
 				</property>
-				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as this parent) -->
-				<file>
-					<exists>src/main/java</exists>
-				</file>
-				<jdk>[17,)</jdk>
 			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
+						<groupId>com.diffplug.spotless</groupId>
+						<artifactId>spotless-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<phase>process-sources</phase>
+								<id>spotless-format</id>
+								<phase>generate-sources</phase>
 								<goals>
-									<goal>format</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sort-imports</id>
-								<goals>
-									<goal>sort</goal>
+									<goal>apply</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -234,33 +255,16 @@
 				<property>
 					<name>no-format</name>
 				</property>
-				<!-- This condition makes sure the ide-config can have parent set and the formatting is skipped -->
-				<!-- for all modules that don't contain actual code (such as this parent) -->
-				<file>
-					<exists>src/main/java</exists>
-				</file>
-				<jdk>[17,)</jdk>
 			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>net.revelc.code.formatter</groupId>
-						<artifactId>formatter-maven-plugin</artifactId>
+						<groupId>com.diffplug.spotless</groupId>
+						<artifactId>spotless-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>validate</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>net.revelc.code</groupId>
-						<artifactId>impsort-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>check-imports</id>
+								<id>spotless-check</id>
+								<phase>process-test-sources</phase>
 								<goals>
 									<goal>check</goal>
 								</goals>
@@ -270,32 +274,5 @@
 				</plugins>
 			</build>
 		</profile>
-
-		<profile>
-			<id>validate-rewrite</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>no-format</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.openrewrite.maven</groupId>
-						<artifactId>rewrite-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>validate-rewrite</id>
-								<goals>
-									<goal>dryRunNoFork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
-
 </project>
