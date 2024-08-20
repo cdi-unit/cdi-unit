@@ -17,9 +17,9 @@ package io.github.cdiunit.internal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.*;
 
 import jakarta.enterprise.inject.spi.Extension;
 

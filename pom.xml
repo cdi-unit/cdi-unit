@@ -34,6 +34,43 @@
 		<module>cdi-unit</module>
 	</modules>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<!-- workaround for https://github.com/diffplug/spotless/issues/2019 -->
+					<target>
+						<delete includeEmptyDirs="true">
+							<dirset dir=".">
+								<include name="*spotless-groovy*"/>
+								<include name="*spotless-groovy*/**"/>
+							</dirset>
+						</delete>
+					</target>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-clean-spotless-groovy-dirs</id>
+						<phase>pre-clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>clean-spotless-groovy-dirs</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<profiles>
 		<profile>
 			<id>rewrite</id>

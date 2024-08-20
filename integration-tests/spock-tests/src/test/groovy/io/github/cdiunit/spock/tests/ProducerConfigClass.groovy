@@ -15,16 +15,16 @@
  */
 package io.github.cdiunit.spock.tests
 
-import io.github.cdiunit.ProducerConfig
-
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
+import io.github.cdiunit.ProducerConfig
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target([ElementType.METHOD, ElementType.TYPE])
 @ProducerConfig
 @interface ProducerConfigClass {
-    Class<?> value();
+    Class<?> value()
 }

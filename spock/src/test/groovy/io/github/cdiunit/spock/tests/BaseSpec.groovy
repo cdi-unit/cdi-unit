@@ -15,19 +15,19 @@
  */
 package io.github.cdiunit.spock.tests
 
-import io.github.cdiunit.spock.CdiUnit
 import jakarta.enterprise.inject.spi.BeanManager
 import jakarta.inject.Inject
+
+import io.github.cdiunit.spock.CdiUnit
 import spock.lang.Specification
 
 @CdiUnit
 abstract class BaseSpec extends Specification {
 
     @Inject
-    private BeanManager beanManager;
+    private BeanManager beanManager
 
     BeanManager getBeanManager() {
-        return beanManager;
+        return beanManager
     }
-
 }

@@ -1,7 +1,22 @@
+/*
+ * Copyright 2024 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.cdiunit.spock.tests
 
-import io.github.cdiunit.*
-import io.github.cdiunit.test.beans.*
+import java.lang.annotation.Annotation
+
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.context.ContextNotActiveException
@@ -14,10 +29,12 @@ import jakarta.enterprise.inject.spi.BeanManager
 import jakarta.inject.Inject
 import jakarta.inject.Provider
 import jakarta.servlet.http.HttpServletRequest
+
 import org.mockito.Mock
 import org.mockito.Mockito
 
-import java.lang.annotation.Annotation
+import io.github.cdiunit.*
+import io.github.cdiunit.test.beans.*
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -27,41 +44,40 @@ class BasicFeaturesSpec extends BaseSpec {
 
     @Produces
     public ProducedViaMethod getProducedViaMethod() {
-        return new ProducedViaMethod(2);
+        return new ProducedViaMethod(2)
     }
 
     @Inject
-    MocksProducer mocks;
+    MocksProducer mocks
 
     @ApplicationScoped
     static class MocksProducer implements ProducerAccess {
 
         @Mock
-        private Runnable disposeListener;
+        private Runnable disposeListener
 
         @Override
         public Runnable disposeListener() {
-            return disposeListener;
+            return disposeListener
         }
 
         @Mock
-        private AInterface mockA;
+        private AInterface mockA
 
         @Override
         @Produces
         @ProducesAlternative
         public AInterface mockA() {
-            return mockA;
+            return mockA
         }
 
         @Produces
-        private ProducedViaField producesViaField = new ProducedViaField(123);
+        private ProducedViaField producesViaField = new ProducedViaField(123)
 
         @Override
         ProducedViaField getProducesViaField() {
             return producesViaField
         }
-
     }
 
 
@@ -70,75 +86,74 @@ class BasicFeaturesSpec extends BaseSpec {
         /**
          * @return produced instance
          */
-        AInterface mockA();
+        AInterface mockA()
 
         /**
          * @return produced instance
          */
-        Runnable disposeListener();
+        Runnable disposeListener()
 
         ProducedViaField getProducesViaField()
-
     }
 
     @Inject
     // direct access to producer to check injected instances for equality
-    ProducerAccess producerAccess;
+    ProducerAccess producerAccess
 
     @Inject
-    private AImplementation1 aImpl;
+    private AImplementation1 aImpl
 
-    private boolean postConstructCalled;
-
-    @Inject
-    private Provider<BRequestScoped> requestScoped;
+    private boolean postConstructCalled
 
     @Inject
-    private Provider<CSessionScoped> sessionScoped;
+    private Provider<BRequestScoped> requestScoped
 
     @Inject
-    private Provider<DConversationScoped> conversationScoped;
+    private Provider<CSessionScoped> sessionScoped
 
     @Inject
-    private Provider<AInterface> a;
+    private Provider<DConversationScoped> conversationScoped
 
     @Inject
-    private BeanManager beanManager;
+    private Provider<AInterface> a
 
     @Inject
-    private FApplicationScoped f1;
+    private BeanManager beanManager
 
     @Inject
-    private FApplicationScoped f2;
+    private FApplicationScoped f1
 
     @Inject
-    private ContextController contextController;
+    private FApplicationScoped f2
 
     @Inject
-    private BRequestScoped request;
+    private ContextController contextController
 
     @Inject
-    private Conversation conversation;
+    private BRequestScoped request
 
     @Inject
-    Instance<List<?>> generics;
+    private Conversation conversation
+
+    @Inject
+    Instance<List<?>> generics
 
     @Produces
     List<Object> producedList() {
-        return new ArrayList<>();
+        return new ArrayList<>()
     }
 
     def 'testGenerics'() {
         expect:
-        assertThat(generics.get()).as("generics").isEqualTo(producedList());
+        assertThat(generics.get()).as("generics").isEqualTo(producedList())
     }
 
     @InRequestScope
     def 'testRequestScope'() {
         when:
-        BRequestScoped b1 = requestScoped.get();
-        b1.setFoo("test"); // Force scoping
-        BRequestScoped b2 = requestScoped.get();
+        BRequestScoped b1 = requestScoped.get()
+        b1.setFoo("test") // Force scoping
+        BRequestScoped b2 = requestScoped.get()
 
         then:
         b1 == b2
@@ -146,11 +161,11 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testRequestScopeFail'() {
         when:
-        BRequestScoped b1 = requestScoped.get();
+        BRequestScoped b1 = requestScoped.get()
 
         then:
         assertThatExceptionOfType(ContextNotActiveException).isThrownBy {
-            b1.setFoo("test"); // Force scoping
+            b1.setFoo("test") // Force scoping
         }
     }
 
@@ -158,9 +173,9 @@ class BasicFeaturesSpec extends BaseSpec {
     @InSessionScope
     def 'testSessionScope'() {
         when:
-        CSessionScoped c1 = sessionScoped.get();
-        c1.setFoo("test"); // Force scoping
-        CSessionScoped c2 = sessionScoped.get();
+        CSessionScoped c1 = sessionScoped.get()
+        c1.setFoo("test") // Force scoping
+        CSessionScoped c2 = sessionScoped.get()
 
         then:
         c1 == c2
@@ -168,11 +183,11 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testSessionScopeFail'() {
         when:
-        CSessionScoped c1 = sessionScoped.get();
+        CSessionScoped c1 = sessionScoped.get()
 
         then:
         assertThatExceptionOfType(ContextNotActiveException).isThrownBy {
-            c1.setFoo("test"); // Force scoping
+            c1.setFoo("test") // Force scoping
         }
     }
 
@@ -180,9 +195,9 @@ class BasicFeaturesSpec extends BaseSpec {
     @InConversationScope
     def 'testConversationScope'() {
         when:
-        DConversationScoped d1 = conversationScoped.get();
-        d1.setFoo("test"); // Force scoping
-        DConversationScoped d2 = conversationScoped.get();
+        DConversationScoped d1 = conversationScoped.get()
+        d1.setFoo("test") // Force scoping
+        DConversationScoped d2 = conversationScoped.get()
 
         then:
         d1 == d2
@@ -190,11 +205,11 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testConversationScopeFail'() {
         when:
-        DConversationScoped d1 = conversationScoped.get();
+        DConversationScoped d1 = conversationScoped.get()
 
         then:
         assertThatExceptionOfType(ContextNotActiveException).isThrownBy {
-            d1.setFoo("test"); // Force scoping
+            d1.setFoo("test") // Force scoping
         }
     }
 
@@ -203,7 +218,7 @@ class BasicFeaturesSpec extends BaseSpec {
      */
     def 'testTestAlternative'() {
         when:
-        AInterface a1 = a.get();
+        AInterface a1 = a.get()
 
         then:
         a1 == producerAccess.mockA()
@@ -216,8 +231,8 @@ class BasicFeaturesSpec extends BaseSpec {
 
     @PostConstruct
     void postConstruct() {
-        assertThat(mocks).withFailMessage("mocks are expected").isNotNull();
-        postConstructCalled = true;
+        assertThat(mocks).withFailMessage("mocks are expected").isNotNull()
+        postConstructCalled = true
     }
 
     def 'testBeanManager'() {
@@ -228,61 +243,61 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testSuper'() {
         expect:
-        assertThat(aImpl.getBeanManager()).isNotNull();
+        assertThat(aImpl.getBeanManager()).isNotNull()
     }
 
     def 'testApplicationScoped'() {
         expect:
-        assertThat(f1).isNotNull();
-        assertThat(f2).isNotNull();
-        assertThat(f1).isEqualTo(f2);
+        assertThat(f1).isNotNull()
+        assertThat(f2).isNotNull()
+        assertThat(f1).isEqualTo(f2)
 
-        AInterface a1 = f1.getA();
-        assertThat(a1).as("injected instance").isEqualTo(producerAccess.mockA());
+        AInterface a1 = f1.getA()
+        assertThat(a1).as("injected instance").isEqualTo(producerAccess.mockA())
     }
 
     @Inject
-    private Provider<Scoped> scoped;
+    private Provider<Scoped> scoped
 
     def 'testContextController'() {
         expect:
-        contextController.openRequest();
+        contextController.openRequest()
 
-        Scoped b1 = scoped.get();
-        Scoped b2 = scoped.get();
-        assertThat(b1).isEqualTo(b2);
-        b1.setDisposedListener(producerAccess.disposeListener());
-        contextController.closeRequest();
-        Mockito.verify(producerAccess.disposeListener()).run();
+        Scoped b1 = scoped.get()
+        Scoped b2 = scoped.get()
+        assertThat(b1).isEqualTo(b2)
+        b1.setDisposedListener(producerAccess.disposeListener())
+        contextController.closeRequest()
+        Mockito.verify(producerAccess.disposeListener()).run()
     }
 
     @Inject
-    private HttpServletRequest requestProvider;
+    private HttpServletRequest requestProvider
 
     def 'testContextControllerRequestScoped'() {
         when:
-        HttpServletRequest r1 = contextController.openRequest();
-        r1.setAttribute("test", "test");
+        HttpServletRequest r1 = contextController.openRequest()
+        r1.setAttribute("test", "test")
 
-        HttpServletRequest r2 = requestProvider;
+        HttpServletRequest r2 = requestProvider
 
-        BRequestScoped b1 = requestScoped.get();
-        b1.setFoo("Bar");
-        BRequestScoped b2 = requestScoped.get();
+        BRequestScoped b1 = requestScoped.get()
+        b1.setFoo("Bar")
+        BRequestScoped b2 = requestScoped.get()
 
         then:
-        r2.getAttribute("test") == "test";
+        r2.getAttribute("test") == "test"
         b1 == b2
         b1.getFoo() == b2.getFoo()
 
         and:
-        contextController.closeRequest();
+        contextController.closeRequest()
 
         when:
-        HttpServletRequest r3 = contextController.openRequest();
-        r3.setAttribute("test", "test2");
-        HttpServletRequest r4 = requestProvider;
-        BRequestScoped b3 = requestScoped.get();
+        HttpServletRequest r3 = contextController.openRequest()
+        r3.setAttribute("test", "test2")
+        HttpServletRequest r4 = requestProvider
+        BRequestScoped b3 = requestScoped.get()
 
         then:
         r4.getAttribute("test") == "test2"
@@ -291,22 +306,22 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testContextControllerSessionScoped'() {
         when:
-        contextController.openRequest();
+        contextController.openRequest()
 
-        CSessionScoped b1 = sessionScoped.get();
-        b1.setFoo("Bar");
-        CSessionScoped b2 = sessionScoped.get();
+        CSessionScoped b1 = sessionScoped.get()
+        b1.setFoo("Bar")
+        CSessionScoped b2 = sessionScoped.get()
 
         then:
         b1.getFoo() == b2.getFoo()
 
         and:
-        contextController.closeRequest();
-        contextController.closeSession();
+        contextController.closeRequest()
+        contextController.closeSession()
 
         when:
-        contextController.openRequest();
-        CSessionScoped b3 = sessionScoped.get();
+        contextController.openRequest()
+        CSessionScoped b3 = sessionScoped.get()
 
         then:
         b3.getFoo() == null
@@ -314,25 +329,25 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testContextControllerSessionScopedWithRequest'() {
         when:
-        contextController.openRequest();
+        contextController.openRequest()
 
-        CSessionScoped b1 = sessionScoped.get();
-        b1.setFoo("Session Bar");
+        CSessionScoped b1 = sessionScoped.get()
+        b1.setFoo("Session Bar")
 
-        BRequestScoped r1 = requestScoped.get();
-        r1.setFoo("Request Bar");
-        BRequestScoped r2 = requestScoped.get();
+        BRequestScoped r1 = requestScoped.get()
+        r1.setFoo("Request Bar")
+        BRequestScoped r2 = requestScoped.get()
 
         then:
         r1.getFoo() == r2.getFoo()
 
         and:
-        contextController.closeRequest();
+        contextController.closeRequest()
 
         when:
-        contextController.openRequest();
-        BRequestScoped r3 = requestScoped.get();
-        CSessionScoped b2 = sessionScoped.get();
+        contextController.openRequest()
+        BRequestScoped r3 = requestScoped.get()
+        CSessionScoped b2 = sessionScoped.get()
 
         then:
         r3.getFoo() == null
@@ -342,54 +357,54 @@ class BasicFeaturesSpec extends BaseSpec {
 
     def 'testContextControllerConversationScoped'() {
         when:
-        contextController.openRequest();
-        conversation.begin();
+        contextController.openRequest()
+        conversation.begin()
 
-        DConversationScoped b1 = conversationScoped.get();
-        b1.setFoo("Bar");
-        DConversationScoped b2 = conversationScoped.get();
+        DConversationScoped b1 = conversationScoped.get()
+        b1.setFoo("Bar")
+        DConversationScoped b2 = conversationScoped.get()
 
         then:
         b1.getFoo() == b2.getFoo()
 
         and:
-        conversation.end();
-        contextController.closeRequest();
+        conversation.end()
+        contextController.closeRequest()
 
         when:
-        contextController.openRequest();
-        conversation.begin();
+        contextController.openRequest()
+        conversation.begin()
 
         then:
-        DConversationScoped b3 = conversationScoped.get();
+        DConversationScoped b3 = conversationScoped.get()
         b3.getFoo() == null
     }
 
     def 'testProducedViaField'() {
         when:
-        ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
+        ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class)
 
         then:
-        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producerAccess.producesViaField);
+        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producerAccess.producesViaField)
     }
 
     def 'testProducedViaMethod'() {
         when:
-        ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class);
+        ProducedViaMethod produced = getContextualInstance(beanManager, ProducedViaMethod.class)
 
         then:
-        assertThat(produced).as("produced via method").isNotNull();
+        assertThat(produced).as("produced via method").isNotNull()
     }
 
     static <T> T getContextualInstance(final BeanManager manager, final Class<T> type, Annotation... qualifiers) {
-        T result = null;
-        Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type, qualifiers));
+        T result = null
+        Bean<T> bean = (Bean<T>) manager.resolve(manager.getBeans(type, qualifiers))
         if (bean != null) {
-            CreationalContext<T> context = manager.createCreationalContext(bean);
+            CreationalContext<T> context = manager.createCreationalContext(bean)
             if (context != null) {
-                result = (T) manager.getReference(bean, type, context);
+                result = (T) manager.getReference(bean, type, context)
             }
         }
-        return result;
+        return result
     }
 }

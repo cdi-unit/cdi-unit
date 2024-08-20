@@ -82,15 +82,15 @@
 				<executions>
 					<execution>
 						<id>enforce</id>
-						<configuration>
-							<rules>
-								<dependencyConvergence />
-								<requireUpperBoundDeps />
-							</rules>
-						</configuration>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
+						<configuration>
+							<rules>
+								<dependencyConvergence/>
+								<requireUpperBoundDeps/>
+							</rules>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

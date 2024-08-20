@@ -17,11 +17,11 @@ package io.github.cdiunit.internal.events;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.*;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Vetoed;

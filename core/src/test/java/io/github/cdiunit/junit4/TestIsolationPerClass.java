@@ -19,11 +19,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.inject.Inject;
 
-import org.junit.*;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.junit.*;
 
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;

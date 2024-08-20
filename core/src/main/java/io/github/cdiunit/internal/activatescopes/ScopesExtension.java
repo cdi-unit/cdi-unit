@@ -20,8 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.*;
 import java.util.stream.Collectors;
+import java.util.*;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Vetoed;
