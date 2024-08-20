@@ -15,11 +15,12 @@
  */
 package io.github.cdiunit.spock.tests
 
-import io.github.cdiunit.test.beans.Qualify
 import jakarta.enterprise.event.Event
 import jakarta.enterprise.event.Observes
 import jakarta.enterprise.inject.spi.EventMetadata
 import jakarta.inject.Inject
+
+import io.github.cdiunit.test.beans.Qualify
 
 class InstanceObserveEventsSpec extends BaseSpec {
 
@@ -27,39 +28,37 @@ class InstanceObserveEventsSpec extends BaseSpec {
     }
 
     @Inject
-    Event<TestEvent> testEvent;
+    Event<TestEvent> testEvent
 
-    int observedUnqualified;
+    int observedUnqualified
 
     void observeUnqualified(@Observes TestEvent event, EventMetadata metadata) {
-        observedUnqualified++;
+        observedUnqualified++
     }
 
     def 'should observe unqualified event'() {
         when:
-        final expected = new TestEvent();
-        testEvent.fire(expected);
+        final expected = new TestEvent()
+        testEvent.fire(expected)
 
         then:
         observedQualified == 0
         observedUnqualified == 1
     }
 
-    int observedQualified;
+    int observedQualified
 
     void observeQualified(@Observes @Qualify TestEvent event) {
-        observedQualified++;
+        observedQualified++
     }
 
     def 'should observe qualified event'() {
         when:
-        final expected = new TestEvent();
-        testEvent.select(Qualify.Literal.INSTANCE).fire(expected);
+        final expected = new TestEvent()
+        testEvent.select(Qualify.Literal.INSTANCE).fire(expected)
 
         then:
         observedQualified == 1
         observedUnqualified == 1
     }
-
-
 }

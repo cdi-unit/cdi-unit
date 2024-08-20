@@ -15,22 +15,23 @@
  */
 package io.github.cdiunit.spock.tests
 
+import java.util.concurrent.atomic.AtomicInteger
+
+import jakarta.inject.Inject
+
 import io.github.cdiunit.Isolation
 import io.github.cdiunit.IsolationLevel
 import io.github.cdiunit.test.beans.ApplicationCounter
-import jakarta.inject.Inject
 import spock.lang.Stepwise
-
-import java.util.concurrent.atomic.AtomicInteger
 
 @Isolation(IsolationLevel.PER_METHOD)
 @Stepwise
 class IsolationPerMethodSpec extends BaseSpec {
 
-    private final AtomicInteger counter = new AtomicInteger();
+    private final AtomicInteger counter = new AtomicInteger()
 
     @Inject
-    ApplicationCounter applicationCounter;
+    ApplicationCounter applicationCounter
 
     def setup() {
         expect:
@@ -39,13 +40,13 @@ class IsolationPerMethodSpec extends BaseSpec {
 
     def 'step1'() {
         when:
-        int number = applicationCounter.incrementAndGet();
+        int number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
 
         when:
-        number = applicationCounter.incrementAndGet();
+        number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
@@ -53,13 +54,13 @@ class IsolationPerMethodSpec extends BaseSpec {
 
     def 'step2'() {
         when:
-        int number = applicationCounter.incrementAndGet();
+        int number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
 
         when:
-        number = applicationCounter.incrementAndGet();
+        number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
@@ -67,13 +68,13 @@ class IsolationPerMethodSpec extends BaseSpec {
 
     def 'step3'() {
         when:
-        int number = applicationCounter.incrementAndGet();
+        int number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
 
         when:
-        number = applicationCounter.incrementAndGet();
+        number = applicationCounter.incrementAndGet()
 
         then:
         number == counter.incrementAndGet()
@@ -88,5 +89,4 @@ class IsolationPerMethodSpec extends BaseSpec {
         appNumber == 1
         specNumber == 1
     }
-
 }

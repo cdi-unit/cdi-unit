@@ -15,18 +15,19 @@
  */
 package io.github.cdiunit.spock.tests
 
-import io.github.cdiunit.ActivateScopes
-import io.github.cdiunit.AdditionalClasses
-import io.github.cdiunit.test.beans.CSessionScoped
-import io.github.cdiunit.test.beans.DConversationScoped
-import io.github.cdiunit.test.beans.Scoped
-import io.github.cdiunit.test.beans.ScopedFactory
 import jakarta.enterprise.context.ContextNotActiveException
 import jakarta.enterprise.context.ConversationScoped
 import jakarta.enterprise.context.RequestScoped
 import jakarta.enterprise.context.SessionScoped
 import jakarta.inject.Inject
 import jakarta.inject.Provider
+
+import io.github.cdiunit.ActivateScopes
+import io.github.cdiunit.AdditionalClasses
+import io.github.cdiunit.test.beans.CSessionScoped
+import io.github.cdiunit.test.beans.DConversationScoped
+import io.github.cdiunit.test.beans.Scoped
+import io.github.cdiunit.test.beans.ScopedFactory
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
@@ -36,51 +37,52 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 class ActivateScopesSpec extends BaseSpec {
 
     @Inject
-    private Provider<Scoped> scoped;
+    private Provider<Scoped> scoped
 
     @Inject
-    private CSessionScoped sessionScoped;
+    private CSessionScoped sessionScoped
 
     @Inject
-    private DConversationScoped conversationScoped;
+    private DConversationScoped conversationScoped
 
     def 'testRequestScoped'() {
         when:
-        Scoped b1 = scoped.get();
-        Scoped b2 = scoped.get();
+        Scoped b1 = scoped.get()
+        Scoped b2 = scoped.get()
 
         then:
         b2 == b1
 
         and:
-        b1.setDisposedListener({ -> assertThat(this).isNotNull() });
-        b2.setDisposedListener({ -> assertThat(this).isNotNull() });
+        b1.setDisposedListener({ -> assertThat(this).isNotNull() })
+        b2.setDisposedListener({ -> assertThat(this).isNotNull() })
     }
 
     def 'testNoActiveSessionScope'() {
         expect:
-        sessionScoped != null;
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> sessionScoped.getFoo() });
+        sessionScoped != null
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> sessionScoped.getFoo() })
     }
 
-    @ActivateScopes.All([@ActivateScopes(SessionScoped.class)])
+    @ActivateScopes.All([
+        @ActivateScopes(SessionScoped.class)
+    ])
     def 'testActiveSessionScope'() {
         expect:
-        sessionScoped != null;
-        sessionScoped.setFoo("success");
+        sessionScoped != null
+        sessionScoped.setFoo("success")
     }
 
     def 'testNoActiveConversationScope'() {
         expect:
-        conversationScoped != null;
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> conversationScoped.getFoo() });
+        conversationScoped != null
+        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy({ -> conversationScoped.getFoo() })
     }
 
     @ActivateScopes(ConversationScoped.class)
     def 'testActiveConversationScope'() {
         expect:
-        conversationScoped != null;
-        conversationScoped.setFoo("success");
+        conversationScoped != null
+        conversationScoped.setFoo("success")
     }
-
 }

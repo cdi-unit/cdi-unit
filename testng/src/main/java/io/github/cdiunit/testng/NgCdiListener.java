@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
-import org.testng.*;
 import org.testng.annotations.Listeners;
+import org.testng.*;
 
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
