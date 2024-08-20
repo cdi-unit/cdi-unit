@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -19,9 +18,7 @@
 	<properties>
 		<version.mockito-core>5.12.0</version.mockito-core>
 		<version.resteasy-core>6.2.9.Final</version.resteasy-core>
-		<ide-config.resources.dir>
-			${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/
-		</ide-config.resources.dir>
+		<ide-config.resources.dir>${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/</ide-config.resources.dir>
 	</properties>
 
 	<dependencyManagement>
@@ -131,13 +128,6 @@
 				<plugin>
 					<groupId>com.diffplug.spotless</groupId>
 					<artifactId>spotless-maven-plugin</artifactId>
-					<dependencies>
-						<dependency>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>cdi-unit-ide-config</artifactId>
-							<version>${project.version}</version>
-						</dependency>
-					</dependencies>
 					<configuration>
 						<java>
 							<importOrder>
@@ -151,14 +141,10 @@
 							<eclipse>
 								<!-- optional version of Eclipse Formatter -->
 								<version>4.26</version>
-								<file>
-									${ide-config.resources.dir}/cdi-unit-format.xml
-								</file>
+								<file>${ide-config.resources.dir}/cdi-unit-format.xml</file>
 							</eclipse>
 							<licenseHeader>
-								<file>
-									${ide-config.resources.dir}/license-header.txt
-								</file>
+								<file>${ide-config.resources.dir}/license-header.txt</file>
 							</licenseHeader>
 						</java>
 						<groovy>
@@ -175,7 +161,21 @@
 								<file>${ide-config.resources.dir}/license-header.txt</file>
 							</licenseHeader>
 						</groovy>
+						<pom>
+							<sortPom>
+								<expandEmptyElements>false</expandEmptyElements>
+								<!-- use TABs -->
+								<nrOfIndentSpace>-1</nrOfIndentSpace>
+							</sortPom>
+						</pom>
 					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>cdi-unit-ide-config</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 
 				<plugin>
@@ -237,10 +237,10 @@
 						<executions>
 							<execution>
 								<id>spotless-format</id>
-								<phase>generate-sources</phase>
 								<goals>
 									<goal>apply</goal>
 								</goals>
+								<phase>generate-sources</phase>
 							</execution>
 						</executions>
 					</plugin>
@@ -264,10 +264,10 @@
 						<executions>
 							<execution>
 								<id>spotless-check</id>
-								<phase>process-test-sources</phase>
 								<goals>
 									<goal>check</goal>
 								</goals>
+								<phase>process-test-sources</phase>
 							</execution>
 						</executions>
 					</plugin>
