@@ -1,4 +1,4 @@
-name: Build and Test with Eclipse Temurin JDK (Windows)
+name: Build and Test - Temurin JDK - Windows
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Build and Test with Eclipse Temurin JDK
+name: Build and Test - Temurin JDK - Linux
 
 on:
   push:
@@ -31,6 +31,7 @@ jobs:
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
 
       - name: Prepare Build
+        shell: bash
         run: ./ci-support/prepare-build.sh
 
   build:
@@ -56,6 +57,7 @@ jobs:
             ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
 
       - name: Build with Maven
+        shell: bash
         run: ./ci-support/build.sh
 
   test-weld:
@@ -93,6 +95,7 @@ jobs:
             ${{ env.cache-name }}-${{ github.sha }}
 
       - name: Test Weld ${{ matrix.weld }}
+        shell: bash
         run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
 
   test-deltaspike:
@@ -126,6 +129,7 @@ jobs:
             ${{ env.cache-name }}-${{ github.sha }}
 
       - name: Test DeltaSpike
+        shell: bash
         run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
 
   test-spock:
@@ -168,4 +172,5 @@ jobs:
             ${{ env.cache-name }}-${{ github.sha }}
 
       - name: Test Spock with Groovy ${{ matrix.groovy }}
+        shell: bash
         run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
