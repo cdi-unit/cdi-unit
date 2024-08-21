@@ -1,0 +1,171 @@
+name: Build and Test with Eclipse Temurin JDK (Windows)
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
+
+jobs:
+  prepare:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Prepare artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+
+      - name: Prepare Build
+        run: ./ci-support/prepare-build.sh
+
+  build:
+    needs: prepare
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+
+      - name: Build with Maven
+        run: ./ci-support/build.sh
+
+  test-weld:
+    needs: build
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [11, 17, 21]
+        weld:
+          - v4.0
+          - v5.0
+          - v5.1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
+
+      - name: Test Weld ${{ matrix.weld }}
+        run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
+
+  test-deltaspike:
+    needs: build
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [11, 17, 21]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
+
+      - name: Test DeltaSpike
+        run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
+
+  test-spock:
+    needs: build
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [11, 17, 21]
+        groovy:
+          # FIXME - #330 - v2.5
+          - v3.0
+          - v4.0
+        include:
+          - java: 11
+            groovy: v2.5
+          - java: 17
+            groovy: v2.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.cache-name }}-${{ github.sha }}
+
+      - name: Test Spock with Groovy ${{ matrix.groovy }}
+        run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
