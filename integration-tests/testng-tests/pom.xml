@@ -40,7 +40,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.5.0</version>
 				<configuration>
 					<properties>
 						<property>
@@ -61,12 +61,12 @@
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-api</artifactId>
-						<version>3.4.0</version>
+						<version>3.5.0</version>
 					</dependency>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-testng</artifactId>
-						<version>3.4.0</version>
+						<version>3.5.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>
