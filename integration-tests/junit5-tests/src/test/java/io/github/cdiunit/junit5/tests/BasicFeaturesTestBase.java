@@ -197,8 +197,9 @@ abstract class BasicFeaturesTestBase extends BaseTest {
     @Test
     void applicationScoped() {
         assertThat(f1).isNotNull();
-        assertThat(f2).isNotNull();
-        assertThat(f2).isEqualTo(f1);
+        assertThat(f2)
+                .isNotNull()
+                .isEqualTo(f1);
 
         AInterface a1 = f1.getA();
         assertThat(a1).isEqualTo(producerAccess.mockA());

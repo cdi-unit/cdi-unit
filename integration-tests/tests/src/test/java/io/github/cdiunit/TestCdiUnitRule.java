@@ -193,8 +193,9 @@ public class TestCdiUnitRule extends BaseTest {
     @Test
     public void testApplicationScoped() {
         assertThat(f1).isNotNull();
-        assertThat(f2).isNotNull();
-        assertThat(f2).isEqualTo(f1);
+        assertThat(f2)
+                .isNotNull()
+                .isEqualTo(f1);
 
         AInterface a1 = f1.getA();
         assertThat(a1).isEqualTo(mocks.mockA());
