@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-integration-tests-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>cdi-unit-5.0.0-EA5</version>
 	</parent>
 
 	<artifactId>cdi-unit-deltaspike-tests</artifactId>
