@@ -277,19 +277,9 @@
 					<artifactId>rewrite-maven-plugin</artifactId>
 					<version>5.39.2</version>
 					<configuration>
-						<activeRecipes>
-							<recipe>io.github.cdiunit.CodingRulesAndConventions</recipe>
-						</activeRecipes>
 						<failOnDryRunResults>true</failOnDryRunResults>
 						<runPerSubmodule>true</runPerSubmodule>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>cdi-unit-rewrite-recipes</artifactId>
-							<version>${project.version}</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 
 				<plugin>

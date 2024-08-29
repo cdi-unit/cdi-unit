@@ -206,6 +206,18 @@
 					<plugin>
 						<groupId>org.openrewrite.maven</groupId>
 						<artifactId>rewrite-maven-plugin</artifactId>
+						<configuration>
+							<activeRecipes>
+								<recipe>io.github.cdiunit.CodingRulesAndConventions</recipe>
+							</activeRecipes>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>${project.groupId}</groupId>
+								<artifactId>cdi-unit-rewrite-recipes</artifactId>
+								<version>${project.version}</version>
+							</dependency>
+						</dependencies>
 						<executions>
 							<execution>
 								<id>default-rewrite</id>
