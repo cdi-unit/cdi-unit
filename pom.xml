@@ -32,6 +32,7 @@
 		<module>spock</module>
 		<module>integration-tests</module>
 		<module>cdi-unit</module>
+		<module>relocations/cdi-unit</module>
 	</modules>
 
 	<build>
