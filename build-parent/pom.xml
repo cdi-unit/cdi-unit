@@ -164,6 +164,7 @@
 						<pom>
 							<sortPom>
 								<expandEmptyElements>false</expandEmptyElements>
+								<spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
 								<!-- use TABs -->
 								<nrOfIndentSpace>-1</nrOfIndentSpace>
 							</sortPom>
