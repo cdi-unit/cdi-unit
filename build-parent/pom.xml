@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-parent</artifactId>
-		<version>5.0.0-EA5</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../independent-projects/parent</relativePath>
 	</parent>
 
@@ -137,7 +137,7 @@
 							<removeUnusedImports>
 								<engine>cleanthat-javaparser-unnecessaryimport</engine>
 							</removeUnusedImports>
-							<formatAnnotations/>
+							<formatAnnotations />
 							<eclipse>
 								<!-- optional version of Eclipse Formatter -->
 								<version>4.26</version>
@@ -151,7 +151,7 @@
 							<importOrder>
 								<file>${ide-config.resources.dir}/eclipse.importorder</file>
 							</importOrder>
-							<removeSemicolons/>
+							<removeSemicolons />
 							<greclipse>
 								<!-- optional version of Eclipse Formatter -->
 								<version>4.26</version>

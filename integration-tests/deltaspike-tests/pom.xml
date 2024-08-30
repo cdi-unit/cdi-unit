@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-integration-tests-parent</artifactId>
-		<version>5.0.0-EA5</version>
+		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>cdi-unit-deltaspike-tests</artifactId>
@@ -87,8 +87,8 @@
 						</goals>
 						<configuration>
 							<rules>
-								<dependencyConvergence/>
-								<requireUpperBoundDeps/>
+								<dependencyConvergence />
+								<requireUpperBoundDeps />
 							</rules>
 						</configuration>
 					</execution>
