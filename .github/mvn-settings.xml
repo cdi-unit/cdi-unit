@@ -8,10 +8,6 @@
       <username>${env.MAVEN_DEPLOY_USERNAME}</username>
       <password>${env.MAVEN_DEPLOY_TOKEN}</password>
     </server>
-    <server>
-      <id>gpg.passphrase</id>
-      <passphrase>${env.MAVEN_GPG_PASSPHRASE}</passphrase>
-    </server>
   </servers>
   <profiles>
     <profile>

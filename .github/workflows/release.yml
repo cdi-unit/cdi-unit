@@ -26,12 +26,11 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         env:
-          MAVEN_GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
+          GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
         with:
           java-version: 17
           distribution: 'temurin'
           gpg-private-key: ${{secrets.MAVEN_GPG_PRIVATE_KEY}}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Maven release ${{steps.metadata.outputs.current-version}}
         shell: bash
