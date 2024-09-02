@@ -43,9 +43,9 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git checkout -b release
-          mvn release:prepare ${{MAVEN_RELEASE_OPTS}}
+          mvn release:prepare ${{env.MAVEN_RELEASE_OPTS}}
           git checkout ${{github.base_ref}}
           git rebase release
-          mvn release:perform ${{MAVEN_RELEASE_OPTS}}
+          mvn release:perform ${{env.MAVEN_RELEASE_OPTS}}
           git push
           git push --tags
