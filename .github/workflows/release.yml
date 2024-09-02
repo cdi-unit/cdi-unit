@@ -29,7 +29,7 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           gpg-private-key: ${{secrets.MAVEN_GPG_PRIVATE_KEY}}
-          gpg-passphrase: 'MAVEN_GPG_PASSPHRASE'
+          gpg-passphrase: ${{secrets.MAVEN_GPG_PASSPHRASE}}
 
       - name: Maven release ${{steps.metadata.outputs.current-version}}
         shell: bash
@@ -37,7 +37,7 @@ jobs:
           MAVEN_DEPLOY_USERNAME: ${{secrets.MAVEN_DEPLOY_USERNAME}}
           MAVEN_DEPLOY_TOKEN: ${{secrets.MAVEN_DEPLOY_TOKEN}}
           MAVEN_GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
-          MAVEN_ARGS: "-V -B --settings .github/mvn-settings.xml"
+          MAVEN_ARGS: "-V -B --settings .github/mvn-settings.xml --no-transfer-progress"
           MAVEN_RELEASE_ARGS: "-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
         run: |
           java -version
