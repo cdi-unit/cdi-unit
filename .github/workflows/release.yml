@@ -1,4 +1,4 @@
-name: CDI-Unit Release
+name: Release to Maven Central
 
 on:
   pull_request:
@@ -36,16 +36,16 @@ jobs:
           MAVEN_DEPLOY_USERNAME: ${{secrets.MAVEN_DEPLOY_USERNAME}}
           MAVEN_DEPLOY_TOKEN: ${{secrets.MAVEN_DEPLOY_TOKEN}}
           MAVEN_GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
+          MAVEN_OPTS: "-V -B --settings .github/mvn-settings.xml"
+          MAVEN_RELEASE_OPTS: "-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
         run: |
-          export MAVEN_OPTS="-V -B --settings .github/mvn-settings.xml"
-          export releaseOptions="-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
           java -version
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git checkout -b release
-          mvn release:prepare ${{releaseOptions}}
+          mvn release:prepare ${{MAVEN_RELEASE_OPTS}}
           git checkout ${{github.base_ref}}
           git rebase release
-          mvn release:perform ${{releaseOptions}}
+          mvn release:perform ${{MAVEN_RELEASE_OPTS}}
           git push
           git push --tags
