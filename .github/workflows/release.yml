@@ -1,0 +1,51 @@
+name: CDI-Unit Release
+
+on:
+  pull_request:
+    types:
+      - closed
+    paths:
+      - '.github/project.yml'
+
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve project metadata
+        id: metadata
+        uses: radcortez/project-metadata-action@master
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          metadata-file-path: '.github/project.yml'
+
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          gpg-private-key: ${{secrets.MAVEN_GPG_PRIVATE_KEY}}
+          gpg-passphrase: 'MAVEN_GPG_PASSPHRASE'
+
+      - name: Maven release ${{steps.metadata.outputs.current-version}}
+        shell: bash
+        env:
+          MAVEN_DEPLOY_USERNAME: ${{secrets.MAVEN_DEPLOY_USERNAME}}
+          MAVEN_DEPLOY_TOKEN: ${{secrets.MAVEN_DEPLOY_TOKEN}}
+          MAVEN_GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
+        run: |
+          export MAVEN_OPTS="-V -B --settings .github/mvn-settings.xml"
+          export releaseOptions="-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
+          java -version
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b release
+          mvn release:prepare ${{releaseOptions}}
+          git checkout ${{github.base_ref}}
+          git rebase release
+          mvn release:perform ${{releaseOptions}}
+          git push
+          git push --tags
