@@ -4,4 +4,5 @@
 # the most recent point release, plus some point releases which caused problems.
 WELD_VERSIONS=(
   "5.1.2.Final"
+  "5.1.3.Final"
 )
