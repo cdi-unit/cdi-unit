@@ -27,6 +27,12 @@ jobs:
           - v5.1
 
     steps:
+      - name: Find user Home
+        id:
+          user-home
+        run:
+          echo "user-home=$HOME" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.java }}
@@ -40,7 +46,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
-          path: ~/.m2/repository
+          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
           key: ${{ inputs.cache-key }}
           restore-keys: |
             ${{ inputs.cache-key }}

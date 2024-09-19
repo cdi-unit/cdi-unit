@@ -52,6 +52,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Find user Home
+        id:
+          user-home
+        run:
+          echo "user-home=$HOME" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -65,7 +71,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
-          path: ~/.m2/repository
+          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
           key: ${{ env.CACHE_KEY_RUN }}
           restore-keys: |
             ${{ env.CACHE_KEY_COMMIT }}
@@ -85,7 +91,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
         with:
           enableCrossOsArchive: true
-          path: ~/.m2/repository
+          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
           key: ${{ env.CACHE_KEY_RUN }}
 
   submit-maven-dependencies:
@@ -107,7 +113,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
-          path: ~/.m2/repository
+          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
           key: ${{ env.CACHE_KEY_RUN }}
           restore-keys: |
             ${{ env.CACHE_KEY_RUN }}
