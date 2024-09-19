@@ -49,6 +49,9 @@ abstract class TestBasicFeatures extends BaseTest {
     public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess {
 
         @Produces
+        List<Object> producedList = new ArrayList<>();
+
+        @Produces
         public ProducedViaMethod getProducedViaMethod() {
             return new ProducedViaMethod(2);
         }
@@ -77,6 +80,11 @@ abstract class TestBasicFeatures extends BaseTest {
         @Override
         public ProducedViaField producesViaField() {
             return producesViaField;
+        }
+
+        @Override
+        public List<Object> producedList() {
+            return producedList;
         }
 
     }
@@ -126,6 +134,14 @@ abstract class TestBasicFeatures extends BaseTest {
                 return producesViaField;
             }
 
+            @Produces
+            List<Object> producedList = new ArrayList<>();
+
+            @Override
+            public List<Object> producedList() {
+                return producedList;
+            }
+
         }
 
     }
@@ -144,6 +160,7 @@ abstract class TestBasicFeatures extends BaseTest {
 
         ProducedViaField producesViaField();
 
+        List<Object> producedList();
     }
 
     @Inject
@@ -188,12 +205,9 @@ abstract class TestBasicFeatures extends BaseTest {
     @Inject
     Instance<List<?>> generics;
 
-    @Produces
-    List<Object> producedList = new ArrayList<>();
-
     @Test
     public void testGenerics() {
-        assertThat(generics.get()).as("generics").isEqualTo(producedList);
+        assertThat(generics.get()).as("generics").isEqualTo(producerAccess.producedList());
     }
 
     @Test

@@ -98,6 +98,18 @@ jobs:
         shell: bash
         run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
 
+      - name: Prepare failure archive (if maven failed)
+        if: failure()
+        shell: bash
+        run: find . -name '*-reports' -type d | tar -czf test-reports.tgz -T -
+
+      - name: Upload failure Archive (if maven failed)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-jdk${{ matrix.java }}-weld${{ matrix.weld }}.tgz
+          path: 'test-reports.tgz'
+
   test-deltaspike:
     needs: build
     runs-on: ubuntu-latest
@@ -131,6 +143,18 @@ jobs:
       - name: Test DeltaSpike
         shell: bash
         run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
+
+      - name: Prepare failure archive (if maven failed)
+        if: failure()
+        shell: bash
+        run: find . -name '*-reports' -type d | tar -czf test-reports.tgz -T -
+
+      - name: Upload failure Archive (if maven failed)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-jdk${{ matrix.java }}-deltaspike.tgz
+          path: 'test-reports.tgz'
 
   test-spock:
     needs: build
@@ -174,3 +198,15 @@ jobs:
       - name: Test Spock with Groovy ${{ matrix.groovy }}
         shell: bash
         run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
+
+      - name: Prepare failure archive (if maven failed)
+        if: failure()
+        shell: bash
+        run: find . -name '*-reports' -type d | tar -czf test-reports.tgz -T -
+
+      - name: Upload failure Archive (if maven failed)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-jdk${{ matrix.java }}-groovy${{ matrix.groovy }}.tgz
+          path: 'test-reports.tgz'
