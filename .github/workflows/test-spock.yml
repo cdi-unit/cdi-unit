@@ -1,0 +1,63 @@
+name: Test Spock
+
+on:
+  workflow_call:
+    inputs:
+      cache-key:
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-spock:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [11, 17, 21]
+        groovy:
+          # FIXME - #330 - v2.5
+          - v3.0
+          - v4.0
+        include:
+          - java: 11
+            groovy: v2.5
+          - java: 17
+            groovy: v2.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
+          path: ~/.m2/repository
+          key: ${{ inputs.cache-key }}
+          restore-keys: |
+            ${{ inputs.cache-key }}
+
+      - name: Test Spock with Groovy ${{ matrix.groovy }}
+        shell: bash
+        run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
+
+      - name: Upload failure Archive (if maven failed)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-jdk${{ matrix.java }}-groovy${{ matrix.groovy }}
+          path: '**/target/surefire-reports/**'
