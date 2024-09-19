@@ -13,11 +13,12 @@ defaults:
 
 jobs:
   test-weld:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
+        os: [ ubuntu-latest, windows-latest ]
         # LTS versions
         java: [ 11, 17, 21 ]
         weld:
@@ -53,5 +54,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-reports-jdk${{ matrix.java }}-weld${{ matrix.weld }}
+          name: test-reports-${{ matrix.os }}-jdk${{ matrix.java }}-weld${{ matrix.weld }}
           path: '**/target/surefire-reports/**'
