@@ -27,6 +27,7 @@ jobs:
         env:
           cache-name: build-maven-repository
         with:
+          enableCrossOsArchive: true
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
 
@@ -54,11 +55,13 @@ jobs:
           java-version: 17
           distribution: ${{ matrix.java_distribution }}
 
-      - name: Cache build artifacts
-        uses: actions/cache@v4
+      - name: Restore build artifacts
+        uses: actions/cache/restore@v4
         env:
           cache-name: build-maven-repository
         with:
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
@@ -75,6 +78,16 @@ jobs:
           name: test-reports-${{ matrix.os }}-jdk${{ matrix.java_distribution }}
           path: '**/target/surefire-reports/**'
 
+      - name: Save build artifacts
+        uses: actions/cache/save@v4
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
+        env:
+          cache-name: build-maven-repository
+        with:
+          enableCrossOsArchive: true
+          path: ~/.m2/repository
+          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
   submit-maven-dependencies:
     needs: build
     runs-on: ubuntu-latest
@@ -89,11 +102,13 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Cache build artifacts
-        uses: actions/cache@v4
+      - name: Restore build artifacts
+        uses: actions/cache/restore@v4
         env:
           cache-name: build-maven-repository
         with:
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
           path: ~/.m2/repository
           key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
