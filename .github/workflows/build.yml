@@ -1,4 +1,4 @@
-name: Build
+name: Build and Test
 
 on:
   push:
@@ -15,8 +15,8 @@ defaults:
     shell: bash
 
 env:
+  CACHE_KEY_COMMIT: build-maven-repository-${{ github.sha }}
   CACHE_KEY_RUN: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
-  CACHE_KEY_RUN_ATTEMPT: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
 jobs:
   prepare:
@@ -35,7 +35,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN }}
+          key: ${{ env.CACHE_KEY_COMMIT }}
 
       - name: Prepare Build
         run: ./ci-support/prepare-build.sh
@@ -66,9 +66,9 @@ jobs:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
+          key: ${{ env.CACHE_KEY_RUN }}
           restore-keys: |
-            ${{ env.CACHE_KEY_RUN }}
+            ${{ env.CACHE_KEY_COMMIT }}
 
       - name: Build with Maven
         run: ./ci-support/build.sh
@@ -86,7 +86,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
+          key: ${{ env.CACHE_KEY_RUN }}
 
   submit-maven-dependencies:
     needs: build
@@ -108,7 +108,7 @@ jobs:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
+          key: ${{ env.CACHE_KEY_RUN }}
           restore-keys: |
             ${{ env.CACHE_KEY_RUN }}
 
@@ -122,16 +122,16 @@ jobs:
     needs: build
     uses: ./.github/workflows/test-weld.yml
     with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
 
   test-deltaspike:
     needs: build
     uses: ./.github/workflows/test-deltaspike.yml
     with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
 
   test-spock:
     needs: build
     uses: ./.github/workflows/test-spock.yml
     with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
