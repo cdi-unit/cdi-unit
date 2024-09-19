@@ -1,0 +1,57 @@
+name: Test Weld
+
+on:
+  workflow_call:
+    inputs:
+      cache-key:
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-weld:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # LTS versions
+        java: [ 11, 17, 21 ]
+        weld:
+          - v4.0
+          - v5.0
+          - v5.1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+
+      - name: Restore build artifacts
+        uses: actions/cache@v4
+        env:
+          cache-name: build-maven-repository
+        with:
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
+          path: ~/.m2/repository
+          key: ${{ inputs.cache-key }}
+          restore-keys: |
+            ${{ inputs.cache-key }}
+
+      - name: Test Weld ${{ matrix.weld }}
+        run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
+
+      - name: Upload failure Archive (if maven failed)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-jdk${{ matrix.java }}-weld${{ matrix.weld }}
+          path: '**/target/surefire-reports/**'

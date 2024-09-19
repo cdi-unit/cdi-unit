@@ -10,6 +10,14 @@ on:
     paths-ignore:
       - 'docs/**'
 
+defaults:
+  run:
+    shell: bash
+
+env:
+  CACHE_KEY_RUN: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+  CACHE_KEY_RUN_ATTEMPT: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -24,15 +32,12 @@ jobs:
 
       - name: Prepare artifacts
         uses: actions/cache@v4
-        env:
-          cache-name: build-maven-repository
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+          key: ${{ env.CACHE_KEY_RUN }}
 
       - name: Prepare Build
-        shell: bash
         run: ./ci-support/prepare-build.sh
 
   build:
@@ -57,18 +62,15 @@ jobs:
 
       - name: Restore build artifacts
         uses: actions/cache/restore@v4
-        env:
-          cache-name: build-maven-repository
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.CACHE_KEY_RUN }}
 
       - name: Build with Maven
-        shell: bash
         run: ./ci-support/build.sh
 
       - name: Upload failure Archive (if maven failed)
@@ -81,12 +83,10 @@ jobs:
       - name: Save build artifacts
         uses: actions/cache/save@v4
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
-        env:
-          cache-name: build-maven-repository
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
 
   submit-maven-dependencies:
     needs: build
@@ -104,18 +104,22 @@ jobs:
 
       - name: Restore build artifacts
         uses: actions/cache/restore@v4
-        env:
-          cache-name: build-maven-repository
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
           path: ~/.m2/repository
-          key: ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: ${{ env.CACHE_KEY_RUN_ATTEMPT }}
           restore-keys: |
-            ${{ env.cache-name }}-${{ github.sha }}-${{ github.run_id }}
+            ${{ env.CACHE_KEY_RUN }}
 
       - name: Submit Dependency Snapshot
         uses: advanced-security/maven-dependency-submission-action@v4
         with:
           settings-file: .github/mvn-settings.xml
           maven-args: "-V -B"
+
+  test-weld:
+    needs: build
+    uses: ./.github/workflows/test-weld.yml
+    with:
+      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
