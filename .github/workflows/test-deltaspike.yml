@@ -1,29 +1,9 @@
 name: Test - DeltaSpike
 
 on:
-  workflow_dispatch:
-    inputs:
-      m2-cache-key:
-        required: true
-        type: string
-      m2-monthly-branch-cache-key:
-        required: false
-        type: string
-      m2-monthly-cache-key:
-        required: false
-        type: string
-
-  workflow_call:
-    inputs:
-      m2-cache-key:
-        required: true
-        type: string
-      m2-monthly-branch-cache-key:
-        required: false
-        type: string
-      m2-monthly-cache-key:
-        required: false
-        type: string
+  workflow_run:
+    workflows: [Build and Test]
+    types: [completed]
 
 defaults:
   run:
@@ -31,6 +11,8 @@ defaults:
 
 jobs:
   test-deltaspike:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -40,6 +22,17 @@ jobs:
         java: [11, 17, 21]
 
     steps:
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          CURRENT_BRANCH="${{ github.repository != 'cdi-unit/cdi-unit' && 'fork' || github.base_ref || github.ref_name }}"
+          CURRENT_MONTH=$(/bin/date -u "+%Y-%m")
+          CURRENT_DAY=$(/bin/date -u "+%d")
+          ROOT_CACHE_KEY="m2-cache"
+          echo "m2-monthly-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}" >> $GITHUB_OUTPUT
+          echo "m2-monthly-branch-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}" >> $GITHUB_OUTPUT
+          echo "m2-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}-${CURRENT_DAY}" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.java }}
@@ -53,16 +46,17 @@ jobs:
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ inputs.m2-cache-key }}
+          key: ${{ steps.cache-key.outputs.m2-cache-key }}
           restore-keys: |
-            ${{ inputs.m2-monthly-branch-cache-key }}-
-            ${{ inputs.m2-monthly-cache-key }}-
+            ${{ steps.cache-key.outputs.m2-monthly-branch-cache-key }}-
+            ${{ steps.cache-key.outputs.m2-monthly-cache-key }}-
 
       - name: Download .m2/repository/io/github/cdi-unit
         uses: actions/download-artifact@v4
         with:
           name: m2-io-github-cdi-unit
           path: .
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Extract .m2/repository/io/github/cdi-unit
         run: tar -xzf m2-io-github-cdi-unit.tgz -C ~
