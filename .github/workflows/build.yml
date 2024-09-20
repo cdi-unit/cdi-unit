@@ -10,6 +10,10 @@ on:
     paths-ignore:
       - 'docs/**'
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'cdi-unit/cdi-unit' }}
+
 defaults:
   run:
     shell: bash
@@ -21,7 +25,24 @@ env:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+
+    outputs:
+      m2-monthly-branch-cache-key: ${{ steps.cache-key.outputs.m2-monthly-branch-cache-key }}
+      m2-monthly-cache-key: ${{ steps.cache-key.outputs.m2-monthly-cache-key }}
+      m2-cache-key: ${{ steps.cache-key.outputs.m2-cache-key }}
+
     steps:
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          CURRENT_BRANCH="${{ github.repository != 'cdi-unit/cdi-unit' && 'fork' || github.base_ref || github.ref_name }}"
+          CURRENT_MONTH=$(/bin/date -u "+%Y-%m")
+          CURRENT_DAY=$(/bin/date -u "+%d")
+          ROOT_CACHE_KEY="m2-cache"
+          echo "m2-monthly-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}" >> $GITHUB_OUTPUT
+          echo "m2-monthly-branch-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}" >> $GITHUB_OUTPUT
+          echo "m2-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}-${CURRENT_DAY}" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -30,15 +51,25 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Prepare artifacts
+      - name: Cache Maven Repository
+        id: cache-maven
         uses: actions/cache@v4
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_COMMIT }}
+          # A new cache will be stored daily. After that first store of the day, cache save actions will fail because the cache is immutable but it's not a problem.
+          # The whole cache is dropped monthly to prevent unlimited growth.
+          # The cache is per branch but in case we don't find a branch for a given branch, we will get a cache from another branch.
+          key: ${{ steps.cache-key.outputs.m2-cache-key }}
+          restore-keys: |
+            ${{ steps.cache-key.outputs.m2-monthly-branch-cache-key }}-
+            ${{ steps.cache-key.outputs.m2-monthly-cache-key }}-
 
       - name: Prepare Build
-        run: echo DEBUG ./ci-support/prepare-build.sh
+        run: ./ci-support/prepare-build.sh
+
+      - name: Delete snapshots artifacts from cache
+        run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +
 
   build:
     needs: prepare
@@ -52,12 +83,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Find user Home
-        id:
-          user-home
-        run:
-          echo "user-home=$HOME" >> $GITHUB_OUTPUT
-
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -66,20 +91,29 @@ jobs:
           java-version: 17
           distribution: ${{ matrix.java_distribution }}
 
-      - name: Restore build artifacts
+      - name: Restore Maven Repository
         uses: actions/cache/restore@v4
         with:
           enableCrossOsArchive: true
-          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN }}
+          path: ~/.m2/repository
+          key: ${{ needs.prepare.outputs.m2-cache-key }}
           restore-keys: |
-            ${{ env.CACHE_KEY_COMMIT }}
+            ${{ needs.prepare.outputs.m2-monthly-branch-cache-key }}-
+            ${{ needs.prepare.outputs.m2-monthly-cache-key }}-
 
       - name: Build with Maven
-#        run: ./ci-support/build.sh
-        run: |
-          mkdir -p ${{ steps.user-home.outputs.user-home }}/.m2/repository
-          date --iso-8601=seconds > ${{ steps.user-home.outputs.user-home }}/.m2/repository/build.timestamp
+        run: ./ci-support/build.sh
+
+      - name: Tar .m2/repository/io/github/cdi-unit
+        run: tar -czf m2-io-github-cdi-unit.tgz -C ~ .m2/repository/io/github/cdi-unit
+
+      - name: Upload .m2/repository/io/github/cdi-unit
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: m2-io-github-cdi-unit
+          path: m2-io-github-cdi-unit.tgz
+          retention-days: 7
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4
@@ -88,13 +122,9 @@ jobs:
           name: test-reports-${{ matrix.os }}-jdk${{ matrix.java_distribution }}
           path: '**/target/surefire-reports/**'
 
-      - name: Save build artifacts
-        uses: actions/cache/save@v4
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
-        with:
-          enableCrossOsArchive: true
-          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN }}
+      - name: Delete snapshots artifacts from cache
+        if: always()
+        run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +
 
   submit-maven-dependencies:
     needs: build
@@ -110,15 +140,15 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Restore build artifacts
+      - name: Restore Maven Repository
         uses: actions/cache/restore@v4
         with:
           enableCrossOsArchive: true
-          fail-on-cache-miss: true
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY_RUN }}
+          key: ${{ needs.prepare.outputs.m2-cache-key }}
           restore-keys: |
-            ${{ env.CACHE_KEY_RUN }}
+            ${{ needs.prepare.outputs.m2-monthly-branch-cache-key }}-
+            ${{ needs.prepare.outputs.m2-monthly-cache-key }}-
 
       - name: Submit Dependency Snapshot
         uses: advanced-security/maven-dependency-submission-action@v4
@@ -126,20 +156,20 @@ jobs:
           settings-file: .github/mvn-settings.xml
           maven-args: "-V -B"
 
-  test-weld:
-    needs: build
-    uses: ./.github/workflows/test-weld.yml
-    with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
-
-  test-deltaspike:
-    needs: build
-    uses: ./.github/workflows/test-deltaspike.yml
-    with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
-
-  test-spock:
-    needs: build
-    uses: ./.github/workflows/test-spock.yml
-    with:
-      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+#  test-weld:
+#    needs: [prepare, build]
+#    uses: ./.github/workflows/test-weld.yml
+#    with:
+#      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+#
+#  test-deltaspike:
+#    needs: [prepare, build]
+#    uses: ./.github/workflows/test-deltaspike.yml
+#    with:
+#      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+#
+#  test-spock:
+#    needs: [prepare, build]
+#    uses: ./.github/workflows/test-spock.yml
+#    with:
+#      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
