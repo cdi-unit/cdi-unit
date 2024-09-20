@@ -51,7 +51,7 @@ jobs:
 
       - name: Test Spock with Groovy ${{ matrix.groovy }}
         shell: bash
-        run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
+        run: echo DEBUG ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4
