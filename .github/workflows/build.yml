@@ -168,8 +168,8 @@ jobs:
     with:
       build-run-id: ${{ github.run_id }}
 
-#  test-spock:
-#    needs: [prepare, build]
-#    uses: ./.github/workflows/test-spock.yml
-#    with:
-#      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+  test-spock:
+    needs: [prepare, build]
+    uses: ./.github/workflows/test-spock.yml
+    with:
+      build-run-id: ${{ github.run_id }}
