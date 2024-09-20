@@ -115,7 +115,7 @@ jobs:
         with:
           enableCrossOsArchive: true
           fail-on-cache-miss: true
-          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
+          path: ~/.m2/repository
           key: ${{ env.CACHE_KEY_RUN }}
           restore-keys: |
             ${{ env.CACHE_KEY_RUN }}
