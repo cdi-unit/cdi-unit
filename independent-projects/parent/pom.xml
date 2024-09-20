@@ -38,7 +38,7 @@
 		<maven.compiler.release>11</maven.compiler.release>
 
 		<!-- The version of the Weld to compile against -->
-		<version.weld.baseline>4.0.3.Final</version.weld.baseline>
+		<version.weld.baseline>5.0.0.SP2</version.weld.baseline>
 
 		<!-- The version of the DeltaSpike to compile against -->
 		<version.deltaspike.baseline>2.0.0</version.deltaspike.baseline>
