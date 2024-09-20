@@ -127,7 +127,7 @@ jobs:
         run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +
 
   submit-maven-dependencies:
-    needs: build
+    needs: [prepare, build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
