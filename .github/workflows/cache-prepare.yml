@@ -1,22 +1,12 @@
 name: Cache - Prepare
 
 on:
-  push:
-    branches: [ master ]
-    paths-ignore:
-      - 'docs/**'
-
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-      - 'docs/**'
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 4 * * *'
+    - cron: '0 4 * * *'
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
@@ -71,3 +61,6 @@ jobs:
 
       - name: Populate Cache
         run: ./ci-support/prepare-build.sh
+
+      - name: Delete snapshots artifacts from cache
+        run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +

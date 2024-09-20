@@ -1,4 +1,4 @@
-name: Test - DeltaSpike
+name: Test - Spock
 
 on:
   workflow_call:
@@ -20,7 +20,7 @@ defaults:
     shell: bash
 
 jobs:
-  test-deltaspike:
+  test-spock:
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,6 +28,15 @@ jobs:
       matrix:
         # LTS versions
         java: [ 11, 17, 21 ]
+        groovy:
+          # FIXME - #330 - v2.5
+          - v3.0
+          - v4.0
+        include:
+          - java: 11
+            groovy: v2.5
+          - java: 17
+            groovy: v2.5
 
     steps:
       - name: Generate cache key
@@ -69,12 +78,12 @@ jobs:
       - name: Extract .m2/repository/io/github/cdi-unit
         run: tar -xzf m2-io-github-cdi-unit.tgz -C ~
 
-      - name: Test DeltaSpike
-        run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
+      - name: Test Spock with Groovy ${{ matrix.groovy }}
+        run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-reports-jdk${{ matrix.java }}-deltaspike
+          name: test-reports-jdk${{ matrix.java }}-groovy${{ matrix.groovy }}
           path: '**/target/surefire-reports/**'

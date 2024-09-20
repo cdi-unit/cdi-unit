@@ -1,4 +1,4 @@
-name: Test - DeltaSpike
+name: Test - Weld
 
 on:
   workflow_call:
@@ -20,14 +20,19 @@ defaults:
     shell: bash
 
 jobs:
-  test-deltaspike:
-    runs-on: ubuntu-latest
+  test-weld:
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
+        os: [ ubuntu-latest, windows-latest ]
         # LTS versions
         java: [ 11, 17, 21 ]
+        weld:
+          - v4.0
+          - v5.0
+          - v5.1
 
     steps:
       - name: Generate cache key
@@ -69,12 +74,12 @@ jobs:
       - name: Extract .m2/repository/io/github/cdi-unit
         run: tar -xzf m2-io-github-cdi-unit.tgz -C ~
 
-      - name: Test DeltaSpike
-        run: ./ci-support/test-deltaspike.sh deltaspike-v2.x.sh
+      - name: Test Weld ${{ matrix.weld }}
+        run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-reports-jdk${{ matrix.java }}-deltaspike
+          name: test-reports-${{ matrix.os }}-jdk${{ matrix.java }}-weld${{ matrix.weld }}
           path: '**/target/surefire-reports/**'
