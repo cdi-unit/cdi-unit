@@ -127,7 +127,7 @@ jobs:
         run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +
 
   submit-maven-dependencies:
-    needs: [prepare, build]
+    needs: [ prepare, build ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -157,19 +157,19 @@ jobs:
           maven-args: "-V -B"
 
   test-weld:
-    needs: [prepare, build]
+    needs: [ prepare, build ]
     uses: ./.github/workflows/test-weld.yml
     with:
       build-run-id: ${{ github.run_id }}
 
   test-deltaspike:
-    needs: [prepare, build]
+    needs: [ prepare, build ]
     uses: ./.github/workflows/test-deltaspike.yml
     with:
       build-run-id: ${{ github.run_id }}
 
   test-spock:
-    needs: [prepare, build]
+    needs: [ prepare, build ]
     uses: ./.github/workflows/test-spock.yml
     with:
       build-run-id: ${{ github.run_id }}
