@@ -1,9 +1,19 @@
 name: Test - DeltaSpike
 
 on:
-  workflow_run:
-    workflows: [Build and Test]
-    types: [completed]
+  workflow_call:
+    inputs:
+      build-run-id:
+        required: true
+        description: Build Run ID to access uploaded artifacts
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      build-run-id:
+        required: true
+        description: Build Run ID to access uploaded artifacts
+        type: string
 
 defaults:
   run:
@@ -11,8 +21,6 @@ defaults:
 
 jobs:
   test-deltaspike:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -56,7 +64,7 @@ jobs:
         with:
           name: m2-io-github-cdi-unit
           path: .
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.build-run-id }}
 
       - name: Extract .m2/repository/io/github/cdi-unit
         run: tar -xzf m2-io-github-cdi-unit.tgz -C ~

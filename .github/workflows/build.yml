@@ -162,13 +162,11 @@ jobs:
 #    with:
 #      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
 
-#  test-deltaspike:
-#    needs: [prepare, build]
-#    uses: ./.github/workflows/test-deltaspike.yml
-#    with:
-#      m2-cache-key: ${{ needs.prepare.outputs.m2-cache-key }}
-#      m2-monthly-branch-cache-key: ${{ needs.prepare.outputs.m2-monthly-branch-cache-key }}
-#      m2-monthly-cache-key: ${{ needs.prepare.outputs.m2-monthly-cache-key }}
+  test-deltaspike:
+    needs: [prepare, build]
+    uses: ./.github/workflows/test-deltaspike.yml
+    with:
+      build-run-id: ${{ github.run_id }}
 
 #  test-spock:
 #    needs: [prepare, build]
