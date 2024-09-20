@@ -1,10 +1,18 @@
-name: Test Weld
+name: Test - Weld
 
 on:
   workflow_call:
     inputs:
-      cache-key:
+      build-run-id:
         required: true
+        description: Build Run ID to access uploaded artifacts
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      build-run-id:
+        required: true
+        description: Build Run ID to access uploaded artifacts
         type: string
 
 defaults:
@@ -27,11 +35,16 @@ jobs:
           - v5.1
 
     steps:
-      - name: Find user Home
-        id:
-          user-home
-        run:
-          echo "user-home=$HOME" >> $GITHUB_OUTPUT
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          CURRENT_BRANCH="${{ github.repository != 'cdi-unit/cdi-unit' && 'fork' || github.base_ref || github.ref_name }}"
+          CURRENT_MONTH=$(/bin/date -u "+%Y-%m")
+          CURRENT_DAY=$(/bin/date -u "+%d")
+          ROOT_CACHE_KEY="m2-cache"
+          echo "m2-monthly-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}" >> $GITHUB_OUTPUT
+          echo "m2-monthly-branch-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}" >> $GITHUB_OUTPUT
+          echo "m2-cache-key=${ROOT_CACHE_KEY}-${CURRENT_MONTH}-${CURRENT_BRANCH}-${CURRENT_DAY}" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v4
 
@@ -41,18 +54,28 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
 
-      - name: Restore build artifacts
-        uses: actions/cache@v4
+      - name: Restore Maven Repository
+        uses: actions/cache/restore@v4
         with:
           enableCrossOsArchive: true
-          fail-on-cache-miss: true
-          path: ${{ steps.user-home.outputs.user-home }}/.m2/repository
-          key: ${{ inputs.cache-key }}
+          path: ~/.m2/repository
+          key: ${{ steps.cache-key.outputs.m2-cache-key }}
           restore-keys: |
-            ${{ inputs.cache-key }}
+            ${{ steps.cache-key.outputs.m2-monthly-branch-cache-key }}-
+            ${{ steps.cache-key.outputs.m2-monthly-cache-key }}-
+
+      - name: Download .m2/repository/io/github/cdi-unit
+        uses: actions/download-artifact@v4
+        with:
+          name: m2-io-github-cdi-unit
+          path: .
+          run-id: ${{ inputs.build-run-id }}
+
+      - name: Extract .m2/repository/io/github/cdi-unit
+        run: tar -xzf m2-io-github-cdi-unit.tgz -C ~
 
       - name: Test Weld ${{ matrix.weld }}
-        run: echo DEBUG ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
+        run: ./ci-support/test-weld.sh weld-${{ matrix.weld }}.sh
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4

@@ -156,11 +156,11 @@ jobs:
           settings-file: .github/mvn-settings.xml
           maven-args: "-V -B"
 
-#  test-weld:
-#    needs: [prepare, build]
-#    uses: ./.github/workflows/test-weld.yml
-#    with:
-#      cache-key: build-maven-repository-${{ github.sha }}-${{ github.run_id }}
+  test-weld:
+    needs: [prepare, build]
+    uses: ./.github/workflows/test-weld.yml
+    with:
+      build-run-id: ${{ github.run_id }}
 
   test-deltaspike:
     needs: [prepare, build]
