@@ -38,7 +38,7 @@ jobs:
           key: ${{ env.CACHE_KEY_COMMIT }}
 
       - name: Prepare Build
-        run: ./ci-support/prepare-build.sh
+        run: echo DEBUG ./ci-support/prepare-build.sh
 
   build:
     needs: prepare
