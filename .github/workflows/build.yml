@@ -77,7 +77,9 @@ jobs:
 
       - name: Build with Maven
 #        run: ./ci-support/build.sh
-        run: touch ${{ steps.user-home.outputs.user-home }}/.m2/repository/built
+        run: |
+          mkdir -p ${{ steps.user-home.outputs.user-home }}/.m2/repository
+          date --iso-8601=seconds > ${{ steps.user-home.outputs.user-home }}/.m2/repository/build.timestamp
 
       - name: Upload failure Archive (if maven failed)
         uses: actions/upload-artifact@v4
