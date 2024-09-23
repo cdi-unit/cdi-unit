@@ -187,7 +187,7 @@ jobs:
           MAVEN_ARGS: "-V -B --settings .github/mvn-settings.xml"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw -Dno-format verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: ./mvnw -Dno-format -Pcoverage verify sonar:sonar
 
   test-weld:
     needs: [ prepare, build ]

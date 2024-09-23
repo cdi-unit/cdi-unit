@@ -285,6 +285,12 @@
 					<artifactId>spotless-maven-plugin</artifactId>
 					<version>2.43.0</version>
 				</plugin>
+
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.12</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -520,6 +526,57 @@
 			</build>
 		</profile>
 
+		<profile>
+			<id>coverage</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pre-unit-test</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>post-unit-test</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+								<phase>test</phase>
+							</execution>
+							<execution>
+								<id>pre-integration-test</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<destFile>${project.build.directory}/jacoco-it.exec</destFile>
+									<propertyName>invoker.mavenOpts</propertyName>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+								<phase>post-integration-test</phase>
+								<configuration>
+									<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+									<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
