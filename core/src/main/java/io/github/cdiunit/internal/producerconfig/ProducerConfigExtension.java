@@ -95,13 +95,18 @@ public class ProducerConfigExtension implements Extension {
     }
 
     private ProducerFactory<ProducerConfigExtension> getProducerFactory(BeanManager bm) {
-        ProducerConfigExtension extension = this;
         AnnotatedType<ProducerConfigExtension> at = bm.createAnnotatedType(ProducerConfigExtension.class);
-        AnnotatedMethod<? super ProducerConfigExtension> producerMethod = at.getMethods().stream()
+        return at.getMethods().stream()
                 .filter(m -> "produceConfigValue".equals(m.getJavaMember().getName()))
                 .findFirst()
-                .get();
-        Bean<ProducerConfigExtension> bean = new Bean<>() {
+                .map(m -> bm.getProducerFactory(m, createProducerBean()))
+                .orElseThrow(
+                        () -> new IllegalStateException("can't find my own method ProducerConfigExtension.produceConfigValue"));
+    }
+
+    private Bean<ProducerConfigExtension> createProducerBean() {
+        ProducerConfigExtension extension = this;
+        return new Bean<>() {
 
             @Override
             public Set<Type> getTypes() {
@@ -168,7 +173,6 @@ public class ProducerConfigExtension implements Extension {
             }
 
         };
-        return bm.getProducerFactory(producerMethod, bean);
     }
 
 }
