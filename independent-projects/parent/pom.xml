@@ -86,7 +86,7 @@
 				<plugin>
 					<groupId>org.sonatype.central</groupId>
 					<artifactId>central-publishing-maven-plugin</artifactId>
-					<version>0.5.0</version>
+					<version>0.6.0</version>
 					<configuration>
 						<publishingServerId>cdi-unit-publish</publishingServerId>
 						<deploymentName>Deployment ${project.groupId}-${project.version}</deploymentName>
