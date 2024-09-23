@@ -30,6 +30,7 @@
 	<properties>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<gpg.skip>true</gpg.skip>
+		<sonar.skip>true</sonar.skip>
 
 		<version.weld.test>${version.weld.baseline}</version.weld.test>
 
