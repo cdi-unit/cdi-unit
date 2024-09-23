@@ -127,7 +127,7 @@ jobs:
         run: find ~/.m2 -name \*-SNAPSHOT -type d -exec rm -rf {} +
 
   submit-maven-dependencies:
-    needs: [ prepare, build ]
+    needs: [ prepare ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -155,6 +155,39 @@ jobs:
         with:
           settings-file: .github/mvn-settings.xml
           maven-args: "-V -B"
+
+  sonar-check:
+    needs: [ prepare ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Restore Maven Repository
+        uses: actions/cache/restore@v4
+        with:
+          enableCrossOsArchive: true
+          path: ~/.m2/repository
+          key: ${{ needs.prepare.outputs.m2-cache-key }}
+          restore-keys: |
+            ${{ needs.prepare.outputs.m2-monthly-branch-cache-key }}-
+            ${{ needs.prepare.outputs.m2-monthly-cache-key }}-
+
+      - name: SonarQube Check
+        env:
+          MAVEN_ARGS: "-V -B --settings .github/mvn-settings.xml"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw -Dno-format verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
   test-weld:
     needs: [ prepare, build ]
