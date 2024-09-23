@@ -2,7 +2,7 @@
 
 set -ex
 
-export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml --no-transfer-progress"
+export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml"
 
-./mvnw -Dno-format dependency:go-offline
+./mvnw -Dno-format -Pcoverage dependency:go-offline
 ./mvnw -Dno-format -DskipTests package
