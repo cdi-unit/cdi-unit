@@ -50,7 +50,7 @@ public class MockHttpSession implements HttpSession {
         attributes = new HashMap();
         isValid = true;
         creationTime = System.currentTimeMillis();
-        sessionId = Double.toString(Math.random());
+        sessionId = UUID.randomUUID().toString();
         maxInactiveInterval = -1;
         attributeListener = new ArrayList();
     }
