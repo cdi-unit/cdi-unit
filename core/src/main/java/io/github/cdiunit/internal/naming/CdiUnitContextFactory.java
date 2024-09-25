@@ -22,7 +22,8 @@ import javax.naming.spi.InitialContextFactory;
 
 public class CdiUnitContextFactory implements InitialContextFactory {
 
-    private static final ThreadLocal<CdiUnitContext> context = ThreadLocal.withInitial(CdiUnitContext::new);
+    private static final ThreadLocal<CdiUnitContext> context = ThreadLocal.withInitial(
+            CdiUnitContextFactory::newInitialContext);
 
     public CdiUnitContextFactory() {
         this(new Hashtable<>());
@@ -34,6 +35,16 @@ public class CdiUnitContextFactory implements InitialContextFactory {
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
         return context.get();
+    }
+
+    private static CdiUnitContext newInitialContext() {
+        CdiUnitContext initialContext = new CdiUnitContext();
+        initialContext.doAfterClose(CdiUnitContextFactory::cleanup);
+        return initialContext;
+    }
+
+    private static void cleanup() {
+        context.remove();
     }
 
 }

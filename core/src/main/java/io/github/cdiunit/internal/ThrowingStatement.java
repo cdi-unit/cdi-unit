@@ -18,4 +18,15 @@ package io.github.cdiunit.internal;
 @FunctionalInterface
 public interface ThrowingStatement {
     void evaluate() throws Throwable;
+
+    default ThrowingStatement andThen(ThrowingStatement next) {
+        if (next == null) {
+            return this;
+        }
+        return () -> {
+            evaluate();
+            next.evaluate();
+        };
+    }
+
 }

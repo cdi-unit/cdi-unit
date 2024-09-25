@@ -18,17 +18,22 @@ package io.github.cdiunit.internal.naming;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.*;
+
+import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.ThrowingStatement;
 
 public class CdiUnitContext implements Context {
     private final Map<String, Object> properties = new HashMap<>();
     private final Map<String, Object> bindings = new HashMap<>();
+
+    private ThrowingStatement afterClose;
+
+    void doAfterClose(ThrowingStatement afterClose) {
+        if (afterClose != null) {
+            this.afterClose = afterClose.andThen(this.afterClose);
+        }
+    }
 
     @Override
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
@@ -49,6 +54,13 @@ public class CdiUnitContext implements Context {
     public void close() throws NamingException {
         properties.clear();
         bindings.clear();
+        if (afterClose != null) {
+            try {
+                afterClose.evaluate();
+            } catch (Throwable e) {
+                throw ExceptionUtils.asRuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -58,77 +70,64 @@ public class CdiUnitContext implements Context {
 
     @Override
     public String composeName(String name, String prefix) throws NamingException {
-
         return null;
     }
 
     @Override
     public Context createSubcontext(Name name) throws NamingException {
-
         return null;
     }
 
     @Override
     public Context createSubcontext(String name) throws NamingException {
-
         return null;
     }
 
     @Override
     public void destroySubcontext(Name name) throws NamingException {
-
     }
 
     @Override
     public void destroySubcontext(String name) throws NamingException {
-
     }
 
     @Override
     public Hashtable<?, ?> getEnvironment() throws NamingException {
-
         return null;
     }
 
     @Override
     public String getNameInNamespace() throws NamingException {
-
         return null;
     }
 
     @Override
     public NameParser getNameParser(Name name) throws NamingException {
-
         return null;
     }
 
     @Override
     public NameParser getNameParser(String name) throws NamingException {
-
         return null;
     }
 
     @Override
     public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
-
         return null;
     }
 
     @Override
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-
         return null;
     }
 
     @Override
     public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
-
         return null;
     }
 
     @Override
     public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
-
         return null;
     }
 
