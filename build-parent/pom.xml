@@ -16,7 +16,7 @@
 	<description>Build parent to bring in required dependencies</description>
 
 	<properties>
-		<version.mockito-core>5.13.0</version.mockito-core>
+		<version.mockito-core>5.14.0</version.mockito-core>
 		<version.resteasy-core>6.2.10.Final</version.resteasy-core>
 		<ide-config.resources.dir>${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/</ide-config.resources.dir>
 	</properties>
