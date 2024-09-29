@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.cdi-unit</groupId>
 		<artifactId>cdi-unit-integration-tests-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.0.0-EA7</version>
 	</parent>
 	<artifactId>cdi-unit-tests</artifactId>
 	<packaging>jar</packaging>
