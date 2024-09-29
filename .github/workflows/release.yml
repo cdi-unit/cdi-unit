@@ -49,5 +49,5 @@ jobs:
           git checkout ${{github.base_ref}}
           git rebase release
           ./mvnw release:perform ${{env.MAVEN_RELEASE_ARGS}}
-          git push --set-upstream origin release
+          git push --force --set-upstream origin release
           git push --tags
