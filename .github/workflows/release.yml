@@ -51,3 +51,10 @@ jobs:
           ./mvnw release:perform ${{env.MAVEN_RELEASE_ARGS}}
           git push --force --set-upstream origin release
           git push --tags
+
+      - name: Upload relocations
+        uses: actions/upload-artifact@v4
+        with:
+          name: relocations
+          path: relocations/**/target/*
+          retention-days: 7
