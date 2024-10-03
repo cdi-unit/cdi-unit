@@ -55,6 +55,6 @@ jobs:
       - name: Upload relocations
         uses: actions/upload-artifact@v4
         with:
-          name: relocations
+          name: cdi-unit-relocations-${{steps.metadata.outputs.current-version}}
           path: relocations/**/target/*
           retention-days: 7
