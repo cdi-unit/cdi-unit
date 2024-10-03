@@ -18,7 +18,6 @@ env:
   MAVEN_DEPLOY_TOKEN: ${{secrets.MAVEN_DEPLOY_TOKEN}}
   MAVEN_GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
   MAVEN_ARGS: "-V -B --settings .github/mvn-settings.xml --no-transfer-progress"
-  MAVEN_RELEASE_ARGS: "-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
 
 jobs:
   release:
@@ -44,6 +43,8 @@ jobs:
           gpg-private-key: ${{secrets.MAVEN_GPG_PRIVATE_KEY}}
 
       - name: Prepare Release for ${{steps.metadata.outputs.current-version}}
+        env:
+          MAVEN_RELEASE_ARGS: "-DautoVersionSubmodules -DpushChanges=false -DlocalCheckout -DreleaseVersion=${{steps.metadata.outputs.current-version}} -Dtag=cdi-unit-${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}"
         run: |
           java -version
           git config --global user.name 'github-actions[bot]'
@@ -55,7 +56,7 @@ jobs:
         run: |
           git checkout ${{github.base_ref}}
           git rebase release
-          ./mvnw release:perform ${{env.MAVEN_RELEASE_ARGS}}
+          ./mvnw release:perform
           git push --force --set-upstream origin release
 
       - name: Push Tags for ${{steps.metadata.outputs.current-version}}
