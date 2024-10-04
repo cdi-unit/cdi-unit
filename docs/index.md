@@ -13,8 +13,6 @@
 11.  [Resource support](#resource-support)
 12.  [DeltaSpike support](#deltaspike-support)
 13.  [JaxRS support](#jaxrs-support)
-14.  [Support for Java 9 and later](#support-for-java-9-and-later)
-15.  [Changelog](#changelog)
 
 ### Quickstart
 
@@ -671,38 +669,3 @@ public static class ExampleWebService {
 
 }
 ```
-
-### Support for Java 9 and later
-
-CDI-Unit has not been tested with Java 9 modules or the module path, but it can be run under Java 9 via the classpath. CDI-Unit 4.1.0 (or later) uses ClassGraph to obtain information about classloaders and classpath entries.
-
-### Changelog
-
-#### 4.4
-
-- Servlet API 3.1+ support
-
-#### 4.3
-
-- CDI-Unit artifacts moved to the new group ID `io.github.cdi-unit`.
-- All packages were renamed from `org.jglue.cdiunit` prefix to `io.github.cdiunit`.
-- Maven Central publishing moved from legacy OSSRH to the Central Portal using `central-publishing-maven-plugin`.
-  See https://central.sonatype.org/register/central-portal/ for details.
-
-#### 4.2
-
-CDI-Unit reuses results of class path scans between tests executions when possible. It may reduce execution time significantly - 10x speedups were observed.
-
-#### 4.1
-CDI-Unit no longer depends on Reflections or Guava, so if you need
-these dependencies you should add them to your project directly. It
-now requires ClassGraph 4.x. The JVM argument
-`--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is no longer
-required.
-
-#### 4.0
-CDI-Unit requires Java 8 or higher. The JVM argument
-`--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED` is required on
-Java 9 or higher (but only in version 4.0).
-
-CDI-Unit now supports Weld 3, but Weld 1 and 2 are still supported. You now need to add your preferred version of Weld SE/Web to your dependencies explicitly.
