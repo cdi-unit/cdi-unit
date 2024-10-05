@@ -28,6 +28,7 @@ import org.spockframework.runtime.model.SpecInfo;
 
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.spock.CdiUnit;
 
 public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
@@ -38,13 +39,13 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
 
     private TestLifecycle initialTestLifecycle(Class<?> testClass) {
         return testLifecycles.computeIfAbsent(testClass,
-                aClass -> new TestLifecycle(new TestConfiguration(aClass, null)));
+                aClass -> new TestLifecycle(new TestConfiguration(aClass)));
     }
 
     private TestLifecycle requiredTestLifecycle(Class<?> testClass, Method method) {
         var testLifecycle = initialTestLifecycle(testClass);
         if (method != null) {
-            testLifecycle.setTestMethod(method);
+            TestMethodHolder.set(method);
         }
         return testLifecycle;
     }

@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 
 public class ExpectStartupException extends Statement {
 
@@ -42,7 +43,7 @@ public class ExpectStartupException extends Statement {
                     .assertThrows(expectedExceptionClass, () -> {
                         throw startupException;
                     });
-            Optional.ofNullable(testLifecycle.getTestMethod())
+            Optional.of(TestMethodHolder.getRequired())
                     .map(o -> o.getAnnotation(Test.class))
                     .map(Test::expected)
                     // annotation field value is always present

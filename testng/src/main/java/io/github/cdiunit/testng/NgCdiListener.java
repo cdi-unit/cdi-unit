@@ -30,6 +30,7 @@ import org.testng.*;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 import io.github.cdiunit.testng.internal.InvokeInterceptors;
 
@@ -49,9 +50,9 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
             super.afterConfigure(testClass, testInstance);
 
             addBeforeMethod(testLifecycle -> ScopesHelper.activateContexts(testLifecycle.getBeanManager(),
-                    testLifecycle.getTestMethod()));
+                    TestMethodHolder.getRequired()));
             addAfterMethod(testLifecycle -> ScopesHelper.deactivateContexts(testLifecycle.getBeanManager(),
-                    testLifecycle.getTestMethod()));
+                    TestMethodHolder.getRequired()));
         }
 
     }
@@ -97,13 +98,13 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
                 .anyMatch(NgCdiListener.class::isAssignableFrom);
 
         return testLifecycles.computeIfAbsent(testClass,
-                aClass -> new NgTestLifecycle(new TestConfiguration(aClass, null), configuredOnClass));
+                aClass -> new NgTestLifecycle(new TestConfiguration(aClass), configuredOnClass));
     }
 
     private NgTestLifecycle requiredTestLifecycle(ITestClass ngTestClass, Method method) {
         var testLifecycle = initialTestLifecycle(ngTestClass);
         if (method != null) {
-            testLifecycle.setTestMethod(method);
+            TestMethodHolder.set(method);
         }
         return testLifecycle;
     }

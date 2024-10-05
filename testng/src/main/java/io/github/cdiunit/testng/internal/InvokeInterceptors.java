@@ -20,6 +20,7 @@ import org.testng.ITestResult;
 
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.TestMethodInvocationContext;
 
 public class InvokeInterceptors implements IHookCallBack {
@@ -39,7 +40,7 @@ public class InvokeInterceptors implements IHookCallBack {
         if (methodInvocationContext == null) {
             final var target = testResult.getInstance();
             final var parameters = next.getParameters();
-            final var method = testLifecycle.getTestMethod();
+            final var method = TestMethodHolder.getRequired();
             methodInvocationContext = new TestMethodInvocationContext<>(target, method, parameters,
                     () -> next.runTestMethod(testResult));
             methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());

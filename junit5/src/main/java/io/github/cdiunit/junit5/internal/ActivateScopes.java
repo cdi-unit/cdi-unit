@@ -23,28 +23,29 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 
 import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 public class ActivateScopes implements InvocationInterceptor.Invocation<Void> {
 
     private final InvocationInterceptor.Invocation<Void> next;
-    private final TestConfiguration testConfiguration;
+    private final TestLifecycle testLifecycle;
     private final AtomicBoolean contextsActivated;
     private final Supplier<BeanManager> beanManager;
 
-    public ActivateScopes(InvocationInterceptor.Invocation<Void> next, TestConfiguration testConfiguration,
+    public ActivateScopes(InvocationInterceptor.Invocation<Void> next, TestLifecycle testLifecycle,
             AtomicBoolean contextsActivated, Supplier<BeanManager> beanManager) {
         this.next = next;
-        this.testConfiguration = testConfiguration;
+        this.testLifecycle = testLifecycle;
         this.contextsActivated = contextsActivated;
         this.beanManager = beanManager;
     }
 
     @Override
     public Void proceed() throws Throwable {
-        final var method = testConfiguration.getTestMethod();
-        final var isolationLevel = testConfiguration.getIsolationLevel();
+        final var method = TestMethodHolder.getRequired();
+        final var isolationLevel = testLifecycle.getIsolationLevel();
         try {
             if (!contextsActivated.get()) {
                 ScopesHelper.activateContexts(beanManager.get(), method);

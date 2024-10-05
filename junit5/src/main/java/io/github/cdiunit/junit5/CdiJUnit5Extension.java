@@ -28,6 +28,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.junit5.internal.ActivateScopes;
 import io.github.cdiunit.junit5.internal.InvokeInterceptors;
 
@@ -63,7 +64,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
             if (explicitInterceptorInvocation()) {
                 invocation = new InvokeInterceptors(invocation, invocationContext, this);
             }
-            invocation = new ActivateScopes(invocation, getTestConfiguration(), contextsActivated, this::getBeanManager);
+            invocation = new ActivateScopes(invocation, this, contextsActivated, this::getBeanManager);
             invocation.proceed();
         }
 
@@ -73,13 +74,13 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
 
     private JupiterTestLifecycle initialTestLifecycle(Class<?> testClass) {
         return testLifecycles.computeIfAbsent(testClass,
-                aClass -> new JupiterTestLifecycle(new TestConfiguration(aClass, null)));
+                aClass -> new JupiterTestLifecycle(new TestConfiguration(aClass)));
     }
 
     private JupiterTestLifecycle requiredTestLifecycle(ExtensionContext context) {
         final Class<?> testClass = context.getRequiredTestClass();
         var testLifecycle = initialTestLifecycle(testClass);
-        context.getTestMethod().ifPresent(testLifecycle::setTestMethod);
+        context.getTestMethod().ifPresentOrElse(TestMethodHolder::set, TestMethodHolder::remove);
         return testLifecycle;
     }
 

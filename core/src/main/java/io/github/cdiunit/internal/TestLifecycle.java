@@ -16,7 +16,6 @@
 package io.github.cdiunit.internal;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.function.Consumer;
@@ -198,7 +197,7 @@ public class TestLifecycle {
     public void afterTestMethod() throws Exception {
         doAfterMethod.accept(this);
         perform(IsolationLevel.PER_METHOD, this::shutdownWeld);
-        testConfiguration.setTestMethod(null);
+        TestMethodHolder.remove();
     }
 
     public BeanManager getBeanManager() {
@@ -213,14 +212,6 @@ public class TestLifecycle {
         if (startupException != null) {
             throw ExceptionUtils.asRuntimeException(startupException);
         }
-    }
-
-    public void setTestMethod(Method method) {
-        testConfiguration.setTestMethod(method);
-    }
-
-    public Method getTestMethod() {
-        return testConfiguration.getTestMethod();
     }
 
     protected TestConfiguration getTestConfiguration() {

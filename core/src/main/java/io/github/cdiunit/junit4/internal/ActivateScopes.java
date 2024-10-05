@@ -21,6 +21,7 @@ import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 public class ActivateScopes extends Statement {
@@ -37,7 +38,7 @@ public class ActivateScopes extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        final var method = testLifecycle.getTestMethod();
+        final var method = TestMethodHolder.getRequired();
         final var isolationLevel = testLifecycle.getIsolationLevel();
         final var beanManager = testLifecycle.getBeanManager();
         try {

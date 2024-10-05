@@ -26,6 +26,7 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.junit4.internal.ActivateScopes;
 import io.github.cdiunit.junit4.internal.AroundMethod;
 import io.github.cdiunit.junit4.internal.ExpectStartupException;
@@ -54,7 +55,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
     public CdiRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
-        var testConfiguration = new TestConfiguration(clazz, null);
+        var testConfiguration = new TestConfiguration(clazz);
         this.testLifecycle = new TestLifecycle(testConfiguration);
     }
 
@@ -87,7 +88,7 @@ public class CdiRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement methodBlock(final FrameworkMethod frameworkMethod) {
-        testLifecycle.setTestMethod(frameworkMethod.getMethod());
+        TestMethodHolder.set(frameworkMethod.getMethod());
         var statement = super.methodBlock(frameworkMethod);
         statement = new ActivateScopes(statement, testLifecycle, contextsActivated);
         statement = new ExpectStartupException(statement, testLifecycle);

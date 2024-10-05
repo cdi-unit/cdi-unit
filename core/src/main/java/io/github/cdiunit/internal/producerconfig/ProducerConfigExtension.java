@@ -32,6 +32,7 @@ import jakarta.enterprise.util.AnnotationLiteral;
 
 import io.github.cdiunit.ProducerConfig;
 import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestMethodHolder;
 
 public class ProducerConfigExtension implements Extension {
 
@@ -90,7 +91,7 @@ public class ProducerConfigExtension implements Extension {
         if (values == null) {
             return null;
         }
-        Annotation result = values.get(testConfiguration.getTestMethod());
+        Annotation result = values.get(TestMethodHolder.get());
         return result != null ? result : values.get(null);
     }
 

@@ -23,6 +23,7 @@ import org.spockframework.runtime.extension.IStore;
 
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 public class ActivateScopes implements IMethodInterceptor {
@@ -40,7 +41,7 @@ public class ActivateScopes implements IMethodInterceptor {
         if (testLifecycle == null) {
             throw new IllegalStateException(String.format("no test lifecycle bound to %s", invocation));
         }
-        final var method = testLifecycle.getTestMethod();
+        final var method = TestMethodHolder.get();
         if (method == null) {
             invocation.proceed();
             return;

@@ -32,7 +32,7 @@ public class TestInvalidJUnitRuleUsage {
 
     @Test(expected = InvalidRuleFieldUsageException.class)
     public void test() throws IOException {
-        WeldHelper.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class, null));
+        WeldHelper.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class));
     }
 
 }

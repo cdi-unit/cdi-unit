@@ -29,6 +29,7 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 
 public class CdiJUnitRule implements TestRule, MethodRule {
 
@@ -59,14 +60,14 @@ public class CdiJUnitRule implements TestRule, MethodRule {
 
     private TestLifecycle getTestLifecycle(Class<?> testClass, Method method, IsolationLevel initIsolationLevel) {
         var testLifecycle = testLifecyclePerClass.computeIfAbsent(testClass, c -> {
-            final var testConfiguration = new TestConfiguration(testClass, method);
+            final var testConfiguration = new TestConfiguration(testClass);
             final var result = new TestLifecycle(testConfiguration);
             if (initIsolationLevel != null) {
                 result.setIsolationLevel(initIsolationLevel);
             }
             return result;
         });
-        testLifecycle.setTestMethod(method);
+        TestMethodHolder.set(method);
         return testLifecycle;
     }
 

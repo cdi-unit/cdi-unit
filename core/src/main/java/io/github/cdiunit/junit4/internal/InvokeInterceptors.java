@@ -18,6 +18,7 @@ package io.github.cdiunit.junit4.internal;
 import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.TestMethodHolder;
 import io.github.cdiunit.internal.TestMethodInvocationContext;
 
 public class InvokeInterceptors extends Statement {
@@ -37,7 +38,7 @@ public class InvokeInterceptors extends Statement {
     @Override
     public void evaluate() throws Throwable {
         if (methodInvocationContext == null) {
-            methodInvocationContext = new TestMethodInvocationContext<>(target, testLifecycle.getTestMethod(), new Object[0],
+            methodInvocationContext = new TestMethodInvocationContext<>(target, TestMethodHolder.getRequired(), new Object[0],
                     next::evaluate);
             methodInvocationContext.resolveInterceptors(testLifecycle.getBeanManager());
         }
