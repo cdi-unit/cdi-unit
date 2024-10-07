@@ -61,7 +61,7 @@
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-api</artifactId>
-						<version>3.5.0</version>
+						<version>3.5.1</version>
 					</dependency>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
