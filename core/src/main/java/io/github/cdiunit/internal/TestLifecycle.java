@@ -237,4 +237,12 @@ public class TestLifecycle {
         return startupException;
     }
 
+    public void shutdown() {
+        try {
+            shutdownWeld();
+        } catch (Throwable t) {
+            throw ExceptionUtils.asRuntimeException(t);
+        }
+    }
+
 }
