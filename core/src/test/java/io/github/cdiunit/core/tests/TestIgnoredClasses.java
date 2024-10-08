@@ -13,30 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.core.tests;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import io.github.cdiunit.junit4.CdiRunner;
+import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.IgnoredClasses;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(CdiRunner.class)
-@AdditionalClasses(TestIgnoreClasses.MyProducer.class)
-public class TestIgnoreClasses {
+public class TestIgnoredClasses {
 
-    public static class MyService {
+    // discoverable bean but ignored due to configuration
+    static class MyService {
 
         public String hello() {
             return "hello";
         }
     }
 
-    public static class MyProducer {
+    static class MyProducer {
 
         @Produces
         public MyService myService() {
@@ -44,12 +45,27 @@ public class TestIgnoreClasses {
         }
     }
 
-    @Inject
-    @IgnoredClasses
-    private MyService myService;
+    @AdditionalClasses(MyProducer.class)
+    static class TestBean {
+
+        @Inject
+        @IgnoredClasses
+        private MyService myService;
+
+        String hello() {
+            return myService.hello();
+        }
+
+    }
 
     @Test
-    public void test() {
-        assertThat(myService.hello()).isEqualTo("hello");
+    public void testIgnoredClasses() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
+        TestBean bean = testLifecycle.createTest(null);
+
+        assertThat(bean.hello()).isEqualTo("hello");
+
+        testLifecycle.shutdown();
     }
+
 }
