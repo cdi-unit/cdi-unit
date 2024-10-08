@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2018 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,45 +17,76 @@ package io.github.cdiunit.core.tests;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
-import jakarta.inject.Provider;
+import jakarta.inject.Named;
 
-import org.easymock.Mock;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
+import io.github.cdiunit.ProducesAlternative;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.test.beans.AInterface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestEasymock {
+class TestProducesAlternative {
+
+    @Named
+    static class AService {
+
+        BService getService() {
+            return service;
+        }
+
+        @Inject
+        private BService service;
+
+    }
+
+    @Named
+    static class BService {
+
+        @Inject
+        private CService unknownService;
+
+    }
+
+    public interface CService {
+
+    }
 
     static class TestBean {
 
-        @Mock
-        @Produces
-        private AInterface mockA;
-
         @Inject
-        private Provider<AInterface> a;
+        private AService service;
 
-        AInterface getMock() {
-            return mockA;
+        @Produces
+        @ProducesAlternative
+        @Mock
+        private BService mock;
+
+        AService getService() {
+            return service;
         }
 
-        AInterface getInjectedBean() {
-            return a.get();
+        BService getMock() {
+            return mock;
         }
 
     }
 
     @Test
-    void easyMock() throws Throwable {
+    void producedAlternative() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
         TestBean bean = testLifecycle.createTest(null);
 
-        assertThat(bean.getInjectedBean()).as("injected bean")
+        assertThat(bean.getMock()).as("injected mock")
                 .isNotNull()
+                .isInstanceOf(BService.class);
+
+        assertThat(bean.getService()).as("injected bean")
+                .isNotNull()
+                .isInstanceOf(AService.class)
+                .extracting(AService::getService)
                 .isSameAs(bean.getMock());
 
         testLifecycle.shutdown();
