@@ -37,7 +37,7 @@ import jakarta.interceptor.Interceptor;
  * <li>alternative stereotypes</li>
  * </ul>
  * <p>
- * Also discoverField types related to the members annotated with:
+ * Also discover types related to the members annotated with:
  * <ul>
  * <li>Inject</li>
  * <li>Produces</li>
