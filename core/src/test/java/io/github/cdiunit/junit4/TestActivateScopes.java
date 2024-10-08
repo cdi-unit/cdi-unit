@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author or authors.
+ * Copyright 2013 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.junit4;
 
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.ConversationScoped;
@@ -25,7 +25,8 @@ import jakarta.inject.Provider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.github.cdiunit.junit4.CdiRunner;
+import io.github.cdiunit.ActivateScopes;
+import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.test.beans.CSessionScoped;
 import io.github.cdiunit.test.beans.DConversationScoped;
 import io.github.cdiunit.test.beans.Scoped;
@@ -36,8 +37,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ScopedFactory.class)
-@ActivateScopes.All(@ActivateScopes(RequestScoped.class))
-public class TestActivateScopesAll {
+@ActivateScopes(RequestScoped.class)
+public class TestActivateScopes {
 
     @Inject
     private Provider<Scoped> scoped;
