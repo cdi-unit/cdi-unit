@@ -23,7 +23,6 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,9 +124,9 @@ class TestActivateScopes {
     void noActiveScopes() {
         assertThat(testBean).as("test bean").isNotNull();
 
-        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
-        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
     }
 
     @Test
@@ -136,9 +135,9 @@ class TestActivateScopes {
         testBean.activateRequestScope();
         testBean.deactivateRequestScope();
 
-        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
-        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
     }
 
     @Test
@@ -148,7 +147,7 @@ class TestActivateScopes {
 
         assertThatNoException().isThrownBy(() -> assertThat(testBean.inRequestScope()).as("in request scope").isTrue());
 
-        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
 
         testBean.deactivateRequestScope();
     }
@@ -158,7 +157,7 @@ class TestActivateScopes {
         assertThat(testBean).as("test bean").isNotNull();
         testBean.activateSessionScope();
 
-        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
+        assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
         assertThatNoException().isThrownBy(() -> assertThat(testBean.inSessionScope()).as("in session scope").isTrue());
 
