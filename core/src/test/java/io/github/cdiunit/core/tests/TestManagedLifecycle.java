@@ -31,9 +31,9 @@ import io.github.cdiunit.internal.ThrowingStatement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-public class TestManagedLifecycle {
+class TestManagedLifecycle {
 
-    static abstract class Bean {
+    abstract static class Bean {
 
         @Inject
         BeanManager beanManager;
@@ -88,16 +88,18 @@ public class TestManagedLifecycle {
     void validCdiManagedBeanDeclaration() {
         Class<CdiManagedBean> c = CdiManagedBean.class;
 
-        assertThat(c).isAssignableTo(Bean.class);
-        assertThat(c).isStatic();
+        assertThat(c)
+                .isAssignableTo(Bean.class)
+                .isStatic();
     }
 
     @Test
     void validCdiUnitManagedBeanDeclaration() {
         Class<CdiUnitManagedBean> c = CdiUnitManagedBean.class;
 
-        assertThat(c).isAssignableTo(Bean.class);
-        assertThat(c).isNotStatic();
+        assertThat(c)
+                .isAssignableTo(Bean.class)
+                .isNotStatic();
     }
 
     @Test

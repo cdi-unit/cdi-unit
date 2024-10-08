@@ -23,6 +23,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.inject.Inject;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class TestActivateScopes {
+class TestActivateScopes {
 
     private TestLifecycle testLifecycle;
     private TestBean testBean;
@@ -121,78 +122,58 @@ public class TestActivateScopes {
     }
 
     @Test
-    void testNoActiveScopes() {
+    void noActiveScopes() {
         assertThat(testBean).as("test bean").isNotNull();
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inRequestScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inSessionScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
     }
 
     @Test
-    void testAfterScopeDeactivation() {
+    void afterScopeDeactivation() {
         assertThat(testBean).as("test bean").isNotNull();
         testBean.activateRequestScope();
         testBean.deactivateRequestScope();
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inRequestScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inSessionScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
     }
 
     @Test
-    void testInRequestScope() {
+    void inRequestScope() {
         assertThat(testBean).as("test bean").isNotNull();
         testBean.activateRequestScope();
 
-        assertThatNoException().isThrownBy(() -> {
-            assertThat(testBean.inRequestScope()).as("in request scope").isTrue();
-        });
+        assertThatNoException().isThrownBy(() -> assertThat(testBean.inRequestScope()).as("in request scope").isTrue());
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inSessionScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inSessionScope()).isInstanceOf(ContextNotActiveException.class);
 
         testBean.deactivateRequestScope();
     }
 
     @Test
-    void testInSessionScope() {
+    void inSessionScope() {
         assertThat(testBean).as("test bean").isNotNull();
         testBean.activateSessionScope();
 
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> {
-            testBean.inRequestScope();
-        });
+        Assertions.assertThatThrownBy(() -> testBean.inRequestScope()).isInstanceOf(ContextNotActiveException.class);
 
-        assertThatNoException().isThrownBy(() -> {
-            assertThat(testBean.inSessionScope()).as("in session scope").isTrue();
-        });
+        assertThatNoException().isThrownBy(() -> assertThat(testBean.inSessionScope()).as("in session scope").isTrue());
 
         testBean.deactivateSessionScope();
     }
 
     @Test
-    void testInRequestAndSessionScope() {
+    void inRequestAndSessionScope() {
         assertThat(testBean).as("test bean").isNotNull();
         testBean.activateRequestScope();
         testBean.activateSessionScope();
 
-        assertThatNoException().isThrownBy(() -> {
-            assertThat(testBean.inRequestScope()).as("in request scope").isTrue();
-        });
+        assertThatNoException().isThrownBy(() -> assertThat(testBean.inRequestScope()).as("in request scope").isTrue());
 
-        assertThatNoException().isThrownBy(() -> {
-            assertThat(testBean.inSessionScope()).as("in session scope").isTrue();
-        });
+        assertThatNoException().isThrownBy(() -> assertThat(testBean.inSessionScope()).as("in session scope").isTrue());
 
         testBean.deactivateSessionScope();
         testBean.deactivateRequestScope();

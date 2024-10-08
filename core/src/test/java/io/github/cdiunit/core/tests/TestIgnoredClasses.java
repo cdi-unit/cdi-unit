@@ -27,7 +27,7 @@ import io.github.cdiunit.internal.TestLifecycle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestIgnoredClasses {
+class TestIgnoredClasses {
 
     // discoverable bean but ignored due to configuration
     static class MyService {
@@ -59,7 +59,7 @@ public class TestIgnoredClasses {
     }
 
     @Test
-    public void testIgnoredClasses() throws Throwable {
+    void ignoredClasses() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
         TestBean bean = testLifecycle.createTest(null);
 

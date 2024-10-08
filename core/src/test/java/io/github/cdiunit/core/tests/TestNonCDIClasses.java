@@ -18,6 +18,7 @@ package io.github.cdiunit.core.tests;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.inject.Inject;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import ch.qos.logback.classic.filter.ThresholdFilter;
@@ -26,9 +27,7 @@ import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
-public class TestNonCDIClasses {
+class TestNonCDIClasses {
 
     @AdditionalClasses(ThresholdFilter.class)
     static class TestBean {
@@ -41,12 +40,12 @@ public class TestNonCDIClasses {
     }
 
     @Test
-    public void testNonCDIClassDiscovery() throws Throwable {
+    void nonCDIClassDiscovery() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
 
-        assertThatExceptionOfType(DeploymentException.class).isThrownBy(() -> {
+        Assertions.assertThatThrownBy(() -> {
             TestBean bean = testLifecycle.createTest(null);
-        });
+        }).isInstanceOf(DeploymentException.class);
 
         testLifecycle.shutdown();
     }
