@@ -30,6 +30,7 @@
 		<module>support-servlet</module>
 		<module>support-servlet6</module>
 		<module>core</module>
+		<module>web</module>
 		<module>junit4</module>
 		<module>junit5</module>
 		<module>deltaspike</module>
