@@ -1,7 +1,5 @@
 io.github.cdiunit.internal.testscope.TestScopeDiscoveryExtension
 io.github.cdiunit.internal.producerconfig.ProducerConfigDiscoveryExtension
-io.github.cdiunit.internal.jsf.ViewScopeDiscoveryExtension
-io.github.cdiunit.internal.servlet.ServletDiscoveryExtension
 io.github.cdiunit.internal.mockito.MockitoDiscoveryExtension
 io.github.cdiunit.internal.easymock.EasyMockDiscoveryExtension
 io.github.cdiunit.internal.IgnoredClassesDiscoveryExtension
