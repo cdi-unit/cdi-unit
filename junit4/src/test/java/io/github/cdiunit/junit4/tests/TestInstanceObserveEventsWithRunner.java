@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.inject.Inject;
+import org.junit.runner.RunWith;
 
-abstract class BaseTest {
+import io.github.cdiunit.junit4.CdiRunner;
 
-    @Inject
-    private BeanManager beanManager;
-
-    public BeanManager getBeanManager() {
-        return beanManager;
-    }
+@RunWith(CdiRunner.class)
+public class TestInstanceObserveEventsWithRunner extends InstanceObserveEventsBaseTest {
 
 }

@@ -13,47 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.inject.Inject;
 
 import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
-import io.github.cdiunit.Isolation;
-import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.test.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-abstract class TestIsolationPerMethod {
-
-    @RunWith(CdiRunner.class)
-    @Isolation(IsolationLevel.PER_METHOD)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    public static class TestWithRunner extends TestIsolationPerMethod {
-
-    }
-
-    @Isolation(IsolationLevel.PER_METHOD)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    public static class TestWithRule extends TestIsolationPerMethod {
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-
-    }
+abstract class IsolationPerMethodBaseTest {
 
     private final AtomicInteger counter = new AtomicInteger();
 

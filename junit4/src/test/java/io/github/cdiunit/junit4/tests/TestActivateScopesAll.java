@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2024 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.ConversationScoped;
@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 
 import io.github.cdiunit.ActivateScopes;
 import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.CSessionScoped;
 import io.github.cdiunit.test.beans.DConversationScoped;
 import io.github.cdiunit.test.beans.Scoped;
@@ -37,8 +38,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(ScopedFactory.class)
-@ActivateScopes(RequestScoped.class)
-public class TestActivateScopes {
+@ActivateScopes.All(@ActivateScopes(RequestScoped.class))
+public class TestActivateScopesAll {
 
     @Inject
     private Provider<Scoped> scoped;
@@ -62,7 +63,8 @@ public class TestActivateScopes {
     @Test
     public void testNoActiveSessionScope() {
         assertThat(sessionScoped).isNotNull();
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> sessionScoped.getFoo());
+        assertThatExceptionOfType(ContextNotActiveException.class)
+                .isThrownBy(() -> sessionScoped.getFoo());
     }
 
     @Test
@@ -75,7 +77,8 @@ public class TestActivateScopes {
     @Test
     public void testNoActiveConversationScope() {
         assertThat(conversationScoped).isNotNull();
-        assertThatExceptionOfType(ContextNotActiveException.class).isThrownBy(() -> conversationScoped.getFoo());
+        assertThatExceptionOfType(ContextNotActiveException.class)
+                .isThrownBy(() -> conversationScoped.getFoo());
     }
 
     @Test

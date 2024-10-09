@@ -58,20 +58,18 @@ class TestViewScope {
 
     @Test
     void transitiveViewScoped1() {
-        assertThatNoException().isThrownBy(() -> testBean.expose(i -> {
-            // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
-            // (ignoring return value)
-            i.g2ViewScoped.getRuntimeId();
-        }));
+        assertThatNoException().isThrownBy(() -> testBean.expose(i ->
+        // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
+        // (ignoring return value)
+        i.g2ViewScoped.getRuntimeId()));
     }
 
     @Test
     void transitiveViewScoped2() {
-        assertThatNoException().isThrownBy(() -> testBean.expose(i -> {
-            // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
-            // (ignoring return value)
-            i.g2ViewScoped.getRuntimeId();
-        }));
+        assertThatNoException().isThrownBy(() -> testBean.expose(i ->
+        // check that bean can be used by more than one test: https://github.com/BrynCooke/cdi-unit/pull/124
+        // (ignoring return value)
+        i.g2ViewScoped.getRuntimeId()));
     }
 
     static class TestBean {

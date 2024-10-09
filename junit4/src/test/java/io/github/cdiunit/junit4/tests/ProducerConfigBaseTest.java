@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -24,10 +24,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
 
 import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.ProducerConfig;
@@ -37,28 +34,8 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AdditionalClasses(TestProducerConfig.Producers.class)
-abstract class TestProducerConfig {
-
-    @RunWith(CdiRunner.class)
-    @TestProducerConfig.ProducerConfigClass(Object.class)
-    @TestProducerConfig.ProducerConfigNum(0)
-    public static class TestWithRunner extends TestProducerConfig {
-
-    }
-
-    @TestProducerConfig.ProducerConfigClass(Object.class)
-    @TestProducerConfig.ProducerConfigNum(0)
-    public static class TestWithRule extends TestProducerConfig {
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-
-    }
+@AdditionalClasses(ProducerConfigBaseTest.Producers.class)
+abstract class ProducerConfigBaseTest {
 
     @Inject
     @Named("a")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original author or authors.
+ * Copyright 2024 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.inject.Inject;
 
-import static org.assertj.core.api.Assertions.assertThat;
+abstract class BaseTest {
 
-@RunWith(CdiRunner.class)
-public class TestJUnitRule {
+    @Inject
+    private BeanManager beanManager;
 
-    private final TestName testName = new TestName();
-
-    @Rule
-    public TestName getTestName() {
-        return testName;
-    }
-
-    @Test
-    public void testName() {
-        assertThat(getTestName().getMethodName()).as("test name is expected").isNotNull();
+    public BeanManager getBeanManager() {
+        return beanManager;
     }
 
 }
