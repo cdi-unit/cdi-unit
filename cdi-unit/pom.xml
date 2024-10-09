@@ -49,6 +49,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-junit4</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit-testng</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 
+import io.github.cdiunit.junit4.CdiJUnit;
+import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.Qualify;
 
 import static org.assertj.core.api.Assertions.assertThat;

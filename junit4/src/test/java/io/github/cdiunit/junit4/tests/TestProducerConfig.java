@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -31,6 +31,8 @@ import org.junit.runner.RunWith;
 
 import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.ProducerConfig;
+import io.github.cdiunit.junit4.CdiJUnit;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

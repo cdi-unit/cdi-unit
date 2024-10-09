@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,6 +26,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
+
+import io.github.cdiunit.junit4.CdiJUnit;
+import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

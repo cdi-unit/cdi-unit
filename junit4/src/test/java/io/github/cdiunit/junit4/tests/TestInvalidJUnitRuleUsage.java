@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
+
+import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.WeldHelper;
+import io.github.cdiunit.junit4.internal.InvalidRuleFieldUsageException;
 
-@RunWith(CdiRunner.class)
-public class TestJUnitRule {
-
-    private final TestName testName = new TestName();
+public class TestInvalidJUnitRuleUsage {
 
     @Rule
-    public TestName getTestName() {
-        return testName;
-    }
+    public final TestName testName = new TestName();
 
-    @Test
-    public void testName() {
-        assertThat(getTestName().getMethodName()).as("test name is expected").isNotNull();
+    @Test(expected = InvalidRuleFieldUsageException.class)
+    public void test() throws IOException {
+        WeldHelper.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class));
     }
 
 }

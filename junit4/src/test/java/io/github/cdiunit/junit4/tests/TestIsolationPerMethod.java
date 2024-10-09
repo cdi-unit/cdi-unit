@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.junit4;
+package io.github.cdiunit.junit4.tests;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +29,8 @@ import org.junit.runners.MethodSorters;
 
 import io.github.cdiunit.Isolation;
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.junit4.CdiJUnit;
+import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
