@@ -13,36 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.easymock;
+package io.github.cdiunit.core.tests;
 
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
 import org.easymock.Mock;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import io.github.cdiunit.junit4.CdiRunner;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.test.beans.AInterface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(CdiRunner.class)
-public class TestEasymock {
+class TestEasymock {
 
-    @Mock
-    @Produces
-    private AInterface mockA;
+    static class TestBean {
 
-    @Inject
-    private Provider<AInterface> a;
+        @Mock
+        @Produces
+        private AInterface mockA;
+
+        @Inject
+        private Provider<AInterface> a;
+
+        AInterface getMock() {
+            return mockA;
+        }
+
+        AInterface getInjectedBean() {
+            return a.get();
+        }
+
+    }
 
     @Test
-    public void testEasyMock() {
-        AInterface a1 = a.get();
-        assertThat(a1).isEqualTo(mockA);
-        assertThat(mockA).isNotNull();
+    void easyMock() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
+        TestBean bean = testLifecycle.createTest(null);
+
+        assertThat(bean.getInjectedBean()).as("injected bean")
+                .isNotNull()
+                .isSameAs(bean.getMock());
+
+        testLifecycle.shutdown();
     }
 
 }

@@ -69,7 +69,7 @@ public interface DiscoveryExtension {
         /**
          * Register callback to handle method discovery.
          * <p>
-         * The callback is invoked once per each declared method of each class to discoverField.
+         * The callback is invoked once per each declared method of each class to discover.
          *
          * @param callback callback to handle method discovery
          */

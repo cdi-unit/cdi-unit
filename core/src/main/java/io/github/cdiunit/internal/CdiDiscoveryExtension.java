@@ -16,10 +16,7 @@
 package io.github.cdiunit.internal;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 import jakarta.decorator.Decorator;
 import jakarta.enterprise.inject.Alternative;
@@ -40,7 +37,7 @@ import jakarta.interceptor.Interceptor;
  * <li>alternative stereotypes</li>
  * </ul>
  * <p>
- * Also discoverField types related to the members annotated with:
+ * Also discover types related to the members annotated with:
  * <ul>
  * <li>Inject</li>
  * <li>Produces</li>
@@ -86,7 +83,9 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
     private void discoverExtensions(Context context, Class<?> beanClass) {
         if (Extension.class.isAssignableFrom(beanClass) && !Modifier.isAbstract(beanClass.getModifiers())) {
             try {
-                context.extension((Extension) beanClass.getConstructor().newInstance());
+                Constructor<?> constructor = beanClass.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                context.extension((Extension) constructor.newInstance());
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }

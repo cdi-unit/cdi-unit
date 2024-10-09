@@ -83,11 +83,13 @@ public class TestLifecycle {
         }
     }
 
-    protected void shutdownWeld() throws Exception {
+    protected void shutdownWeld() {
         try {
             while (!instanceDisposers.isEmpty()) {
                 try (var instanceDisposer = instanceDisposers.pollLast()) {
                     // dispose instance on close
+                } catch (Exception e) {
+                    throw ExceptionUtils.asRuntimeException(e);
                 }
             }
         } finally {
@@ -185,7 +187,7 @@ public class TestLifecycle {
         perform(IsolationLevel.PER_CLASS, this::initWeld);
     }
 
-    public void afterTestClass() throws Exception {
+    public void afterTestClass() {
         perform(IsolationLevel.PER_CLASS, this::shutdownWeld);
     }
 
@@ -194,7 +196,7 @@ public class TestLifecycle {
         doBeforeMethod.accept(this);
     }
 
-    public void afterTestMethod() throws Exception {
+    public void afterTestMethod() {
         doAfterMethod.accept(this);
         perform(IsolationLevel.PER_METHOD, this::shutdownWeld);
         TestMethodHolder.remove();
@@ -235,6 +237,10 @@ public class TestLifecycle {
 
     public Throwable getStartupException() {
         return startupException;
+    }
+
+    public void shutdown() {
+        shutdownWeld();
     }
 
 }

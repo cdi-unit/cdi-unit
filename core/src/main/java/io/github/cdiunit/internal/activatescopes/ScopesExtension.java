@@ -112,7 +112,7 @@ public class ScopesExtension implements Extension {
     @Qualifier
     @interface DeactivateContexts {
 
-        final class Literal extends AnnotationLiteral<DeactivateContexts> implements ActivateContexts {
+        final class Literal extends AnnotationLiteral<DeactivateContexts> implements DeactivateContexts {
 
             private static final long serialVersionUID = 1L;
 

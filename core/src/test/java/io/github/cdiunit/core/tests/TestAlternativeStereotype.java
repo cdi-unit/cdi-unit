@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit;
+package io.github.cdiunit.core.tests;
 
 import jakarta.inject.Inject;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
-import io.github.cdiunit.junit4.CdiRunner;
+import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.internal.TestConfiguration;
+import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.test.beans.AImplementation1;
 import io.github.cdiunit.test.beans.AImplementation3;
 import io.github.cdiunit.test.beans.AImplementation3.StereotypeAlternative;
@@ -28,22 +29,34 @@ import io.github.cdiunit.test.beans.AInterface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(CdiRunner.class)
-@AdditionalClasses(StereotypeAlternative.class)
-public class TestAlternativeStereotype {
-    @Inject
-    private AImplementation1 impl1;
+class TestAlternativeStereotype {
 
-    @Inject
-    private AImplementation3 impl3;
+    @AdditionalClasses(StereotypeAlternative.class)
+    static class TestBean {
 
-    @Inject
-    private AInterface impl;
+        @Inject
+        private AImplementation1 impl1;
+
+        @Inject
+        private AImplementation3 impl3;
+
+        @Inject
+        private AInterface impl;
+
+        AInterface getImpl() {
+            return impl;
+        }
+
+    }
 
     @Test
-    public void testAlternativeSelected() {
+    void alternativeSelected() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
+        TestBean bean = testLifecycle.createTest(null);
 
-        assertThat(impl instanceof AImplementation3).as("Should have been impl3").isTrue();
+        assertThat(bean.getImpl()).as("selected alternative").isInstanceOf(AImplementation3.class);
+
+        testLifecycle.shutdown();
     }
 
 }
