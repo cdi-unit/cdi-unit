@@ -21,33 +21,13 @@ import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.inject.Inject;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
 
-import io.github.cdiunit.junit4.CdiJUnit;
-import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.Qualify;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-abstract class TestInstanceObserveEvents extends BaseTest {
-
-    @RunWith(CdiRunner.class)
-    public static class TestWithRunner extends TestInstanceObserveEvents {
-
-    }
-
-    public static class TestWithRule extends TestInstanceObserveEvents {
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-    }
+abstract class InstanceObserveEventsBaseTest extends BaseTest {
 
     static class TestEvent {
     }

@@ -556,7 +556,7 @@
 								<goals>
 									<goal>report</goal>
 								</goals>
-								<phase>test</phase>
+								<phase>prepare-package</phase>
 							</execution>
 							<execution>
 								<id>pre-integration-test</id>

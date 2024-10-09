@@ -15,6 +15,9 @@
  */
 package io.github.cdiunit.test.beans;
 
+import jakarta.enterprise.inject.Vetoed;
+
+@Vetoed
 public class ProducedViaField {
     public ProducedViaField(int foo) {
 

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.Conversation;
 import jakarta.enterprise.context.spi.CreationalContext;
@@ -32,97 +31,16 @@ import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import io.github.cdiunit.junit4.CdiJUnit;
-import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.*;
 import io.github.cdiunit.test.beans.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AdditionalClasses({ ESupportClass.class, ScopedFactory.class })
-abstract class TestBasicFeatures extends BaseTest {
-
-    @RunWith(CdiRunner.class)
-    public static class TestWithRunner extends TestBasicFeatures implements ProducerAccess {
-
-        @Produces
-        public ProducedViaMethod getProducedViaMethod() {
-            return new ProducedViaMethod(2);
-        }
-
-        @Mock
-        @ProducesAlternative
-        @Produces
-        private AInterface mockA;
-
-        @Mock
-        private Runnable disposeListener;
-
-        @Override
-        public AInterface mockA() {
-            return mockA;
-        }
-
-        @Override
-        public Runnable disposeListener() {
-            return disposeListener;
-        }
-
-    }
-
-    public static class TestWithRule extends TestBasicFeatures {
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-
-        @Produces
-        public ProducedViaMethod getProducesViaMethod() {
-            return new ProducedViaMethod(2);
-        }
-
-        @Inject
-        MocksProducer mocks;
-
-        @PostConstruct
-        void checkMocks() {
-            assertThat(mocks).as("mocks are expected").isNotNull();
-        }
-
-        @ApplicationScoped
-        static class MocksProducer implements ProducerAccess {
-
-            @Mock
-            private Runnable disposeListener;
-
-            @Override
-            public Runnable disposeListener() {
-                return disposeListener;
-            }
-
-            @Mock
-            private AInterface mockA;
-
-            @Override
-            @Produces
-            @ProducesAlternative
-            public AInterface mockA() {
-                return mockA;
-            }
-
-        }
-
-    }
+abstract class BasicFeaturesBaseTest extends BaseTest {
 
     interface ProducerAccess {
 
@@ -135,6 +53,8 @@ abstract class TestBasicFeatures extends BaseTest {
          * @return produced instance
          */
         Runnable disposeListener();
+
+        ProducedViaField producesViaField();
 
     }
 
@@ -176,10 +96,6 @@ abstract class TestBasicFeatures extends BaseTest {
 
     @Inject
     private Conversation conversation;
-
-    @Produces
-    private ProducedViaField producesViaField = new ProducedViaField(123);
-
     @Inject
     Instance<List<?>> generics;
 
@@ -382,7 +298,7 @@ abstract class TestBasicFeatures extends BaseTest {
     @Test
     public void testProducedViaField() {
         ProducedViaField produced = getContextualInstance(beanManager, ProducedViaField.class);
-        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producesViaField);
+        assertThat(produced).as("produced via field").isNotNull().isEqualTo(producerAccess.producesViaField());
     }
 
     @Test

@@ -22,32 +22,11 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
-import org.junit.runner.RunWith;
-
-import io.github.cdiunit.junit4.CdiJUnit;
-import io.github.cdiunit.junit4.CdiRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-abstract class TestNamingContext {
-
-    @RunWith(CdiRunner.class)
-    public static class TestWithRunner extends TestNamingContext {
-
-    }
-
-    public static class TestWithRule extends TestNamingContext {
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-    }
+abstract class NamingContextBaseTest {
 
     private static final String JNDI_BEAN_MANAGER_NAME = "java:comp/BeanManager";
 

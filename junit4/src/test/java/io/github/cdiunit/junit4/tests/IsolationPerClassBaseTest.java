@@ -19,48 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.inject.Inject;
 
-import org.junit.rules.MethodRule;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.junit.*;
 
-import io.github.cdiunit.Isolation;
-import io.github.cdiunit.IsolationLevel;
-import io.github.cdiunit.junit4.CdiJUnit;
-import io.github.cdiunit.junit4.CdiRunner;
 import io.github.cdiunit.test.beans.ApplicationCounter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-abstract class TestIsolationPerClass {
-
-    @RunWith(CdiRunner.class)
-    @Isolation(IsolationLevel.PER_CLASS)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    public static class TestWithRunner extends TestIsolationPerClass {
-
-    }
-
-    @Isolation(IsolationLevel.PER_CLASS)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    public static class TestWithRule extends TestIsolationPerClass {
-
-        @ClassRule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public static TestRule cdiUnitClass() {
-            return CdiJUnit.classRule();
-        }
-
-        @Rule
-        // Use method - not a field - for rules since test class is added to the bean archive.
-        // Weld enforces that no public fields exist in the normal scoped bean class.
-        public MethodRule cdiUnitMethod() {
-            return CdiJUnit.methodRule();
-        }
-
-    }
+abstract class IsolationPerClassBaseTest {
 
     private static final AtomicInteger counter = new AtomicInteger();
 
