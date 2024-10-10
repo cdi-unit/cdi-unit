@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>org.openrewrite.recipe</groupId>
 			<artifactId>rewrite-third-party</artifactId>
-			<version>0.9.0</version>
+			<version>0.10.0</version>
 		</dependency>
 	</dependencies>
 
