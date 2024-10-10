@@ -25,6 +25,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-web</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>cdi-unit-support-servlet</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>

@@ -114,7 +114,6 @@ abstract class BasicFeaturesBaseTest extends BaseTest {
         b1.setFoo("test"); // Force scoping
         BRequestScoped b2 = requestScoped.get();
         assertThat(b2).isEqualTo(b1);
-
     }
 
     @Test(expected = ContextNotActiveException.class)
@@ -131,7 +130,6 @@ abstract class BasicFeaturesBaseTest extends BaseTest {
         c1.setFoo("test"); // Force scoping
         CSessionScoped c2 = sessionScoped.get();
         assertThat(c2).isEqualTo(c1);
-
     }
 
     @Test(expected = ContextNotActiveException.class)

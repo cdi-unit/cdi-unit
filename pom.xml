@@ -27,9 +27,10 @@
 		<module>independent-projects/rewrite-recipes</module>
 		<module>build-parent</module>
 		<module>test-beans</module>
+		<module>core</module>
 		<module>support-servlet</module>
 		<module>support-servlet6</module>
-		<module>core</module>
+		<module>web</module>
 		<module>junit4</module>
 		<module>junit5</module>
 		<module>deltaspike</module>
