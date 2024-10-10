@@ -21,7 +21,6 @@ import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,7 @@ import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.test.beans.DConversationScoped;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TestInConversationScope {
     private TestLifecycle testLifecycle;
@@ -62,7 +62,7 @@ class TestInConversationScope {
 
     @Test
     void notActiveScope() {
-        Assertions.assertThatThrownBy(() -> testBean.expose(i -> {
+        assertThatThrownBy(() -> testBean.expose(i -> {
             DConversationScoped d1 = i.conversationScoped.get();
             d1.setFoo("test"); // Force scoping
         })).isInstanceOf(ContextNotActiveException.class);
