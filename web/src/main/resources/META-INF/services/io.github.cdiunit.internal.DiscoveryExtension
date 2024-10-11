@@ -1,0 +1,2 @@
+io.github.cdiunit.internal.jsf.ViewScopeDiscoveryExtension
+io.github.cdiunit.internal.servlet.ServletDiscoveryExtension

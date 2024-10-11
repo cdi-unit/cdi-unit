@@ -18,6 +18,8 @@ package io.github.cdiunit;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ContextException;
+import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.ServletContext;
@@ -111,7 +113,7 @@ public class ContextController {
     public HttpServletRequest openRequest() {
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest != null) {
-            throw new RuntimeException("A request is already open");
+            throw new ContextException("A request is already open");
         }
 
         HttpServletRequest request = requestProvider.get();
@@ -140,7 +142,7 @@ public class ContextController {
     public HttpServletRequest currentRequest() {
         HttpServletRequest currentRequest = requests.get();
         if (currentRequest == null) {
-            throw new RuntimeException("A request has not been opened");
+            throw new ContextNotActiveException("A request has not been opened");
         }
 
         return currentRequest;

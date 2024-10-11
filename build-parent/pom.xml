@@ -17,7 +17,7 @@
 
 	<properties>
 		<version.mockito-core>5.14.1</version.mockito-core>
-		<version.resteasy-core>6.2.10.Final</version.resteasy-core>
+		<version.resteasy>6.2.10.Final</version.resteasy>
 		<ide-config.resources.dir>${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/</ide-config.resources.dir>
 	</properties>
 
@@ -77,11 +77,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.30.2-GA</version>
-			</dependency>
-			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>1.5.9</version>
@@ -94,16 +89,11 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
 				<version>5.11.2</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter</artifactId>
-				<version>5.11.2</version>
-				<scope>test</scope>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.testng</groupId>
@@ -113,9 +103,10 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-core</artifactId>
-				<version>${version.resteasy-core}</version>
-				<scope>provided</scope>
+				<artifactId>resteasy-bom</artifactId>
+				<version>${version.resteasy}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

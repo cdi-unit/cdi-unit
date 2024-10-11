@@ -8,10 +8,10 @@
 		<relativePath>../build-parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>cdi-unit-junit4</artifactId>
+	<artifactId>cdi-unit-web</artifactId>
 
-	<name>CDI-Unit - JUnit 4 Support</name>
-	<description>CDI-Unit JUnit 4 Support.</description>
+	<name>CDI-Unit - Web Support</name>
+	<description>CDI-Unit Web Support.</description>
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
@@ -31,9 +31,13 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cdi-unit-web</artifactId>
+			<artifactId>cdi-unit-support-servlet</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cdi-unit-support-servlet6</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.enterprise</groupId>
@@ -42,19 +46,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<!-- don't leak dependency to consumers -->
-			<scope>provided</scope>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.16</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
+			<groupId>jakarta.faces</groupId>
+			<artifactId>jakarta.faces-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
@@ -69,8 +66,28 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.16</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-core</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-cdi</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>yasson</artifactId>
+			<version>3.0.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -78,10 +95,13 @@
 			<artifactId>assertj-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>jakarta.servlet</groupId>
-			<artifactId>jakarta.servlet-api</artifactId>
-			<version>6.0.0</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
 		</dependency>
 	</dependencies>
 

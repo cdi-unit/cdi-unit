@@ -15,16 +15,27 @@
  */
 package io.github.cdiunit.internal.jaxrs;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletResponse;
 
-import jakarta.inject.Qualifier;
+import org.jboss.resteasy.cdi.ContextProducers;
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
-public @interface JaxRsQualifier {
+import io.github.cdiunit.AdditionalClasses;
+import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
+
+@AdditionalClasses(ContextProducers.class)
+public class JaxRsProducers {
+
+    @Inject
+    @CdiUnitServlet
+    HttpServletResponse servletResponse;
+
+    @Produces
+    @RequestScoped
+    public HttpServletResponse getHttpServletResponse() {
+        return servletResponse;
+    }
 
 }
