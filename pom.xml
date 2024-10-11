@@ -36,8 +36,9 @@
 		<module>deltaspike</module>
 		<module>testng</module>
 		<module>spock</module>
-		<module>integration-tests</module>
 		<module>cdi-unit</module>
+		<module>bom</module>
+		<module>integration-tests</module>
 		<module>relocations/cdi-unit</module>
 	</modules>
 
