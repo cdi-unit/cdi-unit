@@ -18,6 +18,7 @@ package io.github.cdiunit.internal.jaxrs;
 import java.util.function.Consumer;
 
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.configurator.AnnotatedFieldConfigurator;
@@ -25,6 +26,7 @@ import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 
+@Vetoed
 public class JaxRsExtension implements Extension {
 
     public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {

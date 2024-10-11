@@ -16,16 +16,15 @@
 package io.github.cdiunit.internal.jsf;
 
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
-import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 
+@Vetoed
 public class ViewScopeExtension implements Extension {
-    public ViewScopeExtension() {
 
-    }
-
-    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager manager) {
+    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event) {
         event.addContext(new ViewContext());
     }
+
 }
