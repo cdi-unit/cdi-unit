@@ -28,10 +28,9 @@ import jakarta.ws.rs.core.Context;
 public class JaxRsExtension implements Extension {
 
     public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-        final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> {
-            field.add(new AnnotationLiteral<Inject>() {
-            });
-        };
+        final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> field
+                .add(new AnnotationLiteral<Inject>() {
+                });
         pat.configureAnnotatedType()
                 .filterFields(f -> f.isAnnotationPresent(Context.class))
                 .forEach(annotateField);
