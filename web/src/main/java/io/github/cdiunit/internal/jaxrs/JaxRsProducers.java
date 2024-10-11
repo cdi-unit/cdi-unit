@@ -16,45 +16,17 @@
 package io.github.cdiunit.internal.jaxrs;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Request;
-import jakarta.ws.rs.core.SecurityContext;
-import jakarta.ws.rs.core.UriInfo;
-import jakarta.ws.rs.ext.Providers;
 
-import org.jboss.resteasy.plugins.server.servlet.ServletUtil;
-import org.mockito.Mockito;
+import org.jboss.resteasy.cdi.ContextProducers;
 
-import io.github.cdiunit.ContextController;
+import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.internal.servlet.common.CdiUnitServlet;
 
+@AdditionalClasses(ContextProducers.class)
 public class JaxRsProducers {
-    @Inject
-    @CdiUnitServlet
-    ServletContext servletContext;
-
-    @Produces
-    @JaxRsQualifier
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
-
-    @Inject
-    ContextController contextController;
-
-    @Produces
-    @RequestScoped
-    @JaxRsQualifier
-    public HttpServletRequest getHttpServletRequest() {
-        return contextController.currentRequest();
-    }
 
     @Inject
     @CdiUnitServlet
@@ -62,51 +34,8 @@ public class JaxRsProducers {
 
     @Produces
     @RequestScoped
-    @JaxRsQualifier
     public HttpServletResponse getHttpServletResponse() {
         return servletResponse;
-    }
-
-    @Produces
-    @SessionScoped
-    @JaxRsQualifier
-    public HttpSession getHttpSession() {
-        return contextController.currentRequest().getSession();
-    }
-
-    @Produces
-    @JaxRsQualifier
-    public SecurityContext getSecurityContext() {
-        return Mockito.mock(SecurityContext.class);
-    }
-
-    @Produces
-    @RequestScoped
-    @JaxRsQualifier
-    public Request getRequest() {
-        return new RequestImpl(getHttpServletRequest(), getHttpServletResponse());
-    }
-
-    @Produces
-    @RequestScoped
-    @JaxRsQualifier
-    public UriInfo getUriInfo() {
-        return ServletUtil.extractUriInfo(getHttpServletRequest(), "");
-
-    }
-
-    @Produces
-    @RequestScoped
-    @JaxRsQualifier
-    public HttpHeaders getHttpHeaders() {
-        return ServletUtil.extractHttpHeaders(getHttpServletRequest());
-    }
-
-    @Produces
-    @RequestScoped
-    @JaxRsQualifier
-    public Providers getProviders() {
-        return Mockito.mock(Providers.class);
     }
 
 }

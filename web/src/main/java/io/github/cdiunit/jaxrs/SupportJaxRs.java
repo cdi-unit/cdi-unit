@@ -24,8 +24,6 @@ import io.github.cdiunit.internal.jaxrs.JaxRsProducers;
 
 /**
  * Enable support for JaxRs mocking.
- *
- *
  */
 @AdditionalClasses({ JaxRsExtension.class, JaxRsProducers.class })
 @Retention(RetentionPolicy.RUNTIME)

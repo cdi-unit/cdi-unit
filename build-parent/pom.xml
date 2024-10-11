@@ -17,7 +17,7 @@
 
 	<properties>
 		<version.mockito-core>5.14.1</version.mockito-core>
-		<version.resteasy-core>6.2.10.Final</version.resteasy-core>
+		<version.resteasy>6.2.10.Final</version.resteasy>
 		<ide-config.resources.dir>${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/</ide-config.resources.dir>
 	</properties>
 
@@ -113,9 +113,10 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
-				<artifactId>resteasy-core</artifactId>
-				<version>${version.resteasy-core}</version>
-				<scope>provided</scope>
+				<artifactId>resteasy-bom</artifactId>
+				<version>${version.resteasy}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

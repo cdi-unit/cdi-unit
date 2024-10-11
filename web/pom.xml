@@ -77,7 +77,12 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-core</artifactId>
-			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-cdi</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse</groupId>

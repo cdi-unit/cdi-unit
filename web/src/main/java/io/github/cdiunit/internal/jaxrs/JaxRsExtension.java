@@ -31,8 +31,6 @@ public class JaxRsExtension implements Extension {
         final Consumer<AnnotatedFieldConfigurator<? super T>> annotateField = field -> {
             field.add(new AnnotationLiteral<Inject>() {
             });
-            field.add(new AnnotationLiteral<JaxRsQualifier>() {
-            });
         };
         pat.configureAnnotatedType()
                 .filterFields(f -> f.isAnnotationPresent(Context.class))
