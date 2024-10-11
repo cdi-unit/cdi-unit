@@ -23,16 +23,6 @@
 			<artifactId>jakarta.ejb-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cdi-unit-support-servlet</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cdi-unit-support-servlet6</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
 		</dependency>

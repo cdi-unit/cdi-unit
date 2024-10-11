@@ -13,7 +13,7 @@
 	<packaging>pom</packaging>
 
 	<name>CDI-Unit - Maven Import (BOM)</name>
-	<description/>
+	<description />
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
