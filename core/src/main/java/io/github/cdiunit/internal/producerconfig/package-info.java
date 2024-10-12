@@ -13,4 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Vetoed
 package io.github.cdiunit.internal.producerconfig;
+
+import jakarta.enterprise.inject.Vetoed;

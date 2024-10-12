@@ -39,16 +39,10 @@ public class ProducerConfigExtension implements Extension {
     private final TestConfiguration testConfiguration;
     private final Map<Class<? extends Annotation>, Map<Method, Annotation>> configurations = new HashMap<>();
 
-    @SuppressWarnings("unused")
-    public ProducerConfigExtension() {
-        this(null);
-    }
-
     public ProducerConfigExtension(TestConfiguration testConfiguration) {
         this.testConfiguration = testConfiguration;
     }
 
-    @SuppressWarnings("unused")
     void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) throws Exception {
         var testClass = testConfiguration.getTestClass();
         while (!Object.class.equals(testClass)) {
