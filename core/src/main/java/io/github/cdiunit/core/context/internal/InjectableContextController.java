@@ -72,7 +72,7 @@ class InjectableContextController<T extends Annotation> implements ContextContro
     }
 
     @Override
-    public Class<? extends T> getScopeType() {
+    public Class<? extends T> getScope() {
         return scopeType;
     }
 
