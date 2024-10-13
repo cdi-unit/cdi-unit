@@ -28,9 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.github.cdiunit.ActivateScopes;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.activatescopes.Scopes;
 
 import static org.assertj.core.api.Assertions.*;
 

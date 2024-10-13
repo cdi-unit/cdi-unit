@@ -29,11 +29,11 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import org.testng.annotations.Listeners;
 import org.testng.*;
 
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.Scopes;
 import io.github.cdiunit.testng.internal.InvokeInterceptors;
 
 public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {

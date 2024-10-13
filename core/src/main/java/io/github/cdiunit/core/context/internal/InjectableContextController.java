@@ -29,13 +29,13 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 
 import io.github.cdiunit.core.context.ContextController;
-import io.github.cdiunit.internal.activatescopes.Scopes;
+import io.github.cdiunit.core.context.Scopes;
 
 @Dependent
 class InjectableContextController<T extends Annotation> implements ContextController<T> {
 
     private final BeanManager beanManager;
-    private final ContextTrackerExtension contextTrackerExtension;
+    private final ContextTracker contextTracker;
     private final Class<? extends T> scopeType;
     private final Delegate delegate;
 
@@ -44,10 +44,10 @@ class InjectableContextController<T extends Annotation> implements ContextContro
     @Inject
     public InjectableContextController(BeanManager beanManager,
             InjectionPoint injectionPoint,
-            ContextTrackerExtension contextTrackerExtension,
+            ContextTracker contextTracker,
             RequestContextController requestContextController) {
         this.beanManager = beanManager;
-        this.contextTrackerExtension = contextTrackerExtension;
+        this.contextTracker = contextTracker;
         this.scopeType = Optional.ofNullable(injectionPoint).map(this::extractScopeType).orElse(null);
         if (RequestScoped.class.equals(scopeType)) {
             this.delegate = new RequestContextControllerDelegate(requestContextController);
@@ -78,7 +78,7 @@ class InjectableContextController<T extends Annotation> implements ContextContro
 
     @Override
     public boolean isActive() {
-        return contextTrackerExtension.isActive(scopeType);
+        return contextTracker.isActive(scopeType);
     }
 
     @Override

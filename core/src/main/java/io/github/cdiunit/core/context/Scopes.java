@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+package io.github.cdiunit.core.context;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -51,7 +51,7 @@ public final class Scopes {
         return new Scopes(Set.of(scopeTypes));
     }
 
-    boolean contains(Class<? extends Annotation> scopeType) {
+    public boolean contains(Class<? extends Annotation> scopeType) {
         return scopeTypes.contains(scopeType);
     }
 

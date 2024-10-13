@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 
 import io.github.cdiunit.AdditionalScopes;
 import io.github.cdiunit.core.context.ContextController;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.activatescopes.Scopes;
 import io.github.cdiunit.test.beans.BRequestScoped;
 import io.github.cdiunit.test.beans.CSessionScoped;
 

@@ -20,9 +20,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.runners.model.Statement;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.Scopes;
 
 public class ActivateScopes extends Statement {
 

@@ -5,6 +5,6 @@ io.github.cdiunit.internal.easymock.EasyMockDiscoveryExtension
 io.github.cdiunit.internal.IgnoredClassesDiscoveryExtension
 io.github.cdiunit.internal.CdiDiscoveryExtension
 io.github.cdiunit.internal.CdiUnitDiscoveryExtension
-io.github.cdiunit.internal.activatescopes.ActivateScopesDiscoveryExtension
+io.github.cdiunit.core.context.internal.ActivateScopesDiscoveryExtension
 io.github.cdiunit.internal.naming.NamingDiscoveryExtension
 io.github.cdiunit.internal.events.EventsForwardingDiscoveryExtension

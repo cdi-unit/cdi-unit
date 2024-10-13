@@ -27,7 +27,7 @@ import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.*;
 
 @Vetoed
-public class ContextTrackerExtension implements Extension {
+public class ContextTracker implements Extension {
 
     // one active context per scope per thread
     private final ThreadLocal<Set<Object>> activeContexts = ThreadLocal.withInitial(HashSet::new);
@@ -39,7 +39,7 @@ public class ContextTrackerExtension implements Extension {
             ApplicationScoped.class,
             ConversationScoped.class));
 
-    public ContextTrackerExtension(Set<Class<? extends Annotation>> scopeTypes) {
+    public ContextTracker(Set<Class<? extends Annotation>> scopeTypes) {
         this.scopeTypes.addAll(scopeTypes);
     }
 

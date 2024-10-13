@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+package io.github.cdiunit.core.context.internal;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -26,13 +26,15 @@ import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 
+import io.github.cdiunit.core.context.Scopes;
+
 @Vetoed
-public class ScopesExtension implements Extension {
+public class ContextActivator implements Extension {
 
     private final Set<Class<? extends Annotation>> scopes;
     private List<CdiContext> contexts = List.of();
 
-    public ScopesExtension(Set<Class<? extends Annotation>> scopes) {
+    public ContextActivator(Set<Class<? extends Annotation>> scopes) {
         this.scopes = scopes;
     }
 
