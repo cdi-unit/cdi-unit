@@ -28,9 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.github.cdiunit.ActivateScopes;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -69,19 +69,19 @@ class TestActivateScopes {
         BeanManager beanManager;
 
         void activateRequestScope() {
-            ScopesHelper.activateContexts(beanManager, requestScopedBinding);
+            Scopes.ofTarget(requestScopedBinding).activateContexts(beanManager);
         }
 
         void deactivateRequestScope() {
-            ScopesHelper.deactivateContexts(beanManager, requestScopedBinding);
+            Scopes.ofTarget(requestScopedBinding).deactivateContexts(beanManager);
         }
 
         void activateSessionScope() {
-            ScopesHelper.activateContexts(beanManager, sessionScopedBinding);
+            Scopes.ofTarget(sessionScopedBinding).activateContexts(beanManager);
         }
 
         void deactivateSessionScope() {
-            ScopesHelper.deactivateContexts(beanManager, sessionScopedBinding);
+            Scopes.ofTarget(sessionScopedBinding).deactivateContexts(beanManager);
         }
 
         @Inject

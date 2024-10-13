@@ -64,7 +64,7 @@ public class CdiJUnit5Extension implements TestInstanceFactory,
             if (explicitInterceptorInvocation()) {
                 invocation = new InvokeInterceptors(invocation, invocationContext, this);
             }
-            invocation = new ActivateScopes(invocation, this, contextsActivated, this::getBeanManager);
+            invocation = new ActivateScopes(invocation, this, contextsActivated);
             invocation.proceed();
         }
 

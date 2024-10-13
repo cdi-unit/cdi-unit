@@ -22,9 +22,9 @@ import org.spockframework.runtime.extension.IMethodInvocation;
 import org.spockframework.runtime.extension.IStore;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 public class ActivateScopes implements IMethodInterceptor {
 
@@ -49,16 +49,17 @@ public class ActivateScopes implements IMethodInterceptor {
         final var contextsActivated = store.getOrComputeIfAbsent(testLifecycle, c -> new AtomicBoolean());
         final var isolationLevel = testLifecycle.getIsolationLevel();
         final var beanManager = testLifecycle.getBeanManager();
+        final var scopes = Scopes.ofTarget(method);
         try {
             if (!contextsActivated.get()) {
-                ScopesHelper.activateContexts(beanManager, method);
+                scopes.activateContexts(beanManager);
                 contextsActivated.set(true);
             }
             invocation.proceed();
         } finally {
             if (contextsActivated.get() && isolationLevel == IsolationLevel.PER_METHOD) {
                 contextsActivated.set(false);
-                ScopesHelper.deactivateContexts(beanManager, method);
+                scopes.deactivateContexts(beanManager);
             }
         }
     }

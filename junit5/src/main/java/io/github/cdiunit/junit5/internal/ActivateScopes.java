@@ -16,46 +16,43 @@
 package io.github.cdiunit.junit5.internal;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
-
-import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 
 import io.github.cdiunit.IsolationLevel;
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 public class ActivateScopes implements InvocationInterceptor.Invocation<Void> {
 
     private final InvocationInterceptor.Invocation<Void> next;
     private final TestLifecycle testLifecycle;
     private final AtomicBoolean contextsActivated;
-    private final Supplier<BeanManager> beanManager;
 
     public ActivateScopes(InvocationInterceptor.Invocation<Void> next, TestLifecycle testLifecycle,
-            AtomicBoolean contextsActivated, Supplier<BeanManager> beanManager) {
+            AtomicBoolean contextsActivated) {
         this.next = next;
         this.testLifecycle = testLifecycle;
         this.contextsActivated = contextsActivated;
-        this.beanManager = beanManager;
     }
 
     @Override
     public Void proceed() throws Throwable {
         final var method = TestMethodHolder.getRequired();
         final var isolationLevel = testLifecycle.getIsolationLevel();
+        final var scopes = Scopes.ofTarget(method);
+        final var beanManager = testLifecycle.getBeanManager();
         try {
             if (!contextsActivated.get()) {
-                ScopesHelper.activateContexts(beanManager.get(), method);
+                scopes.activateContexts(beanManager);
                 contextsActivated.set(true);
             }
             return next.proceed();
         } finally {
             if (contextsActivated.get() && isolationLevel == IsolationLevel.PER_METHOD) {
                 contextsActivated.set(false);
-                ScopesHelper.deactivateContexts(beanManager.get(), method);
+                scopes.deactivateContexts(beanManager);
             }
         }
     }

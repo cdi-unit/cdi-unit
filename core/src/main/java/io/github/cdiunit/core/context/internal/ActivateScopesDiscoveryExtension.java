@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+package io.github.cdiunit.core.context.internal;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import io.github.cdiunit.ActivateScopes;
 import io.github.cdiunit.internal.DiscoveryExtension;
@@ -34,13 +31,10 @@ import io.github.cdiunit.internal.DiscoveryExtension;
  */
 public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
 
-    private final Set<Class<? extends Annotation>> scopes = new LinkedHashSet<>();
-
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {
         bdc.discoverClass(this::discoverClass);
         bdc.discoverMethod(this::discoverMethod);
-        bdc.afterDiscovery(this::afterDiscovery);
     }
 
     private void discoverClass(Context context, Class<?> cls) {
@@ -58,7 +52,7 @@ public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
             return;
         }
 
-        Arrays.stream(activateScopes.value()).forEach(scopes::add);
+        Arrays.stream(activateScopes.value()).forEach(context::scope);
     }
 
     private void discover(Context context, ActivateScopes.All activateScopes) {
@@ -67,12 +61,6 @@ public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
         }
 
         Arrays.stream(activateScopes.value()).forEach(scope -> discover(context, scope));
-    }
-
-    private void afterDiscovery(Context context) {
-        if (!scopes.isEmpty()) {
-            context.extension(new ScopesExtension(scopes));
-        }
     }
 
 }

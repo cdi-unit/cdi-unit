@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+package io.github.cdiunit.core.context;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.stream.Collectors;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.Vetoed;
-import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Qualifier;
 
@@ -36,39 +34,56 @@ import io.github.cdiunit.ActivateScopes;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Vetoed
-public class ScopesExtension implements Extension {
+public final class Scopes {
 
-    private final Set<Class<? extends Annotation>> scopes;
-    private List<CdiContext> contexts = List.of();
+    private final Set<Class<? extends Annotation>> scopeTypes;
 
-    public ScopesExtension(Set<Class<? extends Annotation>> scopes) {
-        this.scopes = scopes;
+    private Scopes(Collection<Class<? extends Annotation>> scopeTypes) {
+        this.scopeTypes = Set.copyOf(scopeTypes);
     }
 
-    void onAfterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager beanManager) {
-        if (scopes == null) {
-            return;
-        }
-
-        contexts = scopes.stream()
-                .map(scope -> new CdiContext(scope, beanManager))
-                .collect(Collectors.toList());
-        contexts.forEach(event::addContext);
+    public static Scopes ofTarget(Object target) {
+        return new Scopes(collectScopes(target));
     }
 
-    void onActivateContexts(@Observes @ActivateContexts Object event) {
-        var targetScopes = collectScopes(event);
-        contexts.stream().filter(o -> targetScopes.contains(o.getScope())).forEach(CdiContext::activate);
+    @SafeVarargs
+    public static Scopes of(Class<? extends Annotation>... scopeTypes) {
+        return new Scopes(Set.of(scopeTypes));
     }
 
-    void onDeactivateContexts(@Observes @DeactivateContexts Object event) {
-        var targetScopes = collectScopes(event);
-        contexts.stream().filter(o -> targetScopes.contains(o.getScope())).forEach(CdiContext::deactivate);
+    public boolean contains(Class<? extends Annotation> scopeType) {
+        return scopeTypes.contains(scopeType);
     }
 
-    private Collection<Class<? extends Annotation>> collectScopes(Object target) {
+    public Scopes activateContexts(BeanManager beanManager) {
+        beanManager.getEvent()
+                .select(ActivateContexts.Literal.INSTANCE)
+                .fire(this);
+        return this;
+    }
+
+    public Scopes deactivateContexts(BeanManager beanManager) {
+        beanManager.getEvent()
+                .select(DeactivateContexts.Literal.INSTANCE)
+                .fire(this);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Collection<Class<? extends Annotation>> collectScopes(Object target) {
         final Set<Class<? extends Annotation>> targetScopes = new LinkedHashSet<>();
+        if (target instanceof Class) {
+            final var cls = (Class<?>) target;
+            if (cls.isAnnotation()) {
+                targetScopes.add((Class<? extends Annotation>) cls);
+            } else {
+                collectScopes(cls, targetScopes);
+            }
+        }
+        if (target instanceof Collection) {
+            targetScopes.addAll((Collection<Class<? extends Annotation>>) target);
+            return targetScopes;
+        }
         if (target instanceof Method) {
             final var method = (Method) target;
             collectScopes(method, targetScopes);
@@ -79,7 +94,7 @@ public class ScopesExtension implements Extension {
         return targetScopes;
     }
 
-    private void collectScopes(AnnotatedElement target, Set<Class<? extends Annotation>> scopes) {
+    private static void collectScopes(AnnotatedElement target, Set<Class<? extends Annotation>> scopes) {
         if (target == null) {
             return;
         }
@@ -95,7 +110,7 @@ public class ScopesExtension implements Extension {
     @Retention(RUNTIME)
     @Target(PARAMETER)
     @Qualifier
-    @interface ActivateContexts {
+    public @interface ActivateContexts {
 
         final class Literal extends AnnotationLiteral<ActivateContexts> implements ActivateContexts {
 
@@ -110,7 +125,7 @@ public class ScopesExtension implements Extension {
     @Retention(RUNTIME)
     @Target(PARAMETER)
     @Qualifier
-    @interface DeactivateContexts {
+    public @interface DeactivateContexts {
 
         final class Literal extends AnnotationLiteral<DeactivateContexts> implements DeactivateContexts {
 
@@ -121,5 +136,4 @@ public class ScopesExtension implements Extension {
         }
 
     }
-
 }

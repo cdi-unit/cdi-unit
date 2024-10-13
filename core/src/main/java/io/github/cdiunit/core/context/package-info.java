@@ -13,4 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+@QuietDiscovery
+package io.github.cdiunit.core.context;
+
+import io.github.cdiunit.internal.QuietDiscovery;

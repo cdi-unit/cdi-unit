@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.activatescopes;
+package io.github.cdiunit.core.context.internal;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
+import jakarta.enterprise.context.BeforeDestroyed;
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.Destroyed;
 import jakarta.enterprise.context.Initialized;
@@ -43,6 +45,13 @@ class CdiContext implements Context {
     CdiContext(Class<? extends Annotation> scope, BeanManager beanManager) {
         this.scope = scope;
         this.beanManager = beanManager;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", CdiContext.class.getSimpleName() + "[", "]")
+                .add("scope=" + scope)
+                .toString();
     }
 
     @Override
@@ -84,7 +93,7 @@ class CdiContext implements Context {
      */
     public void activate() {
         currentContext.set(new HashMap<>());
-        beanManager.getEvent().select(Initialized.Literal.of(scope)).fire(new Object());
+        beanManager.getEvent().select(Initialized.Literal.of(scope)).fire(toString());
     }
 
     /**
@@ -95,6 +104,7 @@ class CdiContext implements Context {
         if (ctx == null) {
             return;
         }
+        beanManager.getEvent().select(BeforeDestroyed.Literal.of(scope)).fire(toString());
         for (ContextualInstance<?> instance : ctx.values()) {
             try {
                 instance.destroy();
@@ -104,7 +114,7 @@ class CdiContext implements Context {
         }
         ctx.clear();
         currentContext.remove();
-        beanManager.getEvent().select(Destroyed.Literal.of(scope)).fire(new Object());
+        beanManager.getEvent().select(Destroyed.Literal.of(scope)).fire(toString());
     }
 
     /**

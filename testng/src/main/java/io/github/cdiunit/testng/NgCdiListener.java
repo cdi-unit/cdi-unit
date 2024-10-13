@@ -24,14 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import jakarta.enterprise.inject.spi.BeanManager;
+
 import org.testng.annotations.Listeners;
 import org.testng.*;
 
+import io.github.cdiunit.core.context.Scopes;
 import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 import io.github.cdiunit.testng.internal.InvokeInterceptors;
 
 public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {
@@ -49,10 +51,18 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
         protected void afterConfigure(Class<?> testClass, Object testInstance) throws Throwable {
             super.afterConfigure(testClass, testInstance);
 
-            addBeforeMethod(testLifecycle -> ScopesHelper.activateContexts(testLifecycle.getBeanManager(),
-                    TestMethodHolder.getRequired()));
-            addAfterMethod(testLifecycle -> ScopesHelper.deactivateContexts(testLifecycle.getBeanManager(),
-                    TestMethodHolder.getRequired()));
+            addBeforeMethod(testLifecycle -> {
+                BeanManager beanManager = testLifecycle.getBeanManager();
+                Object target = TestMethodHolder.getRequired();
+                final var scopes = Scopes.ofTarget(target);
+                scopes.activateContexts(beanManager);
+            });
+            addAfterMethod(testLifecycle -> {
+                BeanManager beanManager = testLifecycle.getBeanManager();
+                Object target = TestMethodHolder.getRequired();
+                final var scopes = Scopes.ofTarget(target);
+                scopes.deactivateContexts(beanManager);
+            });
         }
 
     }
