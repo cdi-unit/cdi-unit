@@ -18,10 +18,9 @@ package io.github.cdiunit.internal.activatescopes;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.*;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Vetoed;
@@ -30,8 +29,6 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Qualifier;
-
-import io.github.cdiunit.ActivateScopes;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -57,39 +54,12 @@ public class ScopesExtension implements Extension {
         contexts.forEach(event::addContext);
     }
 
-    void onActivateContexts(@Observes @ActivateContexts Object event) {
-        var targetScopes = collectScopes(event);
-        contexts.stream().filter(o -> targetScopes.contains(o.getScope())).forEach(CdiContext::activate);
+    void observeScopesActivate(@Observes @ActivateContexts Scopes scopes) {
+        contexts.stream().filter(o -> scopes.contains(o.getScope())).forEach(CdiContext::activate);
     }
 
-    void onDeactivateContexts(@Observes @DeactivateContexts Object event) {
-        var targetScopes = collectScopes(event);
-        contexts.stream().filter(o -> targetScopes.contains(o.getScope())).forEach(CdiContext::deactivate);
-    }
-
-    private Collection<Class<? extends Annotation>> collectScopes(Object target) {
-        final Set<Class<? extends Annotation>> targetScopes = new LinkedHashSet<>();
-        if (target instanceof Method) {
-            final var method = (Method) target;
-            collectScopes(method, targetScopes);
-            collectScopes(method.getDeclaringClass(), targetScopes);
-        } else {
-            collectScopes(target.getClass(), targetScopes);
-        }
-        return targetScopes;
-    }
-
-    private void collectScopes(AnnotatedElement target, Set<Class<? extends Annotation>> scopes) {
-        if (target == null) {
-            return;
-        }
-        Arrays.stream(target.getAnnotationsByType(ActivateScopes.class))
-                .flatMap(o -> Arrays.stream(o.value()))
-                .forEachOrdered(scopes::add);
-        Arrays.stream(target.getAnnotationsByType(ActivateScopes.All.class))
-                .flatMap(o -> Arrays.stream(o.value()))
-                .flatMap(o -> Arrays.stream(o.value()))
-                .forEachOrdered(scopes::add);
+    void observeScopesDeactivate(@Observes @DeactivateContexts Scopes scopes) {
+        contexts.stream().filter(o -> scopes.contains(o.getScope())).forEach(CdiContext::deactivate);
     }
 
     @Retention(RUNTIME)

@@ -24,14 +24,17 @@ import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.control.RequestContextController;
+import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 
 import io.github.cdiunit.core.context.ContextController;
+import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 
 @Dependent
 class InjectableContextController<T extends Annotation> implements ContextController<T> {
 
+    private final BeanManager beanManager;
     private final ContextTrackerExtension contextTrackerExtension;
     private final Class<? extends T> scopeType;
     private final Delegate delegate;
@@ -39,15 +42,17 @@ class InjectableContextController<T extends Annotation> implements ContextContro
     private boolean isActivator;
 
     @Inject
-    public InjectableContextController(InjectionPoint injectionPoint,
+    public InjectableContextController(BeanManager beanManager,
+            InjectionPoint injectionPoint,
             ContextTrackerExtension contextTrackerExtension,
             RequestContextController requestContextController) {
+        this.beanManager = beanManager;
         this.contextTrackerExtension = contextTrackerExtension;
         this.scopeType = Optional.ofNullable(injectionPoint).map(this::extractScopeType).orElse(null);
         if (RequestScoped.class.equals(scopeType)) {
             this.delegate = new RequestContextControllerDelegate(requestContextController);
         } else {
-            this.delegate = null;
+            this.delegate = new ScopesHelperDelegate();
         }
     }
 
@@ -118,6 +123,21 @@ class InjectableContextController<T extends Annotation> implements ContextContro
         @Override
         public void deactivate(Class<? extends Annotation> scopeType) throws ContextNotActiveException {
             requestContextController.deactivate();
+        }
+
+    }
+
+    class ScopesHelperDelegate implements Delegate {
+
+        @Override
+        public boolean activate(Class<? extends Annotation> scopeType) {
+            ScopesHelper.activateContexts(beanManager, scopeType);
+            return isActive();
+        }
+
+        @Override
+        public void deactivate(Class<? extends Annotation> scopeType) throws ContextNotActiveException {
+            ScopesHelper.deactivateContexts(beanManager, scopeType);
         }
 
     }

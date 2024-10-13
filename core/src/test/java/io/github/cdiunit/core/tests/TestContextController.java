@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.context.control.RequestContextController;
 import jakarta.inject.Inject;
@@ -27,10 +28,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.github.cdiunit.AdditionalScopes;
 import io.github.cdiunit.core.context.ContextController;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
+import io.github.cdiunit.internal.activatescopes.ScopesHelper;
 import io.github.cdiunit.test.beans.BRequestScoped;
+import io.github.cdiunit.test.beans.CSessionScoped;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -57,7 +61,7 @@ class TestContextController {
             assertThat(i.requestContextController)
                     .as("requestContextController")
                     .isNotNull();
-            assertThat(i.contextController)
+            assertThat(i.requestContext)
                     .as("contextController")
                     .isNotNull();
         });
@@ -66,11 +70,11 @@ class TestContextController {
     @Test
     void requestContextControl() {
         testBean.expose(i -> {
-            assertThat(i.contextController.isActive())
+            assertThat(i.requestContext.isActive())
                     .as("is active")
                     .isFalse();
 
-            assertThat(i.contextController.activate())
+            assertThat(i.requestContext.activate())
                     .as("activate with ContextController")
                     .isTrue();
 
@@ -78,19 +82,19 @@ class TestContextController {
                     .as("activate with RequestContextController")
                     .isFalse();
 
-            assertThat(i.contextController.isActive())
+            assertThat(i.requestContext.isActive())
                     .as("is active")
                     .isTrue();
 
             assertThatNoException()
                     .as("deactivate with ContextController")
-                    .isThrownBy(i.contextController::deactivate);
+                    .isThrownBy(i.requestContext::deactivate);
 
             assertThatExceptionOfType(ContextNotActiveException.class)
                     .as("deactivate with RequestContextController")
                     .isThrownBy(i.requestContextController::deactivate);
 
-            assertThat(i.contextController.isActive())
+            assertThat(i.requestContext.isActive())
                     .as("is active")
                     .isFalse();
         });
@@ -98,7 +102,7 @@ class TestContextController {
 
     @Test
     void activateRequestContext() {
-        testBean.exposeInScope(i -> {
+        testBean.exposeInRequestScope(i -> {
             assertThat(i.requestContextController.activate())
                     .as("context is active")
                     .isFalse();
@@ -112,23 +116,77 @@ class TestContextController {
         });
     }
 
+    @Test
+    void sessionContextControl() {
+        testBean.expose(i -> {
+            assertThat(i.sessionContext.isActive())
+                    .as("is active")
+                    .isFalse();
+
+            assertThat(i.sessionContext.activate())
+                    .as("activate with ContextController")
+                    .isTrue();
+
+            assertThatNoException()
+                    .as("access SessionScoped bean")
+                    .isThrownBy(i.sessionScoped::getFoo);
+
+            assertThatNoException()
+                    .as("deactivate with ContextController")
+                    .isThrownBy(i.sessionContext::deactivate);
+
+            assertThat(i.sessionContext.isActive())
+                    .as("is active")
+                    .isFalse();
+
+            assertThatExceptionOfType(ContextNotActiveException.class)
+                    .as("access SessionScoped bean")
+                    .isThrownBy(i.sessionScoped::getFoo);
+        });
+    }
+
+    @Test
+    void activateSessionContext() {
+        ScopesHelper.activateContexts(testLifecycle.getBeanManager(), SessionScoped.class);
+        testBean.expose(i -> {
+            assertThat(i.sessionContext.activate())
+                    .as("context is active")
+                    .isFalse();
+
+            assertThatNoException().isThrownBy(i.sessionScoped::getFoo);
+
+            assertThatNoException()
+                    .isThrownBy(i.sessionContext::deactivate);
+
+            assertThatNoException().isThrownBy(i.sessionScoped::getFoo);
+        });
+        ScopesHelper.deactivateContexts(testLifecycle.getBeanManager(), SessionScoped.class);
+    }
+
+    @AdditionalScopes(SessionScoped.class)
     static class TestBean {
 
         @Inject
         RequestContextController requestContextController;
 
         @Inject
-        ContextController<RequestScoped> contextController;
+        ContextController<RequestScoped> requestContext;
 
         @Inject
         BRequestScoped requestScoped;
+
+        @Inject
+        ContextController<SessionScoped> sessionContext;
+
+        @Inject
+        CSessionScoped sessionScoped;
 
         void expose(Consumer<TestBean> consumer) {
             consumer.accept(this);
         }
 
         @ActivateRequestContext
-        void exposeInScope(Consumer<TestBean> consumer) {
+        void exposeInRequestScope(Consumer<TestBean> consumer) {
             consumer.accept(this);
         }
 
