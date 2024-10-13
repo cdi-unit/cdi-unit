@@ -50,6 +50,7 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         discover(context, cls.getAnnotation(AdditionalPackages.class));
         discover(context, cls.getAnnotation(AdditionalClasses.class));
         discover(context, cls.getAnnotation(AdditionalScopes.class));
+        discover(context, cls.getAnnotation(AdditionalScopes.All.class));
         discover(context, cls.getAnnotation(ActivatedAlternatives.class));
         discover(context, cls.getAnnotations());
         discover(context, cls.getGenericSuperclass());
@@ -86,6 +87,13 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
             return;
         }
         Arrays.stream(additionalScopes.value()).forEach(context::scope);
+    }
+
+    private void discover(Context context, AdditionalScopes.All additionalScopes) {
+        if (additionalScopes == null) {
+            return;
+        }
+        Arrays.stream(additionalScopes.value()).forEach(scope -> discover(context, scope));
     }
 
     private void discover(Context context, ActivatedAlternatives alternativeClasses) {
