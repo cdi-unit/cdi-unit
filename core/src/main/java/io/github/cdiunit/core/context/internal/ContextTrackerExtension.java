@@ -49,6 +49,10 @@ public class ContextTrackerExtension implements Extension {
         }
     }
 
+    void observeBeforeShutdown(@Observes BeforeShutdown bs) {
+        activeContexts.remove();
+    }
+
     void observeAfterBeanDiscovery(@Observes AfterBeanDiscovery abd) {
         scopeTypes.forEach(scopeType -> configureScopeObservers(abd, scopeType));
     }
