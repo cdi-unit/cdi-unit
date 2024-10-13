@@ -67,7 +67,12 @@ class InjectableContextController<T extends Annotation> implements ContextContro
             throw new IllegalStateException(String.format("Annotation type is expected, but got %s", classArgument));
         }
         @SuppressWarnings("unchecked")
-        Class<? extends T> scopeType = (Class<? extends T>) classArgument;
+        final Class<? extends T> result = (Class<? extends T>) classArgument;
+        return result;
+    }
+
+    @Override
+    public Class<? extends T> getScopeType() {
         return scopeType;
     }
 

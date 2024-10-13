@@ -44,8 +44,14 @@ import jakarta.enterprise.context.ContextNotActiveException;
  *
  * @param <T> an annotation representing the scope
  */
-
 public interface ContextController<T extends Annotation> {
+
+    /**
+     * Context scope type.
+     *
+     * @return context scope type.
+     */
+    Class<? extends T> getScopeType();
 
     /**
      * Indicates whether there is an active context for a given scope.

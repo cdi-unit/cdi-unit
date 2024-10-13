@@ -81,7 +81,7 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         Arrays.stream(additionalClasses.late()).forEach(context::processBean);
     }
 
-    private <A extends Annotation> void discover(Context context, AdditionalScopes additionalScopes) {
+    private void discover(Context context, AdditionalScopes additionalScopes) {
         if (additionalScopes == null) {
             return;
         }
