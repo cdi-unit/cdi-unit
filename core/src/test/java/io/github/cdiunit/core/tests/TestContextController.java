@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ContextNotActiveException;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.context.control.RequestContextController;
 import jakarta.inject.Inject;
@@ -28,7 +27,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.github.cdiunit.AdditionalScopes;
 import io.github.cdiunit.core.context.ContextController;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
