@@ -29,7 +29,7 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 
 import io.github.cdiunit.core.context.ContextController;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
+import io.github.cdiunit.internal.activatescopes.Scopes;
 
 @Dependent
 class InjectableContextController<T extends Annotation> implements ContextController<T> {
@@ -136,13 +136,13 @@ class InjectableContextController<T extends Annotation> implements ContextContro
 
         @Override
         public boolean activate(Class<? extends Annotation> scopeType) {
-            ScopesHelper.activateContexts(beanManager, scopeType);
+            Scopes.of(scopeType).activateContexts(beanManager);
             return isActive();
         }
 
         @Override
         public void deactivate(Class<? extends Annotation> scopeType) throws ContextNotActiveException {
-            ScopesHelper.deactivateContexts(beanManager, scopeType);
+            Scopes.of(scopeType).deactivateContexts(beanManager);
         }
 
     }

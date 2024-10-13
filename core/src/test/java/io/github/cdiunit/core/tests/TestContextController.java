@@ -32,7 +32,7 @@ import io.github.cdiunit.AdditionalScopes;
 import io.github.cdiunit.core.context.ContextController;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
+import io.github.cdiunit.internal.activatescopes.Scopes;
 import io.github.cdiunit.test.beans.BRequestScoped;
 import io.github.cdiunit.test.beans.CSessionScoped;
 
@@ -147,7 +147,8 @@ class TestContextController {
 
     @Test
     void activateSessionContext() {
-        ScopesHelper.activateContexts(testLifecycle.getBeanManager(), SessionScoped.class);
+        final var beanManager = testLifecycle.getBeanManager();
+        final var scopes = Scopes.of(SessionScoped.class).activateContexts(beanManager);
         testBean.expose(i -> {
             assertThat(i.sessionContext.activate())
                     .as("context is active")
@@ -160,7 +161,7 @@ class TestContextController {
 
             assertThatNoException().isThrownBy(i.sessionScoped::getFoo);
         });
-        ScopesHelper.deactivateContexts(testLifecycle.getBeanManager(), SessionScoped.class);
+        scopes.deactivateContexts(beanManager);
     }
 
     @AdditionalScopes(SessionScoped.class)

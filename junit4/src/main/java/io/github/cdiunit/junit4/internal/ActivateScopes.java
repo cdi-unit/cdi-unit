@@ -22,7 +22,7 @@ import org.junit.runners.model.Statement;
 import io.github.cdiunit.IsolationLevel;
 import io.github.cdiunit.internal.TestLifecycle;
 import io.github.cdiunit.internal.TestMethodHolder;
-import io.github.cdiunit.internal.activatescopes.ScopesHelper;
+import io.github.cdiunit.internal.activatescopes.Scopes;
 
 public class ActivateScopes extends Statement {
 
@@ -41,16 +41,17 @@ public class ActivateScopes extends Statement {
         final var method = TestMethodHolder.getRequired();
         final var isolationLevel = testLifecycle.getIsolationLevel();
         final var beanManager = testLifecycle.getBeanManager();
+        final var scopes = Scopes.ofTarget(method);
         try {
             if (!contextsActivated.get()) {
-                ScopesHelper.activateContexts(beanManager, method);
+                scopes.activateContexts(beanManager);
                 contextsActivated.set(true);
             }
             next.evaluate();
         } finally {
             if (contextsActivated.get() && isolationLevel == IsolationLevel.PER_METHOD) {
                 contextsActivated.set(false);
-                ScopesHelper.deactivateContexts(beanManager, method);
+                scopes.deactivateContexts(beanManager);
             }
         }
     }

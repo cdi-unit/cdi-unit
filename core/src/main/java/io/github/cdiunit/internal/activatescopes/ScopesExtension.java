@@ -16,8 +16,6 @@
 package io.github.cdiunit.internal.activatescopes;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,11 +25,6 @@ import jakarta.enterprise.inject.Vetoed;
 import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
-import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.inject.Qualifier;
-
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Vetoed
 public class ScopesExtension implements Extension {
@@ -54,42 +47,12 @@ public class ScopesExtension implements Extension {
         contexts.forEach(event::addContext);
     }
 
-    void observeScopesActivate(@Observes @ActivateContexts Scopes scopes) {
+    void observeScopesActivate(@Observes @Scopes.ActivateContexts Scopes scopes) {
         contexts.stream().filter(o -> scopes.contains(o.getScope())).forEach(CdiContext::activate);
     }
 
-    void observeScopesDeactivate(@Observes @DeactivateContexts Scopes scopes) {
+    void observeScopesDeactivate(@Observes @Scopes.DeactivateContexts Scopes scopes) {
         contexts.stream().filter(o -> scopes.contains(o.getScope())).forEach(CdiContext::deactivate);
-    }
-
-    @Retention(RUNTIME)
-    @Target(PARAMETER)
-    @Qualifier
-    @interface ActivateContexts {
-
-        final class Literal extends AnnotationLiteral<ActivateContexts> implements ActivateContexts {
-
-            private static final long serialVersionUID = 1L;
-
-            public static final Literal INSTANCE = new Literal();
-
-        }
-
-    }
-
-    @Retention(RUNTIME)
-    @Target(PARAMETER)
-    @Qualifier
-    @interface DeactivateContexts {
-
-        final class Literal extends AnnotationLiteral<DeactivateContexts> implements DeactivateContexts {
-
-            private static final long serialVersionUID = 1L;
-
-            public static final Literal INSTANCE = new Literal();
-
-        }
-
     }
 
 }
