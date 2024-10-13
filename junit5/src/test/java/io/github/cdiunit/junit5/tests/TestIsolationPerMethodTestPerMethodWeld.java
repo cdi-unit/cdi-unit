@@ -44,7 +44,7 @@ class TestIsolationPerMethodTestPerMethodWeld {
 
     @BeforeEach
     void initialCounter() {
-        assertThat(counter.get()).as("instance counter").isEqualTo(0);
+        assertThat(counter.get()).as("instance counter").isZero();
     }
 
     @Test

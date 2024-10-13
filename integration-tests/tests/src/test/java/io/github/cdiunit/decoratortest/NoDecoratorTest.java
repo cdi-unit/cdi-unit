@@ -35,6 +35,6 @@ public class NoDecoratorTest {
 
     @Test
     public void testZero() {
-        assertThat(decorated.calculate()).isEqualTo(0);
+        assertThat(decorated.calculate()).isZero();
     }
 }

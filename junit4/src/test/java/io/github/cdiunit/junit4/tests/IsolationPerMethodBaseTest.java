@@ -35,7 +35,7 @@ abstract class IsolationPerMethodBaseTest {
 
     @Before
     public void initialCounter() {
-        assertThat(counter.get()).as("instance counter").isEqualTo(0);
+        assertThat(counter.get()).as("instance counter").isZero();
     }
 
     @Test
