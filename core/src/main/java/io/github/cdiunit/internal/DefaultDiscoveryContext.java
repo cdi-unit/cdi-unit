@@ -31,6 +31,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
 import io.github.cdiunit.ProducesAlternative;
+import io.github.cdiunit.internal.activatescopes.ScopesExtension;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
@@ -51,6 +52,8 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     private final Set<Class<?>> interceptors = new LinkedHashSet<>();
 
     private final Set<Class<? extends Annotation>> alternativeStereotypes = new LinkedHashSet<>();
+
+    private final Set<Class<? extends Annotation>> scopeTypes = new LinkedHashSet<>();
 
     public DefaultDiscoveryContext(ClasspathScanner scanner, final TestConfiguration testConfiguration) {
         this.scanner = scanner;
@@ -179,6 +182,21 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public void scope(String additionalScope) {
+        scope((Class<? extends Annotation>) loadClass(additionalScope));
+    }
+
+    @Override
+    public void scope(Class<? extends Annotation> additionalScope) {
+        scopeTypes.add(additionalScope);
+    }
+
+    public Collection<Class<? extends Annotation>> getScopes() {
+        return scopeTypes;
+    }
+
+    @Override
     public Collection<Class<?>> scanPackages(Collection<Class<?>> baseClasses) {
         final Collection<Class<?>> result = new LinkedHashSet<>();
         for (Class<?> baseClass : baseClasses) {
@@ -226,6 +244,8 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
         alternativeStereotypes.forEach(weld::addAlternativeStereotype);
         decorators.forEach(weld::addDecorator);
         interceptors.forEach(weld::addInterceptor);
+
+        weld.addExtension(new ScopesExtension(scopeTypes));
     }
 
 }

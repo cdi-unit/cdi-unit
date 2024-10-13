@@ -40,7 +40,6 @@ public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
     public void bootstrap(BootstrapDiscoveryContext bdc) {
         bdc.discoverClass(this::discoverClass);
         bdc.discoverMethod(this::discoverMethod);
-        bdc.afterDiscovery(this::afterDiscovery);
     }
 
     private void discoverClass(Context context, Class<?> cls) {
@@ -58,7 +57,7 @@ public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
             return;
         }
 
-        Arrays.stream(activateScopes.value()).forEach(scopes::add);
+        Arrays.stream(activateScopes.value()).forEach(context::scope);
     }
 
     private void discover(Context context, ActivateScopes.All activateScopes) {
@@ -67,12 +66,6 @@ public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
         }
 
         Arrays.stream(activateScopes.value()).forEach(scope -> discover(context, scope));
-    }
-
-    private void afterDiscovery(Context context) {
-        if (!scopes.isEmpty()) {
-            context.extension(new ScopesExtension(scopes));
-        }
     }
 
 }

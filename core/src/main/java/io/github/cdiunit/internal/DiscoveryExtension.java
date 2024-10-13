@@ -30,8 +30,8 @@ public interface DiscoveryExtension {
     /**
      * Initialise discovery extension.
      * <p>
-     * Invoked once per discovery cycle. Discovery extension may register discovery callbacks.
-     * All modifications to the discovery callbacks performed outside of this method are ignored.
+     * Invoked once per discovery cycle. Discovery extension may register discovery callbacks. All modifications to the
+     * discovery callbacks performed outside of this method are ignored.
      *
      * @param bdc bootstrap discovery context to register discovery callbacks
      */
@@ -119,6 +119,10 @@ public interface DiscoveryExtension {
         Collection<Class<?>> scanPackages(Collection<Class<?>> baseClasses);
 
         Collection<Class<?>> scanBeanArchives(Collection<Class<?>> baseClasses);
+
+        void scope(Class<? extends Annotation> additionalScope);
+
+        void scope(String additionalScope);
 
     }
 

@@ -33,6 +33,7 @@ import io.github.cdiunit.*;
  * <li>{@link AdditionalClasspaths}</li>
  * <li>{@link AdditionalPackages}</li>
  * <li>{@link AdditionalClasses}</li>
+ * <li>{@link AdditionalScopes}</li>
  * <li>{@link ActivatedAlternatives}</li>
  * <li>meta annotations</li>
  * </ul>
@@ -48,6 +49,7 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         discover(context, cls.getAnnotation(AdditionalClasspaths.class));
         discover(context, cls.getAnnotation(AdditionalPackages.class));
         discover(context, cls.getAnnotation(AdditionalClasses.class));
+        discover(context, cls.getAnnotation(AdditionalScopes.class));
         discover(context, cls.getAnnotation(ActivatedAlternatives.class));
         discover(context, cls.getAnnotations());
         discover(context, cls.getGenericSuperclass());
@@ -77,6 +79,13 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         }
         Arrays.stream(additionalClasses.value()).forEach(context::processBean);
         Arrays.stream(additionalClasses.late()).forEach(context::processBean);
+    }
+
+    private <A extends Annotation> void discover(Context context, AdditionalScopes additionalScopes) {
+        if (additionalScopes == null) {
+            return;
+        }
+        Arrays.stream(additionalScopes.value()).forEach(context::scope);
     }
 
     private void discover(Context context, ActivatedAlternatives alternativeClasses) {
