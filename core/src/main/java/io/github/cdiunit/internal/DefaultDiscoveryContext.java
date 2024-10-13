@@ -31,6 +31,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
 import io.github.cdiunit.ProducesAlternative;
+import io.github.cdiunit.core.context.internal.ContextTrackerExtension;
 import io.github.cdiunit.internal.activatescopes.ScopesExtension;
 
 class DefaultDiscoveryContext implements DiscoveryExtension.Context {
@@ -246,6 +247,7 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
         interceptors.forEach(weld::addInterceptor);
 
         weld.addExtension(new ScopesExtension(scopeTypes));
+        weld.addExtension(new ContextTrackerExtension(scopeTypes));
     }
 
 }

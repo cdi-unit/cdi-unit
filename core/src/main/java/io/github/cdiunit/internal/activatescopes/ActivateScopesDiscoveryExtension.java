@@ -15,11 +15,8 @@
  */
 package io.github.cdiunit.internal.activatescopes;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import io.github.cdiunit.ActivateScopes;
 import io.github.cdiunit.internal.DiscoveryExtension;
@@ -33,8 +30,6 @@ import io.github.cdiunit.internal.DiscoveryExtension;
  * </ul>
  */
 public class ActivateScopesDiscoveryExtension implements DiscoveryExtension {
-
-    private final Set<Class<? extends Annotation>> scopes = new LinkedHashSet<>();
 
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {
