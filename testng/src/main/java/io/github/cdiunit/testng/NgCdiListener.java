@@ -19,10 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.stream.StreamSupport;
 
 import jakarta.enterprise.inject.spi.BeanManager;
 
@@ -30,10 +27,7 @@ import org.testng.annotations.Listeners;
 import org.testng.*;
 
 import io.github.cdiunit.core.context.Scopes;
-import io.github.cdiunit.internal.ExceptionUtils;
-import io.github.cdiunit.internal.TestConfiguration;
-import io.github.cdiunit.internal.TestLifecycle;
-import io.github.cdiunit.internal.TestMethodHolder;
+import io.github.cdiunit.internal.*;
 import io.github.cdiunit.testng.internal.InvokeInterceptors;
 
 public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodListener {
@@ -71,37 +65,7 @@ public class NgCdiListener implements IHookable, IClassListener, IInvokedMethodL
 
     private NgTestLifecycle initialTestLifecycle(ITestClass ngTestClass) {
         var testClass = ngTestClass.getRealClass();
-        var superClassSpliterator = new Spliterator<Class<?>>() {
-
-            Class<?> aClass = testClass;
-
-            @Override
-            public boolean tryAdvance(Consumer<? super Class<?>> action) {
-                if (aClass == null) {
-                    return false;
-                }
-
-                action.accept(aClass);
-                aClass = aClass.getSuperclass();
-                return true;
-            }
-
-            @Override
-            public Spliterator<Class<?>> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return ORDERED | DISTINCT | NONNULL | IMMUTABLE;
-            }
-        };
-        var configuredOnClass = StreamSupport.stream(superClassSpliterator, false)
+        var configuredOnClass = ReflectionUtils.bottomUpClassHierarchy(testClass)
                 .map(c -> c.getAnnotation(Listeners.class))
                 .filter(Objects::nonNull)
                 .flatMap(a -> Arrays.stream(a.value()))

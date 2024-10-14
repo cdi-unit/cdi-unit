@@ -21,10 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -60,37 +57,7 @@ public final class BeanLifecycleHelper {
     }
 
     private static Collection<Method> findLifecycleMethods(Class<?> targetClass, Class<? extends Annotation> a) {
-        var superClassSpliterator = new Spliterator<Class<?>>() {
-
-            Class<?> aClass = targetClass;
-
-            @Override
-            public boolean tryAdvance(Consumer<? super Class<?>> action) {
-                if (aClass == null) {
-                    return false;
-                }
-
-                action.accept(aClass);
-                aClass = aClass.getSuperclass();
-                return true;
-            }
-
-            @Override
-            public Spliterator<Class<?>> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return ORDERED | DISTINCT | NONNULL | IMMUTABLE;
-            }
-        };
-        var superclasses = StreamSupport.stream(superClassSpliterator, false).collect(Collectors.toList());
+        var superclasses = ReflectionUtils.bottomUpClassHierarchy(targetClass).collect(Collectors.toList());
         Collections.reverse(superclasses);
         return superclasses.stream()
                 .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))

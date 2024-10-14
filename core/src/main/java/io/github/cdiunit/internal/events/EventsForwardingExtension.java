@@ -18,9 +18,7 @@ package io.github.cdiunit.internal.events;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import java.util.*;
 
 import jakarta.enterprise.event.Observes;
@@ -30,6 +28,7 @@ import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
 import io.github.cdiunit.internal.ExceptionUtils;
+import io.github.cdiunit.internal.ReflectionUtils;
 
 @Vetoed
 public class EventsForwardingExtension implements Extension {
@@ -147,37 +146,7 @@ public class EventsForwardingExtension implements Extension {
     }
 
     private static Map<Class<?>, List<Method>> findObserverMethods(Class<?> targetClass) {
-        var superClassSpliterator = new Spliterator<Class<?>>() {
-
-            Class<?> aClass = targetClass;
-
-            @Override
-            public boolean tryAdvance(Consumer<? super Class<?>> action) {
-                if (aClass == null) {
-                    return false;
-                }
-
-                action.accept(aClass);
-                aClass = aClass.getSuperclass();
-                return true;
-            }
-
-            @Override
-            public Spliterator<Class<?>> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return ORDERED | DISTINCT | NONNULL | IMMUTABLE;
-            }
-        };
-        var superclasses = StreamSupport.stream(superClassSpliterator, false).collect(Collectors.toList());
+        var superclasses = ReflectionUtils.bottomUpClassHierarchy(targetClass).collect(Collectors.toList());
         Collections.reverse(superclasses);
         return superclasses.stream()
                 .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
