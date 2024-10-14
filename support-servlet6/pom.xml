@@ -15,6 +15,9 @@
 
 	<properties>
 		<central.publishing.phase>deploy</central.publishing.phase>
+
+		<!-- Exclude this module from the analysis -->
+		<sonar.skip>true</sonar.skip>
 	</properties>
 
 	<dependencies>
