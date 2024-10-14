@@ -12,4 +12,9 @@
 
 	<name>CDI-Unit - Bean Archive for Testing</name>
 
+	<properties>
+		<!-- Exclude this module from the analysis -->
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
 </project>
