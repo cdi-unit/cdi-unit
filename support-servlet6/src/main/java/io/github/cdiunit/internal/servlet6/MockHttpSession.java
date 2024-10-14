@@ -116,8 +116,8 @@ public class MockHttpSession implements HttpSession {
         if (!isValid) {
             throw new IllegalStateException("session invalid");
         }
-        Vector attKeys = new Vector(attributes.keySet());
-        return (String[]) attKeys.toArray();
+        Vector<String> attKeys = new Vector<>(attributes.keySet());
+        return attKeys.toArray(new String[0]);
     }
 
     public synchronized void putValue(String key, Object value) {
