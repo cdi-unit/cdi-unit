@@ -5,7 +5,7 @@ displayName: CDI Unit Coding Rules & Conventions
 recipeList:
   - io.github.cdiunit.AddApache2LicenseHeader
   - io.github.cdiunit.JUnit5BestPractices
-  - org.openrewrite.java.testing.assertj.Assertj
+  - io.github.cdiunit.AssertJBestPractices
   - org.openrewrite.staticanalysis.CommonStaticAnalysis
   - org.openrewrite.staticanalysis.RemoveJavaDocAuthorTag
 
@@ -43,3 +43,37 @@ preconditions:
       typePattern: org.junit.jupiter..*
 recipeList:
   - org.openrewrite.java.testing.junit5.JUnit5BestPractices
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.github.cdiunit.AssertJBestPractices
+displayName: AssertJ best practices
+description: Applies AssertJ's best practices to assertions.
+tags:
+  - testing
+  - assertj
+preconditions:
+  - org.openrewrite.java.search.FindImports:
+      typePattern: org.assertj..*
+recipeList:
+  - org.openrewrite.java.testing.assertj.StaticImports
+  - org.openrewrite.java.testing.assertj.SimplifyChainedAssertJAssertions
+  - org.openrewrite.java.testing.assertj.SimplifyAssertJAssertions
+
+  - tech.picnic.errorprone.refasterrules.AssertJBigDecimalRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJBigIntegerRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJBooleanRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJByteRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJCharSequenceRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJDoubleRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJFloatRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJIntegerRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJLongRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJNumberRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJPrimitiveRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJShortRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJStringRulesRecipes
+  - tech.picnic.errorprone.refasterrules.AssertJThrowingCallableRulesRecipes
+
+  - org.openrewrite.java.testing.assertj.CollapseConsecutiveAssertThatStatements
