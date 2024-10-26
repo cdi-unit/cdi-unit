@@ -15,8 +15,6 @@
  */
 package io.github.cdiunit.junit4.tests;
 
-import java.io.IOException;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -25,14 +23,19 @@ import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.WeldHelper;
 import io.github.cdiunit.junit4.internal.InvalidRuleFieldUsageException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class TestInvalidJUnitRuleUsage {
 
     @Rule
     public final TestName testName = new TestName();
 
     @Test(expected = InvalidRuleFieldUsageException.class)
-    public void test() throws IOException {
+    public void test() {
         WeldHelper.configureWeld(new TestConfiguration(TestInvalidJUnitRuleUsage.class));
+        assertThat(testName.getMethodName())
+                .as("unreachable assertion")
+                .isBlank();
     }
 
 }

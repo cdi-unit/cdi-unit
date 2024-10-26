@@ -216,10 +216,6 @@ public class TestLifecycle {
         }
     }
 
-    protected TestConfiguration getTestConfiguration() {
-        return testConfiguration;
-    }
-
     public boolean explicitInterceptorInvocation() {
         return needsExplicitInterceptorInvocation;
     }
