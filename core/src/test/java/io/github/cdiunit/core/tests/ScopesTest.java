@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.context;
+package io.github.cdiunit.core.tests;
 
 import java.util.Set;
 
@@ -24,6 +24,7 @@ import jakarta.enterprise.context.SessionScoped;
 import org.junit.jupiter.api.Test;
 
 import io.github.cdiunit.ActivateScopes;
+import io.github.cdiunit.core.context.Scopes;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,6 +54,7 @@ class ScopesTest {
 
             @ActivateScopes(RequestScoped.class)
             void target() {
+                assertThat(this).as("not empty method").isNotNull();
             }
 
         }

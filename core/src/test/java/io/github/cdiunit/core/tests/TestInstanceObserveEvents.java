@@ -51,6 +51,7 @@ class TestInstanceObserveEvents {
         int observedUnqualified;
 
         void observeUnqualified(@Observes TestEvent event, EventMetadata metadata) {
+            assertThat(metadata).as("event metadata").isNotNull();
             observedUnqualified++;
         }
 

@@ -15,6 +15,7 @@
  */
 package io.github.cdiunit.core.tests;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.inject.Inject;
 
@@ -26,6 +27,7 @@ import io.github.cdiunit.AdditionalClasses;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TestNonCDIClasses {
@@ -37,6 +39,12 @@ class TestNonCDIClasses {
         private Filter foo;
 
         private ThresholdFilter bar;
+
+        @PostConstruct
+        void init() {
+            assertThat(foo).as("never injected").isNull();
+            assertThat(bar).as("plan field").isNull();
+        }
 
     }
 

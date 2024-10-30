@@ -53,7 +53,7 @@ class TestResource {
     @Test
     void unnamedResources() {
         testBean.expose(i -> {
-            assertThat(i._unnamedAResource).as("AResource")
+            assertThat(i.unnamedAResource).as("AResource")
                     .isNotNull()
                     .isInstanceOf(AResource.class);
             assertThat(i.unnamedBResource).as("BResource")
@@ -65,9 +65,9 @@ class TestResource {
     @Test
     void namedResources() {
         testBean.expose(i -> {
-            assertThat(i._namedAResource).as("AResource")
+            assertThat(i.namedAResource).as("AResource")
                     .isNotNull()
-                    .isNotSameAs(i._unnamedAResource)
+                    .isNotSameAs(i.unnamedAResource)
                     .isInstanceOf(AResource.class);
             assertThat(i.namedBResource).as("BResource")
                     .isNotNull()
@@ -79,7 +79,7 @@ class TestResource {
     @Test
     void typedResources() {
         testBean.expose(i -> {
-            assertThat(i._typedAResource).as("AResource")
+            assertThat(i.typedAResource).as("AResource")
                     .isNotNull()
                     .isInstanceOf(AResourceExt.class);
             assertThat(i.typedBResource).as("BResource")
@@ -127,13 +127,13 @@ class TestResource {
     @AdditionalClasses(Resources.class)
     static class TestBean {
 
-        AResourceType _unnamedAResource;
-        AResourceType _namedAResource;
-        AResource _typedAResource;
+        AResourceType unnamedAResource;
+        AResourceType namedAResource;
+        AResource typedAResource;
 
         @Resource
         void unnamedAResource(AResourceType resource) {
-            _unnamedAResource = resource;
+            unnamedAResource = resource;
         }
 
         @Resource
@@ -141,7 +141,7 @@ class TestResource {
 
         @Resource(name = "namedAResource")
         void withNamedAResource(AResourceType resource) {
-            _namedAResource = resource;
+            namedAResource = resource;
         }
 
         @Resource(name = "namedBResource")
@@ -150,7 +150,7 @@ class TestResource {
         @Resource
         public void setTypedAResource(AResource resource) {
             // public to make it visible as Java Bean property to derive the name
-            _typedAResource = resource;
+            typedAResource = resource;
         }
 
         @Resource

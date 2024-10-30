@@ -38,13 +38,13 @@ class TestNamingContext {
         @PostConstruct
         void init() throws NamingException {
             var instance = InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
-            assertThat(instance).as("lookup result").isInstanceOf(BeanManager.class);
+            assertThat(instance).as("lookup when PostConstruct").isInstanceOf(BeanManager.class);
         }
 
         @PreDestroy
         void shutdown() throws NamingException {
             var instance = InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
-            assertThat(instance).as("lookup result").isInstanceOf(BeanManager.class);
+            assertThat(instance).as("lookup when PreDestroy").isInstanceOf(BeanManager.class);
         }
 
         BeanManager lookupBeanManager() throws NamingException {
