@@ -163,6 +163,11 @@
 						</dependency>
 						<dependency>
 							<groupId>org.apache.deltaspike.core</groupId>
+							<artifactId>deltaspike-core-api</artifactId>
+							<version>${version.deltaspike.baseline}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.deltaspike.core</groupId>
 							<artifactId>deltaspike-core-impl</artifactId>
 							<version>${version.deltaspike.baseline}</version>
 						</dependency>
@@ -174,6 +179,11 @@
 						<dependency>
 							<groupId>org.jboss.resteasy</groupId>
 							<artifactId>resteasy-core</artifactId>
+							<version>${version.resteasy}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.jboss.resteasy</groupId>
+							<artifactId>resteasy-cdi</artifactId>
 							<version>${version.resteasy}</version>
 						</dependency>
 						<dependency>
