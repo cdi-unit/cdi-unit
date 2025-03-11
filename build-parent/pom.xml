@@ -17,7 +17,7 @@
 
 	<properties>
 		<version.mockito-core>5.16.0</version.mockito-core>
-		<version.resteasy>6.2.11.Final</version.resteasy>
+		<version.resteasy>6.2.12.Final</version.resteasy>
 		<ide-config.resources.dir>${maven.multiModuleProjectDirectory}/independent-projects/ide-config/src/main/resources/</ide-config.resources.dir>
 	</properties>
 
