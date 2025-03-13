@@ -65,7 +65,7 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
         if (field.isAnnotationPresent(Inject.class) || field.isAnnotationPresent(Produces.class)) {
             context.processBean(field.getGenericType());
         }
-        if (field.getType().equals(Provider.class) || field.getType().equals(Instance.class)) {
+        if (Provider.class.equals(field.getType()) || Instance.class.equals(field.getType())) {
             context.processBean(field.getGenericType());
         }
     }

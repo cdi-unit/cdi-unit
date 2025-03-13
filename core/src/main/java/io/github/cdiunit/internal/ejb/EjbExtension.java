@@ -66,7 +66,7 @@ public class EjbExtension implements Extension {
                 .collect(Collectors.toList())) {
             EJB ejb = method.getAnnotated().getAnnotation(EJB.class);
             method.add(EJbQualifierLiteral.INSTANCE);
-            method.remove(a -> a.annotationType().equals(EJB.class));
+            method.remove(a -> EJB.class.equals(a.annotationType()));
             if (!ejb.beanName().isEmpty()) {
                 method.add(new EJbName.EJbNameLiteral(ejb.beanName()));
             } else {
@@ -84,7 +84,7 @@ public class EjbExtension implements Extension {
                 });
             }
 
-            field.remove(a -> a.annotationType().equals(EJB.class));
+            field.remove(a -> EJB.class.equals(a.annotationType()));
             field.add(EJbQualifierLiteral.INSTANCE);
             if (!ejb.beanName().isEmpty()) {
                 field.add(new EJbName.EJbNameLiteral(ejb.beanName()));

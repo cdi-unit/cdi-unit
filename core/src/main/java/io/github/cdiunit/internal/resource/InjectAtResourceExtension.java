@@ -52,7 +52,7 @@ public class InjectAtResourceExtension implements Extension {
                 field.add(INJECT_INSTANCE);
             }
 
-            field.remove(a -> a.annotationType().equals(Resource.class));
+            field.remove(a -> Resource.class.equals(a.annotationType()));
 
             // For field annotations, the default is the field name.
             var name = resource.name();
@@ -84,7 +84,7 @@ public class InjectAtResourceExtension implements Extension {
                 method.add(INJECT_INSTANCE);
             }
 
-            method.remove(a -> a.annotationType().equals(Resource.class));
+            method.remove(a -> Resource.class.equals(a.annotationType()));
 
             // For method annotations, the default is the JavaBeans property name corresponding to the method.
             var name = resource.name();
