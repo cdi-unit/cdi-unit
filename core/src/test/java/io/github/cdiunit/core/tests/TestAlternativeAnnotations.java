@@ -48,10 +48,38 @@ class TestAlternativeAnnotations {
 
     }
 
+    @ActivatedAlternatives(late = "io.github.cdiunit.test.beans.AImplementation2")
+    static class TestBeanLate {
+
+        @Inject
+        private AImplementation1 impl1;
+
+        @Inject
+        private AImplementation2 impl2;
+
+        @Inject
+        private AInterface impl;
+
+        AInterface getImpl() {
+            return impl;
+        }
+
+    }
+
     @Test
     void alternativeSelected() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
         TestBean bean = testLifecycle.createTest(null);
+
+        assertThat(bean.getImpl()).as("selected alternative").isInstanceOf(AImplementation2.class);
+
+        testLifecycle.shutdown();
+    }
+
+    @Test
+    void lateAlternativeSelected() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBeanLate.class));
+        TestBeanLate bean = testLifecycle.createTest(null);
 
         assertThat(bean.getImpl()).as("selected alternative").isInstanceOf(AImplementation2.class);
 

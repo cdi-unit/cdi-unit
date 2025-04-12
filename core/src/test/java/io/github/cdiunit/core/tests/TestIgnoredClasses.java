@@ -68,4 +68,27 @@ class TestIgnoredClasses {
         testLifecycle.shutdown();
     }
 
+    @AdditionalClasses(MyProducer.class)
+    @IgnoredClasses(late = "io.github.cdiunit.core.tests.TestIgnoredClasses$MyService")
+    static class TestBeanLate {
+
+        @Inject
+        private MyService myService;
+
+        String hello() {
+            return myService.hello();
+        }
+
+    }
+
+    @Test
+    void lateIgnoredClasses() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBeanLate.class));
+        TestBeanLate bean = testLifecycle.createTest(null);
+
+        assertThat(bean.hello()).isEqualTo("hello");
+
+        testLifecycle.shutdown();
+    }
+
 }

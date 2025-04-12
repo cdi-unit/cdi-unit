@@ -46,11 +46,11 @@ public @interface IgnoredClasses {
     /**
      * @return Array of classes to make undiscoverable during testing.
      */
-    public Class<?>[] value() default {};
+    Class<?>[] value() default {};
 
     /**
      * @return Array of class names to make undiscoverable during testing (late binding allows specifying classes that are
      *         package visible).
      */
-    public String[] late() default {};
+    String[] late() default {};
 }

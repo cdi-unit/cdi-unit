@@ -22,9 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * <code>&#064;ActivatedAlternatives</code> adds classes to the CDI environment
- * that are not discovered automatically and marks them as an activated
- * alternative as if they were specified in beans.xml.
- *
+ * that are not discovered automatically and marks them as an activated alternative
+ * as if they were specified in beans.xml.
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,5 +31,11 @@ public @interface ActivatedAlternatives {
     /**
      * @return Array of alternative classes to make discoverable during testing and mark as activated.
      */
-    Class<?>[] value();
+    Class<?>[] value() default {};
+
+    /**
+     * @return Array of alternative class names to make discoverable during testing and mark as activated.
+     */
+    String[] late() default {};
+
 }

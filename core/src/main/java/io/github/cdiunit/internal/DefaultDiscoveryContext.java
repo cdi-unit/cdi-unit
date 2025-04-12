@@ -227,11 +227,11 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     }
 
     private Class<?> loadClass(String name) {
-        try {
-            return getClass().getClassLoader().loadClass(name);
-        } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.asRuntimeException(e);
+        final Class<?> result = ClassLookup.INSTANCE.lookup(name);
+        if (result == null) {
+            throw ExceptionUtils.asRuntimeException(new ClassNotFoundException(String.format("Class %s not found", name)));
         }
+        return result;
     }
 
     void configure(Weld weld) {

@@ -102,14 +102,33 @@ public class CdiUnitDiscoveryExtension implements DiscoveryExtension {
         }
         for (Class<?> alternativeClass : alternativeClasses.value()) {
             context.processBean(alternativeClass);
-            if (!isAlternativeStereotype(alternativeClass)) {
+            if (isAlternativeStereotype(alternativeClass)) {
+                context.enableAlternativeStereotype(alternativeClass.asSubclass(Annotation.class));
+            } else {
                 context.enableAlternative(alternativeClass);
+            }
+        }
+        for (String alternativeClassName : alternativeClasses.late()) {
+            context.processBean(alternativeClassName);
+            Class<?> alternativeClass = loadClass(alternativeClassName);
+            if (isAlternativeStereotype(alternativeClass)) {
+                context.enableAlternativeStereotype(alternativeClassName);
+            } else {
+                context.enableAlternative(alternativeClassName);
             }
         }
     }
 
     private static boolean isAlternativeStereotype(Class<?> c) {
-        return c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
+        return c.isAnnotation() && c.isAnnotationPresent(Stereotype.class) && c.isAnnotationPresent(Alternative.class);
+    }
+
+    private Class<?> loadClass(String name) {
+        final Class<?> result = ClassLookup.INSTANCE.lookup(name);
+        if (result == null) {
+            throw ExceptionUtils.asRuntimeException(new ClassNotFoundException(String.format("Class %s not found", name)));
+        }
+        return result;
     }
 
     private void discover(Context context, Annotation[] annotations) {

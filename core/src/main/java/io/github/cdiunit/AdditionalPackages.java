@@ -46,5 +46,5 @@ public @interface AdditionalPackages {
     /**
      * @return Array of classes that belong to classpath entries to make discoverable during testing.
      */
-    public Class<?>[] value();
+    Class<?>[] value();
 }

@@ -37,7 +37,6 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -46,11 +45,11 @@ public @interface AdditionalClasses {
     /**
      * @return Array of classes to make discoverable during testing.
      */
-    public Class<?>[] value();
+    Class<?>[] value() default {};
 
     /**
      * @return Array of class names to make discoverable during testing (late binding allows specifying classes that are package
      *         visible).
      */
-    public String[] late() default {};
+    String[] late() default {};
 }

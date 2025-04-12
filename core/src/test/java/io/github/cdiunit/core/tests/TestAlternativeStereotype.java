@@ -49,10 +49,38 @@ class TestAlternativeStereotype {
 
     }
 
+    @AdditionalClasses(late = "io.github.cdiunit.test.beans.AImplementation3$StereotypeAlternative")
+    static class TestBeanLate {
+
+        @Inject
+        private AImplementation1 impl1;
+
+        @Inject
+        private AImplementation3 impl3;
+
+        @Inject
+        private AInterface impl;
+
+        AInterface getImpl() {
+            return impl;
+        }
+
+    }
+
     @Test
     void alternativeSelected() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
         TestBean bean = testLifecycle.createTest(null);
+
+        assertThat(bean.getImpl()).as("selected alternative").isInstanceOf(AImplementation3.class);
+
+        testLifecycle.shutdown();
+    }
+
+    @Test
+    void lateAlternativeSelected() throws Throwable {
+        var testLifecycle = new TestLifecycle(new TestConfiguration(TestBeanLate.class));
+        TestBeanLate bean = testLifecycle.createTest(null);
 
         assertThat(bean.getImpl()).as("selected alternative").isInstanceOf(AImplementation3.class);
 
