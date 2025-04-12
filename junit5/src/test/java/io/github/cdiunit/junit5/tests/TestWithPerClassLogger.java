@@ -20,11 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.github.cdiunit.junit5.CdiJUnit5Extension;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @ExtendWith(CdiJUnit5Extension.class)
 class TestWithPerClassLogger implements PerClassLogger {
 
     @Test
     void method() {
+        assertThat(this).isInstanceOf(PerClassLogger.class);
     }
 
 }

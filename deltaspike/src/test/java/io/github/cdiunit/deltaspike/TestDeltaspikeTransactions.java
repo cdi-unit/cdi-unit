@@ -29,6 +29,8 @@ import org.junit.runner.RunWith;
 import io.github.cdiunit.InRequestScope;
 import io.github.cdiunit.junit4.CdiRunner;
 
+import static org.assertj.core.api.Assertions.assertThatNoException;
+
 @SupportDeltaspikeJpa
 @SupportDeltaspikeData
 @RunWith(CdiRunner.class)
@@ -55,6 +57,7 @@ public class TestDeltaspikeTransactions {
     @Test
     public void test() {
         TestEntity t = new TestEntity();
-        er.save(t);
+        assertThatNoException().isThrownBy(() -> er.save(t));
     }
+
 }
