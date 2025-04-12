@@ -33,9 +33,7 @@ public class InvalidRuleFieldUsageDiscoveryExtension implements DiscoveryExtensi
     /**
      * The non-null value here means that we have JUnit in the classpath.
      */
-    @SuppressWarnings("unchecked")
-    private final Class<? extends Annotation> fieldAnnotation = (Class<? extends Annotation>) ClassLookup.INSTANCE
-            .lookup("org.junit.Rule");
+    private final Class<? extends Annotation> fieldAnnotation = ClassLookup.getInstance().lookup("org.junit.Rule");
 
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {

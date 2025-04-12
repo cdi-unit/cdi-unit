@@ -26,9 +26,7 @@ public class MockitoDiscoveryExtension implements DiscoveryExtension {
     /**
      * The non-null value here means that we have Mockito in the classpath.
      */
-    @SuppressWarnings("unchecked")
-    private final Class<? extends Annotation> fieldAnnotation = (Class<? extends Annotation>) ClassLookup.INSTANCE
-            .lookup("org.mockito.Mock");
+    private final Class<? extends Annotation> fieldAnnotation = ClassLookup.getInstance().lookup("org.mockito.Mock");
 
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {

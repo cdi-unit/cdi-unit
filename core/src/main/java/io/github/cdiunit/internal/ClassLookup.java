@@ -22,11 +22,25 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Class lookup singleton.
  */
-public enum ClassLookup {
-
-    INSTANCE;
+public final class ClassLookup {
 
     private final ConcurrentMap<String, AtomicReference<Class<?>>> classes = new ConcurrentHashMap<>();
+
+    private ClassLookup() {
+    }
+
+    /**
+     * Class lookup singleton instance.
+     *
+     * @return singleton instance
+     */
+    public static ClassLookup getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+
+    private static class SingletonHelper {
+        private static final ClassLookup INSTANCE = new ClassLookup();
+    }
 
     /**
      * Lookup the class. This method is thread-safe.

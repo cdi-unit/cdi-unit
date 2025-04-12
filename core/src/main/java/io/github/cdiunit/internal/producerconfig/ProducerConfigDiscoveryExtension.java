@@ -20,7 +20,7 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ProducerConfigDiscoveryExtension implements DiscoveryExtension {
 
-    private final boolean supportsProducerFactory = ClassLookup.INSTANCE
+    private final boolean supportsProducerFactory = ClassLookup.getInstance()
             .isPresent("jakarta.enterprise.inject.spi.ProducerFactory");
 
     @Override

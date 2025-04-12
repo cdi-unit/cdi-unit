@@ -227,7 +227,7 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
     }
 
     private Class<?> loadClass(String name) {
-        final Class<?> result = ClassLookup.INSTANCE.lookup(name);
+        final Class<?> result = ClassLookup.getInstance().lookup(name);
         if (result == null) {
             throw ExceptionUtils.asRuntimeException(new ClassNotFoundException(String.format("Class %s not found", name)));
         }

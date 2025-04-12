@@ -26,9 +26,7 @@ public class EasyMockDiscoveryExtension implements DiscoveryExtension {
     /**
      * The non-null value here means that we have EasyMock in the classpath.
      */
-    @SuppressWarnings("unchecked")
-    private final Class<? extends Annotation> fieldAnnotation = (Class<? extends Annotation>) ClassLookup.INSTANCE
-            .lookup("org.easymock.Mock");
+    private final Class<? extends Annotation> fieldAnnotation = ClassLookup.getInstance().lookup("org.easymock.Mock");
 
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {

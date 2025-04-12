@@ -22,10 +22,10 @@ import io.github.cdiunit.servlet6.ServletAPI6Mocks;
 
 public class ServletDiscoveryExtension implements DiscoveryExtension {
 
-    private final boolean usesServlet = ClassLookup.INSTANCE.isPresent("jakarta.servlet.http.HttpServletRequest");
-    private final boolean servletApi5 = ClassLookup.INSTANCE.isPresent("jakarta.servlet.http.HttpSessionContext");
+    private final boolean usesServlet = ClassLookup.getInstance().isPresent("jakarta.servlet.http.HttpServletRequest");
+    private final boolean servletApi5 = ClassLookup.getInstance().isPresent("jakarta.servlet.http.HttpSessionContext");
 
-    private final boolean requiresServletObjectsProducers = !ClassLookup.INSTANCE
+    private final boolean requiresServletObjectsProducers = !ClassLookup.getInstance()
             .isPresent("org.jboss.weld.bean.AbstractSyntheticBean");
 
     @Override

@@ -35,7 +35,7 @@ public class DeltaspikeProxyDiscoveryExtension implements DiscoveryExtension {
 
     public DeltaspikeProxyDiscoveryExtension() {
         proxyModuleAnchor = Stream.of(
-                ClassLookup.INSTANCE.lookup(DELTASPIKE_20x_ANCHOR_CLASS_NAME))
+                ClassLookup.getInstance().lookup(DELTASPIKE_20x_ANCHOR_CLASS_NAME))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);

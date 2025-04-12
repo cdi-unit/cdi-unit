@@ -30,26 +30,26 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class DeltaspikeScopeDiscoveryExtension implements DiscoveryExtension {
 
-    private final Class<? extends Annotation> windowScopedAnnotation = ClassLookup.INSTANCE.lookup(
+    private final Class<? extends Annotation> windowScopedAnnotation = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.api.scope.WindowScoped");
-    private final Class<? extends Annotation> viewAccessScopedAnnotation = ClassLookup.INSTANCE.lookup(
+    private final Class<? extends Annotation> viewAccessScopedAnnotation = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.api.scope.ViewAccessScoped");
-    private final Class<? extends Annotation> groupedConversationScopedAnnotation = ClassLookup.INSTANCE.lookup(
+    private final Class<? extends Annotation> groupedConversationScopedAnnotation = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.api.scope.GroupedConversationScoped");
 
     private final List<Class<?>> supportClassesToLoad = Stream.of(
             "org.apache.deltaspike.core.impl.scope.conversation.ConversationBeanHolder",
             "org.apache.deltaspike.core.impl.scope.viewaccess.ViewAccessBeanHolder",
             "org.apache.deltaspike.core.impl.scope.window.WindowBeanHolder")
-            .map(ClassLookup.INSTANCE::lookup)
+            .map(ClassLookup.getInstance()::lookup)
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
 
-    private final Class<?> windowContext = ClassLookup.INSTANCE.lookup(
+    private final Class<?> windowContext = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.spi.scope.window.WindowContext");
-    private final Class<?> viewAccessContextManager = ClassLookup.INSTANCE.lookup(
+    private final Class<?> viewAccessContextManager = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.spi.scope.viewaccess.ViewAccessContextManager");
-    private final Class<?> groupedConversationManager = ClassLookup.INSTANCE.lookup(
+    private final Class<?> groupedConversationManager = ClassLookup.getInstance().lookup(
             "org.apache.deltaspike.core.spi.scope.conversation.GroupedConversationManager");
 
     @Override

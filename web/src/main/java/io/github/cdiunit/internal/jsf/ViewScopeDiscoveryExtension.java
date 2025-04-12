@@ -20,7 +20,7 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
 
-    private final boolean usesJsf = ClassLookup.INSTANCE.isPresent("jakarta.faces.view.ViewScoped");
+    private final boolean usesJsf = ClassLookup.getInstance().isPresent("jakarta.faces.view.ViewScoped");
 
     @Override
     public void bootstrap(BootstrapDiscoveryContext bdc) {
