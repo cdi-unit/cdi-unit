@@ -26,18 +26,29 @@ import jakarta.enterprise.inject.spi.ProcessInjectionTarget;
 
 import org.mockito.MockitoAnnotations;
 
+import io.github.cdiunit.internal.ExceptionUtils;
+
 public class MockitoExtension implements Extension {
     public <T> void process(@Observes ProcessInjectionTarget<T> event) {
         final InjectionTarget<T> injectionTarget = event.getInjectionTarget();
-        event.setInjectionTarget(new InjectionTarget<T>() {
+        event.setInjectionTarget(new InjectionTarget<>() {
+
+            private AutoCloseable openedMocks;
 
             public T produce(CreationalContext<T> ctx) {
                 T o = injectionTarget.produce(ctx);
-                MockitoAnnotations.initMocks(o);
+                openedMocks = MockitoAnnotations.openMocks(o);
                 return o;
             }
 
             public void dispose(T instance) {
+                if (openedMocks != null) {
+                    try {
+                        openedMocks.close();
+                    } catch (Exception e) {
+                        throw ExceptionUtils.asRuntimeException(e);
+                    }
+                }
                 injectionTarget.dispose(instance);
             }
 
