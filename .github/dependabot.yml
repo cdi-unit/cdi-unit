@@ -25,6 +25,11 @@ updates:
       # explicitly keep baseline version
       - dependency-name: org.spockframework:*
         update-types: [ "version-update:semver-patch" ]
+    groups:
+      openrewrite:
+        patterns:
+          - org.openrewrite.maven:*
+          - org.openrewrite.recipe:*
     rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
