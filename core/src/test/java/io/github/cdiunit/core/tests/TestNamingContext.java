@@ -15,6 +15,7 @@
  */
 package io.github.cdiunit.core.tests;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.NoInitialContextException;
@@ -86,6 +87,21 @@ class TestNamingContext {
                 .isInstanceOf(BeanManager.class);
 
         testLifecycle.shutdown();
+    }
+
+    @Order(4)
+    @Test
+    void lookupWithInitialContextFactory() throws Throwable {
+        try {
+            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "TEST");
+
+            lookupInContext();
+
+            assertThat(System.getProperty(Context.INITIAL_CONTEXT_FACTORY)).as("InitialContextFactory")
+                    .isEqualTo("TEST");
+        } finally {
+            System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
+        }
     }
 
 }
