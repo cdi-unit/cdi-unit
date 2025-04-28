@@ -15,20 +15,25 @@
  */
 package io.github.cdiunit.core.tests;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.NoInitialContextException;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.inject.spi.BeanManager;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.cdiunit.internal.TestConfiguration;
 import io.github.cdiunit.internal.TestLifecycle;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TestNamingContext {
 
     private static final String JNDI_BEAN_MANAGER_NAME = "java:comp/BeanManager";
@@ -36,24 +41,44 @@ class TestNamingContext {
     static class TestBean {
 
         @PostConstruct
-        void init() throws NamingException {
-            var instance = InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
+        void init() {
+            final var instance = lookupBeanManager();
             assertThat(instance).as("lookup when PostConstruct").isInstanceOf(BeanManager.class);
         }
 
         @PreDestroy
-        void shutdown() throws NamingException {
-            var instance = InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
+        void shutdown() {
+            final var instance = lookupBeanManager();
             assertThat(instance).as("lookup when PreDestroy").isInstanceOf(BeanManager.class);
         }
 
-        BeanManager lookupBeanManager() throws NamingException {
-            return InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
+        BeanManager lookupBeanManager() {
+            try {
+                return InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME);
+            } catch (NamingException e) {
+                throw ExceptionUtils.asRuntimeException(e);
+            }
         }
+
     }
 
+    @Order(1)
     @Test
-    void lookup() throws Throwable {
+    void beforeContext() {
+        assertThatExceptionOfType(NoInitialContextException.class)
+                .isThrownBy(() -> InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME));
+    }
+
+    @Order(3)
+    @Test
+    void afterContext() {
+        assertThatExceptionOfType(NoInitialContextException.class)
+                .isThrownBy(() -> InitialContext.doLookup(JNDI_BEAN_MANAGER_NAME));
+    }
+
+    @Order(2)
+    @Test
+    void lookupInContext() throws Throwable {
         var testLifecycle = new TestLifecycle(new TestConfiguration(TestBean.class));
         TestBean bean = testLifecycle.createTest(null);
 
@@ -62,6 +87,21 @@ class TestNamingContext {
                 .isInstanceOf(BeanManager.class);
 
         testLifecycle.shutdown();
+    }
+
+    @Order(4)
+    @Test
+    void lookupWithInitialContextFactory() throws Throwable {
+        try {
+            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "TEST");
+
+            lookupInContext();
+
+            assertThat(System.getProperty(Context.INITIAL_CONTEXT_FACTORY)).as("InitialContextFactory")
+                    .isEqualTo("TEST");
+        } finally {
+            System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
+        }
     }
 
 }
