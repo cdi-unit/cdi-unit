@@ -17,7 +17,6 @@ package io.github.cdiunit.internal.naming;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.spi.NamingManager;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
@@ -31,19 +30,27 @@ public class NamingExtension implements Extension {
 
     private InitialContext boundToContext;
 
+    private String factoryToRestore;
+
     void onAfterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) throws Exception {
-        var existingFactory = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
-        if (existingFactory == null && !NamingManager.hasInitialContextFactoryBuilder()) {
-            NamingManager.setInitialContextFactoryBuilder(CdiUnitContextFactory::new);
-        }
+        this.factoryToRestore = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CdiUnitContextFactory.class.getName());
         boundToContext = new InitialContext();
         boundToContext.bind(JNDI_BEAN_MANAGER_NAME, beanManager);
     }
 
     void onBeforeShutdown(@Observes BeforeShutdown bs) throws Exception {
-        if (boundToContext != null) {
-            boundToContext.unbind(JNDI_BEAN_MANAGER_NAME);
-            boundToContext.close();
+        try {
+            if (boundToContext != null) {
+                boundToContext.unbind(JNDI_BEAN_MANAGER_NAME);
+                boundToContext.close();
+            }
+        } finally {
+            if (factoryToRestore == null) {
+                System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
+            } else {
+                System.setProperty(Context.INITIAL_CONTEXT_FACTORY, factoryToRestore);
+            }
         }
     }
 
