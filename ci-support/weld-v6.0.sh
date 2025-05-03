@@ -5,4 +5,5 @@
 WELD_VERSIONS=(
   "6.0.0.Final"
   "6.0.1.Final"
+  "6.0.2.Final"
 )
