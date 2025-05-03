@@ -57,8 +57,8 @@ public class TestContextController {
     @Test
     @InRequestScope
     public void testAsynchronousExecution() throws ExecutionException, InterruptedException {
-
-        assertThat(testCounter2.getCounter()).as("Counter values should be equal.").isEqualTo(testCounter1.getCounter());
+        assertThat(testCounter2.getCounter()).as("Counter values should be equal.")
+                .isEqualTo(testCounter1.getCounter());
 
         Future<Integer> testCallableResult = Executors.newSingleThreadExecutor().submit(new Callable<Integer>() {
 
@@ -73,7 +73,8 @@ public class TestContextController {
             }
         });
 
-        assertThat((testCallableResult.get() != testCounter1.getCounter())).as("Counter values should not be equal.").isTrue();
+        assertThat(testCounter1.getCounter()).as("Counter values should not be equal.")
+                .isNotEqualTo(testCallableResult.get());
     }
 
     @Produces
