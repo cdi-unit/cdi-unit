@@ -15,15 +15,18 @@
  */
 package io.github.cdiunit.core.resource.internal;
 
-import java.beans.*;
+import java.beans.FeatureDescriptor;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
-import jakarta.enterprise.inject.spi.*;
 import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
+import jakarta.enterprise.inject.spi.*;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 

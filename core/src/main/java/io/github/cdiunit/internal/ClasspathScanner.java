@@ -15,55 +15,23 @@
  */
 package io.github.cdiunit.internal;
 
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface ClasspathScanner {
 
-    Logger log = LoggerFactory.getLogger(ClasspathScanner.class);
+    Collection<ClassContributor> getBeanArchives();
 
-    Collection<URL> getBeanArchives();
+    Collection<String> getClassNamesForClasspath(Iterable<ClassContributor> classContributors);
 
-    List<String> getClassNamesForClasspath(URL[] urls);
-
-    List<String> getClassNamesForPackage(String packageName, URL url);
-
-    default URL getClasspathURL(Class<?> cls) {
-        return Optional.ofNullable(cls)
-                .map(Class::getProtectionDomain)
-                .map(ProtectionDomain::getCodeSource)
-                .map(CodeSource::getLocation)
-                .map(this::getRealURL)
-                .orElse(null);
-    }
-
-    default URL getRealURL(URL urlWithPotentialSymLink) {
-        try {
-            Path realPath = Paths.get(urlWithPotentialSymLink.toURI()).toRealPath();
-            URL realURL = realPath.toUri().toURL();
-            if (log.isDebugEnabled() && !realURL.equals(urlWithPotentialSymLink)) {
-                log.debug("Resolving {} to {}", urlWithPotentialSymLink, realURL);
-            }
-            return realURL;
-        } catch (Exception e) {
-            log.warn("Could not resolve real path (without symlink, ...) for {}", urlWithPotentialSymLink, e);
-        }
-
-        return urlWithPotentialSymLink;
-    }
+    Collection<String> getClassNamesForPackage(String packageName, ClassContributor classContributor);
 
     default boolean isContainedInBeanArchive(Class<?> cls) {
-        final URL location = getClasspathURL(cls);
-        return location != null && getBeanArchives().contains(location);
+        final ClassContributor classContributor = ClassContributorLookup.getInstance().lookup(cls);
+        if (classContributor == null) {
+            return false;
+        }
+
+        return getBeanArchives().contains(classContributor);
     }
 
 }

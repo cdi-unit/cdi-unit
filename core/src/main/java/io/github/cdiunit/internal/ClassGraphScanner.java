@@ -15,9 +15,9 @@
  */
 package io.github.cdiunit.internal;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -30,43 +30,47 @@ class ClassGraphScanner implements ClasspathScanner {
         this.beanArchiveScanner = beanArchiveScanner;
     }
 
-    private List<URL> getClasspathURLs() {
+    private Collection<ClassContributor> getClassContributors() {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
+                .disableModuleScanning()
                 .scan()) {
-            return scan.getClasspathURLs();
+            return scan.getClasspathURIs().stream()
+                    .distinct()
+                    .map(ClassContributor::of)
+                    .collect(Collectors.toList());
         }
     }
 
     @Override
-    public Collection<URL> getBeanArchives() {
-        final List<URL> urls = getClasspathURLs();
+    public Collection<ClassContributor> getBeanArchives() {
+        final Collection<ClassContributor> classContributors = getClassContributors();
         try {
-            return beanArchiveScanner.findBeanArchives(urls);
+            return beanArchiveScanner.findBeanArchives(classContributors);
         } catch (Exception e) {
             throw ExceptionUtils.asRuntimeException(e);
         }
     }
 
     @Override
-    public List<String> getClassNamesForClasspath(URL[] urls) {
+    public List<String> getClassNamesForClasspath(final Iterable<ClassContributor> classContributors) {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(urls)
+                .overrideClasspath(classContributors)
                 .scan()) {
             return scan.getAllClasses().getNames();
         }
     }
 
     @Override
-    public List<String> getClassNamesForPackage(String packageName, URL url) {
+    public List<String> getClassNamesForPackage(String packageName, ClassContributor classContributor) {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(url)
+                .overrideClasspath(classContributor)
                 .acceptPackagesNonRecursive(packageName)
                 .scan()) {
             return scan.getAllClasses().getNames();

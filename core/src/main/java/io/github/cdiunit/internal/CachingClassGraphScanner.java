@@ -16,16 +16,15 @@
 package io.github.cdiunit.internal;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -62,70 +61,75 @@ public class CachingClassGraphScanner implements ClasspathScanner {
         return (V) cache.computeIfAbsent(k, o -> computeValue.get());
     }
 
-    private List<URL> getClasspathURLs() {
-        return computeIfAbsent(getClass().getClassLoader(), this::computeClasspathUrls);
+    private Iterable<ClassContributor> getClassContributors() {
+        return computeIfAbsent(getClass().getClassLoader(), this::computeClassContributors);
     }
 
     @Override
-    public Collection<URL> getBeanArchives() {
-        final List<URL> urls = getClasspathURLs();
-        return computeIfAbsent(computeKey(urls.stream()), () -> findBeanArchives(urls));
+    public Collection<ClassContributor> getBeanArchives() {
+        final Iterable<ClassContributor> classContributors = getClassContributors();
+        return computeIfAbsent(computeKey(classContributors), () -> findBeanArchives(classContributors));
     }
 
-    private Collection<URL> findBeanArchives(final List<URL> urls) {
+    private Collection<ClassContributor> findBeanArchives(final Iterable<ClassContributor> classContributors) {
         try {
-            return beanArchiveScanner.findBeanArchives(urls);
+            return beanArchiveScanner.findBeanArchives(classContributors);
         } catch (Exception e) {
             throw ExceptionUtils.asRuntimeException(e);
         }
     }
 
-    private List<URL> computeClasspathUrls() {
+    private Iterable<ClassContributor> computeClassContributors() {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .disableModuleScanning()
                 .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
-            return scan.getClasspathURLs();
+            return scan.getClasspathURIs().stream()
+                    .distinct()
+                    .map(ClassContributor::of)
+                    .collect(Collectors.toList());
         }
     }
 
     @Override
-    public List<String> getClassNamesForClasspath(URL[] urls) {
-        return computeIfAbsent(computeKey(Arrays.stream(urls)), () -> this.computeClassNamesForClasspath(urls));
+    public List<String> getClassNamesForClasspath(final Iterable<ClassContributor> classContributors) {
+        return computeIfAbsent(computeKey(classContributors), () -> this.computeClassNamesForClasspath(classContributors));
     }
 
-    private Object computeKey(final Stream<URL> urls) {
-        return urls
-                .map(URL::toString)
+    private Object computeKey(final Iterable<ClassContributor> classContributors) {
+        return StreamSupport.stream(classContributors.spliterator(), false)
+                .map(ClassContributor::getURI)
+                .map(Objects::toString)
                 .collect(Collectors.joining(File.pathSeparator));
     }
 
-    private List<String> computeClassNamesForClasspath(URL[] urls) {
+    private List<String> computeClassNamesForClasspath(final Iterable<ClassContributor> classContributors) {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(Arrays.asList(urls))
+                .overrideClasspath(classContributors)
                 .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
             return scan.getAllClasses().getNames();
         }
     }
 
     @Override
-    public List<String> getClassNamesForPackage(String packageName, URL url) {
-        return computeIfAbsent(computeKey(packageName, url), () -> this.computeClassNamesForPackage(packageName, url));
+    public List<String> getClassNamesForPackage(final String packageName, final ClassContributor classContributor) {
+        return computeIfAbsent(computeKey(packageName, classContributor),
+                () -> this.computeClassNamesForPackage(packageName, classContributor));
     }
 
-    private Object computeKey(final String packageName, final URL url) {
-        return String.format("%s@%s", packageName, url);
+    private Object computeKey(final String packageName, final ClassContributor classContributor) {
+        return String.format("%s@%s", packageName, classContributor);
     }
 
-    private List<String> computeClassNamesForPackage(String packageName, URL url) {
+    private List<String> computeClassNamesForPackage(final String packageName, final ClassContributor classContributor) {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(url)
+                .overrideClasspath(classContributor)
                 .acceptPackagesNonRecursive(packageName)
                 .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
             return scan.getAllClasses().getNames();

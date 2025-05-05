@@ -18,9 +18,9 @@ package io.github.cdiunit.internal;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -202,12 +202,15 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
         final Collection<Class<?>> result = new LinkedHashSet<>();
         for (Class<?> baseClass : baseClasses) {
             final String packageName = baseClass.getPackage().getName();
-            final URL url = scanner.getClasspathURL(baseClass);
+            final ClassContributor contributor = ClassContributorLookup.getInstance().lookup(baseClass);
+            if (contributor == null) {
+                continue;
+            }
 
             // It might be more efficient to scan all packageNames at once, but we
             // might pick up classes from a different package's classpath entry, which
             // would be a change in behaviour (but perhaps less surprising?).
-            scanner.getClassNamesForPackage(packageName, url)
+            scanner.getClassNamesForPackage(packageName, contributor)
                     .stream()
                     .map(this::loadClass)
                     .collect(Collectors.toCollection(() -> result));
@@ -217,10 +220,10 @@ class DefaultDiscoveryContext implements DiscoveryExtension.Context {
 
     @Override
     public Collection<Class<?>> scanBeanArchives(Collection<Class<?>> baseClasses) {
-        URL[] urls = baseClasses.stream()
-                .map(scanner::getClasspathURL)
-                .toArray(URL[]::new);
-        return scanner.getClassNamesForClasspath(urls)
+        final List<ClassContributor> classContributors = baseClasses.stream()
+                .map(ClassContributorLookup.getInstance()::lookup)
+                .collect(Collectors.toList());
+        return scanner.getClassNamesForClasspath(classContributors)
                 .stream()
                 .map(this::loadClass)
                 .collect(Collectors.toSet());
