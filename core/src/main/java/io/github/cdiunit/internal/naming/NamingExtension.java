@@ -17,6 +17,7 @@ package io.github.cdiunit.internal.naming;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
@@ -32,14 +33,14 @@ public class NamingExtension implements Extension {
 
     private String factoryToRestore;
 
-    void onAfterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) throws Exception {
+    void onAfterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager beanManager) throws NamingException {
         this.factoryToRestore = System.getProperty(Context.INITIAL_CONTEXT_FACTORY);
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CdiUnitContextFactory.class.getName());
         boundToContext = new InitialContext();
         boundToContext.bind(JNDI_BEAN_MANAGER_NAME, beanManager);
     }
 
-    void onBeforeShutdown(@Observes BeforeShutdown bs) throws Exception {
+    void onBeforeShutdown(@Observes BeforeShutdown bs) throws NamingException {
         try {
             if (boundToContext != null) {
                 boundToContext.unbind(JNDI_BEAN_MANAGER_NAME);

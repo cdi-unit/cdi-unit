@@ -23,7 +23,6 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
-import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import jakarta.enterprise.util.AnnotationLiteral;
 
 import io.github.cdiunit.IsolationLevel;
@@ -49,7 +48,7 @@ public class TestScopeExtension implements Extension {
     <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
         final AnnotatedType<T> annotatedType = pat.getAnnotatedType();
         if (annotatedType.getJavaClass().equals(testConfiguration.getTestClass())) {
-            AnnotatedTypeConfigurator<T> builder = pat.configureAnnotatedType()
+            pat.configureAnnotatedType()
                     .add(testConfiguration.getIsolationLevel() == IsolationLevel.PER_CLASS ? DEPENDENT : APPLICATIONSCOPED);
         }
     }

@@ -93,7 +93,7 @@ public class CdiUnitContext implements Context {
 
     @Override
     public Hashtable<?, ?> getEnvironment() throws NamingException {
-        return null;
+        return new Hashtable<>(properties);
     }
 
     @Override

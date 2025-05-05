@@ -51,11 +51,11 @@ public interface ClasspathScanner {
             Path realPath = Paths.get(urlWithPotentialSymLink.toURI()).toRealPath();
             URL realURL = realPath.toUri().toURL();
             if (log.isDebugEnabled() && !realURL.equals(urlWithPotentialSymLink)) {
-                log.debug("Adapting URL:" + urlWithPotentialSymLink + " to URL:" + realURL);
+                log.debug("Resolving {} to {}", urlWithPotentialSymLink, realURL);
             }
             return realURL;
         } catch (Exception e) {
-            log.warn("Could not try to find real path (without symlink, ...) for URL:" + urlWithPotentialSymLink.toString(), e);
+            log.warn("Could not resolve real path (without symlink, ...) for {}", urlWithPotentialSymLink, e);
         }
 
         return urlWithPotentialSymLink;

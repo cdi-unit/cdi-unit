@@ -100,7 +100,7 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
                 if (classpath != null) {
                     String[] manifestEntries = classpath.split(" ?file:");
                     for (String entry : manifestEntries) {
-                        if (entry.length() > 0) {
+                        if (!entry.isEmpty()) {
                             // entries is a Set, so this won't add duplicates
                             manifestURLs.add(new URL("file:" + entry));
                         }

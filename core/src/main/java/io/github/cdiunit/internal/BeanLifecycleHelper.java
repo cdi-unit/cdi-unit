@@ -30,16 +30,15 @@ import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
 
 public final class BeanLifecycleHelper {
 
-    public static void invokePostConstruct(Class<?> targetClass, Object target) throws Throwable {
+    public static void invokePostConstruct(Class<?> targetClass, Object target) {
         invokeLifecycleMethods(targetClass, PostConstruct.class, target);
     }
 
-    public static void invokePreDestroy(Class<?> targetClass, Object target) throws Throwable {
+    public static void invokePreDestroy(Class<?> targetClass, Object target) {
         invokeLifecycleMethods(targetClass, PreDestroy.class, target);
     }
 
-    private static void invokeLifecycleMethods(Class<?> targetClass, Class<? extends Annotation> a, Object target)
-            throws Throwable {
+    private static void invokeLifecycleMethods(Class<?> targetClass, Class<? extends Annotation> a, Object target) {
         findLifecycleMethods(targetClass, a).forEach(m -> {
             try {
                 m.setAccessible(true);

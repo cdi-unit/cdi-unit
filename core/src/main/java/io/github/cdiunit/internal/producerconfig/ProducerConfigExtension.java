@@ -43,7 +43,7 @@ public class ProducerConfigExtension implements Extension {
         this.testConfiguration = testConfiguration;
     }
 
-    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) throws Exception {
+    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
         var testClass = testConfiguration.getTestClass();
         while (!Object.class.equals(testClass)) {
             addConfigValues(configurations, null, testClass.getAnnotations());
