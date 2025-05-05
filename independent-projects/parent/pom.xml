@@ -550,6 +550,11 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>io/github/cdiunit/**</include>
+							</includes>
+						</configuration>
 						<executions>
 							<execution>
 								<id>pre-unit-test</id>
