@@ -116,17 +116,27 @@ public class TestLifecycle {
             return testInstance;
         }
 
-        final Class<?> declaringClass = testClass.getDeclaringClass();
-        if (declaringClass != null && declaringClass.isInstance(outerInstance)) {
-            final Constructor<T> constructor = testClass.getDeclaredConstructor(declaringClass);
-            constructor.setAccessible(true);
-            var testInstance = constructor.newInstance(outerInstance);
-            configureTest(testInstance);
-
+        final T testInstance = createNestedTestInstance(outerInstance, testClass);
+        if (testInstance != null) {
             return testInstance;
         }
 
         throw new IllegalStateException(String.format("Don't know how to instantiate %s", testClass));
+    }
+
+    @SuppressWarnings("java:S3011")
+    private <T> T createNestedTestInstance(Object outerInstance, Class<T> testClass) throws Throwable {
+        final Class<?> declaringClass = testClass.getDeclaringClass();
+        if (declaringClass == null || !declaringClass.isInstance(outerInstance)) {
+            return null;
+        }
+
+        final Constructor<T> constructor = testClass.getDeclaredConstructor(declaringClass);
+        constructor.setAccessible(true);
+        var testInstance = constructor.newInstance(outerInstance);
+        configureTest(testInstance);
+
+        return testInstance;
     }
 
     @SuppressWarnings("unchecked")

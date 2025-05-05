@@ -16,14 +16,18 @@
 package io.github.cdiunit.internal.events;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.*;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Vetoed;
-import jakarta.enterprise.inject.spi.*;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeforeShutdown;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 
@@ -67,6 +71,7 @@ public class EventsForwardingExtension implements Extension {
             this.observerMethods = observerMethods;
         }
 
+        @SuppressWarnings("java:S3011")
         void invoke(BeanManager beanManager, InvocationContext ic, Object... args) {
             for (Method m : observerMethods) {
                 if (!matchingObserver(m, ic.getMethod(), args)) {

@@ -80,6 +80,7 @@ public class CdiDiscoveryExtension implements DiscoveryExtension {
         }
     }
 
+    @SuppressWarnings("java:S3011")
     private void discoverExtensions(Context context, Class<?> beanClass) {
         if (Extension.class.isAssignableFrom(beanClass) && !Modifier.isAbstract(beanClass.getModifiers())) {
             try {

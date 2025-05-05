@@ -38,6 +38,7 @@ public final class BeanLifecycleHelper {
         invokeLifecycleMethods(targetClass, PreDestroy.class, target);
     }
 
+    @SuppressWarnings("java:S3011")
     private static void invokeLifecycleMethods(Class<?> targetClass, Class<? extends Annotation> a, Object target) {
         findLifecycleMethods(targetClass, a).forEach(m -> {
             try {
