@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.resource;
+package io.github.cdiunit.core.resource.internal;
 
 import java.beans.*;
 import java.util.Arrays;
@@ -22,10 +22,7 @@ import jakarta.annotation.Resource;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
-import jakarta.enterprise.inject.spi.AnnotatedField;
-import jakarta.enterprise.inject.spi.AnnotatedMethod;
-import jakarta.enterprise.inject.spi.Extension;
-import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.*;
 import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
@@ -43,7 +40,7 @@ public class InjectAtResourceExtension implements Extension {
 
         var beanInfo = Introspector.getBeanInfo(pat.getAnnotatedType().getJavaClass());
 
-        builder.filterFields(this::eligibleField).forEach(field -> {
+        builder.filterFields(this::eligibleMember).forEach(field -> {
             final AnnotatedField<? super T> annotatedField = field.getAnnotated();
             final var javaMember = annotatedField.getJavaMember();
             Resource resource = annotatedField.getAnnotation(Resource.class);
@@ -72,7 +69,7 @@ public class InjectAtResourceExtension implements Extension {
             }
         });
 
-        builder.filterMethods(this::eligibleMethod).forEach(method -> {
+        builder.filterMethods(this::eligibleMember).forEach(method -> {
             final AnnotatedMethod<? super T> annotatedMethod = method.getAnnotated();
             final var javaMember = annotatedMethod.getJavaMember();
             final var propertyDescriptor = Arrays.stream(beanInfo.getPropertyDescriptors())
@@ -113,12 +110,8 @@ public class InjectAtResourceExtension implements Extension {
         });
     }
 
-    private <X> boolean eligibleField(AnnotatedField<? super X> field) {
-        return !field.isAnnotationPresent(Inject.class) && field.isAnnotationPresent(Resource.class);
-    }
-
-    private <X> boolean eligibleMethod(AnnotatedMethod<? super X> method) {
-        return !method.isAnnotationPresent(Inject.class) && method.isAnnotationPresent(Resource.class);
+    private <X> boolean eligibleMember(final AnnotatedMember<? super X> member) {
+        return !member.isAnnotationPresent(Inject.class) && member.isAnnotationPresent(Resource.class);
     }
 
 }

@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import jakarta.annotation.Resource;
 
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.internal.resource.InjectAtResourceExtension;
+import io.github.cdiunit.core.resource.internal.InjectAtResourceExtension;
 
 /**
  * Enable support for {@link Resource} injection.
