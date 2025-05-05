@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.ejb;
+package io.github.cdiunit.core.ejb.internal;
 
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
-import io.github.cdiunit.internal.ejb.EJbQualifier.EJbQualifierLiteral;
+import io.github.cdiunit.core.ejb.internal.EJbQualifier.EJbQualifierLiteral;
 
 public class EjbExtension implements Extension {
 

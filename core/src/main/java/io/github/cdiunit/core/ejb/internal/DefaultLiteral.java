@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.ejb;
+package io.github.cdiunit.core.ejb.internal;
 
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.util.AnnotationLiteral;

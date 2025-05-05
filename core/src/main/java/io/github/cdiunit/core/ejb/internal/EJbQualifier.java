@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.ejb;
+package io.github.cdiunit.core.ejb.internal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,7 +29,7 @@ import jakarta.inject.Qualifier;
 public @interface EJbQualifier {
     String name() default "";
 
-    public static class EJbQualifierLiteral extends AnnotationLiteral<EJbQualifier> implements EJbQualifier {
+    class EJbQualifierLiteral extends AnnotationLiteral<EJbQualifier> implements EJbQualifier {
 
         private static final long serialVersionUID = 6325669711688098239L;
         private final String name;

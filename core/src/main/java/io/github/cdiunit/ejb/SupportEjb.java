@@ -19,7 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import io.github.cdiunit.AdditionalClasses;
-import io.github.cdiunit.internal.ejb.EjbExtension;
+import io.github.cdiunit.core.ejb.internal.EjbExtension;
 
 /**
  * Enable support for Ejb
