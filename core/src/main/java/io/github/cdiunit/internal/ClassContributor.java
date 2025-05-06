@@ -18,6 +18,7 @@ package io.github.cdiunit.internal;
 import java.io.File;
 import java.net.URI;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public final class ClassContributor {
 
@@ -48,7 +49,9 @@ public final class ClassContributor {
 
     @Override
     public String toString() {
-        return uri.toString();
+        return new StringJoiner(", ", ClassContributor.class.getSimpleName() + "[", "]")
+                .add("uri=" + uri)
+                .toString();
     }
 
     public boolean isDirectory() {

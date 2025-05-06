@@ -104,12 +104,14 @@ public class CachingClassGraphScanner implements ClasspathScanner {
     }
 
     private List<String> computeClassNamesForClasspath(final Iterable<ClassContributor> classContributors) {
-        try (ScanResult scan = new ClassGraph()
+        final var scanner = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
-                .ignoreClassVisibility()
-                .overrideClasspath(classContributors)
-                .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
+                .ignoreClassVisibility();
+        StreamSupport.stream(classContributors.spliterator(), false)
+                .map(ClassContributor::getURI)
+                .forEachOrdered(scanner::overrideClasspath);
+        try (ScanResult scan = scanner.scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
             return scan.getAllClasses().getNames();
         }
     }
@@ -129,7 +131,7 @@ public class CachingClassGraphScanner implements ClasspathScanner {
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(classContributor)
+                .overrideClasspath(classContributor.getURI())
                 .acceptPackagesNonRecursive(packageName)
                 .scan(scanExecutor, DEFAULT_NUM_WORKER_THREADS)) {
             return scan.getAllClasses().getNames();

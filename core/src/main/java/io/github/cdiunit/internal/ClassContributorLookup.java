@@ -57,6 +57,9 @@ public final class ClassContributorLookup {
      * @return type contributor if found, null otherwise
      */
     public ClassContributor lookup(final String className) {
+        if (className == null) {
+            return null;
+        }
         return lookup(ClassLookup.getInstance().lookup(className));
     }
 

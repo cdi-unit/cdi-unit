@@ -18,15 +18,16 @@ package io.github.cdiunit.internal;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-class ClassGraphScanner implements ClasspathScanner {
+public class ClassGraphScanner implements ClasspathScanner {
 
     private final BeanArchiveScanner beanArchiveScanner;
 
-    ClassGraphScanner(final BeanArchiveScanner beanArchiveScanner) {
+    public ClassGraphScanner(final BeanArchiveScanner beanArchiveScanner) {
         this.beanArchiveScanner = beanArchiveScanner;
     }
 
@@ -54,12 +55,14 @@ class ClassGraphScanner implements ClasspathScanner {
 
     @Override
     public List<String> getClassNamesForClasspath(final Iterable<ClassContributor> classContributors) {
-        try (ScanResult scan = new ClassGraph()
+        final var scanner = new ClassGraph()
                 .disableNestedJarScanning()
                 .enableClassInfo()
-                .ignoreClassVisibility()
-                .overrideClasspath(classContributors)
-                .scan()) {
+                .ignoreClassVisibility();
+        StreamSupport.stream(classContributors.spliterator(), false)
+                .map(ClassContributor::getURI)
+                .forEachOrdered(scanner::overrideClasspath);
+        try (ScanResult scan = scanner.scan()) {
             return scan.getAllClasses().getNames();
         }
     }
@@ -70,7 +73,7 @@ class ClassGraphScanner implements ClasspathScanner {
                 .disableNestedJarScanning()
                 .enableClassInfo()
                 .ignoreClassVisibility()
-                .overrideClasspath(classContributor)
+                .overrideClasspath(classContributor.getURI())
                 .acceptPackagesNonRecursive(packageName)
                 .scan()) {
             return scan.getAllClasses().getNames();
