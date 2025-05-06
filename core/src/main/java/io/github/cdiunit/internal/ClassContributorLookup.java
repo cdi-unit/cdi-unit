@@ -20,7 +20,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ public final class ClassContributorLookup {
 
     private final Logger logger = LoggerFactory.getLogger(ClassContributorLookup.class);
 
-    private final ConcurrentMap<Class<?>, ClassContributor> contributors = new ConcurrentHashMap<>();
+    private final ConcurrentMap<CodeSource, ClassContributor> contributors = new ConcurrentHashMap<>();
 
     private ClassContributorLookup() {
     }
@@ -58,17 +57,28 @@ public final class ClassContributorLookup {
      * @return type contributor if found, null otherwise
      */
     public ClassContributor lookup(final String className) {
-        return contributors.computeIfAbsent(ClassLookup.getInstance().lookup(className), this::lookupAbsent);
+        return lookup(ClassLookup.getInstance().lookup(className));
     }
 
+    /**
+     * Lookup the type contributor. This method is thread-safe.
+     *
+     * @param cls class to search
+     * @return type contributor if found, null otherwise
+     */
     public ClassContributor lookup(final Class<?> cls) {
-        return contributors.computeIfAbsent(cls, this::lookupAbsent);
+        if (cls == null) {
+            return null;
+        }
+        final var key = cls.getProtectionDomain().getCodeSource();
+        if (key == null) {
+            return null;
+        }
+        return contributors.computeIfAbsent(key, this::lookupAbsent);
     }
 
-    private ClassContributor lookupAbsent(final Class<?> cls) {
-        return Optional.ofNullable(cls)
-                .map(Class::getProtectionDomain)
-                .map(ProtectionDomain::getCodeSource)
+    private ClassContributor lookupAbsent(final CodeSource key) {
+        return Optional.of(key)
                 .map(CodeSource::getLocation)
                 .map(this::normalize)
                 .map(ClassContributor::of)
