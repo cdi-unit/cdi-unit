@@ -55,7 +55,7 @@ class ClasspathScannerTest {
 
     private static final BeanArchiveScanner beanArchiveScanner = new DefaultBeanArchiveScanner();
 
-    private static final ClasspathScanner simpleScanner = new ClassGraphScanner(beanArchiveScanner);
+    private static final ClasspathScanner simpleScanner = new CachingClassGraphScanner(beanArchiveScanner);
     private static final ClasspathScanner cachingScanner = new ClassGraphScanner(beanArchiveScanner);
 
     static Stream<Arguments> classpathScannerProvider() {
