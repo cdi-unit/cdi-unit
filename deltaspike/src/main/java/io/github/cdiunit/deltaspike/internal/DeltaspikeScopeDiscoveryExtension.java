@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classcontributor.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class DeltaspikeScopeDiscoveryExtension implements DiscoveryExtension {

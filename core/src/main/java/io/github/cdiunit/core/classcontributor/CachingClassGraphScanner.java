@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classcontributor;
 
 import java.io.File;
 import java.util.Collection;
@@ -26,10 +26,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import io.github.cdiunit.core.beanarchive.BeanArchiveScanner;
+import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-public class CachingClassGraphScanner implements ClasspathScanner {
+class CachingClassGraphScanner implements ClasspathScanner {
 
     /**
      * The default number of worker threads to use while scanning. This number gave the best results on a relatively
@@ -61,7 +63,8 @@ public class CachingClassGraphScanner implements ClasspathScanner {
         return (V) cache.computeIfAbsent(k, o -> computeValue.get());
     }
 
-    private Iterable<ClassContributor> getClassContributors() {
+    @Override
+    public Iterable<ClassContributor> getClassContributors() {
         return computeIfAbsent(getClass().getClassLoader(), this::computeClassContributors);
     }
 

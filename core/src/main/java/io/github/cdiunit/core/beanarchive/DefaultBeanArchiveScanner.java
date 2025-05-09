@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.beanarchive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +31,12 @@ import java.util.jar.Manifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdiunit.core.classcontributor.ClassContributor;
+
+/**
+ * @deprecated use {@link BeanArchiveClosures#ofManifestClassPath()} instead.
+ */
+@Deprecated(forRemoval = true)
 public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBeanArchiveScanner.class);
@@ -76,7 +82,7 @@ public class DefaultBeanArchiveScanner implements BeanArchiveScanner {
         return result;
     }
 
-    private static Collection<? extends ClassContributor> getContributorsFromManifest(
+    private static Collection<ClassContributor> getContributorsFromManifest(
             final ClassContributor classContributor) throws IOException {
         final Set<ClassContributor> manifestContributors = new LinkedHashSet<>();
         // If this is a surefire manifest-only jar we need to get the original classpath.

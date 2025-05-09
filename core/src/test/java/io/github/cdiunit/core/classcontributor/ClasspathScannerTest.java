@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.tests;
+package io.github.cdiunit.core.classcontributor;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,7 +22,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import io.github.cdiunit.internal.*;
 import io.github.cdiunit.test.beans.AImplementation1;
 import io.github.cdiunit.test.beans.AImplementation3;
 
@@ -53,10 +52,8 @@ class ClasspathScannerTest {
             "io.github.cdiunit.test.beans.ScopedFactory"
     };
 
-    private static final BeanArchiveScanner beanArchiveScanner = new DefaultBeanArchiveScanner();
-
-    private static final ClasspathScanner simpleScanner = new CachingClassGraphScanner(beanArchiveScanner);
-    private static final ClasspathScanner cachingScanner = new ClassGraphScanner(beanArchiveScanner);
+    private static final ClasspathScanner cachingScanner = ClasspathScanners.caching();
+    private static final ClasspathScanner simpleScanner = ClasspathScanners.simple();
 
     static Stream<Arguments> classpathScannerProvider() {
         return Stream.of(
@@ -87,12 +84,12 @@ class ClasspathScannerTest {
                 .isNotEmpty()
                 .containsOnlyOnce(ALL_TEST_BEANS)
                 .containsOnlyOnce(
-                        ClassContributorLookupTest.class.getName(),
-                        ClasspathScannerTest.class.getName(),
-                        ScopesTest.class.getName(),
-                        TestResource.AResource.class.getName(),
-                        TestResource.AResourceExt.class.getName(),
-                        TestResource.AResourceType.class.getName());
+                        "io.github.cdiunit.core.classcontributor.ClassContributorLookupTest",
+                        "io.github.cdiunit.core.classcontributor.ClasspathScannerTest",
+                        "io.github.cdiunit.core.tests.ScopesTest",
+                        "io.github.cdiunit.core.tests.TestResource$AResource",
+                        "io.github.cdiunit.core.tests.TestResource$AResourceExt",
+                        "io.github.cdiunit.core.tests.TestResource$AResourceType");
     }
 
     @ParameterizedTest

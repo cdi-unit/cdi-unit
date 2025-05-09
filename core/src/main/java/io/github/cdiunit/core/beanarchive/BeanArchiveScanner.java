@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.beanarchive;
 
 import java.io.IOException;
 import java.util.Collection;
 
+import io.github.cdiunit.core.classcontributor.ClassContributor;
+
 /**
  * Scanner for bean archives.
+ * 
+ * @deprecated use {@link BeanArchiveClosure} instead.
  */
+@Deprecated(forRemoval = true)
 public interface BeanArchiveScanner {
 
     Collection<ClassContributor> findBeanArchives(Iterable<ClassContributor> classContributors) throws IOException;

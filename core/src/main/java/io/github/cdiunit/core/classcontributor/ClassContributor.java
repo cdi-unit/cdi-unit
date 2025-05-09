@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classcontributor;
 
 import java.io.File;
 import java.net.URI;
@@ -54,6 +54,10 @@ public final class ClassContributor {
                 .toString();
     }
 
+    /**
+     * @deprecated TODO - REMOVE together with {@link io.github.cdiunit.core.beanarchive.BeanArchiveScanner}
+     */
+    @Deprecated(forRemoval = true)
     public boolean isDirectory() {
         try {
             return new File(uri).isDirectory();

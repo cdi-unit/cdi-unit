@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import org.apache.deltaspike.data.impl.RepositoryExtension;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classcontributor.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class DeltaspikeProxyDiscoveryExtension implements DiscoveryExtension {
