@@ -15,7 +15,7 @@
  */
 package io.github.cdiunit.internal.producerconfig;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classcontributor.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ProducerConfigDiscoveryExtension implements DiscoveryExtension {

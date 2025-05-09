@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original author or authors.
+ * Copyright 2025 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.jsf;
+package io.github.cdiunit.core.beanarchive;
 
+import io.github.cdiunit.core.classcontributor.ClassContributor;
 import io.github.cdiunit.core.classcontributor.ClassLookup;
-import io.github.cdiunit.internal.DiscoveryExtension;
 
-public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
+public interface BeanArchiveClosure {
 
-    private final boolean usesJsf = ClassLookup.getInstance().isPresent("jakarta.faces.view.ViewScoped");
+    void resolve(Iterable<ClassContributor> classContributors);
 
-    @Override
-    public void bootstrap(BootstrapDiscoveryContext bdc) {
-        if (usesJsf) {
-            bdc.discoverExtension(this::discoverCdiExtension);
-        }
-    }
+    boolean isBeanArchive(ClassContributor classContributor);
 
-    private void discoverCdiExtension(Context context) {
-        context.extension(new ViewScopeExtension());
+    boolean isContainedInBeanArchive(final Class<?> clazz);
+
+    default boolean isContainedInBeanArchive(String className) {
+        return isContainedInBeanArchive(ClassLookup.getInstance().lookup(className));
     }
 
 }

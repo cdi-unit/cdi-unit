@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original author or authors.
+ * Copyright 2025 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.beanarchive;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.util.Optional;
 
-/**
- * Scanner for bean archives.
- */
-public interface BeanArchiveScanner {
+import io.github.cdiunit.core.classcontributor.ClassContributor;
 
-    Collection<ClassContributor> findBeanArchives(Iterable<ClassContributor> classContributors) throws IOException;
+@FunctionalInterface
+public interface BeanArchiveContentAdapter {
+
+    /**
+     * @param classContributor class contributor
+     * @return optional content, empty if could not be adapted
+     */
+    Optional<BeanArchive.Content> adapt(final ClassContributor classContributor);
 
 }

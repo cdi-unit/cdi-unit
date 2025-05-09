@@ -27,6 +27,11 @@ import org.jboss.weld.environment.se.Weld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdiunit.core.beanarchive.BeanArchiveClosure;
+import io.github.cdiunit.core.beanarchive.BeanArchiveClosures;
+import io.github.cdiunit.core.classcontributor.ClasspathScanner;
+import io.github.cdiunit.core.classcontributor.ClasspathScanners;
+
 public final class WeldHelper {
 
     private static final Logger log = LoggerFactory.getLogger(WeldHelper.class);
@@ -47,7 +52,10 @@ public final class WeldHelper {
         final BiConsumer<DiscoveryExtension.Context, Method> discoverMethod = bdc.discoverMethod;
         final Consumer<DiscoveryExtension.Context> afterDiscovery = bdc.afterDiscovery;
 
-        final ClasspathScanner scanner = new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
+        final ClasspathScanner scanner = ClasspathScanners.caching();
+        final BeanArchiveClosure beanArchiveClosure = BeanArchiveClosures.ofManifestClassPath();
+        beanArchiveClosure.resolve(scanner.getClassContributors());
+
         final DefaultDiscoveryContext discoveryContext = new DefaultDiscoveryContext(scanner, testConfiguration);
 
         final Set<Class<?>> discoveredClasses = new LinkedHashSet<>();
@@ -61,7 +69,13 @@ public final class WeldHelper {
         while (discoveryContext.hasClassesToProcess()) {
             final Class<?> cls = discoveryContext.nextClassToProcess();
 
-            final boolean candidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
+            final boolean oldCandidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
+            final boolean newCandidate = beanArchiveClosure.isContainedInBeanArchive(cls);
+
+            assert oldCandidate == newCandidate
+                    : String.format("%s: old %s, new %s", cls.getName(), oldCandidate, newCandidate);
+
+            final boolean candidate = newCandidate;
             final boolean processed = classesProcessed.contains(cls);
             final boolean primitive = cls.isPrimitive();
             final boolean ignored = discoveryContext.isIgnored(cls);
