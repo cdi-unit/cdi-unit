@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal.jsf;
+package io.github.cdiunit.core.classcontributor;
 
-import io.github.cdiunit.core.classcontributor.ClassLookup;
-import io.github.cdiunit.internal.DiscoveryExtension;
+import java.io.IOException;
+import java.util.Collection;
 
-public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
+/**
+ * Scanner for bean archives.
+ */
+public interface BeanArchiveScanner {
 
-    private final boolean usesJsf = ClassLookup.getInstance().isPresent("jakarta.faces.view.ViewScoped");
-
-    @Override
-    public void bootstrap(BootstrapDiscoveryContext bdc) {
-        if (usesJsf) {
-            bdc.discoverExtension(this::discoverCdiExtension);
-        }
-    }
-
-    private void discoverCdiExtension(Context context) {
-        context.extension(new ViewScopeExtension());
-    }
+    Collection<ClassContributor> findBeanArchives(Iterable<ClassContributor> classContributors) throws IOException;
 
 }

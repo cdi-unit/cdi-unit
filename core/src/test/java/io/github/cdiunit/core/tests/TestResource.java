@@ -162,7 +162,7 @@ class TestResource {
 
     }
 
-    interface AResourceType {
+    public interface AResourceType {
     }
 
     public interface BResourceType {
@@ -177,7 +177,7 @@ class TestResource {
     }
 
     @Vetoed
-    static class AResourceExt extends AResource {
+    public static class AResourceExt extends AResource {
     }
 
     @Vetoed
