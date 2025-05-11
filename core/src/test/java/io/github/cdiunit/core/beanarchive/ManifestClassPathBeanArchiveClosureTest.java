@@ -77,6 +77,8 @@ class ManifestClassPathBeanArchiveClosureTest {
         return Stream.of(
                 arguments("root/", false),
                 arguments("with-beans-xml/", true),
+                arguments("with-web-inf-beans-xml/", true),
+                arguments("with-web-inf-meta-inf-beans-xml/", true),
                 arguments("with-cdi-extension/", true),
                 arguments("with-cdiunit-extension/", true),
                 arguments("with-cdiunit-archive/", true),

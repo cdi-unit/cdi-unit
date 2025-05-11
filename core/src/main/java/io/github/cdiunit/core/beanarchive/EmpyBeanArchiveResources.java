@@ -27,6 +27,11 @@ class EmpyBeanArchiveResources implements BeanArchive.Resources, BeanArchive.Res
     }
 
     @Override
+    public boolean anyExist(String... paths) {
+        return false;
+    }
+
+    @Override
     public Optional<Manifest> getManifest() {
         return Optional.empty();
     }

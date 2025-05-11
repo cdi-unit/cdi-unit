@@ -18,6 +18,7 @@ package io.github.cdiunit.core.beanarchive;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.JarEntry;
@@ -78,8 +79,10 @@ class FileSystemResourceContextAdapter implements BeanArchive.ResourceContextAda
         }
 
         @Override
-        public boolean exists(String path) {
-            return resolveInContext(path).isPresent();
+        public boolean anyExist(String... paths) {
+            return Arrays.stream(paths)
+                    .map(this::resolveInContext)
+                    .anyMatch(Optional::isPresent);
         }
 
         @Override
@@ -138,8 +141,10 @@ class FileSystemResourceContextAdapter implements BeanArchive.ResourceContextAda
             }
 
             @Override
-            public boolean exists(String path) {
-                return resolveInContext(jarFile, path).isPresent();
+            public boolean anyExist(String... paths) {
+                return Arrays.stream(paths)
+                        .map(path -> resolveInContext(jarFile, path))
+                        .anyMatch(Optional::isPresent);
             }
 
             @Override

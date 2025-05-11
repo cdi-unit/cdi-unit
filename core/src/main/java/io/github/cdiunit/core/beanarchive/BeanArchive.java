@@ -29,7 +29,11 @@ interface BeanArchive {
 
     ResourcesContext EMPTY_RESOURCES_CONTEXT = new EmpyBeanArchiveResources();
 
-    String BEANS_XML_PATH = "META-INF/beans.xml";
+    String[] BEANS_XML_PATHS = new String[] {
+            "META-INF/beans.xml",
+            "WEB-INF/beans.xml",
+            "WEB-INF/classes/META-INF/beans.xml"
+    };
     String META_INF_SERVICES_PATH = "META-INF/services/";
     String CDI_PROVIDER_PATH = META_INF_SERVICES_PATH + CDIProvider.class.getName();
     String CDI_EXTENSION_PATH = META_INF_SERVICES_PATH + Extension.class.getName();
@@ -44,7 +48,17 @@ interface BeanArchive {
          * @param path path to the resource
          * @return true if resource exists and readable
          */
-        boolean exists(final String path);
+        default boolean exists(final String path) {
+            return anyExist(path);
+        }
+
+        /**
+         * Check if any of the specified resources exists.
+         *
+         * @param paths paths to the resource
+         * @return true if any of the specified resources exists and is readable
+         */
+        boolean anyExist(final String... paths);
 
         /**
          * Get manifest.
