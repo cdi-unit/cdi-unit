@@ -31,10 +31,10 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldSEBeanRegistrant;
 
 import io.github.cdiunit.ProducesAlternative;
-import io.github.cdiunit.core.classcontributor.ClassContributor;
-import io.github.cdiunit.core.classcontributor.ClassContributorLookup;
-import io.github.cdiunit.core.classcontributor.ClassLookup;
-import io.github.cdiunit.core.classcontributor.ClasspathScanner;
+import io.github.cdiunit.core.classpath.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassContributorLookup;
+import io.github.cdiunit.core.classpath.ClassLookup;
+import io.github.cdiunit.core.classpath.ClasspathScanner;
 import io.github.cdiunit.core.context.internal.ContextActivator;
 import io.github.cdiunit.core.context.internal.ContextTracker;
 

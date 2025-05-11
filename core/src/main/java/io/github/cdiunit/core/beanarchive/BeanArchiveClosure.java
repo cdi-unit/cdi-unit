@@ -15,8 +15,8 @@
  */
 package io.github.cdiunit.core.beanarchive;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
-import io.github.cdiunit.core.classcontributor.ClassLookup;
+import io.github.cdiunit.core.classpath.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassLookup;
 
 public interface BeanArchiveClosure {
 

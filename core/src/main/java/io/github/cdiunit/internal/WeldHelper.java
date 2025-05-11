@@ -22,17 +22,15 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.*;
 
-import jakarta.enterprise.inject.spi.Extension;
-
 import org.jboss.weld.environment.se.Weld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.cdiunit.core.beanarchive.BeanArchiveClosure;
 import io.github.cdiunit.core.beanarchive.BeanArchiveClosures;
-import io.github.cdiunit.core.classcontributor.ClassContributorLookup;
-import io.github.cdiunit.core.classcontributor.ClasspathScanner;
-import io.github.cdiunit.core.classcontributor.ClasspathScanners;
+import io.github.cdiunit.core.classpath.ClassContributorLookup;
+import io.github.cdiunit.core.classpath.ClasspathScanner;
+import io.github.cdiunit.core.classpath.ClasspathScanners;
 
 public final class WeldHelper {
 
@@ -75,14 +73,8 @@ public final class WeldHelper {
         while (discoveryContext.hasClassesToProcess()) {
             final Class<?> cls = discoveryContext.nextClassToProcess();
 
-            final boolean oldCandidate = scanner.isContainedInBeanArchive(cls) || Extension.class.isAssignableFrom(cls);
-            final boolean newCandidate = beanArchiveClosure.isContainedInBeanArchive(cls)
+            final boolean candidate = beanArchiveClosure.isContainedInBeanArchive(cls)
                     || isInTestClassContributor.test(cls);
-
-            assert oldCandidate == newCandidate
-                    : String.format("%s: old %s, new %s", cls.getName(), oldCandidate, newCandidate);
-
-            final boolean candidate = newCandidate;
             final boolean processed = classesProcessed.contains(cls);
             final boolean primitive = cls.isPrimitive();
             final boolean ignored = discoveryContext.isIgnored(cls);

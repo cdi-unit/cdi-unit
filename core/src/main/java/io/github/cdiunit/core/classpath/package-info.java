@@ -13,24 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.classcontributor;
-
-import io.github.cdiunit.core.beanarchive.DefaultBeanArchiveScanner;
-
-import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
-
-public final class ClasspathScanners {
-
-    private ClasspathScanners() throws IllegalAccessException {
-        illegalInstantiation();
-    }
-
-    public static ClasspathScanner simple() {
-        return new ClassGraphScanner(new DefaultBeanArchiveScanner());
-    }
-
-    public static ClasspathScanner caching() {
-        return new CachingClassGraphScanner(new DefaultBeanArchiveScanner());
-    }
-
-}
+package io.github.cdiunit.core.classpath;

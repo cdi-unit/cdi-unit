@@ -27,8 +27,8 @@ import org.junit.jupiter.params.converter.TypedArgumentConverter;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
-import io.github.cdiunit.core.classcontributor.ClassContributorLookup;
+import io.github.cdiunit.core.classpath.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassContributorLookup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;

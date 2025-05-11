@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original author or authors.
+ * Copyright 2025 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.beanarchive;
+package io.github.cdiunit.core.classpath;
 
-import java.io.IOException;
-import java.util.Collection;
+import static io.github.cdiunit.internal.ExceptionUtils.illegalInstantiation;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
+public final class ClasspathScanners {
 
-/**
- * Scanner for bean archives.
- * 
- * @deprecated use {@link BeanArchiveClosure} instead.
- */
-@Deprecated(forRemoval = true)
-public interface BeanArchiveScanner {
+    private ClasspathScanners() throws IllegalAccessException {
+        illegalInstantiation();
+    }
 
-    Collection<ClassContributor> findBeanArchives(Iterable<ClassContributor> classContributors) throws IOException;
+    public static ClasspathScanner simple() {
+        return new ClassGraphScanner();
+    }
+
+    public static ClasspathScanner caching() {
+        return new CachingClassGraphScanner();
+    }
 
 }

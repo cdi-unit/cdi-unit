@@ -22,8 +22,8 @@ import java.util.function.Consumer;
 import java.util.jar.Manifest;
 import java.util.*;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
-import io.github.cdiunit.core.classcontributor.ClassContributorLookup;
+import io.github.cdiunit.core.classpath.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassContributorLookup;
 
 import static io.github.cdiunit.core.beanarchive.BeanArchive.*;
 

@@ -13,26 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.classcontributor;
+package io.github.cdiunit.core.classpath;
 
 import java.util.Collection;
 
 public interface ClasspathScanner {
 
-    Collection<ClassContributor> getBeanArchives();
-
     Collection<String> getClassNamesForClasspath(Iterable<ClassContributor> classContributors);
 
     Collection<String> getClassNamesForPackage(String packageName, ClassContributor classContributor);
-
-    default boolean isContainedInBeanArchive(Class<?> cls) {
-        final ClassContributor classContributor = ClassContributorLookup.getInstance().lookup(cls);
-        if (classContributor == null) {
-            return false;
-        }
-
-        return getBeanArchives().contains(classContributor);
-    }
 
     Iterable<ClassContributor> getClassContributors();
 

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.classcontributor;
+package io.github.cdiunit.core.classpath;
 
-import java.io.File;
 import java.net.URI;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -52,19 +51,6 @@ public final class ClassContributor {
         return new StringJoiner(", ", ClassContributor.class.getSimpleName() + "[", "]")
                 .add("uri=" + uri)
                 .toString();
-    }
-
-    /**
-     * @deprecated TODO - REMOVE together with {@link io.github.cdiunit.core.beanarchive.BeanArchiveScanner}
-     */
-    @Deprecated(forRemoval = true)
-    public boolean isDirectory() {
-        try {
-            return new File(uri).isDirectory();
-        } catch (IllegalArgumentException ignore) {
-            // Ignore, thrown by File constructor for unsupported URIs
-        }
-        return false;
     }
 
     public static ClassContributor of(final URI uri) {

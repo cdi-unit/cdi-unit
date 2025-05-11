@@ -28,7 +28,7 @@ import java.util.jar.Manifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassContributor;
 import io.github.cdiunit.internal.ExceptionUtils;
 
 class FileSystemResourceContextAdapter implements BeanArchive.ResourceContextAdapter {

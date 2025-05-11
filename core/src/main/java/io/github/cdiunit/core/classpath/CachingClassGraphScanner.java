@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.classcontributor;
+package io.github.cdiunit.core.classpath;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,8 +25,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import io.github.cdiunit.core.beanarchive.BeanArchiveScanner;
-import io.github.cdiunit.internal.ExceptionUtils;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
@@ -52,10 +49,7 @@ class CachingClassGraphScanner implements ClasspathScanner {
 
     static ConcurrentHashMap<Object, Object> cache = new ConcurrentHashMap<>();
 
-    private final BeanArchiveScanner beanArchiveScanner;
-
-    public CachingClassGraphScanner(final BeanArchiveScanner beanArchiveScanner) {
-        this.beanArchiveScanner = beanArchiveScanner;
+    CachingClassGraphScanner() {
     }
 
     @SuppressWarnings("unchecked")
@@ -66,20 +60,6 @@ class CachingClassGraphScanner implements ClasspathScanner {
     @Override
     public Iterable<ClassContributor> getClassContributors() {
         return computeIfAbsent(getClass().getClassLoader(), this::computeClassContributors);
-    }
-
-    @Override
-    public Collection<ClassContributor> getBeanArchives() {
-        final Iterable<ClassContributor> classContributors = getClassContributors();
-        return computeIfAbsent(computeKey(classContributors), () -> findBeanArchives(classContributors));
-    }
-
-    private Collection<ClassContributor> findBeanArchives(final Iterable<ClassContributor> classContributors) {
-        try {
-            return beanArchiveScanner.findBeanArchives(classContributors);
-        } catch (Exception e) {
-            throw ExceptionUtils.asRuntimeException(e);
-        }
     }
 
     private Iterable<ClassContributor> computeClassContributors() {

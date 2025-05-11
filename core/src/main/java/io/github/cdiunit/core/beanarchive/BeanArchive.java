@@ -22,7 +22,7 @@ import java.util.jar.Manifest;
 import jakarta.enterprise.inject.spi.CDIProvider;
 import jakarta.enterprise.inject.spi.Extension;
 
-import io.github.cdiunit.core.classcontributor.ClassContributor;
+import io.github.cdiunit.core.classpath.ClassContributor;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 interface BeanArchive {

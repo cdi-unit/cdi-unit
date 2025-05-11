@@ -15,7 +15,7 @@
  */
 package io.github.cdiunit.internal.jsf;
 
-import io.github.cdiunit.core.classcontributor.ClassLookup;
+import io.github.cdiunit.core.classpath.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class ViewScopeDiscoveryExtension implements DiscoveryExtension {
