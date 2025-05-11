@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import jakarta.enterprise.inject.Alternative;
 import jakarta.enterprise.inject.Stereotype;
 
+import io.github.cdiunit.core.classpath.ClassLookup;
 import io.github.cdiunit.*;
 
 /**

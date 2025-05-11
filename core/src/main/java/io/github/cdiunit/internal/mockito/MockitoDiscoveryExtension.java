@@ -18,7 +18,7 @@ package io.github.cdiunit.internal.mockito;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classpath.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 public class MockitoDiscoveryExtension implements DiscoveryExtension {

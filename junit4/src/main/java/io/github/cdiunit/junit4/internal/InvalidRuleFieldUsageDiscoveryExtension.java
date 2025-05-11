@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classpath.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 
 /**

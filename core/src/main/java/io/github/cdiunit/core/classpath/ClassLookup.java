@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classpath;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Class lookup singleton.
  */
+@SuppressWarnings("java:S6548")
 public final class ClassLookup {
 
     private final ConcurrentMap<String, AtomicReference<Class<?>>> classes = new ConcurrentHashMap<>();

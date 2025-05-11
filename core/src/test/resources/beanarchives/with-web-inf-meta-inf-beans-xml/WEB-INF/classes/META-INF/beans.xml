@@ -1,0 +1,3 @@
+<!-- marker file -->
+<beans xmlns="https://jakarta.ee/xml/ns/jakartaee" bean-discovery-mode="none">
+</beans>

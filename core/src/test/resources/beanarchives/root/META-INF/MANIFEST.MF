@@ -1,0 +1,9 @@
+Class-Path: with-beans-xml/
+    with-cdi-extension/
+    with-cdiunit-extension/
+    with-cdiunit-archive/
+    with-cdi-provider/
+    does-not-exists/
+    with-classes/
+    with-web-inf-beans-xml/
+    with-web-inf-meta-inf-beans-xml/

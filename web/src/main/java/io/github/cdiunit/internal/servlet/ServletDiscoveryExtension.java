@@ -15,7 +15,7 @@
  */
 package io.github.cdiunit.internal.servlet;
 
-import io.github.cdiunit.internal.ClassLookup;
+import io.github.cdiunit.core.classpath.ClassLookup;
 import io.github.cdiunit.internal.DiscoveryExtension;
 import io.github.cdiunit.servlet5.ServletAPI5Mocks;
 import io.github.cdiunit.servlet6.ServletAPI6Mocks;

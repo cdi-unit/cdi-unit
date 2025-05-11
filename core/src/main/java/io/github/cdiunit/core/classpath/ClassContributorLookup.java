@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classpath;
 
 import java.net.URI;
 import java.net.URL;
@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("java:S6548")
 public final class ClassContributorLookup {
 
     private final Logger logger = LoggerFactory.getLogger(ClassContributorLookup.class);

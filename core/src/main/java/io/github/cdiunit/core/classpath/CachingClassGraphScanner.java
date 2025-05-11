@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classpath;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +28,7 @@ import java.util.stream.StreamSupport;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-public class CachingClassGraphScanner implements ClasspathScanner {
+class CachingClassGraphScanner implements ClasspathScanner {
 
     /**
      * The default number of worker threads to use while scanning. This number gave the best results on a relatively
@@ -50,10 +49,7 @@ public class CachingClassGraphScanner implements ClasspathScanner {
 
     static ConcurrentHashMap<Object, Object> cache = new ConcurrentHashMap<>();
 
-    private final BeanArchiveScanner beanArchiveScanner;
-
-    public CachingClassGraphScanner(final BeanArchiveScanner beanArchiveScanner) {
-        this.beanArchiveScanner = beanArchiveScanner;
+    CachingClassGraphScanner() {
     }
 
     @SuppressWarnings("unchecked")
@@ -61,22 +57,9 @@ public class CachingClassGraphScanner implements ClasspathScanner {
         return (V) cache.computeIfAbsent(k, o -> computeValue.get());
     }
 
-    private Iterable<ClassContributor> getClassContributors() {
-        return computeIfAbsent(getClass().getClassLoader(), this::computeClassContributors);
-    }
-
     @Override
-    public Collection<ClassContributor> getBeanArchives() {
-        final Iterable<ClassContributor> classContributors = getClassContributors();
-        return computeIfAbsent(computeKey(classContributors), () -> findBeanArchives(classContributors));
-    }
-
-    private Collection<ClassContributor> findBeanArchives(final Iterable<ClassContributor> classContributors) {
-        try {
-            return beanArchiveScanner.findBeanArchives(classContributors);
-        } catch (Exception e) {
-            throw ExceptionUtils.asRuntimeException(e);
-        }
+    public Iterable<ClassContributor> getClassContributors() {
+        return computeIfAbsent(getClass().getClassLoader(), this::computeClassContributors);
     }
 
     private Iterable<ClassContributor> computeClassContributors() {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.core.tests;
+package io.github.cdiunit.core.classpath;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,9 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import io.github.cdiunit.internal.*;
 import io.github.cdiunit.test.beans.AImplementation1;
-import io.github.cdiunit.test.beans.AImplementation3;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Named.named;
@@ -53,10 +51,8 @@ class ClasspathScannerTest {
             "io.github.cdiunit.test.beans.ScopedFactory"
     };
 
-    private static final BeanArchiveScanner beanArchiveScanner = new DefaultBeanArchiveScanner();
-
-    private static final ClasspathScanner simpleScanner = new CachingClassGraphScanner(beanArchiveScanner);
-    private static final ClasspathScanner cachingScanner = new ClassGraphScanner(beanArchiveScanner);
+    private static final ClasspathScanner cachingScanner = ClasspathScanners.caching();
+    private static final ClasspathScanner simpleScanner = ClasspathScanners.simple();
 
     static Stream<Arguments> classpathScannerProvider() {
         return Stream.of(
@@ -87,47 +83,12 @@ class ClasspathScannerTest {
                 .isNotEmpty()
                 .containsOnlyOnce(ALL_TEST_BEANS)
                 .containsOnlyOnce(
-                        ClassContributorLookupTest.class.getName(),
-                        ClasspathScannerTest.class.getName(),
-                        ScopesTest.class.getName(),
-                        TestResource.AResource.class.getName(),
-                        TestResource.AResourceExt.class.getName(),
-                        TestResource.AResourceType.class.getName());
-    }
-
-    @ParameterizedTest
-    @MethodSource("classpathScannerProvider")
-    void should_getBeanArchives(ClasspathScanner scanner) {
-        final var actual = scanner.getBeanArchives();
-        assertThat(actual).as("bean archives")
-                .isNotEmpty()
-                .extracting(o -> o.getURI().toString())
-                .allMatch(uri -> uri.contains("/cdi-unit/core/target/") ||
-                        uri.contains("/cdi-unit/test-beans/target/"));
-    }
-
-    void should_isContainedInBeanArchive(ClasspathScanner scanner, Class<?> clazz, boolean inBeanArchive) {
-        assertThat(scanner.isContainedInBeanArchive(clazz)).as((inBeanArchive ? "" : "not ") + "in bean archive")
-                .isEqualTo(inBeanArchive);
-    }
-
-    @ParameterizedTest
-    @MethodSource("classesInBeanArchive")
-    void should_isContainedInBeanArchive_SimpleScanner(Class<?> clazz, boolean inBeanArchive) {
-        should_isContainedInBeanArchive(simpleScanner, clazz, inBeanArchive);
-    }
-
-    @ParameterizedTest
-    @MethodSource("classesInBeanArchive")
-    void should_isContainedInBeanArchive_CachingScanner(Class<?> clazz, boolean inBeanArchive) {
-        should_isContainedInBeanArchive(cachingScanner, clazz, inBeanArchive);
-    }
-
-    static Stream<Arguments> classesInBeanArchive() {
-        return Stream.of(
-                arguments(Integer.class, false),
-                arguments(ClassGraphScanner.class, true),
-                arguments(AImplementation3.class, true));
+                        "io.github.cdiunit.core.classpath.ClassContributorLookupTest",
+                        "io.github.cdiunit.core.classpath.ClasspathScannerTest",
+                        "io.github.cdiunit.core.tests.ScopesTest",
+                        "io.github.cdiunit.core.tests.TestResource$AResource",
+                        "io.github.cdiunit.core.tests.TestResource$AResourceExt",
+                        "io.github.cdiunit.core.tests.TestResource$AResourceType");
     }
 
 }

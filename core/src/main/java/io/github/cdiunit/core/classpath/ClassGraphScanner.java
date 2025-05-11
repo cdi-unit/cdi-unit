@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.cdiunit.internal;
+package io.github.cdiunit.core.classpath;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -23,15 +22,13 @@ import java.util.stream.StreamSupport;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
-public class ClassGraphScanner implements ClasspathScanner {
+class ClassGraphScanner implements ClasspathScanner {
 
-    private final BeanArchiveScanner beanArchiveScanner;
-
-    public ClassGraphScanner(final BeanArchiveScanner beanArchiveScanner) {
-        this.beanArchiveScanner = beanArchiveScanner;
+    ClassGraphScanner() {
     }
 
-    private Collection<ClassContributor> getClassContributors() {
+    @Override
+    public Iterable<ClassContributor> getClassContributors() {
         try (ScanResult scan = new ClassGraph()
                 .disableNestedJarScanning()
                 .disableModuleScanning()
@@ -40,16 +37,6 @@ public class ClassGraphScanner implements ClasspathScanner {
                     .distinct()
                     .map(ClassContributor::of)
                     .collect(Collectors.toList());
-        }
-    }
-
-    @Override
-    public Collection<ClassContributor> getBeanArchives() {
-        final Collection<ClassContributor> classContributors = getClassContributors();
-        try {
-            return beanArchiveScanner.findBeanArchives(classContributors);
-        } catch (Exception e) {
-            throw ExceptionUtils.asRuntimeException(e);
         }
     }
 
