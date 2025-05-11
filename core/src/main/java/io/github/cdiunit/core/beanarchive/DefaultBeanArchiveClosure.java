@@ -71,7 +71,7 @@ class DefaultBeanArchiveClosure implements BeanArchiveClosure {
                     uriConsumer);
             final Attributes attributes = new Attributes();
             contentAdapter.from(classContributor).withResources(resources -> {
-                attributes.hasBeansXml = resources.anyExist(BEANS_XML_PATHS);
+                attributes.hasBeansXml = resources.anyExist(BEANS_XML_PATHS.toArray(new String[0]));
                 attributes.hasCdiExtensions = resources.exists(CDI_EXTENSION_PATH)
                         && !resources.exists(CDI_PROVIDER_PATH);
                 attributes.hasCdiUnitExtensions = resources.exists(CDI_UNIT_EXTENSION_PATH)

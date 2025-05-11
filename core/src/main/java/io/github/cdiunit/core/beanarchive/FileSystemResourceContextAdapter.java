@@ -54,7 +54,7 @@ class FileSystemResourceContextAdapter implements BeanArchive.ResourceContextAda
     public BeanArchive.ResourcesContext from(ClassContributor classContributor) {
         return Optional.ofNullable(classContributor)
                 .map(this::resolveContext)
-                .orElse(BeanArchive.EMPTY_RESOURCES_CONTEXT);
+                .orElse(EmpyBeanArchiveResources.INSTANCE);
     }
 
     class DirectoryContent implements BeanArchive.Resources, BeanArchive.ResourcesContext {

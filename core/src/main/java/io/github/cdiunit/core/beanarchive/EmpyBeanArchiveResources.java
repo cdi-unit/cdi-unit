@@ -19,7 +19,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
-class EmpyBeanArchiveResources implements BeanArchive.Resources, BeanArchive.ResourcesContext {
+@SuppressWarnings("java:S6548")
+final class EmpyBeanArchiveResources implements BeanArchive.Resources, BeanArchive.ResourcesContext {
+
+    static final EmpyBeanArchiveResources INSTANCE = new EmpyBeanArchiveResources();
+
+    private EmpyBeanArchiveResources() {
+    }
 
     @Override
     public boolean exists(final String path) {

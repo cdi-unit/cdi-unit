@@ -15,6 +15,8 @@
  */
 package io.github.cdiunit.core.beanarchive;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
@@ -27,13 +29,11 @@ import io.github.cdiunit.internal.DiscoveryExtension;
 
 interface BeanArchive {
 
-    ResourcesContext EMPTY_RESOURCES_CONTEXT = new EmpyBeanArchiveResources();
-
-    String[] BEANS_XML_PATHS = new String[] {
+    Collection<String> BEANS_XML_PATHS = List.of(
             "META-INF/beans.xml",
             "WEB-INF/beans.xml",
-            "WEB-INF/classes/META-INF/beans.xml"
-    };
+            "WEB-INF/classes/META-INF/beans.xml");
+
     String META_INF_SERVICES_PATH = "META-INF/services/";
     String CDI_PROVIDER_PATH = META_INF_SERVICES_PATH + CDIProvider.class.getName();
     String CDI_EXTENSION_PATH = META_INF_SERVICES_PATH + Extension.class.getName();
