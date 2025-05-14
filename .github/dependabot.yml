@@ -30,6 +30,9 @@ updates:
         patterns:
           - org.openrewrite.maven:*
           - org.openrewrite.recipe:*
+      io-smallrye:
+        patterns:
+          - io.smallrye:jandex*
     rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
