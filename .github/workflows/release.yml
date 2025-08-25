@@ -34,7 +34,7 @@ jobs:
           local-file: true
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         env:
           GPG_PASSPHRASE: ${{secrets.MAVEN_GPG_PASSPHRASE}}
         with:
