@@ -17,6 +17,9 @@ updates:
       - dependency-name: jakarta.*:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch" ]
       # explicitly keep baseline version
+      - dependency-name: org.apache.deltaspike.*:*
+        update-types: [ "version-update:semver-patch" ]
+      # explicitly keep baseline version
       - dependency-name: org.hibernate.orm:*
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
       # explicitly keep baseline version
