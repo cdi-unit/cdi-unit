@@ -36,6 +36,10 @@ updates:
       io-smallrye:
         patterns:
           - io.smallrye:jandex*
+      surefire:
+        patterns:
+          - org.apache.maven.plugins:maven-surefire-plugin
+          - org.apache.maven.surefire:*
     rebase-strategy: auto
 
   - package-ecosystem: "github-actions"
