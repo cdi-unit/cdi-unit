@@ -32,6 +32,7 @@ jobs:
           # FIXME - #330 - v2.5
           - v3.0
           - v4.0
+          - v5.0
         include:
           - java: 11
             groovy: v2.5
