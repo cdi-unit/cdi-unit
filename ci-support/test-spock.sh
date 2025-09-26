@@ -12,7 +12,7 @@ else
   exit 1
 fi
 
-export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml"
+export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml $GROOVY_MAVEN_ARGS"
 
 for GROOVY_VERSION in ${GROOVY_VERSIONS[*]}; do
   "$BASE_DIR/hide-logs.sh" ./mvnw test \
