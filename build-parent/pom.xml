@@ -247,6 +247,7 @@
 			<id>format</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
+				<jdk>[17,)</jdk>
 				<property>
 					<name>!no-format</name>
 				</property>
@@ -274,6 +275,7 @@
 			<id>validate</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
+				<jdk>[17,)</jdk>
 				<property>
 					<name>no-format</name>
 				</property>
