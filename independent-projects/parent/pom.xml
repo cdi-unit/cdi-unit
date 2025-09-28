@@ -305,6 +305,12 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>5.2.0.4988</version>
 				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.gmavenplus</groupId>
+					<artifactId>gmavenplus-plugin</artifactId>
+					<version>4.2.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
