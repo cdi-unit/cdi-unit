@@ -4,5 +4,4 @@ set -ex
 
 export MAVEN_ARGS="-V -B --settings .github/mvn-settings.xml"
 
-./mvnw -Dno-format -Pcoverage dependency:go-offline
-./mvnw -Dno-format -DskipTests package
+./mvnw -T2C -Dno-format -Pcoverage -DskipTests package dependency:go-offline
