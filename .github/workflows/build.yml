@@ -109,14 +109,14 @@ jobs:
 
       - name: Upload .m2/repository/io/github/cdi-unit
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.java_distribution == 'temurin' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: m2-io-github-cdi-unit
           path: m2-io-github-cdi-unit.tgz
           retention-days: 7
 
       - name: Upload failure Archive (if maven failed)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: test-reports-${{ matrix.os }}-jdk${{ matrix.java_distribution }}
