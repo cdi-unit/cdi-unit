@@ -65,7 +65,7 @@ jobs:
             ${{ steps.cache-key.outputs.m2-monthly-cache-key }}-
 
       - name: Download .m2/repository/io/github/cdi-unit
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: m2-io-github-cdi-unit
           path: .
@@ -127,7 +127,7 @@ jobs:
             ${{ steps.cache-key.outputs.m2-monthly-cache-key }}-
 
       - name: Download .m2/repository/io/github/cdi-unit
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: m2-io-github-cdi-unit
           path: .
