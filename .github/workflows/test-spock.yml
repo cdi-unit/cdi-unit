@@ -83,7 +83,7 @@ jobs:
         run: ./ci-support/test-spock.sh groovy-${{ matrix.groovy }}.sh
 
       - name: Upload failure Archive (if maven failed)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: test-reports-jdk${{ matrix.java }}-groovy${{ matrix.groovy }}
