@@ -85,7 +85,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.5.20</version>
+				<version>1.5.21</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -97,7 +97,7 @@
 			<dependency>
 				<groupId>nl.jqno.equalsverifier</groupId>
 				<artifactId>equalsverifier</artifactId>
-				<version>4.2.1</version>
+				<version>4.2.2</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
