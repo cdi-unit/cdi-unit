@@ -21,12 +21,12 @@
 		<dependency>
 			<groupId>org.openrewrite.recipe</groupId>
 			<artifactId>rewrite-testing-frameworks</artifactId>
-			<version>3.21.0</version>
+			<version>3.21.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openrewrite.recipe</groupId>
 			<artifactId>rewrite-third-party</artifactId>
-			<version>0.31.0</version>
+			<version>0.31.1</version>
 		</dependency>
 	</dependencies>
 
