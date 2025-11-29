@@ -37,7 +37,7 @@ public class ActivateScopes implements IMethodInterceptor {
     @Override
     public void intercept(IMethodInvocation invocation) throws Throwable {
         var store = invocation.getStore(namespace);
-        var testLifecycle = store.get(invocation, TestLifecycle.class);
+        var testLifecycle = store.get(invocation.getMethod(), TestLifecycle.class);
         if (testLifecycle == null) {
             throw new IllegalStateException(String.format("no test lifecycle bound to %s", invocation));
         }

@@ -120,7 +120,7 @@ public class CdiSpockExtension implements IAnnotationDrivenExtension<CdiUnit> {
             final var testLifecycle = requiredTestLifecycle(instance.getClass(), method);
             try {
                 testLifecycle.beforeTestMethod();
-                invocation.getStore(NAMESPACE).put(invocation, testLifecycle);
+                invocation.getStore(NAMESPACE).put(invocation.getMethod(), testLifecycle);
                 invocation.proceed();
             } finally {
                 testLifecycle.afterTestMethod();
