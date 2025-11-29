@@ -69,7 +69,7 @@
 				<dependency>
 					<groupId>org.spockframework</groupId>
 					<artifactId>spock-core</artifactId>
-					<version>2.4-M4-groovy-2.5</version>
+					<version>2.4-M7-groovy-2.5</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
@@ -96,7 +96,7 @@
 				<dependency>
 					<groupId>org.spockframework</groupId>
 					<artifactId>spock-core</artifactId>
-					<version>2.4-M4-groovy-2.5</version>
+					<version>2.4-M7-groovy-2.5</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
@@ -123,7 +123,7 @@
 				<dependency>
 					<groupId>org.spockframework</groupId>
 					<artifactId>spock-core</artifactId>
-					<version>2.4-M4-groovy-3.0</version>
+					<version>2.4-M7-groovy-3.0</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
@@ -144,13 +144,13 @@
 				</property>
 			</activation>
 			<properties>
-				<version.groovy.test>4.0.28</version.groovy.test>
+				<version.groovy.test>4.0.29</version.groovy.test>
 			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>org.spockframework</groupId>
 					<artifactId>spock-core</artifactId>
-					<version>2.4-M4-groovy-4.0</version>
+					<version>2.4-M7-groovy-4.0</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
@@ -171,13 +171,13 @@
 				</property>
 			</activation>
 			<properties>
-				<version.groovy.test>5.0.1</version.groovy.test>
+				<version.groovy.test>5.0.2</version.groovy.test>
 			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>org.spockframework</groupId>
 					<artifactId>spock-core</artifactId>
-					<version>2.4-M4-groovy-4.0</version>
+					<version>2.4-M7-groovy-5.0</version>
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
