@@ -38,6 +38,8 @@ jobs:
             groovy: v2.5
           - java: 17
             groovy: v2.5
+          - java: 25
+            groovy: v5.0
 
     steps:
       - name: Generate cache key

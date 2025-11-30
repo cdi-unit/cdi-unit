@@ -310,6 +310,9 @@
 					<groupId>org.codehaus.gmavenplus</groupId>
 					<artifactId>gmavenplus-plugin</artifactId>
 					<version>4.2.1</version>
+					<configuration>
+						<targetBytecode>${maven.compiler.target}</targetBytecode>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
