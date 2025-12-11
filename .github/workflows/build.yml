@@ -53,7 +53,7 @@ jobs:
 
       - name: Cache Maven Repository
         id: cache-maven
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
@@ -92,7 +92,7 @@ jobs:
           distribution: ${{ matrix.java_distribution }}
 
       - name: Restore Maven Repository
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
@@ -141,7 +141,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Restore Maven Repository
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
@@ -173,7 +173,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Restore Maven Repository
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
