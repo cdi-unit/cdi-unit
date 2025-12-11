@@ -67,7 +67,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Restore Maven Repository
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           enableCrossOsArchive: true
           path: ~/.m2/repository
