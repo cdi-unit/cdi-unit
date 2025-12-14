@@ -64,7 +64,7 @@ jobs:
           git push --tags
 
       - name: Upload relocations
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cdi-unit-relocations-${{steps.metadata.outputs.current-version}}
           path: relocations/**/target/*
